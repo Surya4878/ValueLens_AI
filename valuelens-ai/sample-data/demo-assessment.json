@@ -1,0 +1,95 @@
+{
+  "id": "demo-sap-pipo-to-btp",
+  "name": "Global Enterprise SAP PI/PO to BTP Migration Assessment",
+  "sourcePlatform": "SAP PI/PO",
+  "targetPlatform": "SAP BTP Integration Suite",
+  "status": "APPROVED",
+  "currency": "USD",
+  "sourceSystem": {
+    "companyInformation": {
+      "companySize": "Enterprise (5,000+ employees)",
+      "industry": "Retail & Consumer Goods",
+      "migrationTimeline": "12-18 months",
+      "integrationComplexity": "HIGH",
+      "availabilityRequirements": "99.9% High Availability",
+      "complianceRequirements": "SOX, GDPR, ISO 27001",
+      "customDevelopment": "EXTENSIVE",
+      "monitoringMaturity": "MEDIUM"
+    },
+    "environmentAssessment": {
+      "integrationVolume": "HIGH",
+      "systemComplexity": "HIGH",
+      "availabilityRequirements": "HIGH",
+      "customDevelopment": "HIGH",
+      "complianceRequirements": "HIGH",
+      "monitoring": "MEDIUM",
+      "simpleInterfaces": 800,
+      "mediumInterfaces": 200,
+      "complexInterfaces": 50,
+      "totalInterfaces": 1050
+    },
+    "volumetrics": {
+      "currentMessageThroughput": "200000",
+      "indicativeMessageThroughput": "300000",
+      "apiCount": 45,
+      "b2bInterfaces": 20
+    },
+    "sapPiPoAnnualCostBreakdown": {
+      "licensing": {
+        "sapPiPoLicenseCosts": 150000.00,
+        "thirdPartyAdapterLicenses": 50000.00,
+        "developmentEnvironmentLicenses": 30000.00,
+        "testingEnvironmentLicenses": 20000.00,
+        "subtotal": 250000.00
+      },
+      "infrastructure": {
+        "hardwareServerCosts": 80000.00,
+        "storageBackupCosts": 25000.00,
+        "networkingConnectivity": 15000.00,
+        "dataCenterFacilities": 40000.00,
+        "subtotal": 160000.00
+      },
+      "support": {
+        "sapSupportMaintenance": 80000.00,
+        "thirdPartySupportContracts": 25000.00,
+        "systemMaintenanceUpgrades": 15000.00,
+        "dataCenterFacilities": 40000.00,
+        "subtotal": 160000.00
+      },
+      "operations": {
+        "administrativeStaffCosts": 80000.00,
+        "supportStaffCosts": 25000.00,
+        "trainingCertificationCosts": 15000.00,
+        "dataCenterFacilities": 40000.00,
+        "subtotal": 160000.00
+      }
+    }
+  },
+  "targetSystem": {
+    "targetPlatform": "SAP BTP Integration Suite",
+    "configuration": {
+      "selectedEditionName": "SAP Integration Suite, Standard Edition",
+      "numberOfUnits": 3,
+      "additionalMessagePacks": 400,
+      "totalAnnualCost": 204084.00,
+      "calculationFormula": "3 x $ 57,900.00 + 400 x $ 75.96"
+    },
+    "additionalTcoComponents": {
+      "totalAdditionalTcoAnnual": 109000.00
+    }
+  },
+  "migrationRelatedDetails": {
+    "developmentCost": 200000.00,
+    "architectureCost": 15000.00,
+    "testingCost": 15000.00,
+    "projectManagementCost": 15000.00,
+    "trainingCost": 5000.00,
+    "deploymentCutoverCost": 10000.00,
+    "documentationCost": 10000.00,
+    "contingencyCost": 30000.00,
+    "baseMigrationCost": 270000.00,
+    "totalMigrationCost": 300000.00,
+    "currency": "USD",
+    "roiAnalysisPeriodYears": 5
+  }
+}
