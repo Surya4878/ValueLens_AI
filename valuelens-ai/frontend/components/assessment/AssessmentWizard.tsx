@@ -3,6 +3,31 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import {
+  Box,
+  Layers,
+  Crown,
+  Lightbulb,
+  Check,
+  ChevronDown,
+  ChevronUp,
+  Sparkles,
+  Scale,
+  Puzzle,
+  Info,
+  ArrowRight,
+  ArrowLeft,
+  Pencil,
+  HelpCircle,
+  ShieldCheck,
+  Zap,
+  Plus,
+  Minus,
+  X,
+  Server,
+  Database,
+  MessageSquare,
+} from 'lucide-react';
 import { Assessment, RoiCalculationResult } from '@/types';
 import { api } from '@/lib/api';
 import { formatCurrency } from '@/lib/formatters';
@@ -13,6 +38,12 @@ export function AssessmentWizard() {
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [calculationResult, setCalculationResult] = useState<RoiCalculationResult | null>(null);
+
+  // Contract Horizon: 1 Year (Annualized), 3 Years (36 Mo), or 5 Years (60 Mo)
+  const [contractYears, setContractYears] = useState<1 | 3 | 5>(1);
+  const [showFeatureComparison, setShowFeatureComparison] = useState(false);
+  const [showAddOns, setShowAddOns] = useState(false);
+  const [showAiRecommendation, setShowAiRecommendation] = useState(false);
 
   // Form State initialized with authoritative benchmark values matching the specification screenshot
   const [assessment, setAssessment] = useState<Assessment>({
@@ -87,11 +118,13 @@ export function AssessmentWizard() {
         selectedEditionName: 'Standard Edition',
         numberOfUnits: 3,
         additionalMessagePacks: 400,
-        totalAnnualCost: 204084, // $173,700 base (3 x $57,900) + (400 * $75.96 = $30,384) = $204,084
-        calculationFormula: '3 units x $57,900/yr + 400 packs x $75.96',
+        dataSpacePackages: 0,
+        additionalEicTenants: 0,
+        totalAnnualCost: 225804, // 3 x $64,068 ($192,204) + 400 x $84 ($33,600) = $225,804
+        calculationFormula: '3 units x $64,068/yr + 400 packs x $84.00',
       },
       additionalTcoComponents: {
-        totalAdditionalTcoAnnual: 109000, // People / Cloud Run = $109,000. Total Target TCO = $204,084 + $109,000 = $313,084
+        totalAdditionalTcoAnnual: 109000,
         categories: {
           optionalComponents: 0,
           infrastructure: 0,
@@ -125,25 +158,29 @@ export function AssessmentWizard() {
     (assessment.sourceSystem.sapPiPoAnnualCostBreakdown.support.subtotal || 160000) +
     (assessment.sourceSystem.sapPiPoAnnualCostBreakdown.operations.subtotal || 160000);
 
-  // Target BTP Edition Base
+  // Target BTP Edition Base (Official SAP 2026 published prices)
   const getEditionBasePrice = (editionName: string, units: number = 3) => {
-    if (!editionName) return 57900 * units;
+    if (!editionName) return 64068 * units;
     const lower = editionName.toLowerCase();
-    if (lower.includes('starter')) return 18744;
+    if (lower.includes('starter')) return 20736;
+    if (lower.includes('enhanced')) return 92256 * (units > 0 ? units : 1);
     if (lower.includes('premium')) return 318204;
-    return 57900 * (units > 0 ? units : 3);
+    return 64068 * (units > 0 ? units : 3);
   };
 
   const currentUnits =
     assessment.targetSystem.configuration.selectedEditionName === 'Standard Edition'
       ? (assessment.targetSystem.configuration.numberOfUnits || 3)
-      : 1;
+      : (assessment.targetSystem.configuration.numberOfUnits || 1);
   const editionBase = getEditionBasePrice(assessment.targetSystem.configuration.selectedEditionName, currentUnits);
-  const messagePacksCost = (assessment.targetSystem.configuration.additionalMessagePacks || 0) * 75.96;
+  const messagePacksCost = (assessment.targetSystem.configuration.additionalMessagePacks || 0) * 84;
+  const dataSpaceCost = (assessment.targetSystem.configuration.dataSpacePackages || 0) * 900;
+  const additionalEicCost = (assessment.targetSystem.configuration.additionalEicTenants || 0) * 41460;
+  const totalAddOnsCostPreview = messagePacksCost + dataSpaceCost + additionalEicCost;
   const targetConfigTotal =
     assessment.targetSystem.configuration.totalAnnualCost && assessment.targetSystem.configuration.totalAnnualCost > 0
       ? assessment.targetSystem.configuration.totalAnnualCost
-      : editionBase + messagePacksCost;
+      : editionBase + totalAddOnsCostPreview;
   const targetAdditionalTco =
     assessment.targetSystem.additionalTcoComponents.totalAdditionalTcoAnnual !== undefined
       ? assessment.targetSystem.additionalTcoComponents.totalAdditionalTcoAnnual
@@ -233,21 +270,23 @@ export function AssessmentWizard() {
     }
   };
 
-  // 5 Master Milestones corresponding to Screenshot 1 top progress bar
+  // 6 Milestones corresponding to the official SAP BTP edition selection workflow
   const milestones = [
-    { id: 1, label: 'Company Information', activeForSteps: [1] },
-    { id: 2, label: 'Current PI/PO Environment', activeForSteps: [2, 3] },
-    { id: 3, label: 'Target BTP Platform', activeForSteps: [4, 5] },
-    { id: 4, label: 'Migration Details', activeForSteps: [6] },
-    { id: 5, label: 'Results', activeForSteps: [7] },
+    { id: 1, label: 'Current Landscape', step: 1 },
+    { id: 2, label: 'Requirements', step: 2 },
+    { id: 3, label: 'Sizing', step: 3 },
+    { id: 4, label: 'Cost Parameters', step: 4 },
+    { id: 5, label: 'Select Edition', step: 5 },
+    { id: 6, label: 'Review & Results', step: 6 },
   ];
 
   const getActiveMilestone = () => {
-    if (currentStep === 1) return 1;
-    if (currentStep === 2 || currentStep === 3) return 2;
-    if (currentStep === 4 || currentStep === 5) return 3;
-    if (currentStep === 6) return 4;
-    return 5;
+    if (currentStep <= 1) return 1;
+    if (currentStep === 2) return 2;
+    if (currentStep === 3) return 3;
+    if (currentStep === 4) return 4;
+    if (currentStep === 5) return 5;
+    return 6;
   };
 
   const activeMilestoneId = getActiveMilestone();
@@ -312,9 +351,13 @@ export function AssessmentWizard() {
                   // Direct navigation to milestone's primary step
                   if (m.id === 1) setCurrentStep(1);
                   if (m.id === 2) setCurrentStep(2);
-                  if (m.id === 3) setCurrentStep(4);
-                  if (m.id === 4) setCurrentStep(6);
-                  if (m.id === 5 && calculationResult) setCurrentStep(7);
+                  if (m.id === 3) setCurrentStep(3);
+                  if (m.id === 4) setCurrentStep(4);
+                  if (m.id === 5) setCurrentStep(5);
+                  if (m.id === 6) {
+                    if (calculationResult) setCurrentStep(7);
+                    else setCurrentStep(6);
+                  }
                 }}
               >
                 <div
@@ -1283,265 +1326,1278 @@ export function AssessmentWizard() {
           )}
 
           {/* ========================================================================= */}
-          {/* STEP 5 (Slide 6): Target SAP BTP Platform                                  */}
+          {/* STEP 5: Select your SAP BTP Integration Suite edition                      */}
           {/* ========================================================================= */}
-          {currentStep === 5 && (
-            <div className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-xs space-y-6">
-              <div className="border-b border-slate-100 pb-4">
-                <span className="text-xs font-bold text-indigo-600 uppercase tracking-wider">Step 5 of 6</span>
-                <h2 className="text-xl font-black text-slate-900 mt-1">Select your SAP BTP Integration Suite edition</h2>
-                <p className="text-sm text-slate-500 mt-0.5">
-                  Choose the edition that best fits your requirements and sizing.
-                </p>
-              </div>
+          {currentStep === 5 && (() => {
+            const currentEd = assessment.targetSystem.configuration.selectedEditionName || 'Standard Edition';
+            const units = currentEd === 'Standard Edition'
+              ? (assessment.targetSystem.configuration.numberOfUnits || 3)
+              : (assessment.targetSystem.configuration.numberOfUnits || 1);
+            const packs = assessment.targetSystem.configuration.additionalMessagePacks || 0;
+            const dataSpacePackages = assessment.targetSystem.configuration.dataSpacePackages || 0;
+            const additionalEicTenants = assessment.targetSystem.configuration.additionalEicTenants || 0;
 
-              {/* 3 Tier Edition Cards matching Slide 6 */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                {/* Starter Edition */}
-                <div
-                  onClick={() => {
-                    const packs = assessment.targetSystem.configuration.additionalMessagePacks || 0;
-                    setAssessment({
-                      ...assessment,
-                      targetSystem: {
-                        ...assessment.targetSystem,
-                        configuration: {
-                          ...assessment.targetSystem.configuration,
-                          selectedEditionName: 'Starter Edition',
-                          numberOfUnits: 1,
-                          totalAnnualCost: 18744 + (packs * 75.96),
-                          calculationFormula: `Starter Edition ($18,744/yr) + ${packs} packs x $75.96`,
-                        },
-                      },
-                    });
-                  }}
-                  className={`p-5 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between ${
-                    assessment.targetSystem.configuration.selectedEditionName === 'Starter Edition'
-                      ? 'border-indigo-600 ring-2 ring-indigo-500/20 bg-indigo-50/20 shadow-md'
-                      : 'border-slate-200 hover:border-slate-300 bg-white'
-                  }`}
-                >
-                  <div className="space-y-3">
-                    <h3 className="text-sm font-black text-slate-900">Starter Edition</h3>
-                    <div className="text-lg font-black text-indigo-900 font-mono">$18,744 <span className="text-xs font-normal text-slate-500">/ year</span></div>
-                    <ul className="space-y-1.5 text-xs text-slate-600">
-                      <li>• 50K messages per month</li>
-                      <li>• Access to 920+ integrations</li>
-                      <li>• 1 tenant per year</li>
-                    </ul>
-                  </div>
-                  <button
-                    type="button"
-                    className={`mt-4 w-full py-1.5 rounded-lg text-xs font-bold transition-colors ${
-                      assessment.targetSystem.configuration.selectedEditionName === 'Starter Edition'
-                        ? 'bg-indigo-600 text-white'
-                        : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-                    }`}
-                  >
-                    {assessment.targetSystem.configuration.selectedEditionName === 'Starter Edition' ? 'Selected ✓' : 'Select'}
-                  </button>
-                </div>
+            const baseUnitAnnual = getEditionBasePrice(currentEd, 1);
+            const annualizedBaseCost = baseUnitAnnual * units;
+            const annualizedPacksCost = packs * 84;
+            const annualizedDataSpaceCost = dataSpacePackages * 900;
+            const annualizedEicCost = additionalEicTenants * 41460;
+            const annualizedAddOnsCost = annualizedPacksCost + annualizedDataSpaceCost + annualizedEicCost;
+            const estimatedAnnualCost = annualizedBaseCost + annualizedAddOnsCost;
+            const termTotalCost = estimatedAnnualCost * contractYears;
 
-                {/* Standard Edition (Recommended) */}
-                <div
-                  onClick={() => {
-                    const units = assessment.targetSystem.configuration.numberOfUnits || 3;
-                    const packs = assessment.targetSystem.configuration.additionalMessagePacks || 0;
-                    setAssessment({
-                      ...assessment,
-                      targetSystem: {
-                        ...assessment.targetSystem,
-                        configuration: {
-                          ...assessment.targetSystem.configuration,
-                          selectedEditionName: 'Standard Edition',
-                          numberOfUnits: units,
-                          totalAnnualCost: (units * 57900) + (packs * 75.96),
-                          calculationFormula: `${units} units x $57,900/yr + ${packs} packs x $75.96`,
-                        },
-                      },
-                    });
-                  }}
-                  className={`p-5 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between relative ${
-                    assessment.targetSystem.configuration.selectedEditionName === 'Standard Edition'
-                      ? 'border-indigo-600 ring-2 ring-indigo-500/20 bg-indigo-50/30 shadow-md'
-                      : 'border-slate-200 hover:border-slate-300 bg-white'
-                  }`}
-                >
-                  <span className="absolute -top-2.5 right-4 bg-indigo-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-xs">
-                    Recommended
-                  </span>
-                  <div className="space-y-3">
-                    <h3 className="text-sm font-black text-slate-900">Standard Edition</h3>
-                    <div className="text-lg font-black text-indigo-900 font-mono">$57,900 <span className="text-xs font-normal text-slate-500">/ unit / yr</span></div>
-                    <ul className="space-y-1.5 text-xs text-slate-600">
-                      <li>• API lifecycle management</li>
-                      <li>• B2B capabilities</li>
-                      <li>• 160+ SaaS applications</li>
-                    </ul>
-                  </div>
-                  <button
-                    type="button"
-                    className={`mt-4 w-full py-1.5 rounded-lg text-xs font-bold transition-colors ${
-                      assessment.targetSystem.configuration.selectedEditionName === 'Standard Edition'
-                        ? 'bg-indigo-600 text-white shadow-sm'
-                        : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-                    }`}
-                  >
-                    {assessment.targetSystem.configuration.selectedEditionName === 'Standard Edition' ? 'Selected ✓' : 'Select'}
-                  </button>
-                </div>
+            const totalSelectedAddOnsCount = (packs > 0 ? 1 : 0) + (dataSpacePackages > 0 ? 1 : 0) + (additionalEicTenants > 0 ? 1 : 0);
 
-                {/* Premium Edition */}
-                <div
-                  onClick={() => {
-                    const packs = assessment.targetSystem.configuration.additionalMessagePacks || 0;
-                    setAssessment({
-                      ...assessment,
-                      targetSystem: {
-                        ...assessment.targetSystem,
-                        configuration: {
-                          ...assessment.targetSystem.configuration,
-                          selectedEditionName: 'Premium Edition',
-                          numberOfUnits: 1,
-                          totalAnnualCost: 318204 + (packs * 75.96),
-                          calculationFormula: `Premium Edition ($318,204/yr) + ${packs} packs x $75.96`,
-                        },
-                      },
-                    });
-                  }}
-                  className={`p-5 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between ${
-                    assessment.targetSystem.configuration.selectedEditionName === 'Premium Edition'
-                      ? 'border-indigo-600 ring-2 ring-indigo-500/20 bg-indigo-50/20 shadow-md'
-                      : 'border-slate-200 hover:border-slate-300 bg-white'
-                  }`}
-                >
-                  <div className="space-y-3">
-                    <h3 className="text-sm font-black text-slate-900">Premium Edition</h3>
-                    <div className="text-lg font-black text-indigo-900 font-mono">$318,204 <span className="text-xs font-normal text-slate-500">/ year</span></div>
-                    <ul className="space-y-1.5 text-xs text-slate-600">
-                      <li>• All Standard features</li>
-                      <li>• 4 Integration Suite tenants</li>
-                      <li>• 4 Edge Integration tenants</li>
-                    </ul>
-                  </div>
-                  <button
-                    type="button"
-                    className={`mt-4 w-full py-1.5 rounded-lg text-xs font-bold transition-colors ${
-                      assessment.targetSystem.configuration.selectedEditionName === 'Premium Edition'
-                        ? 'bg-indigo-600 text-white'
-                        : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-                    }`}
-                  >
-                    {assessment.targetSystem.configuration.selectedEditionName === 'Premium Edition' ? 'Selected ✓' : 'Select'}
-                  </button>
-                </div>
-              </div>
+            const updateConfig = (
+              newEdition: string = currentEd,
+              newUnits: number = units,
+              newPacks: number = packs,
+              newDataSpace: number = dataSpacePackages,
+              newEic: number = additionalEicTenants
+            ) => {
+              const unitPrice = getEditionBasePrice(newEdition, 1);
+              const total = (newUnits * unitPrice) + (newPacks * 84) + (newDataSpace * 900) + (newEic * 41460);
+              const parts = [`${newUnits} units x $${unitPrice.toLocaleString()}/yr`];
+              if (newPacks > 0) parts.push(`${newPacks} msg packs x $84.00`);
+              if (newDataSpace > 0) parts.push(`${newDataSpace} Data Space x $900.00`);
+              if (newEic > 0) parts.push(`${newEic} EIC tenants x $41,460.00`);
 
-              {/* Sizing & Message Packs Parameters */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {/* Standard Edition Units Selector */}
-                {assessment.targetSystem.configuration.selectedEditionName === 'Standard Edition' && (
-                  <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between">
-                    <div>
-                      <span className="text-xs font-bold text-slate-800 uppercase tracking-wider block">Production Units</span>
-                      <span className="text-xs text-slate-500 mt-0.5 block">$57,900 base per unit</span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <input
-                        type="number"
-                        min="1"
-                        max="20"
-                        value={assessment.targetSystem.configuration.numberOfUnits || 3}
-                        onChange={(e) => {
-                          const units = Math.max(1, parseInt(e.target.value) || 1);
-                          const packs = assessment.targetSystem.configuration.additionalMessagePacks || 0;
-                          const total = (units * 57900) + (packs * 75.96);
-                          setAssessment({
-                            ...assessment,
-                            targetSystem: {
-                              ...assessment.targetSystem,
-                              configuration: {
-                                ...assessment.targetSystem.configuration,
-                                numberOfUnits: units,
-                                totalAnnualCost: total,
-                                calculationFormula: `${units} units x $57,900/yr + ${packs} packs x $75.96`,
-                              },
-                            },
-                          });
-                        }}
-                        className="w-20 text-right font-mono text-sm border border-slate-300 rounded-lg p-2 bg-white"
-                      />
-                      <span className="text-xs text-slate-500 font-medium">units</span>
-                    </div>
-                  </div>
-                )}
+              setAssessment({
+                ...assessment,
+                targetSystem: {
+                  ...assessment.targetSystem,
+                  configuration: {
+                    ...assessment.targetSystem.configuration,
+                    selectedEditionName: newEdition,
+                    numberOfUnits: newUnits,
+                    additionalMessagePacks: newPacks,
+                    dataSpacePackages: newDataSpace,
+                    additionalEicTenants: newEic,
+                    totalAnnualCost: total,
+                    calculationFormula: parts.join(' + '),
+                  },
+                },
+              });
+            };
 
-                {/* Additional Message Packs */}
-                <div className={`p-4 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between ${assessment.targetSystem.configuration.selectedEditionName !== 'Standard Edition' ? 'sm:col-span-2' : ''}`}>
+            const handleSelectEdition = (editionName: string, defaultUnits: number = 1) => {
+              const newUnits = editionName === 'Standard Edition' ? (assessment.targetSystem.configuration.numberOfUnits || 3) : defaultUnits;
+              updateConfig(editionName, newUnits, packs, dataSpacePackages, additionalEicTenants);
+            };
+
+            const handleUpdateUnits = (newUnits: number) => {
+              const safeUnits = Math.max(1, Math.min(50, newUnits));
+              updateConfig(currentEd, safeUnits, packs, dataSpacePackages, additionalEicTenants);
+            };
+
+            const handleUpdatePacks = (newPacks: number) => {
+              const safePacks = Math.max(0, newPacks);
+              updateConfig(currentEd, units, safePacks, dataSpacePackages, additionalEicTenants);
+            };
+
+            const handleUpdateDataSpace = (newCount: number) => {
+              const safeCount = Math.max(0, newCount);
+              updateConfig(currentEd, units, packs, safeCount, additionalEicTenants);
+            };
+
+            const handleUpdateEic = (newCount: number) => {
+              const safeCount = Math.max(0, newCount);
+              updateConfig(currentEd, units, packs, dataSpacePackages, safeCount);
+            };
+
+            const handleClearAllAddOns = () => {
+              updateConfig(currentEd, units, 0, 0, 0);
+            };
+
+            // Recommendation analysis based on SAP rules from PDF report
+            const totalIflows = assessment.sourceSystem.environmentAssessment.totalInterfaces || 0;
+            const complexIflows = assessment.sourceSystem.environmentAssessment.complexInterfaces || 0;
+            const b2bCount = assessment.sourceSystem.volumetrics.b2bInterfaces || 0;
+            const monthlyThroughput = parseInt(assessment.sourceSystem.volumetrics.indicativeMessageThroughput || '0') || 300000;
+
+            let recommendedEd = 'Standard Edition';
+            let recommendationReason = 'Standard Edition is the recommended enterprise baseline. It provides full API Management, B2B/EDI libraries, Integration Advisor, and Edge Integration Cell runtimes without the 10 custom iFlow limit of Starter Edition.';
+
+            if (monthlyThroughput > 400000 || complexIflows > 100) {
+              recommendedEd = 'Enhanced Edition';
+              recommendationReason = 'With heavy message volumes (>400K/month) and high operational complexity, Enhanced Edition is optimal. It includes 500K messages/month, SAP Alert Notification (ANS), Cloud Transport Management (TMS), Document AI, and a dedicated Advanced Event Mesh (AEM 100) tenant.';
+            } else if (totalIflows <= 10 && complexIflows === 0 && b2bCount === 0 && monthlyThroughput <= 50000) {
+              recommendedEd = 'Starter Edition';
+              recommendationReason = 'Your integration scope is small and simple (<10 custom iFlows, <50K messages/mo). Starter Edition provides standard Cloud Integration capabilities at minimal cost.';
+            }
+
+            return (
+              <div className="space-y-6">
+                {/* Header Card with Years Commitment Switcher */}
+                <div className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-xs flex flex-wrap items-center justify-between gap-4">
                   <div>
-                    <span className="text-xs font-bold text-slate-800 uppercase tracking-wider block">Additional Message Packs</span>
-                    <span className="text-xs text-slate-500 mt-0.5 block">$75.96 per 10,000 transactions per year</span>
+                    <span className="text-xs font-bold text-indigo-600 uppercase tracking-wider">Step 5 of 6</span>
+                    <h2 className="text-2xl font-black text-slate-900 mt-1">Select your SAP BTP Integration Suite edition</h2>
+                    <p className="text-sm text-slate-500 mt-0.5">
+                      Choose the edition that best fits your requirements and sizing. Each edition includes different features and capabilities.
+                    </p>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <input
-                      type="number"
-                      min="0"
-                      value={assessment.targetSystem.configuration.additionalMessagePacks}
-                      onChange={(e) => {
-                        const packs = Math.max(0, parseInt(e.target.value) || 0);
-                        const ed = assessment.targetSystem.configuration.selectedEditionName;
-                        const units = ed === 'Standard Edition' ? (assessment.targetSystem.configuration.numberOfUnits || 3) : 1;
-                        const base = getEditionBasePrice(ed, units);
-                        const total = base + (packs * 75.96);
-                        setAssessment({
-                          ...assessment,
-                          targetSystem: {
-                            ...assessment.targetSystem,
-                            configuration: {
-                              ...assessment.targetSystem.configuration,
-                              additionalMessagePacks: packs,
-                              totalAnnualCost: total,
-                              calculationFormula: `${ed} + ${packs} packs x $75.96`,
-                            },
-                          },
-                        });
-                      }}
-                      className="w-24 text-right font-mono text-sm border border-slate-300 rounded-lg p-2 bg-white"
-                    />
-                    <span className="text-xs text-slate-500 font-medium">packs</span>
+
+                  {/* Commitment Term Switcher (Years while selecting) */}
+                  <div className="flex items-center space-x-1.5 p-1.5 bg-slate-100/90 rounded-2xl border border-slate-200 shadow-2xs">
+                    <span className="text-[11px] font-black text-slate-500 px-2.5 uppercase tracking-wider flex items-center gap-1">
+                      Term:
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setContractYears(1)}
+                      className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                        contractYears === 1
+                          ? 'bg-white text-indigo-700 shadow-xs border border-indigo-200/80 font-black'
+                          : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
+                      }`}
+                    >
+                      1 Year (Annual)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setContractYears(3)}
+                      className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                        contractYears === 3
+                          ? 'bg-white text-indigo-700 shadow-xs border border-indigo-200/80 font-black'
+                          : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
+                      }`}
+                    >
+                      3 Years (36 Mo)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setContractYears(5)}
+                      className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                        contractYears === 5
+                          ? 'bg-white text-indigo-700 shadow-xs border border-indigo-200/80 font-black'
+                          : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
+                      }`}
+                    >
+                      5 Years (60 Mo)
+                    </button>
                   </div>
                 </div>
-              </div>
 
-              {/* Dynamic Target Config Summary */}
-              <div className="p-3 bg-indigo-50/60 border border-indigo-200 rounded-xl flex items-center justify-between text-xs">
-                <span className="font-semibold text-indigo-950">
-                  Target BTP Platform Configuration Annual Cost:
-                </span>
-                <span className="font-mono font-black text-indigo-700 text-sm">
-                  ${(assessment.targetSystem.configuration.totalAnnualCost || targetConfigTotal).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} / yr
-                </span>
-              </div>
+                {/* 2-Column Responsive Layout Matching Reference Screenshot */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                  {/* Left Column (8 cols): Cards, Accordions, AI Callout */}
+                  <div className="lg:col-span-8 space-y-6">
+                    {/* AI Recommendation Callout Banner */}
+                    <div className="p-4 bg-indigo-50/70 border border-indigo-100 rounded-2xl flex flex-wrap items-center justify-between gap-3 shadow-2xs">
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-xl bg-indigo-100 flex items-center justify-center text-indigo-600 shadow-2xs">
+                          <Lightbulb className="w-5 h-5" />
+                        </div>
+                        <div>
+                          <h4 className="text-xs font-bold text-indigo-950">Not sure which edition to choose?</h4>
+                          <p className="text-[11px] text-indigo-700">Get AI-based recommendations based on your inputs.</p>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setShowAiRecommendation(!showAiRecommendation)}
+                        className="px-3.5 py-1.5 bg-white border border-indigo-200 hover:border-indigo-400 text-indigo-700 hover:bg-indigo-50/60 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-2xs transition-all active:scale-95"
+                      >
+                        <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
+                        Get Recommendation
+                      </button>
+                    </div>
 
-              {/* Navigation Controls */}
-              <div className="flex items-center justify-between pt-6 border-t border-slate-100">
-                <button
-                  type="button"
-                  onClick={() => setCurrentStep(4)}
-                  className="px-5 py-2.5 text-xs font-bold text-slate-600 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors"
-                >
-                  ← Back
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setCurrentStep(6)}
-                  className="px-6 py-2.5 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-xs transition-all active:scale-95"
-                >
-                  Continue →
-                </button>
+                    {/* AI Recommendation Expansion Card */}
+                    {showAiRecommendation && (
+                      <div className="p-5 bg-gradient-to-br from-indigo-50/90 via-purple-50/50 to-white rounded-2xl border border-indigo-200 space-y-3 shadow-xs animate-fadeIn">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <Sparkles className="w-4 h-4 text-indigo-600" />
+                            <span className="text-xs font-black text-indigo-950 uppercase tracking-wider">
+                              AI Recommendation: {recommendedEd}
+                            </span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setShowAiRecommendation(false)}
+                            className="text-xs text-slate-400 hover:text-slate-600 font-bold"
+                          >
+                            ✕
+                          </button>
+                        </div>
+                        <p className="text-xs text-slate-700 leading-relaxed">
+                          {recommendationReason}
+                        </p>
+                        <div className="pt-2 flex flex-wrap items-center justify-between gap-3 border-t border-indigo-100">
+                          <span className="text-[11px] text-slate-500">
+                            Evaluated against: {totalIflows} interfaces, {complexIflows} complex iFlows, and {monthlyThroughput.toLocaleString()} msg/mo.
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              handleSelectEdition(recommendedEd, recommendedEd === 'Standard Edition' ? 3 : 1);
+                              setShowAiRecommendation(false);
+                            }}
+                            className="px-4 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow-xs transition-all active:scale-95"
+                          >
+                            Apply {recommendedEd}
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* 3 Main Edition Cards */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      {/* 1. Starter Edition */}
+                      <div
+                        onClick={() => handleSelectEdition('Starter Edition', 1)}
+                        className={`p-5 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between relative ${
+                          currentEd === 'Starter Edition'
+                            ? 'border-indigo-600 ring-2 ring-indigo-500/20 bg-indigo-50/20 shadow-md'
+                            : 'border-slate-200 hover:border-slate-300 bg-white shadow-2xs'
+                        }`}
+                      >
+                        <div className="space-y-4">
+                          <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600">
+                            <Box className="w-5 h-5" />
+                          </div>
+                          <div>
+                            <h3 className="text-base font-black text-slate-900">Starter Edition</h3>
+                            <p className="text-xs text-slate-500 mt-0.5">Best for small and simple integration landscapes</p>
+                          </div>
+
+                          <div className="pt-1">
+                            <div className="text-xl font-black text-slate-900 font-mono">
+                              USD 1,728 <span className="text-xs font-normal text-slate-500">/ month</span>
+                            </div>
+                            <div className="text-[11px] text-slate-500 mt-0.5">
+                              {contractYears === 1 && '(USD 20,736 / year)'}
+                              {contractYears === 3 && 'USD 62,208 total (36-mo term)'}
+                              {contractYears === 5 && 'USD 103,680 total (60-mo term)'}
+                            </div>
+                          </div>
+
+                          <ul className="space-y-2 text-xs text-slate-600 pt-2 border-t border-slate-100">
+                            <li className="flex items-start gap-2">
+                              <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
+                              <span>50K messages per month</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
+                              <span>Access to 3,400+ prebuilt integrations</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
+                              <span>1 tenant per year</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
+                              <span>Cloud Integration (10 custom iFlow cap)</span>
+                            </li>
+                          </ul>
+                        </div>
+
+                        <div className="pt-5 space-y-2">
+                          <button
+                            type="button"
+                            className={`w-full py-2 rounded-xl text-xs font-bold transition-all shadow-2xs ${
+                              currentEd === 'Starter Edition'
+                                ? 'bg-indigo-600 text-white shadow-xs'
+                                : 'bg-white border border-indigo-200 text-indigo-600 hover:bg-indigo-50/50'
+                            }`}
+                          >
+                            {currentEd === 'Starter Edition' ? 'Selected ✓' : 'Select'}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setShowFeatureComparison(true);
+                            }}
+                            className="w-full text-[11px] font-semibold text-indigo-600 hover:text-indigo-800 text-center flex items-center justify-center gap-1"
+                          >
+                            View all features &gt;
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* 2. Standard Edition (Recommended) */}
+                      <div
+                        onClick={() => handleSelectEdition('Standard Edition', 3)}
+                        className={`p-5 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between relative ${
+                          currentEd === 'Standard Edition'
+                            ? 'border-indigo-600 ring-2 ring-indigo-500/20 bg-indigo-50/20 shadow-md'
+                            : 'border-slate-200 hover:border-slate-300 bg-white shadow-2xs'
+                        }`}
+                      >
+                        <span className="absolute -top-2.5 right-4 bg-indigo-600 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full shadow-xs flex items-center gap-1">
+                          ★ Recommended
+                        </span>
+
+                        <div className="space-y-4">
+                          <div className="w-10 h-10 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600">
+                            <Layers className="w-5 h-5" />
+                          </div>
+                          <div>
+                            <h3 className="text-base font-black text-slate-900">Standard Edition</h3>
+                            <p className="text-xs text-slate-500 mt-0.5">Ideal for enterprise integration needs</p>
+                          </div>
+
+                          <div className="pt-1">
+                            <div className="text-xl font-black text-slate-900 font-mono">
+                              USD 5,339 <span className="text-xs font-normal text-slate-500">/ month</span>
+                            </div>
+                            <div className="text-[11px] text-slate-500 mt-0.5">
+                              {contractYears === 1 && '(USD 64,068 / year)'}
+                              {contractYears === 3 && 'USD 192,204 total (36-mo term)'}
+                              {contractYears === 5 && 'USD 320,340 total (60-mo term)'}
+                            </div>
+                          </div>
+
+                          <ul className="space-y-2 text-xs text-slate-600 pt-2 border-t border-slate-100">
+                            <li className="flex items-start gap-2">
+                              <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
+                              <span>API Management</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
+                              <span>B2B capabilities</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
+                              <span>Open Connectors (200+)</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
+                              <span>Integration Advisor</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
+                              <span>Integration Assessment</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
+                              <span>Edge integration cell (1+ tenant)</span>
+                            </li>
+                          </ul>
+                        </div>
+
+                        <div className="pt-5 space-y-2">
+                          <button
+                            type="button"
+                            className={`w-full py-2 rounded-xl text-xs font-bold transition-all shadow-2xs ${
+                              currentEd === 'Standard Edition'
+                                ? 'bg-indigo-600 text-white shadow-xs'
+                                : 'bg-white border border-indigo-200 text-indigo-600 hover:bg-indigo-50/50'
+                            }`}
+                          >
+                            {currentEd === 'Standard Edition' ? 'Selected ✓' : 'Select'}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setShowFeatureComparison(true);
+                            }}
+                            className="w-full text-[11px] font-semibold text-indigo-600 hover:text-indigo-800 text-center flex items-center justify-center gap-1"
+                          >
+                            View all features &gt;
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* 3. Enhanced Edition */}
+                      <div
+                        onClick={() => handleSelectEdition('Enhanced Edition', 1)}
+                        className={`p-5 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between relative ${
+                          currentEd === 'Enhanced Edition'
+                            ? 'border-indigo-600 ring-2 ring-indigo-500/20 bg-indigo-50/20 shadow-md'
+                            : 'border-slate-200 hover:border-slate-300 bg-white shadow-2xs'
+                        }`}
+                      >
+                        <div className="space-y-4">
+                          <div className="w-10 h-10 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center text-amber-600">
+                            <Crown className="w-5 h-5" />
+                          </div>
+                          <div>
+                            <h3 className="text-base font-black text-slate-900">Enhanced Edition</h3>
+                            <p className="text-xs text-slate-500 mt-0.5">For high-volume and advanced integration scenarios</p>
+                          </div>
+
+                          <div className="pt-1">
+                            <div className="text-xl font-black text-slate-900 font-mono">
+                              USD 7,688 <span className="text-xs font-normal text-slate-500">/ month</span>
+                            </div>
+                            <div className="text-[11px] text-slate-500 mt-0.5">
+                              {contractYears === 1 && '(USD 92,256 / year)'}
+                              {contractYears === 3 && 'USD 276,768 total (36-mo term)'}
+                              {contractYears === 5 && 'USD 461,280 total (60-mo term)'}
+                            </div>
+                          </div>
+
+                          <ul className="space-y-2 text-xs text-slate-600 pt-2 border-t border-slate-100">
+                            <li className="flex items-start gap-2">
+                              <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
+                              <span>All Standard features</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
+                              <span>500K messages per month</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
+                              <span>Alert Notification Service (ANS)</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
+                              <span>Cloud Transport Management (TMS)</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
+                              <span>Document AI (100 docs/month)</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
+                              <span>Advanced Event Mesh (AEM 100)</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
+                              <span>Integration Suite AI capabilities</span>
+                            </li>
+                          </ul>
+                        </div>
+
+                        <div className="pt-5 space-y-2">
+                          <button
+                            type="button"
+                            className={`w-full py-2 rounded-xl text-xs font-bold transition-all shadow-2xs ${
+                              currentEd === 'Enhanced Edition'
+                                ? 'bg-indigo-600 text-white shadow-xs'
+                                : 'bg-white border border-indigo-200 text-indigo-600 hover:bg-indigo-50/50'
+                            }`}
+                          >
+                            {currentEd === 'Enhanced Edition' ? 'Selected ✓' : 'Select'}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setShowFeatureComparison(true);
+                            }}
+                            className="w-full text-[11px] font-semibold text-indigo-600 hover:text-indigo-800 text-center flex items-center justify-center gap-1"
+                          >
+                            View all features &gt;
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Expandable Accordion 1: Which plan is right for me? */}
+                    <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs transition-all">
+                      <div className="flex flex-wrap items-center justify-between gap-3">
+                        <div className="flex items-center gap-3">
+                          <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                            <Scale className="w-5 h-5" />
+                          </div>
+                          <div>
+                            <h4 className="text-sm font-bold text-slate-900">Which plan is right for me?</h4>
+                            <p className="text-xs text-slate-500">Compare starter, standard, and enhanced options. View detailed feature comparison.</p>
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setShowFeatureComparison(!showFeatureComparison)}
+                          className="px-3.5 py-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 flex items-center gap-1.5 transition-colors"
+                        >
+                          <span>{showFeatureComparison ? 'Hide Comparison' : 'View Feature Comparison'}</span>
+                          {showFeatureComparison ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+                        </button>
+                      </div>
+
+                      {showFeatureComparison && (
+                        <div className="mt-5 pt-5 border-t border-slate-100 overflow-x-auto">
+                          <table className="w-full text-xs text-left">
+                            <thead>
+                              <tr className="border-b border-slate-200 text-slate-500 font-bold uppercase text-[10px] tracking-wider">
+                                <th className="py-2.5 px-3">Capability / Feature</th>
+                                <th className="py-2.5 px-3">Starter Edition</th>
+                                <th className="py-2.5 px-3 bg-indigo-50/50 text-indigo-950 font-black">Standard Edition (Recommended)</th>
+                                <th className="py-2.5 px-3">Enhanced Edition</th>
+                              </tr>
+                            </thead>
+                            <tbody className="divide-y divide-slate-100">
+                              <tr>
+                                <td className="py-2.5 px-3 font-semibold text-slate-900">Target Fit</td>
+                                <td className="py-2.5 px-3 text-slate-600">Small, simple landscapes</td>
+                                <td className="py-2.5 px-3 bg-indigo-50/30 text-indigo-900 font-medium">Enterprise integration core</td>
+                                <td className="py-2.5 px-3 text-slate-600">High-volume & advanced AI/AEM</td>
+                              </tr>
+                              <tr>
+                                <td className="py-2.5 px-3 font-semibold text-slate-900">Included Messages</td>
+                                <td className="py-2.5 px-3 text-slate-600">50K / month</td>
+                                <td className="py-2.5 px-3 bg-indigo-50/30 text-indigo-900 font-medium">10K / month</td>
+                                <td className="py-2.5 px-3 text-slate-600">500K / month</td>
+                              </tr>
+                              <tr>
+                                <td className="py-2.5 px-3 font-semibold text-slate-900">Free SAP-to-SAP Messages</td>
+                                <td className="py-2.5 px-3 text-emerald-600 font-bold">✓ Unlimited</td>
+                                <td className="py-2.5 px-3 bg-indigo-50/30 text-emerald-600 font-bold">✓ Unlimited</td>
+                                <td className="py-2.5 px-3 text-emerald-600 font-bold">✓ Unlimited</td>
+                              </tr>
+                              <tr>
+                                <td className="py-2.5 px-3 font-semibold text-slate-900">Prebuilt Integrations</td>
+                                <td className="py-2.5 px-3 text-slate-600">3,400+ packages</td>
+                                <td className="py-2.5 px-3 bg-indigo-50/30 text-indigo-900 font-medium">3,400+ packages</td>
+                                <td className="py-2.5 px-3 text-slate-600">3,400+ packages</td>
+                              </tr>
+                              <tr>
+                                <td className="py-2.5 px-3 font-semibold text-slate-900">Custom iFlow Entitlement</td>
+                                <td className="py-2.5 px-3 text-amber-700 font-bold">Cap of 10 custom iFlows</td>
+                                <td className="py-2.5 px-3 bg-indigo-50/30 text-emerald-600 font-bold">✓ Unlimited</td>
+                                <td className="py-2.5 px-3 text-emerald-600 font-bold">✓ Unlimited</td>
+                              </tr>
+                              <tr>
+                                <td className="py-2.5 px-3 font-semibold text-slate-900">API Lifecycle Management</td>
+                                <td className="py-2.5 px-3 text-slate-400">✕ Not included</td>
+                                <td className="py-2.5 px-3 bg-indigo-50/30 text-emerald-600 font-bold">✓ Fully included</td>
+                                <td className="py-2.5 px-3 text-emerald-600 font-bold">✓ Fully included</td>
+                              </tr>
+                              <tr>
+                                <td className="py-2.5 px-3 font-semibold text-slate-900">B2B / EDI Trading Partner Mgmt</td>
+                                <td className="py-2.5 px-3 text-slate-400">✕ Not included</td>
+                                <td className="py-2.5 px-3 bg-indigo-50/30 text-emerald-600 font-bold">✓ Fully included</td>
+                                <td className="py-2.5 px-3 text-emerald-600 font-bold">✓ Fully included</td>
+                              </tr>
+                              <tr>
+                                <td className="py-2.5 px-3 font-semibold text-slate-900">Open Connectors (200+ SaaS)</td>
+                                <td className="py-2.5 px-3 text-slate-400">✕ Not included</td>
+                                <td className="py-2.5 px-3 bg-indigo-50/30 text-emerald-600 font-bold">✓ Fully included</td>
+                                <td className="py-2.5 px-3 text-emerald-600 font-bold">✓ Fully included</td>
+                              </tr>
+                              <tr>
+                                <td className="py-2.5 px-3 font-semibold text-slate-900">Integration Advisor (AI-assisted)</td>
+                                <td className="py-2.5 px-3 text-slate-400">✕ Not included</td>
+                                <td className="py-2.5 px-3 bg-indigo-50/30 text-emerald-600 font-bold">✓ Fully included</td>
+                                <td className="py-2.5 px-3 text-emerald-600 font-bold">✓ Fully included</td>
+                              </tr>
+                              <tr>
+                                <td className="py-2.5 px-3 font-semibold text-slate-900">Edge Integration Cell</td>
+                                <td className="py-2.5 px-3 text-slate-400">✕ Not included</td>
+                                <td className="py-2.5 px-3 bg-indigo-50/30 text-indigo-900 font-medium">✓ 1+ runtime tenant</td>
+                                <td className="py-2.5 px-3 text-indigo-900 font-medium">✓ 1+ runtime tenant</td>
+                              </tr>
+                              <tr>
+                                <td className="py-2.5 px-3 font-semibold text-slate-900">Alert Notification (ANS)</td>
+                                <td className="py-2.5 px-3 text-slate-400">✕ Not included</td>
+                                <td className="py-2.5 px-3 bg-indigo-50/30 text-slate-500">Optional Add-on</td>
+                                <td className="py-2.5 px-3 text-emerald-600 font-bold">✓ 100K API calls/mo</td>
+                              </tr>
+                              <tr>
+                                <td className="py-2.5 px-3 font-semibold text-slate-900">Cloud Transport Mgmt (TMS)</td>
+                                <td className="py-2.5 px-3 text-slate-400">✕ Not included</td>
+                                <td className="py-2.5 px-3 bg-indigo-50/30 text-slate-500">Optional Add-on</td>
+                                <td className="py-2.5 px-3 text-emerald-600 font-bold">✓ 25 GB/month</td>
+                              </tr>
+                              <tr>
+                                <td className="py-2.5 px-3 font-semibold text-slate-900">SAP Document AI</td>
+                                <td className="py-2.5 px-3 text-slate-400">✕ Not included</td>
+                                <td className="py-2.5 px-3 bg-indigo-50/30 text-slate-500">Optional Add-on</td>
+                                <td className="py-2.5 px-3 text-emerald-600 font-bold">✓ 100 docs/month</td>
+                              </tr>
+                              <tr>
+                                <td className="py-2.5 px-3 font-semibold text-slate-900">Advanced Event Mesh (AEM)</td>
+                                <td className="py-2.5 px-3 text-slate-400">✕ Not included</td>
+                                <td className="py-2.5 px-3 bg-indigo-50/30 text-slate-500">Separate subscription</td>
+                                <td className="py-2.5 px-3 text-emerald-600 font-bold">✓ 1 x AEM 100 tenant</td>
+                              </tr>
+                              <tr>
+                                <td className="py-2.5 px-3 font-semibold text-slate-900">Integration Suite AI</td>
+                                <td className="py-2.5 px-3 text-slate-400">✕ Not included</td>
+                                <td className="py-2.5 px-3 bg-indigo-50/30 text-slate-500">Fair-use waiver</td>
+                                <td className="py-2.5 px-3 text-emerald-600 font-bold">✓ iFlow Gen & Optimization</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Expandable Accordion 2: Add-ons to enhance your plan */}
+                    <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs transition-all">
+                      <div className="flex flex-wrap items-center justify-between gap-3">
+                        <div className="flex items-center gap-3">
+                          <div className="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center">
+                            <Puzzle className="w-5 h-5" />
+                          </div>
+                          <div>
+                            <h4 className="text-sm font-bold text-slate-900">Add-ons to enhance your plan</h4>
+                            <p className="text-xs text-slate-500">Add additional capabilities to meet your specific requirements.</p>
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setShowAddOns(!showAddOns)}
+                          className="px-3.5 py-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 flex items-center gap-1.5 transition-colors"
+                        >
+                          <span>{showAddOns ? 'Hide Add-ons' : 'View Add-ons'}</span>
+                          {showAddOns ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+                        </button>
+                      </div>
+
+                      {showAddOns && (
+                        <div className="mt-5 pt-5 border-t border-slate-100 space-y-4">
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs text-slate-500">
+                              Select one or more add-ons to customize your solution, or leave unselected for base edition only.
+                            </span>
+                            {totalSelectedAddOnsCount > 0 && (
+                              <button
+                                type="button"
+                                onClick={handleClearAllAddOns}
+                                className="text-xs font-bold text-rose-600 hover:text-rose-800 transition-colors"
+                              >
+                                Clear all add-ons
+                              </button>
+                            )}
+                          </div>
+
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            {/* 1. Additional Messages */}
+                            <div
+                              className={`p-4 rounded-xl border transition-all flex flex-col justify-between ${
+                                packs > 0
+                                  ? 'border-indigo-600 ring-2 ring-indigo-500/20 bg-indigo-50/20 shadow-xs'
+                                  : 'border-slate-200 bg-white hover:border-slate-300 shadow-2xs'
+                              }`}
+                            >
+                              <div className="space-y-2.5">
+                                <div className="flex items-center justify-between">
+                                  <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                                    <MessageSquare className="w-4 h-4" />
+                                  </div>
+                                  <span
+                                    className={`px-2 py-0.5 rounded-full text-[10px] font-black ${
+                                      packs > 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'
+                                    }`}
+                                  >
+                                    {packs > 0 ? `✓ In Plan (${packs} blocks)` : 'Optional'}
+                                  </span>
+                                </div>
+
+                                <div>
+                                  <h5 className="text-xs font-black text-slate-900">Additional Messages</h5>
+                                  <p className="text-[11px] text-slate-500 mt-0.5">
+                                    Blocks of 10,000 monthly transactions to process integrations and APIs.
+                                  </p>
+                                </div>
+
+                                <div className="pt-1">
+                                  <div className="text-sm font-black text-indigo-900 font-mono">
+                                    USD 7.00 <span className="text-[10px] font-normal text-slate-500">/ mo</span>
+                                  </div>
+                                  <div className="text-[10px] text-slate-500 mt-0.5">
+                                    {contractYears === 1 && 'USD 84.00 / 10K-month block / yr'}
+                                    {contractYears === 3 && 'USD 252.00 total / block (3-yr term)'}
+                                    {contractYears === 5 && 'USD 420.00 total / block (5-yr term)'}
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div className="pt-4 border-t border-slate-100 mt-3 space-y-2">
+                                {packs === 0 ? (
+                                  <button
+                                    type="button"
+                                    onClick={() => handleUpdatePacks(50)}
+                                    className="w-full py-1.5 rounded-xl border border-indigo-200 text-indigo-600 hover:bg-indigo-50 text-xs font-bold transition-all flex items-center justify-center gap-1 active:scale-95"
+                                  >
+                                    <Plus className="w-3.5 h-3.5" /> Add to Plan
+                                  </button>
+                                ) : (
+                                  <div className="space-y-1.5">
+                                    <div className="flex items-center justify-between text-[11px]">
+                                      <span className="font-semibold text-slate-700">Quantity (10K blocks):</span>
+                                      <span className="font-mono font-bold text-indigo-700">{packs} blocks</span>
+                                    </div>
+                                    <div className="flex items-center gap-1.5">
+                                      <button
+                                        type="button"
+                                        onClick={() => handleUpdatePacks(packs - 50)}
+                                        className="w-7 h-7 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-100 flex items-center justify-center font-bold text-xs"
+                                      >
+                                        -
+                                      </button>
+                                      <input
+                                        type="number"
+                                        min="0"
+                                        step="50"
+                                        value={packs}
+                                        onChange={(e) => handleUpdatePacks(parseInt(e.target.value) || 0)}
+                                        className="w-full text-center font-mono text-xs border border-slate-300 rounded-lg py-1 bg-white"
+                                      />
+                                      <button
+                                        type="button"
+                                        onClick={() => handleUpdatePacks(packs + 50)}
+                                        className="w-7 h-7 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-100 flex items-center justify-center font-bold text-xs"
+                                      >
+                                        +
+                                      </button>
+                                    </div>
+                                    <div className="flex items-center justify-between pt-1">
+                                      <span className="text-[10px] text-slate-400 font-mono">
+                                        +{(packs * 10).toLocaleString()}K msgs/mo
+                                      </span>
+                                      <button
+                                        type="button"
+                                        onClick={() => handleUpdatePacks(0)}
+                                        className="text-[10px] font-bold text-rose-600 hover:text-rose-800"
+                                      >
+                                        Remove
+                                      </button>
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+
+                            {/* 2. Data Space Integration */}
+                            <div
+                              className={`p-4 rounded-xl border transition-all flex flex-col justify-between ${
+                                dataSpacePackages > 0
+                                  ? 'border-indigo-600 ring-2 ring-indigo-500/20 bg-indigo-50/20 shadow-xs'
+                                  : 'border-slate-200 bg-white hover:border-slate-300 shadow-2xs'
+                              }`}
+                            >
+                              <div className="space-y-2.5">
+                                <div className="flex items-center justify-between">
+                                  <div className="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center">
+                                    <Database className="w-4 h-4" />
+                                  </div>
+                                  <span
+                                    className={`px-2 py-0.5 rounded-full text-[10px] font-black ${
+                                      dataSpacePackages > 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'
+                                    }`}
+                                  >
+                                    {dataSpacePackages > 0 ? `✓ In Plan (${dataSpacePackages} pkg)` : 'Optional'}
+                                  </span>
+                                </div>
+
+                                <div>
+                                  <h5 className="text-xs font-black text-slate-900">Data Space Integration</h5>
+                                  <p className="text-[11px] text-slate-500 mt-0.5">
+                                    Supports secure, sovereign data exchange across industrial ecosystems (DSI & DIV).
+                                  </p>
+                                </div>
+
+                                <div className="pt-1">
+                                  <div className="text-sm font-black text-indigo-900 font-mono">
+                                    USD 75.00 <span className="text-[10px] font-normal text-slate-500">/ mo</span>
+                                  </div>
+                                  <div className="text-[10px] text-slate-500 mt-0.5">
+                                    {contractYears === 1 && 'USD 900.00 / pkg / year'}
+                                    {contractYears === 3 && 'USD 2,700.00 total / pkg (3-yr term)'}
+                                    {contractYears === 5 && 'USD 4,500.00 total / pkg (5-yr term)'}
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div className="pt-4 border-t border-slate-100 mt-3 space-y-2">
+                                {dataSpacePackages === 0 ? (
+                                  <button
+                                    type="button"
+                                    onClick={() => handleUpdateDataSpace(1)}
+                                    className="w-full py-1.5 rounded-xl border border-indigo-200 text-indigo-600 hover:bg-indigo-50 text-xs font-bold transition-all flex items-center justify-center gap-1 active:scale-95"
+                                  >
+                                    <Plus className="w-3.5 h-3.5" /> Add to Plan
+                                  </button>
+                                ) : (
+                                  <div className="space-y-1.5">
+                                    <div className="flex items-center justify-between text-[11px]">
+                                      <span className="font-semibold text-slate-700">Tenants / Packages:</span>
+                                      <span className="font-mono font-bold text-indigo-700">{dataSpacePackages} pkg</span>
+                                    </div>
+                                    <div className="flex items-center gap-1.5">
+                                      <button
+                                        type="button"
+                                        onClick={() => handleUpdateDataSpace(dataSpacePackages - 1)}
+                                        className="w-7 h-7 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-100 flex items-center justify-center font-bold text-xs"
+                                      >
+                                        -
+                                      </button>
+                                      <input
+                                        type="number"
+                                        min="0"
+                                        max="20"
+                                        value={dataSpacePackages}
+                                        onChange={(e) => handleUpdateDataSpace(parseInt(e.target.value) || 0)}
+                                        className="w-full text-center font-mono text-xs border border-slate-300 rounded-lg py-1 bg-white"
+                                      />
+                                      <button
+                                        type="button"
+                                        onClick={() => handleUpdateDataSpace(dataSpacePackages + 1)}
+                                        className="w-7 h-7 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-100 flex items-center justify-center font-bold text-xs"
+                                      >
+                                        +
+                                      </button>
+                                    </div>
+                                    <div className="flex items-center justify-between pt-1">
+                                      <span className="text-[10px] text-slate-400 font-mono">
+                                        +USD {(dataSpacePackages * 900).toLocaleString()}/yr
+                                      </span>
+                                      <button
+                                        type="button"
+                                        onClick={() => handleUpdateDataSpace(0)}
+                                        className="text-[10px] font-bold text-rose-600 hover:text-rose-800"
+                                      >
+                                        Remove
+                                      </button>
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+
+                            {/* 3. Additional EIC Tenant */}
+                            <div
+                              className={`p-4 rounded-xl border transition-all flex flex-col justify-between ${
+                                additionalEicTenants > 0
+                                  ? 'border-indigo-600 ring-2 ring-indigo-500/20 bg-indigo-50/20 shadow-xs'
+                                  : 'border-slate-200 bg-white hover:border-slate-300 shadow-2xs'
+                              }`}
+                            >
+                              <div className="space-y-2.5">
+                                <div className="flex items-center justify-between">
+                                  <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                                    <Server className="w-4 h-4" />
+                                  </div>
+                                  <span
+                                    className={`px-2 py-0.5 rounded-full text-[10px] font-black ${
+                                      additionalEicTenants > 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'
+                                    }`}
+                                  >
+                                    {additionalEicTenants > 0 ? `✓ In Plan (${additionalEicTenants} tenant)` : 'Optional'}
+                                  </span>
+                                </div>
+
+                                <div>
+                                  <h5 className="text-xs font-black text-slate-900">Additional EIC Tenant</h5>
+                                  <p className="text-[11px] text-slate-500 mt-0.5">
+                                    Additional runtime tenants for private cloud or on-prem deployment landscapes.
+                                  </p>
+                                </div>
+
+                                <div className="pt-1">
+                                  <div className="text-sm font-black text-indigo-900 font-mono">
+                                    USD 3,455.00 <span className="text-[10px] font-normal text-slate-500">/ mo</span>
+                                  </div>
+                                  <div className="text-[10px] text-slate-500 mt-0.5">
+                                    {contractYears === 1 && 'USD 41,460.00 / tenant / yr'}
+                                    {contractYears === 3 && 'USD 124,380.00 total / tenant (3-yr term)'}
+                                    {contractYears === 5 && 'USD 207,300.00 total / tenant (5-yr term)'}
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div className="pt-4 border-t border-slate-100 mt-3 space-y-2">
+                                {additionalEicTenants === 0 ? (
+                                  <button
+                                    type="button"
+                                    onClick={() => handleUpdateEic(1)}
+                                    className="w-full py-1.5 rounded-xl border border-indigo-200 text-indigo-600 hover:bg-indigo-50 text-xs font-bold transition-all flex items-center justify-center gap-1 active:scale-95"
+                                  >
+                                    <Plus className="w-3.5 h-3.5" /> Add to Plan
+                                  </button>
+                                ) : (
+                                  <div className="space-y-1.5">
+                                    <div className="flex items-center justify-between text-[11px]">
+                                      <span className="font-semibold text-slate-700">Tenants:</span>
+                                      <span className="font-mono font-bold text-indigo-700">{additionalEicTenants} tenant(s)</span>
+                                    </div>
+                                    <div className="flex items-center gap-1.5">
+                                      <button
+                                        type="button"
+                                        onClick={() => handleUpdateEic(additionalEicTenants - 1)}
+                                        className="w-7 h-7 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-100 flex items-center justify-center font-bold text-xs"
+                                      >
+                                        -
+                                      </button>
+                                      <input
+                                        type="number"
+                                        min="0"
+                                        max="20"
+                                        value={additionalEicTenants}
+                                        onChange={(e) => handleUpdateEic(parseInt(e.target.value) || 0)}
+                                        className="w-full text-center font-mono text-xs border border-slate-300 rounded-lg py-1 bg-white"
+                                      />
+                                      <button
+                                        type="button"
+                                        onClick={() => handleUpdateEic(additionalEicTenants + 1)}
+                                        className="w-7 h-7 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-100 flex items-center justify-center font-bold text-xs"
+                                      >
+                                        +
+                                      </button>
+                                    </div>
+                                    <div className="flex items-center justify-between pt-1">
+                                      <span className="text-[10px] text-slate-400 font-mono">
+                                        +USD {(additionalEicTenants * 41460).toLocaleString()}/yr
+                                      </span>
+                                      <button
+                                        type="button"
+                                        onClick={() => handleUpdateEic(0)}
+                                        className="text-[10px] font-bold text-rose-600 hover:text-rose-800"
+                                      >
+                                        Remove
+                                      </button>
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Right Column (4 cols): Your Selection Sidebar & Quick Links */}
+                  <div className="lg:col-span-4 space-y-6">
+                    {/* Your Selection Card Matching Reference UI */}
+                    <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-5">
+                      <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                        <h3 className="text-base font-black text-slate-900">Your Selection</h3>
+                        <button
+                          type="button"
+                          onClick={() => setShowFeatureComparison(true)}
+                          className="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1"
+                        >
+                          <Pencil className="w-3.5 h-3.5" /> Edit
+                        </button>
+                      </div>
+
+                      {/* Selected Edition Summary */}
+                      <div className="flex items-start gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100">
+                        <div className="w-9 h-9 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center shrink-0">
+                          {currentEd === 'Starter Edition' && <Box className="w-5 h-5" />}
+                          {currentEd === 'Standard Edition' && <Layers className="w-5 h-5" />}
+                          {currentEd === 'Enhanced Edition' && <Crown className="w-5 h-5" />}
+                        </div>
+                        <div>
+                          <div className="text-sm font-black text-slate-900">{currentEd}</div>
+                          <div className="text-xs font-black text-indigo-900 font-mono mt-0.5">
+                            USD {currentEd === 'Starter Edition' ? '1,728' : currentEd === 'Standard Edition' ? '5,339' : '7,688'} <span className="text-[10px] font-normal text-slate-500">/ month</span>
+                          </div>
+                          <div className="text-[10px] text-slate-500">
+                            (USD {baseUnitAnnual.toLocaleString()} / year)
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Production Units Interactive Stepper */}
+                      <div className="space-y-1.5 pt-1">
+                        <div className="flex items-center justify-between text-xs">
+                          <span className="font-semibold text-slate-700 flex items-center gap-1">
+                            Production Units
+                            <span title="SAP Integration Suite tenant units (typically 3 for Dev, Test, Prod in enterprise landscapes)">
+                              <Info className="w-3.5 h-3.5 text-slate-400 cursor-help" />
+                            </span>
+                          </span>
+                          <span className="font-mono font-bold text-slate-900">{units} units</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => handleUpdateUnits(units - 1)}
+                            className="w-8 h-8 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-100 flex items-center justify-center font-bold text-sm disabled:opacity-40"
+                            disabled={units <= 1}
+                          >
+                            -
+                          </button>
+                          <input
+                            type="number"
+                            min="1"
+                            max="20"
+                            value={units}
+                            onChange={(e) => handleUpdateUnits(parseInt(e.target.value) || 1)}
+                            className="w-full text-center font-mono text-sm border border-slate-300 rounded-lg py-1 bg-white"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => handleUpdateUnits(units + 1)}
+                            className="w-8 h-8 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-100 flex items-center justify-center font-bold text-sm"
+                          >
+                            +
+                          </button>
+                        </div>
+                        <p className="text-[10px] text-slate-400">USD {baseUnitAnnual.toLocaleString()} per unit per year</p>
+                      </div>
+
+                      {/* Selected Add-ons Itemized Breakdown */}
+                      <div className="space-y-2 pt-2 border-t border-slate-100">
+                        <div className="flex items-center justify-between text-xs">
+                          <span className="font-semibold text-slate-700 flex items-center gap-1.5">
+                            Add-ons
+                            {totalSelectedAddOnsCount > 0 && (
+                              <span className="w-4 h-4 rounded-full bg-indigo-100 text-indigo-700 text-[10px] font-black flex items-center justify-center">
+                                {totalSelectedAddOnsCount}
+                              </span>
+                            )}
+                          </span>
+                          {totalSelectedAddOnsCount > 0 ? (
+                            <button
+                              type="button"
+                              onClick={handleClearAllAddOns}
+                              className="text-[10px] font-bold text-rose-600 hover:text-rose-800"
+                            >
+                              Clear all
+                            </button>
+                          ) : (
+                            <span className="text-[10px] text-slate-400">None selected ($0)</span>
+                          )}
+                        </div>
+
+                        {totalSelectedAddOnsCount === 0 ? (
+                          <div className="p-3 bg-slate-50 rounded-xl border border-dashed border-slate-200 flex items-center justify-between">
+                            <span className="text-[11px] text-slate-500">No add-ons selected</span>
+                            <button
+                              type="button"
+                              onClick={() => setShowAddOns(true)}
+                              className="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 bg-white px-2 py-1 rounded-lg border border-indigo-200 hover:bg-indigo-50/50 transition-colors flex items-center gap-1"
+                            >
+                              <Plus className="w-3 h-3" /> Select Add-ons
+                            </button>
+                          </div>
+                        ) : (
+                          <div className="space-y-2">
+                            {/* Messages in Sidebar */}
+                            {packs > 0 && (
+                              <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-100 flex items-center justify-between gap-2">
+                                <div className="min-w-0">
+                                  <div className="text-xs font-bold text-slate-900 truncate">
+                                    Additional Messages
+                                  </div>
+                                  <div className="text-[10px] text-slate-500 font-mono">
+                                    {packs} blocks ({contractYears === 1 ? `+$${(packs * 84).toLocaleString()}/yr` : `+$${(packs * 84 * contractYears).toLocaleString()} total`})
+                                  </div>
+                                </div>
+                                <div className="flex items-center gap-1 shrink-0">
+                                  <button
+                                    type="button"
+                                    onClick={() => handleUpdatePacks(packs - 50)}
+                                    className="w-5 h-5 rounded bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 flex items-center justify-center text-[10px] font-bold"
+                                    disabled={packs <= 0}
+                                  >
+                                    -
+                                  </button>
+                                  <span className="text-[10px] font-mono font-bold w-6 text-center">{packs}</span>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleUpdatePacks(packs + 50)}
+                                    className="w-5 h-5 rounded bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 flex items-center justify-center text-[10px] font-bold"
+                                  >
+                                    +
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleUpdatePacks(0)}
+                                    className="w-5 h-5 rounded hover:bg-rose-50 text-slate-400 hover:text-rose-600 flex items-center justify-center text-xs ml-0.5"
+                                    title="Remove add-on"
+                                  >
+                                    <X className="w-3 h-3" />
+                                  </button>
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Data Space in Sidebar */}
+                            {dataSpacePackages > 0 && (
+                              <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-100 flex items-center justify-between gap-2">
+                                <div className="min-w-0">
+                                  <div className="text-xs font-bold text-slate-900 truncate">
+                                    Data Space Integration
+                                  </div>
+                                  <div className="text-[10px] text-slate-500 font-mono">
+                                    {dataSpacePackages} pkg ({contractYears === 1 ? `+$${(dataSpacePackages * 900).toLocaleString()}/yr` : `+$${(dataSpacePackages * 900 * contractYears).toLocaleString()} total`})
+                                  </div>
+                                </div>
+                                <div className="flex items-center gap-1 shrink-0">
+                                  <button
+                                    type="button"
+                                    onClick={() => handleUpdateDataSpace(dataSpacePackages - 1)}
+                                    className="w-5 h-5 rounded bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 flex items-center justify-center text-[10px] font-bold"
+                                  >
+                                    -
+                                  </button>
+                                  <span className="text-[10px] font-mono font-bold w-5 text-center">{dataSpacePackages}</span>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleUpdateDataSpace(dataSpacePackages + 1)}
+                                    className="w-5 h-5 rounded bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 flex items-center justify-center text-[10px] font-bold"
+                                  >
+                                    +
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleUpdateDataSpace(0)}
+                                    className="w-5 h-5 rounded hover:bg-rose-50 text-slate-400 hover:text-rose-600 flex items-center justify-center text-xs ml-0.5"
+                                    title="Remove add-on"
+                                  >
+                                    <X className="w-3 h-3" />
+                                  </button>
+                                </div>
+                              </div>
+                            )}
+
+                            {/* EIC Tenant in Sidebar */}
+                            {additionalEicTenants > 0 && (
+                              <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-100 flex items-center justify-between gap-2">
+                                <div className="min-w-0">
+                                  <div className="text-xs font-bold text-slate-900 truncate">
+                                    Additional EIC Tenant
+                                  </div>
+                                  <div className="text-[10px] text-slate-500 font-mono">
+                                    {additionalEicTenants} tenant(s) ({contractYears === 1 ? `+$${(additionalEicTenants * 41460).toLocaleString()}/yr` : `+$${(additionalEicTenants * 41460 * contractYears).toLocaleString()} total`})
+                                  </div>
+                                </div>
+                                <div className="flex items-center gap-1 shrink-0">
+                                  <button
+                                    type="button"
+                                    onClick={() => handleUpdateEic(additionalEicTenants - 1)}
+                                    className="w-5 h-5 rounded bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 flex items-center justify-center text-[10px] font-bold"
+                                  >
+                                    -
+                                  </button>
+                                  <span className="text-[10px] font-mono font-bold w-5 text-center">{additionalEicTenants}</span>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleUpdateEic(additionalEicTenants + 1)}
+                                    className="w-5 h-5 rounded bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 flex items-center justify-center text-[10px] font-bold"
+                                  >
+                                    +
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleUpdateEic(0)}
+                                    className="w-5 h-5 rounded hover:bg-rose-50 text-slate-400 hover:text-rose-600 flex items-center justify-center text-xs ml-0.5"
+                                    title="Remove add-on"
+                                  >
+                                    <X className="w-3 h-3" />
+                                  </button>
+                                </div>
+                              </div>
+                            )}
+
+                            <div className="text-[10px] font-mono text-indigo-700 font-bold text-right pt-0.5">
+                              Add-ons Total: {contractYears === 1 ? `USD ${annualizedAddOnsCost.toLocaleString()} / yr` : `USD ${(annualizedAddOnsCost * contractYears).toLocaleString()} (${contractYears}-yr)`}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Estimated Annual Cost / Term Cost Box */}
+                      <div className="pt-4 border-t border-slate-100 space-y-1">
+                        <div className="flex items-center justify-between text-xs text-slate-600">
+                          <span className="font-medium flex items-center gap-1">
+                            {contractYears === 1 ? 'Estimated Annual Cost' : `${contractYears}-Year Total Commitment`}
+                            <span title="Total cloud configuration cost including base edition units and message packs">
+                              <Info className="w-3.5 h-3.5 text-slate-400 cursor-help" />
+                            </span>
+                          </span>
+                        </div>
+                        <div className="text-2xl font-black text-indigo-700 font-mono tracking-tight">
+                          USD {contractYears === 1 ? estimatedAnnualCost.toLocaleString() : termTotalCost.toLocaleString()}
+                        </div>
+                        {contractYears > 1 && (
+                          <div className="text-[11px] text-slate-500 font-mono">
+                            (Annualized: USD {estimatedAnnualCost.toLocaleString()} / year)
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Primary CTA Button */}
+                      <button
+                        type="button"
+                        onClick={() => setCurrentStep(6)}
+                        className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow-md shadow-indigo-600/20 flex items-center justify-center gap-2 transition-all active:scale-95"
+                      >
+                        Next: Review & Results <ArrowRight className="w-4 h-4" />
+                      </button>
+                    </div>
+
+                    {/* Quick Links Card Matching Reference Screenshot */}
+                    <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-3">
+                      <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider">Quick Links</h4>
+                      <div className="space-y-2">
+                        <button
+                          type="button"
+                          onClick={() => setShowFeatureComparison(true)}
+                          className="w-full p-3 rounded-xl border border-slate-100 hover:border-indigo-200 bg-slate-50/50 hover:bg-indigo-50/30 flex items-center justify-between text-left transition-all group"
+                        >
+                          <div className="flex items-center gap-2.5">
+                            <div className="w-7 h-7 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0">
+                              <Scale className="w-4 h-4" />
+                            </div>
+                            <div>
+                              <div className="text-xs font-bold text-slate-800 group-hover:text-indigo-700">Compare Editions</div>
+                              <div className="text-[10px] text-slate-500">Side-by-side feature comparison</div>
+                            </div>
+                          </div>
+                          <span className="text-slate-400 group-hover:text-indigo-600 text-xs">&gt;</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => setShowAddOns(true)}
+                          className="w-full p-3 rounded-xl border border-slate-100 hover:border-indigo-200 bg-slate-50/50 hover:bg-indigo-50/30 flex items-center justify-between text-left transition-all group"
+                        >
+                          <div className="flex items-center gap-2.5">
+                            <div className="w-7 h-7 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center shrink-0">
+                              <Puzzle className="w-4 h-4" />
+                            </div>
+                            <div>
+                              <div className="text-xs font-bold text-slate-800 group-hover:text-indigo-700">View Add-ons</div>
+                              <div className="text-[10px] text-slate-500">Enhance your plan with additional services</div>
+                            </div>
+                          </div>
+                          <span className="text-slate-400 group-hover:text-indigo-600 text-xs">&gt;</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => setShowAiRecommendation(true)}
+                          className="w-full p-3 rounded-xl border border-slate-100 hover:border-indigo-200 bg-slate-50/50 hover:bg-indigo-50/30 flex items-center justify-between text-left transition-all group"
+                        >
+                          <div className="flex items-center gap-2.5">
+                            <div className="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">
+                              <Sparkles className="w-4 h-4" />
+                            </div>
+                            <div>
+                              <div className="text-xs font-bold text-slate-800 group-hover:text-indigo-700">Get AI Recommendation</div>
+                              <div className="text-[10px] text-slate-500">Let AI suggest the best edition for your needs</div>
+                            </div>
+                          </div>
+                          <span className="text-slate-400 group-hover:text-indigo-600 text-xs">&gt;</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Bottom Navigation Controls */}
+                <div className="flex items-center justify-between pt-6 border-t border-slate-200">
+                  <button
+                    type="button"
+                    onClick={() => setCurrentStep(4)}
+                    className="px-5 py-2.5 text-xs font-bold text-slate-600 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors flex items-center gap-1.5"
+                  >
+                    <ArrowLeft className="w-3.5 h-3.5" /> Previous
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setCurrentStep(6)}
+                    className="px-6 py-2.5 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-xs transition-all active:scale-95 flex items-center gap-1.5"
+                  >
+                    Next: Review & Results <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
               </div>
-            </div>
-          )}
+            );
+          })()}
 
           {/* ========================================================================= */}
           {/* STEP 6 (Slide 7): Additional TCO & Migration Costs                         */}
@@ -1955,7 +3011,7 @@ export function AssessmentWizard() {
                   <h4 className="text-xs font-bold text-indigo-900 uppercase tracking-wider">AI-Powered Insights</h4>
                 </div>
                 <p className="text-xs text-indigo-950 leading-relaxed">
-                  Your migration shows strong economic case. Moving from SAP PI/PO to SAP BTP reduces estimated annual platform TCO by approximately 57%, with an estimated 5-year ROI of 594.86%. The largest component stems from eliminating legacy infrastructure, support and operational overhead.
+                  Your migration presents a compelling business case. Moving from {assessment.sourcePlatform || 'SAP PI/PO'} to {assessment.targetPlatform || 'SAP BTP'} reduces estimated annual platform TCO by approximately {currentTcoPreview > 0 ? ((annualSavingsPreview / currentTcoPreview) * 100).toFixed(1) : '57.1'}%, unlocking ${annualSavingsPreview.toLocaleString()} in annual operating savings with an estimated 5-year ROI of {fiveYearRoiPreview.toFixed(1)}%.
                 </p>
               </div>
 

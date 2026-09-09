@@ -320,6 +320,8 @@ public class AssessmentDto {
         private String selectedEditionName = "SAP Integration Suite, Standard Edition";
         private int numberOfUnits = 3;
         private int additionalMessagePacks = 400;
+        private int dataSpacePackages = 0;
+        private int additionalEicTenants = 0;
         private BigDecimal totalAnnualCost = BigDecimal.valueOf(204084.00);
         private String calculationFormula = "3 x $ 57,900.00 + 400 x $ 75.96";
 
@@ -329,6 +331,10 @@ public class AssessmentDto {
         public void setNumberOfUnits(int numberOfUnits) { this.numberOfUnits = numberOfUnits; }
         public int getAdditionalMessagePacks() { return additionalMessagePacks; }
         public void setAdditionalMessagePacks(int additionalMessagePacks) { this.additionalMessagePacks = additionalMessagePacks; }
+        public int getDataSpacePackages() { return dataSpacePackages; }
+        public void setDataSpacePackages(int dataSpacePackages) { this.dataSpacePackages = dataSpacePackages; }
+        public int getAdditionalEicTenants() { return additionalEicTenants; }
+        public void setAdditionalEicTenants(int additionalEicTenants) { this.additionalEicTenants = additionalEicTenants; }
         public BigDecimal getTotalAnnualCost() { return totalAnnualCost; }
         public void setTotalAnnualCost(BigDecimal totalAnnualCost) { this.totalAnnualCost = totalAnnualCost; }
         public String getCalculationFormula() { return calculationFormula; }

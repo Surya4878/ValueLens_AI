@@ -28,8 +28,8 @@ nvidia:
   api-key: ${NVIDIA_API_KEY}
   model: ${NVIDIA_MODEL:meta/llama-3.2-11b-vision-instruct}
   temperature: ${NVIDIA_TEMPERATURE:0.6}
-  max-tokens: ${NVIDIA_MAX_TOKENS:4096}
-  timeout-seconds: ${NVIDIA_TIMEOUT_SECONDS:60}
+  max-tokens: ${NVIDIA_MAX_TOKENS:1500}
+  timeout-seconds: ${NVIDIA_TIMEOUT_SECONDS:35}
 
 app:
   cors:

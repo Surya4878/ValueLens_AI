@@ -89,6 +89,8 @@ export interface TargetConfiguration {
   selectedEditionName: string;
   numberOfUnits: number;
   additionalMessagePacks: number;
+  dataSpacePackages?: number;
+  additionalEicTenants?: number;
   totalAnnualCost: number;
   calculationFormula: string;
 }

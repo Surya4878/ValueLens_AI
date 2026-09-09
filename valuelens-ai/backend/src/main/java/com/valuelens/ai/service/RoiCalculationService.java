@@ -102,19 +102,27 @@ public class RoiCalculationService {
         int units;
 
         if (editionName.contains("starter")) {
-            unitPrice = BigDecimal.valueOf(18744.00);
+            unitPrice = BigDecimal.valueOf(20736.00);
+            units = targetConfig.getNumberOfUnits() > 0 ? targetConfig.getNumberOfUnits() : 1;
+        } else if (editionName.contains("enhanced")) {
+            unitPrice = BigDecimal.valueOf(92256.00);
             units = targetConfig.getNumberOfUnits() > 0 ? targetConfig.getNumberOfUnits() : 1;
         } else if (editionName.contains("premium")) {
             unitPrice = BigDecimal.valueOf(318204.00);
             units = targetConfig.getNumberOfUnits() > 0 ? targetConfig.getNumberOfUnits() : 1;
         } else {
-            // Standard edition ($57,900/unit)
-            unitPrice = BigDecimal.valueOf(57900.00);
+            // Standard edition ($64,068/unit = $5,339/mo)
+            unitPrice = BigDecimal.valueOf(64068.00);
             units = targetConfig.getNumberOfUnits() > 0 ? targetConfig.getNumberOfUnits() : 3;
         }
 
-        BigDecimal packPrice = BigDecimal.valueOf(75.96);
+        BigDecimal packPrice = BigDecimal.valueOf(84.00);
         int packs = Math.max(0, targetConfig.getAdditionalMessagePacks());
+        int dataSpacePackages = Math.max(0, targetConfig.getDataSpacePackages());
+        int additionalEicTenants = Math.max(0, targetConfig.getAdditionalEicTenants());
+        BigDecimal dataSpacePrice = BigDecimal.valueOf(900.00);
+        BigDecimal eicPrice = BigDecimal.valueOf(41460.00);
+
         BigDecimal additionalTco = targetAdditional.getTotalAdditionalTcoAnnual() != null
                 ? targetAdditional.getTotalAdditionalTcoAnnual()
                 : BigDecimal.valueOf(109000.00);
@@ -124,6 +132,10 @@ public class RoiCalculationService {
                 units,
                 packPrice,
                 packs,
+                dataSpacePrice,
+                dataSpacePackages,
+                eicPrice,
+                additionalEicTenants,
                 additionalTco
         );
 

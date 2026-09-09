@@ -53,28 +53,28 @@ class RoiCalculationIntegrationTest {
         var demoAssessment = assessmentService.buildDemoAssessment();
         var result = roiCalculationService.calculate(demoAssessment);
 
-        // Verify Authoritative Financial Calculations
+        // Verify Authoritative Financial Calculations with SAP 2026 pricing
         assertEquals(new BigDecimal("730000.00"), result.getCurrentPlatformTCO());
-        assertEquals(new BigDecimal("313084.00"), result.getTargetPlatformTCO());
-        assertEquals(new BigDecimal("416916.00"), result.getAnnualSavings());
-        assertEquals(new BigDecimal("57.11"), result.getSavingsPercentage());
+        assertEquals(new BigDecimal("334804.00"), result.getTargetPlatformTCO());
+        assertEquals(new BigDecimal("395196.00"), result.getAnnualSavings());
+        assertEquals(new BigDecimal("54.14"), result.getSavingsPercentage());
         assertEquals(new BigDecimal("300000.00"), result.getMigrationCost());
 
         // Payback
-        assertEquals(new BigDecimal("8.64"), result.getBreakEvenMonths());
+        assertEquals(new BigDecimal("9.11"), result.getBreakEvenMonths());
         assertEquals(BreakEvenCalculator.BreakEvenStatus.REACHED, result.getBreakEvenStatus());
 
         // Multi-period ROI
-        assertEquals(new BigDecimal("38.97"), result.getOneYearROI());
-        assertEquals(new BigDecimal("316.92"), result.getThreeYearROI());
-        assertEquals(new BigDecimal("594.86"), result.getFiveYearROI());
-        assertEquals(new BigDecimal("1289.72"), result.getTenYearROI());
+        assertEquals(new BigDecimal("31.73"), result.getOneYearROI());
+        assertEquals(new BigDecimal("295.20"), result.getThreeYearROI());
+        assertEquals(new BigDecimal("558.66"), result.getFiveYearROI());
+        assertEquals(new BigDecimal("1217.32"), result.getTenYearROI());
 
         // Net Benefit
-        assertEquals(new BigDecimal("116916.00"), result.getOneYearNetBenefit());
-        assertEquals(new BigDecimal("950748.00"), result.getThreeYearNetBenefit());
-        assertEquals(new BigDecimal("1784580.00"), result.getFiveYearNetBenefit());
-        assertEquals(new BigDecimal("3869160.00"), result.getTenYearNetBenefit());
+        assertEquals(new BigDecimal("95196.00"), result.getOneYearNetBenefit());
+        assertEquals(new BigDecimal("885588.00"), result.getThreeYearNetBenefit());
+        assertEquals(new BigDecimal("1675980.00"), result.getFiveYearNetBenefit());
+        assertEquals(new BigDecimal("3651960.00"), result.getTenYearNetBenefit());
     }
 
     @Test
@@ -88,17 +88,17 @@ class RoiCalculationIntegrationTest {
 
         var result = roiCalculationService.calculate(asmt);
 
-        // Expected:
-        // Edition Cost: $18,744.00
-        // Message Packs: 100 * $75.96 = $7,596.00
-        // Config Cost: $18,744 + $7,596 = $26,340.00
+        // Expected SAP 2026:
+        // Edition Cost: $20,736.00
+        // Message Packs: 100 * $84.00 = $8,400.00
+        // Config Cost: $20,736 + $8,400 = $29,136.00
         // Additional TCO: $50,000.00
-        // Total Target TCO: $26,340 + $50,000 = $76,340.00
-        assertEquals(new BigDecimal("76340.00"), result.getTargetPlatformTCO());
+        // Total Target TCO: $29,136 + $50,000 = $79,136.00
+        assertEquals(new BigDecimal("79136.00"), result.getTargetPlatformTCO());
         assertEquals(new BigDecimal("730000.00"), result.getCurrentPlatformTCO());
-        // Annual Savings: 730,000 - 76,340 = 653,660
-        assertEquals(new BigDecimal("653660.00"), result.getAnnualSavings());
-        // Savings %: (653,660 / 730,000) * 100 = 89.54%
-        assertEquals(new BigDecimal("89.54"), result.getSavingsPercentage());
+        // Annual Savings: 730,000 - 79,136 = 650,864
+        assertEquals(new BigDecimal("650864.00"), result.getAnnualSavings());
+        // Savings %: (650,864 / 730,000) * 100 = 89.16%
+        assertEquals(new BigDecimal("89.16"), result.getSavingsPercentage());
     }
 }

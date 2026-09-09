@@ -237,12 +237,14 @@ export default function DashboardPage() {
     if (tab !== 'executive') {
       const clientInsight = getClientChartInsight(tab);
       setChartInsight(clientInsight);
+      setChartInsightLoading(true);
       api.getChartInsight(tab, undefined, assessmentId)
         .then((res) => {
           if (res && res.finding) {
             setChartInsight((prev) => ({
               ...clientInsight,
               ...res,
+              aiStatus: 'AI GENERATED (LIVE)',
               detailedAnalysis: res.detailedAnalysis || clientInsight.detailedAnalysis,
               keyMetrics: res.keyMetrics && res.keyMetrics.length > 0 ? res.keyMetrics : clientInsight.keyMetrics,
               actionRoadmap: res.actionRoadmap && res.actionRoadmap.length > 0 ? res.actionRoadmap : clientInsight.actionRoadmap,
@@ -250,22 +252,29 @@ export default function DashboardPage() {
             }));
           }
         })
-        .catch((err) => console.warn('Using validated dynamic AI chart insight', err));
+        .catch((err) => console.warn('Using validated dynamic AI chart insight', err))
+        .finally(() => setChartInsightLoading(false));
     } else {
       if (!aiAnalysis) {
-        setAiAnalysis(getClientExecutiveAdvisory());
-      }
-      api.analyzeWithAI({
-        assessmentId,
-        assessment: assessment || undefined,
-        calculations: calculations || undefined,
-      })
-        .then((res) => {
-          if (res && res.decision) {
-            setAiAnalysis(res);
-          }
+        setAiAnalysisLoading(true);
+        api.analyzeWithAI({
+          assessmentId,
+          assessment: assessment || undefined,
+          calculations: calculations || undefined,
         })
-        .catch((err) => console.warn('Using validated dynamic AI executive advisory', err));
+          .then((res) => {
+            if (res && res.decision) {
+              setAiAnalysis(res);
+            } else {
+              setAiAnalysis(getClientExecutiveAdvisory());
+            }
+          })
+          .catch((err) => {
+            console.warn('Using fallback executive advisory', err);
+            setAiAnalysis(getClientExecutiveAdvisory());
+          })
+          .finally(() => setAiAnalysisLoading(false));
+      }
     }
   };
 
@@ -275,15 +284,14 @@ export default function DashboardPage() {
     setAiModalOpen(true);
     const clientInsight = getClientChartInsight(chartId);
     setChartInsight(clientInsight);
-    if (!aiAnalysis) {
-      setAiAnalysis(getClientExecutiveAdvisory());
-    }
+    setChartInsightLoading(true);
     try {
       const res = await api.getChartInsight(chartId, undefined, assessmentId);
       if (res && res.finding) {
         setChartInsight({
           ...clientInsight,
           ...res,
+          aiStatus: 'AI GENERATED (LIVE)',
           detailedAnalysis: res.detailedAnalysis || clientInsight.detailedAnalysis,
           keyMetrics: res.keyMetrics && res.keyMetrics.length > 0 ? res.keyMetrics : clientInsight.keyMetrics,
           actionRoadmap: res.actionRoadmap && res.actionRoadmap.length > 0 ? res.actionRoadmap : clientInsight.actionRoadmap,
@@ -292,6 +300,8 @@ export default function DashboardPage() {
       }
     } catch (err) {
       console.warn('Using validated dynamic AI chart insight', err);
+    } finally {
+      setChartInsightLoading(false);
     }
   };
 
@@ -300,19 +310,24 @@ export default function DashboardPage() {
     setAiModalTitle('Executive Decision Intelligence & Strategy');
     setAiModalOpen(true);
     if (!aiAnalysis) {
-      setAiAnalysis(getClientExecutiveAdvisory());
-    }
-    try {
-      const res = await api.analyzeWithAI({
-        assessmentId,
-        assessment: assessment || undefined,
-        calculations: calculations || undefined,
-      });
-      if (res && res.decision) {
-        setAiAnalysis(res);
+      setAiAnalysisLoading(true);
+      try {
+        const res = await api.analyzeWithAI({
+          assessmentId,
+          assessment: assessment || undefined,
+          calculations: calculations || undefined,
+        });
+        if (res && res.decision) {
+          setAiAnalysis(res);
+        } else {
+          setAiAnalysis(getClientExecutiveAdvisory());
+        }
+      } catch (err) {
+        console.warn('Using fallback executive advisory', err);
+        setAiAnalysis(getClientExecutiveAdvisory());
+      } finally {
+        setAiAnalysisLoading(false);
       }
-    } catch (err) {
-      console.warn('Using validated dynamic AI executive advisory', err);
     }
   };
 
@@ -410,21 +425,27 @@ export default function DashboardPage() {
   const selectedEdition = assessment?.targetSystem?.configuration?.selectedEditionName || 'Standard Edition';
   const getEditionBasePrice = (edition: string, unitCount: number = 3) => {
     const lower = edition.toLowerCase();
-    if (lower.includes('starter')) return 18744;
+    if (lower.includes('starter')) return 20736;
+    if (lower.includes('enhanced')) return 92256 * (unitCount > 0 ? unitCount : 1);
     if (lower.includes('premium')) return 318204;
-    return 57900 * (unitCount > 0 ? unitCount : 3);
+    return 64068 * (unitCount > 0 ? unitCount : 3);
   };
   const unitCount =
     selectedEdition.toLowerCase().includes('standard')
       ? (assessment?.targetSystem?.configuration?.numberOfUnits || 3)
       : 1;
   const editionBasePrice = getEditionBasePrice(selectedEdition, unitCount);
-  const additionalPacks = assessment?.targetSystem?.configuration?.additionalMessagePacks ?? 400;
-  const packsCost = additionalPacks * 75.96;
+  const additionalPacks = assessment?.targetSystem?.configuration?.additionalMessagePacks ?? 0;
+  const packsCost = additionalPacks * 84;
+  const dataSpacePackages = assessment?.targetSystem?.configuration?.dataSpacePackages ?? 0;
+  const dataSpaceCost = dataSpacePackages * 900;
+  const additionalEicTenants = assessment?.targetSystem?.configuration?.additionalEicTenants ?? 0;
+  const eicCost = additionalEicTenants * 41460;
+  const addOnsCost = packsCost + dataSpaceCost + eicCost;
   const targetConfigCost =
     assessment?.targetSystem?.configuration?.totalAnnualCost && assessment.targetSystem.configuration.totalAnnualCost > 0
       ? assessment.targetSystem.configuration.totalAnnualCost
-      : editionBasePrice + packsCost;
+      : editionBasePrice + addOnsCost;
   const targetAdditionalTco =
     assessment?.targetSystem?.additionalTcoComponents?.totalAdditionalTcoAnnual !== undefined
       ? assessment.targetSystem.additionalTcoComponents.totalAdditionalTcoAnnual
@@ -611,12 +632,25 @@ export default function DashboardPage() {
 
             {/* Right: AI Insight (Cols 4) */}
             <div className="lg:col-span-4 space-y-2">
-              <div className="flex items-center space-x-1.5 text-xs font-bold text-indigo-600">
-                <span>✦</span>
-                <span>AI Insight</span>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-1.5 text-xs font-bold text-indigo-600">
+                  <span>✦</span>
+                  <span>AI Insight</span>
+                </div>
+                {aiAnalysis && (
+                  <span className="text-[9px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                    ✦ LIVE AI
+                  </span>
+                )}
               </div>
               <p className="text-xs text-slate-700 leading-relaxed">
-                Annual savings of <strong className="text-slate-900 font-semibold">{formatCurrency(annualSavings, currency)}</strong> ({savingsPct.toFixed(1)}% reduction) create a strong business case. The main area to validate is the migration development effort, which represents {devPct}% of the total investment.
+                {aiAnalysis?.executiveSummary ? (
+                  aiAnalysis.executiveSummary.length > 210
+                    ? aiAnalysis.executiveSummary.slice(0, 210) + '...'
+                    : aiAnalysis.executiveSummary
+                ) : (
+                  <>Annual savings of <strong className="text-slate-900 font-semibold">{formatCurrency(annualSavings, currency)}</strong> ({savingsPct.toFixed(1)}% reduction) create a strong business case. The main area to validate is the migration development effort, which represents {devPct}% of the total investment.</>
+                )}
               </p>
               <button
                 type="button"
@@ -1403,6 +1437,15 @@ export default function DashboardPage() {
 
               {/* Modal Body: Pure Actual AI Insights */}
               <div className="p-6 space-y-5 overflow-y-auto flex-1 min-h-0">
+                {(aiModalTab === 'executive' ? aiAnalysisLoading : chartInsightLoading) && (
+                  <div className="p-4 bg-purple-50 border border-purple-200 rounded-2xl flex items-center space-x-3 text-purple-900 animate-pulse">
+                    <span className="animate-spin text-lg">⟳</span>
+                    <div className="text-xs">
+                      <span className="font-bold block">Synthesizing Live AI Decision Intelligence...</span>
+                      <span className="text-purple-600 text-[11px]">Connecting to NVIDIA NIM (meta/llama-3.2-11b-vision-instruct)</span>
+                    </div>
+                  </div>
+                )}
 
                 {/* TAB 1-4: Chart Insight Views */}
                 {aiModalTab !== 'executive' && chartInsight && (

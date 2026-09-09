@@ -23,6 +23,7 @@ public class ApplicationConfig {
     @Bean
     public HttpClient httpClient(NvidiaProperties properties) {
         return HttpClient.newBuilder()
+                .version(HttpClient.Version.HTTP_1_1)
                 .connectTimeout(Duration.ofSeconds(properties.getTimeoutSeconds()))
                 .build();
     }

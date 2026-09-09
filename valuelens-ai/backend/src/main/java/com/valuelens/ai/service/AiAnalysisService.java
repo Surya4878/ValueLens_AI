@@ -77,7 +77,7 @@ public class AiAnalysisService {
         );
 
         // 3. Invoke NVIDIA NIM
-        String rawResponse = nvidiaAiClient.callChatCompletion(systemPrompt, userPayload);
+        String rawResponse = nvidiaAiClient.callChatCompletion(systemPrompt, userPayload, 1200);
 
         AiAnalysisResponseDto result;
         if (rawResponse != null && !rawResponse.isBlank()) {
@@ -135,7 +135,8 @@ public class AiAnalysisService {
             String prompt = buildChartPrompt(chartId, calc, assessment);
             String aiRaw = nvidiaAiClient.callChatCompletion(
                     "You are ValueLens AI enterprise migration advisor. Analyze the chart data and respond with valid JSON: {\"finding\": \"...\", \"businessImpact\": \"...\", \"recommendation\": \"...\"}. Do not include markdown code fences or conversational text.",
-                    prompt
+                    prompt,
+                    400
             );
             if (aiRaw != null && !aiRaw.isBlank()) {
                 int firstBrace = aiRaw.indexOf('{');
@@ -357,7 +358,11 @@ public class AiAnalysisService {
                     baseBe, worstBe, worstNet5, bestNet5,
                     cur, tgt
             );
-            String aiRaw = nvidiaAiClient.callChatCompletion("You are ValueLens AI enterprise risk advisor. Be thorough, quantitative, and concise.", prompt);
+            String aiRaw = nvidiaAiClient.callChatCompletion(
+                    "You are ValueLens AI enterprise risk advisor. Be thorough, quantitative, and concise.",
+                    prompt,
+                    750
+            );
             if (aiRaw != null && !aiRaw.isBlank()) {
                 return aiRaw.trim();
             }
@@ -405,7 +410,7 @@ public class AiAnalysisService {
                     """,
                     cur, tgt, sav, mig, be, net5, roi
             );
-            String aiRaw = nvidiaAiClient.callChatCompletion("You are ValueLens AI executive strategy advisor.", prompt);
+            String aiRaw = nvidiaAiClient.callChatCompletion("You are ValueLens AI executive strategy advisor.", prompt, 750);
             if (aiRaw != null && !aiRaw.isBlank()) {
                 return aiRaw.trim();
             }
@@ -433,7 +438,8 @@ public class AiAnalysisService {
             );
             String aiRaw = nvidiaAiClient.callChatCompletion(
                     "You are ValueLens AI, an expert enterprise cloud migration economics advisor. Be concise and precise.",
-                    prompt
+                    prompt,
+                    350
             );
             if (aiRaw != null && !aiRaw.isBlank()) {
                 String clean = aiRaw.replaceAll("```[a-z]*", "").replaceAll("```", "").trim();

@@ -32,9 +32,10 @@ public class PricingCatalogService {
 
     public List<PricingCatalogEntity> getDefaultBtpCatalog() {
         return List.of(
-                createCatalogEntry("price_btp_starter_2026", "SAP BTP Integration Suite", "Starter Edition", "Tenants per year", BigDecimal.valueOf(18744.00), BigDecimal.valueOf(75.96)),
-                createCatalogEntry("price_btp_standard_2026", "SAP BTP Integration Suite", "Standard Edition", "Tenants per year", BigDecimal.valueOf(57900.00), BigDecimal.valueOf(75.96)),
-                createCatalogEntry("price_btp_premium_2026", "SAP BTP Integration Suite", "Premium Edition", "Entitlements package per year", BigDecimal.valueOf(318204.00), BigDecimal.valueOf(75.96))
+                createCatalogEntry("price_btp_starter_2026", "SAP BTP Integration Suite", "Starter Edition", "Tenants per year", BigDecimal.valueOf(20736.00), BigDecimal.valueOf(84.00)),
+                createCatalogEntry("price_btp_standard_2026", "SAP BTP Integration Suite", "Standard Edition", "Tenants per year", BigDecimal.valueOf(64068.00), BigDecimal.valueOf(84.00)),
+                createCatalogEntry("price_btp_enhanced_2026", "SAP BTP Integration Suite", "Enhanced Edition", "Tenants per year", BigDecimal.valueOf(92256.00), BigDecimal.valueOf(84.00)),
+                createCatalogEntry("price_btp_premium_2026", "SAP BTP Integration Suite", "Premium Edition", "Entitlements package per year", BigDecimal.valueOf(318204.00), BigDecimal.valueOf(84.00))
         );
     }
 

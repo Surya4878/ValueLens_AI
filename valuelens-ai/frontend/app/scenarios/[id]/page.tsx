@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { ScenarioResponse, ScenarioOutcome, Assessment, RoiCalculationResult } from '@/types';
@@ -23,6 +23,8 @@ export default function ScenariosPage() {
   const [loading, setLoading] = useState(false);
   const [aiAnalysisText, setAiAnalysisText] = useState<string | null>(null);
   const [loadingAi, setLoadingAi] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
+  const [isCustomTuned, setIsCustomTuned] = useState(false);
 
   // Load user's actual assessment and calculation
   useEffect(() => {
@@ -70,17 +72,31 @@ export default function ScenariosPage() {
   const fetchLiveAiScenarioAnalysis = async () => {
     if (!scenarios) return;
     setLoadingAi(true);
+    setAiError(null);
     try {
       const res = await api.analyzeScenario(scenarios);
       if (res && res.interpretation) {
         setAiAnalysisText(res.interpretation);
+        setIsCustomTuned(false);
+      } else {
+        setAiError('AI decision engine response was empty. Click to retry.');
       }
     } catch (err) {
       console.error('Failed to analyze scenario with AI:', err);
+      setAiError('AI inference service connection timed out or is busy. Click to retry.');
     } finally {
       setLoadingAi(false);
     }
   };
+
+  // Auto-generate AI insights on initial load once scenarios are calculated
+  const autoLoadedRef = useRef(false);
+  useEffect(() => {
+    if (scenarios && !autoLoadedRef.current && !aiAnalysisText && !loadingAi) {
+      autoLoadedRef.current = true;
+      fetchLiveAiScenarioAnalysis();
+    }
+  }, [scenarios]);
 
   const runSimulation = async (sFactor: number, mFactor: number, tFactor: number) => {
     setLoading(true);
@@ -149,6 +165,9 @@ export default function ScenariosPage() {
   };
 
   useEffect(() => {
+    if (aiAnalysisText) {
+      setIsCustomTuned(true);
+    }
     runSimulation(savingsFactor, migrationCostFactor, targetCostFactor);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [savingsFactor, migrationCostFactor, targetCostFactor, calculations]);
@@ -481,27 +500,78 @@ export default function ScenariosPage() {
 
           {/* Deep AI Sensitivity Intelligence Output */}
           <div className="p-5 bg-white/95 rounded-2xl border border-purple-200 shadow-xs text-xs space-y-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2 font-bold text-purple-900 text-sm">
-                <span>✦</span>
-                <span>Autonomous AI Sensitivity Intelligence</span>
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="space-y-0.5">
+                <div className="flex items-center space-x-2 font-bold text-purple-900 text-sm">
+                  <span>✦</span>
+                  <span>Autonomous AI Sensitivity Intelligence</span>
+                </div>
+                <div className="flex items-center space-x-2 text-[10px] text-purple-600">
+                  <span>Powered by NVIDIA NIM Inference Engine</span>
+                  <span>•</span>
+                  <span>meta/llama-3.2-11b-vision-instruct</span>
+                </div>
               </div>
-              {scenarioAnalysis && (
-                <span className={`px-2.5 py-1 rounded-full text-[11px] font-bold border ${scenarioAnalysis.verdictColor}`}>
-                  {scenarioAnalysis.verdict}
-                </span>
-              )}
+              <div className="flex items-center space-x-2">
+                {loadingAi && (
+                  <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-purple-100 text-purple-700 animate-pulse border border-purple-300 flex items-center space-x-1">
+                    <span className="animate-spin text-xs">⟳</span>
+                    <span>Synthesizing Live AI Insights...</span>
+                  </span>
+                )}
+                {isCustomTuned && !loadingAi && (
+                  <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300">
+                    Sliders Adjusted • Ready to Re-evaluate
+                  </span>
+                )}
+                {scenarioAnalysis && (
+                  <span className={`px-2.5 py-1 rounded-full text-[11px] font-bold border ${scenarioAnalysis.verdictColor}`}>
+                    {scenarioAnalysis.verdict}
+                  </span>
+                )}
+              </div>
             </div>
 
+            {aiError && !loadingAi && (
+              <div className="p-4 bg-rose-50 border border-rose-200 rounded-xl text-rose-800 text-xs flex flex-wrap items-center justify-between gap-3">
+                <div className="flex items-center space-x-2">
+                  <span className="text-base font-bold text-rose-600">⚠</span>
+                  <span>{aiError}</span>
+                </div>
+                <button
+                  onClick={fetchLiveAiScenarioAnalysis}
+                  className="px-3.5 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs shadow-xs transition-all cursor-pointer"
+                >
+                  Retry Live AI Inference ⟳
+                </button>
+              </div>
+            )}
+
             {loadingAi ? (
-              <div className="py-8 flex flex-col items-center justify-center space-y-2.5 text-purple-700">
-                <span className="animate-spin text-2xl">⟳</span>
-                <span className="text-xs font-semibold">Consulting AI Decision Engine & evaluating scenario sensitivity live...</span>
-                <span className="text-[11px] text-slate-500">Benchmarking custom simulation against base case, best case, and stress-tested floor</span>
+              <div className="py-10 flex flex-col items-center justify-center space-y-3 text-purple-700">
+                <span className="animate-spin text-3xl">⟳</span>
+                <span className="text-xs font-bold text-purple-900">Consulting AI Decision Engine & synthesizing live sensitivity advisory...</span>
+                <span className="text-[11px] text-slate-500 max-w-md text-center">
+                  Benchmarking custom simulation against base case, best case, and stress-tested floor via NVIDIA NIM. Usually takes 3-6 seconds.
+                </span>
               </div>
             ) : aiAnalysisText ? (
-              <div className="text-slate-800 leading-relaxed font-normal whitespace-pre-line text-xs sm:text-sm bg-purple-50/40 p-4 rounded-xl border border-purple-100">
-                {aiAnalysisText}
+              <div className="space-y-3">
+                {isCustomTuned && (
+                  <div className="p-2.5 bg-amber-50/80 border border-amber-200 rounded-lg text-amber-900 text-xs flex items-center justify-between">
+                    <span>Simulation sliders were updated. Click to re-run AI evaluation for this new configuration:</span>
+                    <button
+                      onClick={fetchLiveAiScenarioAnalysis}
+                      disabled={loadingAi}
+                      className="px-3 py-1 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-bold text-[11px] shadow-xs cursor-pointer ml-2 shrink-0"
+                    >
+                      ✦ Re-run Live AI Advisory
+                    </button>
+                  </div>
+                )}
+                <div className="text-slate-800 leading-relaxed font-normal whitespace-pre-line text-xs sm:text-sm bg-purple-50/40 p-4 rounded-xl border border-purple-100">
+                  {aiAnalysisText}
+                </div>
               </div>
             ) : (
               <div className="py-10 flex flex-col items-center justify-center space-y-4 text-center">

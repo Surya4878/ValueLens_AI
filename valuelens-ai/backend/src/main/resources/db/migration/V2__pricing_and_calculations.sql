@@ -60,6 +60,7 @@ CREATE TABLE IF NOT EXISTS calculation_results (
 -- Seed initial standard SAP BTP Integration Suite pricing
 INSERT INTO pricing_catalog (id, platform, edition_name, pricing_unit, unit_price, message_pack_price, message_pack_size, currency, version_tag, effective_from, active)
 VALUES 
-('price_btp_starter_2026', 'SAP BTP Integration Suite', 'Starter Edition', 'Tenants per year', 18744.00, 75.96, 10000, 'USD', 'BTP_2026_Q1', '2026-01-01 00:00:00', TRUE),
-('price_btp_standard_2026', 'SAP BTP Integration Suite', 'Standard Edition', 'Tenants per year', 57900.00, 75.96, 10000, 'USD', 'BTP_2026_Q1', '2026-01-01 00:00:00', TRUE),
-('price_btp_premium_2026', 'SAP BTP Integration Suite', 'Premium Edition', 'Entitlements package per year', 318204.00, 75.96, 10000, 'USD', 'BTP_2026_Q1', '2026-01-01 00:00:00', TRUE);
+('price_btp_starter_2026', 'SAP BTP Integration Suite', 'Starter Edition', 'Tenants per year', 20736.00, 84.00, 10000, 'USD', 'BTP_2026_Q1', '2026-01-01 00:00:00', TRUE),
+('price_btp_standard_2026', 'SAP BTP Integration Suite', 'Standard Edition', 'Tenants per year', 64068.00, 84.00, 10000, 'USD', 'BTP_2026_Q1', '2026-01-01 00:00:00', TRUE),
+('price_btp_enhanced_2026', 'SAP BTP Integration Suite', 'Enhanced Edition', 'Tenants per year', 92256.00, 84.00, 10000, 'USD', 'BTP_2026_Q1', '2026-01-01 00:00:00', TRUE),
+('price_btp_premium_2026', 'SAP BTP Integration Suite', 'Premium Edition', 'Entitlements package per year', 318204.00, 84.00, 10000, 'USD', 'BTP_2026_Q1', '2026-01-01 00:00:00', TRUE);

@@ -14,6 +14,10 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 
 @Component
 public class NvidiaAiClient {
@@ -24,6 +28,19 @@ public class NvidiaAiClient {
     private final ObjectMapper objectMapper;
     private final NvidiaProperties properties;
 
+    // NVIDIA NIM developer tier enforces strict single-request concurrency.
+    // Fair semaphore serializes calls across Tomcat threads and prevents mutual timeouts.
+    private final Semaphore concurrencyGate = new Semaphore(1, true);
+
+    // In-memory cache for fast repeated queries (3-minute TTL)
+    private final Map<String, CacheEntry> responseCache = new ConcurrentHashMap<>();
+
+    private record CacheEntry(String response, long expiresAt) {
+        boolean isExpired() {
+            return System.currentTimeMillis() > expiresAt;
+        }
+    }
+
     public NvidiaAiClient(HttpClient httpClient, ObjectMapper objectMapper, NvidiaProperties properties) {
         this.httpClient = httpClient;
         this.objectMapper = objectMapper;
@@ -31,17 +48,45 @@ public class NvidiaAiClient {
     }
 
     public String callChatCompletion(String systemPrompt, String userContent) {
+        return callChatCompletion(systemPrompt, userContent, null);
+    }
+
+    public String callChatCompletion(String systemPrompt, String userContent, Integer customMaxTokens) {
         String apiKey = properties.getApiKey();
         if (apiKey == null || apiKey.isBlank()) {
             log.warn("NVIDIA API key not configured. Using intelligent fallback mode.");
             return null;
         }
 
+        int tokens = (customMaxTokens != null && customMaxTokens > 0) ? customMaxTokens : properties.getMaxTokens();
+        String cacheKey = properties.getModel() + "|" + tokens + "|" + (systemPrompt != null ? systemPrompt.hashCode() : 0) + "|" + (userContent != null ? userContent.hashCode() : 0);
+
+        CacheEntry cached = responseCache.get(cacheKey);
+        if (cached != null && !cached.isExpired()) {
+            log.info("Returning cached AI response for cacheKey (TTL valid)");
+            return cached.response();
+        }
+
+        boolean acquired = false;
         try {
+            log.debug("Waiting for NVIDIA NIM concurrency gate...");
+            acquired = concurrencyGate.tryAcquire(35, TimeUnit.SECONDS);
+            if (!acquired) {
+                log.warn("NVIDIA NIM concurrency gate timed out after 35s waiting for active request.");
+                return null;
+            }
+
+            // Re-check cache after acquiring gate in case a parallel thread just computed it
+            cached = responseCache.get(cacheKey);
+            if (cached != null && !cached.isExpired()) {
+                log.info("Returning cached AI response acquired post-lock");
+                return cached.response();
+            }
+
             ObjectNode root = objectMapper.createObjectNode();
             root.put("model", properties.getModel());
             root.put("temperature", properties.getTemperature());
-            root.put("max_tokens", properties.getMaxTokens());
+            root.put("max_tokens", tokens);
             root.put("stream", false);
 
             ArrayNode messages = root.putArray("messages");
@@ -69,14 +114,15 @@ public class NvidiaAiClient {
                     .POST(HttpRequest.BodyPublishers.ofString(requestBody))
                     .build();
 
-            log.info("Dispatching chat completion request to NVIDIA NIM model: {}", properties.getModel());
+            log.info("Dispatching chat completion request to NVIDIA NIM model: {} (max_tokens: {})", properties.getModel(), tokens);
 
             String text = executeCall(request);
             if (text != null && !text.isBlank()) {
+                responseCache.put(cacheKey, new CacheEntry(text, System.currentTimeMillis() + 180_000));
                 return text;
             }
 
-            // Fallback to meta/llama-3.2-11b-vision-instruct if primary model failed
+            // Fallback model if primary model failed
             if (!"meta/llama-3.2-11b-vision-instruct".equalsIgnoreCase(properties.getModel())) {
                 log.warn("Attempting fallback chat completion with meta/llama-3.2-11b-vision-instruct");
                 root.put("model", "meta/llama-3.2-11b-vision-instruct");
@@ -88,24 +134,38 @@ public class NvidiaAiClient {
                         .timeout(Duration.ofSeconds(properties.getTimeoutSeconds()))
                         .POST(HttpRequest.BodyPublishers.ofString(fallbackBody))
                         .build();
-                return executeCall(fallbackReq);
+                String fallbackText = executeCall(fallbackReq);
+                if (fallbackText != null && !fallbackText.isBlank()) {
+                    responseCache.put(cacheKey, new CacheEntry(fallbackText, System.currentTimeMillis() + 180_000));
+                    return fallbackText;
+                }
             }
 
             return null;
 
+        } catch (InterruptedException ie) {
+            Thread.currentThread().interrupt();
+            log.warn("Thread interrupted while waiting for NVIDIA NIM concurrency gate");
+            return null;
         } catch (Exception e) {
             log.error("Error communicating with NVIDIA NIM: {}", e.getMessage(), e);
             return null;
+        } finally {
+            if (acquired) {
+                concurrencyGate.release();
+            }
         }
     }
 
     private String executeCall(HttpRequest request) {
-        int maxRetries = 3;
-        long retryDelayMs = 2000;
+        int maxRetries = 2;
+        long retryDelayMs = 1500;
 
         for (int attempt = 1; attempt <= maxRetries; attempt++) {
+            long t0 = System.currentTimeMillis();
             try {
                 HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+                long elapsed = System.currentTimeMillis() - t0;
 
                 if (response.statusCode() == 200) {
                     JsonNode respNode = objectMapper.readTree(response.body());
@@ -113,24 +173,29 @@ public class NvidiaAiClient {
                     JsonNode contentNode = messageNode.path("content");
 
                     if (!contentNode.isMissingNode() && !contentNode.isNull() && !contentNode.asText().isBlank()) {
-                        log.info("NVIDIA NIM returned AI response on attempt {}", attempt);
+                        log.info("NVIDIA NIM returned AI response on attempt {} in {}ms", attempt, elapsed);
                         return contentNode.asText();
                     }
 
-                    // Fallback to reasoning_content if content is empty
                     JsonNode reasoningNode = messageNode.path("reasoning_content");
                     if (!reasoningNode.isMissingNode() && !reasoningNode.isNull() && !reasoningNode.asText().isBlank()) {
+                        log.info("NVIDIA NIM returned AI reasoning response on attempt {} in {}ms", attempt, elapsed);
                         return reasoningNode.asText();
                     }
 
                     log.warn("NVIDIA NIM response contained neither content nor reasoning_content on attempt {}: {}", attempt, response.body().substring(0, Math.min(response.body().length(), 200)));
                     return null;
+                }
 
-                } else if (response.statusCode() == 502 || response.statusCode() == 503 || response.statusCode() == 429) {
-                    log.warn("NVIDIA NIM transient error status {} on attempt {}/{}. Retrying in {}ms...", response.statusCode(), attempt, maxRetries, retryDelayMs);
+                boolean isRetryable = (response.statusCode() >= 500 && response.statusCode() <= 599)
+                        || response.statusCode() == 429
+                        || response.statusCode() == 408;
+
+                if (isRetryable) {
+                    log.warn("NVIDIA NIM transient error status {} on attempt {}/{} in {}ms. Retrying in {}ms...", response.statusCode(), attempt, maxRetries, elapsed, retryDelayMs);
                     if (attempt < maxRetries) {
                         Thread.sleep(retryDelayMs);
-                        retryDelayMs *= 2; // exponential backoff
+                        retryDelayMs *= 2;
                     }
                 } else {
                     log.error("NVIDIA NIM returned non-retryable error status {}: {}", response.statusCode(), response.body().substring(0, Math.min(response.body().length(), 300)));
@@ -138,7 +203,7 @@ public class NvidiaAiClient {
                 }
 
             } catch (java.net.http.HttpTimeoutException te) {
-                log.warn("NVIDIA NIM request timed out on attempt {}/{}. Retrying...", attempt, maxRetries);
+                log.warn("NVIDIA NIM request timed out on attempt {}/{} after {}ms. Retrying...", attempt, maxRetries, System.currentTimeMillis() - t0);
                 if (attempt < maxRetries) {
                     try { Thread.sleep(retryDelayMs); } catch (InterruptedException ie) { Thread.currentThread().interrupt(); }
                     retryDelayMs *= 2;
@@ -149,7 +214,10 @@ public class NvidiaAiClient {
                 return null;
             } catch (Exception e) {
                 log.error("Error in executeCall attempt {}: {}", attempt, e.getMessage());
-                return null;
+                if (attempt < maxRetries) {
+                    try { Thread.sleep(retryDelayMs); } catch (InterruptedException ie) { Thread.currentThread().interrupt(); }
+                    retryDelayMs *= 2;
+                }
             }
         }
 
