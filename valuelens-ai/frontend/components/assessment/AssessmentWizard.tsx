@@ -30,6 +30,16 @@ import {
   Loader2,
   RefreshCw,
   CheckCircle2,
+  Download,
+  Cloud,
+  Share2,
+  FileText,
+  ExternalLink,
+  Brain,
+  Bell,
+  Truck,
+  Building2,
+  Mail,
 } from 'lucide-react';
 import { Assessment, RoiCalculationResult } from '@/types';
 import { api } from '@/lib/api';
@@ -43,7 +53,11 @@ export function AssessmentWizard() {
   const [calculationResult, setCalculationResult] = useState<RoiCalculationResult | null>(null);
 
   // Contract Horizon: 1 Year (Annualized), 3 Years (36 Mo), or 5 Years (60 Mo)
-  const [contractYears, setContractYears] = useState<1 | 3 | 5>(1);
+  const [contractYears, setContractYears] = useState<1 | 3 | 5>(3);
+  const [step5SubView, setStep5SubView] = useState<'cards' | 'edition-detail' | 'comparison'>('cards');
+  const [detailEdition, setDetailEdition] = useState<string>('Starter Edition');
+  const [detailTab, setDetailTab] = useState<'features' | 'what-you-get' | 'use-cases' | 'add-ons' | 'docs'>('features');
+  const [liveEconomicsEnabled, setLiveEconomicsEnabled] = useState<boolean>(true);
   const [showFeatureComparison, setShowFeatureComparison] = useState(false);
   const [showAddOns, setShowAddOns] = useState(false);
   const [showAiRecommendation, setShowAiRecommendation] = useState(false);
@@ -402,9 +416,9 @@ export function AssessmentWizard() {
       </div>
 
       {/* Wizard Content Layout */}
-      <div className={`grid grid-cols-1 ${currentStep === 7 ? 'lg:grid-cols-1' : 'lg:grid-cols-3'} gap-6`}>
+      <div className={`grid grid-cols-1 ${currentStep === 5 || currentStep === 7 ? 'lg:grid-cols-1' : 'lg:grid-cols-3'} gap-6`}>
         {/* Main Content Area */}
-        <div className={`${currentStep === 7 ? 'lg:col-span-1' : 'lg:col-span-2'} space-y-6`}>
+        <div className={`${currentStep === 5 || currentStep === 7 ? 'lg:col-span-1' : 'lg:col-span-2'} space-y-6`}>
           
           {/* ========================================================================= */}
           {/* STEP 1 (Slide 2): Company Information                                     */}
@@ -1343,21 +1357,25 @@ export function AssessmentWizard() {
           {/* ========================================================================= */}
           {currentStep === 5 && (() => {
             const currentEd = assessment.targetSystem.configuration.selectedEditionName || 'Standard Edition';
-            const units = currentEd === 'Standard Edition'
-              ? (assessment.targetSystem.configuration.numberOfUnits || 3)
-              : (assessment.targetSystem.configuration.numberOfUnits || 1);
-            const packs = assessment.targetSystem.configuration.additionalMessagePacks || 0;
+            const units = assessment.targetSystem.configuration.numberOfUnits !== undefined
+              ? assessment.targetSystem.configuration.numberOfUnits
+              : (currentEd === 'Standard Edition' ? 3 : 1);
+            const packs = assessment.targetSystem.configuration.additionalMessagePacks !== undefined
+              ? assessment.targetSystem.configuration.additionalMessagePacks
+              : 400;
             const dataSpacePackages = assessment.targetSystem.configuration.dataSpacePackages || 0;
             const additionalEicTenants = assessment.targetSystem.configuration.additionalEicTenants || 0;
 
             const baseUnitAnnual = getEditionBasePrice(currentEd, 1);
-            const annualizedBaseCost = baseUnitAnnual * units;
+            // SAP Standard Edition subscription includes up to 3 environments (Dev, Test, Prod)
+            const effectiveBaseMultiplier = units <= 3 ? 1 : Math.ceil(units / 3);
+            const annualizedBaseCost = baseUnitAnnual * effectiveBaseMultiplier;
             const annualizedPacksCost = packs * 84;
             const annualizedDataSpaceCost = dataSpacePackages * 900;
             const annualizedEicCost = additionalEicTenants * 41460;
             const annualizedAddOnsCost = annualizedPacksCost + annualizedDataSpaceCost + annualizedEicCost;
             const estimatedAnnualCost = annualizedBaseCost + annualizedAddOnsCost;
-            const termTotalCost = estimatedAnnualCost * contractYears;
+            const termTotalCost = estimatedAnnualCost * 3; // Estimated 3-Year TCO ($293,004 benchmark)
 
             const totalSelectedAddOnsCount = (packs > 0 ? 1 : 0) + (dataSpacePackages > 0 ? 1 : 0) + (additionalEicTenants > 0 ? 1 : 0);
 
@@ -1369,8 +1387,9 @@ export function AssessmentWizard() {
               newEic: number = additionalEicTenants
             ) => {
               const unitPrice = getEditionBasePrice(newEdition, 1);
-              const total = (newUnits * unitPrice) + (newPacks * 84) + (newDataSpace * 900) + (newEic * 41460);
-              const parts = [`${newUnits} units x $${unitPrice.toLocaleString()}/yr`];
+              const effMult = newUnits <= 3 ? 1 : Math.ceil(newUnits / 3);
+              const total = (effMult * unitPrice) + (newPacks * 84) + (newDataSpace * 900) + (newEic * 41460);
+              const parts = [`${newUnits} units ($${(effMult * unitPrice).toLocaleString()}/yr)`];
               if (newPacks > 0) parts.push(`${newPacks} msg packs x $84.00`);
               if (newDataSpace > 0) parts.push(`${newDataSpace} Data Space x $900.00`);
               if (newEic > 0) parts.push(`${newEic} EIC tenants x $41,460.00`);
@@ -1393,8 +1412,8 @@ export function AssessmentWizard() {
               });
             };
 
-            const handleSelectEdition = (editionName: string, defaultUnits: number = 1) => {
-              const newUnits = editionName === 'Standard Edition' ? (assessment.targetSystem.configuration.numberOfUnits || 3) : defaultUnits;
+            const handleSelectEdition = (editionName: string, defaultUnits: number = 3) => {
+              const newUnits = editionName === 'Standard Edition' ? 3 : defaultUnits;
               updateConfig(editionName, newUnits, packs, dataSpacePackages, additionalEicTenants);
             };
 
@@ -1423,17 +1442,17 @@ export function AssessmentWizard() {
             };
 
             const handleOpenComparison = () => {
-              setShowFeatureComparison(true);
-              setTimeout(() => {
-                const el = document.getElementById('feature-comparison-section');
-                if (el) {
-                  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-              }, 60);
+              setStep5SubView('comparison');
             };
 
-            const handleOpenAddOns = () => {
-              setShowAddOns(true);
+            const handleOpenDetail = (ed: string) => {
+              setDetailEdition(ed);
+              setDetailTab('features');
+              setStep5SubView('edition-detail');
+            };
+
+            const handleToggleAddOns = () => {
+              setShowAddOns((prev) => !prev);
               setTimeout(() => {
                 const el = document.getElementById('add-ons-section');
                 if (el) {
@@ -1462,6 +1481,7 @@ export function AssessmentWizard() {
             const fetchLiveAiRecommendation = async () => {
               if (aiLoading) return;
               setAiLoading(true);
+              setShowAiRecommendation(true);
               try {
                 const res = await api.recommendEdition(assessment);
                 setAiRecommendationData(res);
@@ -1485,213 +1505,1004 @@ export function AssessmentWizard() {
               }
             };
 
-            const handleGetLiveAiRecommendation = () => {
-              setShowAiRecommendation(true);
-              setTimeout(() => {
-                const el = document.getElementById('ai-recommendation-section');
-                if (el) {
-                  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-              }, 60);
-              fetchLiveAiRecommendation();
+            const handleDownloadComparison = () => {
+              const content = `SAP BTP Integration Suite - Feature Comparison Matrix
+Generated by ValueLens AI
+
+FEATURE | DESCRIPTION | STARTER | STANDARD | ENHANCED
+---------------------------------------------------------------------------------------------------------------
+[GENERAL]
+Tenants | Number of tenants included | 1+ | 1+ | 1+
+Messages included per month | Monthly message entitlement (250 KB per message) | 50K | 10K | 500K
+Free messages | Unlimited SAP-to-SAP application integrations with prebuilt content | Included | Included | Included
+Prebuilt content | More than 3,400 prebuilt integrations for SAP, third-party, and e-gov | Included | Included | Included
+
+[INTEGRATION CAPABILITIES]
+Cloud Integration | A2A, B2B, and B2G integration scenarios | 10 custom iFlow cap | Fully Included | Fully Included
+B2B interchange libraries | B2B electronic interchange libraries, acknowledgment framework | Not Included | Fully Included | Fully Included
+Integration Assessment | Guided and systematic design & execution of strategy | Not Included | Fully Included | Fully Included
+Open Connectors | More than 200 connectors to third-party apps | Not Included | Fully Included | Fully Included
+API Management | Full lifecycle API management including developer portals | Not Included | Fully Included | Fully Included
+Integration Advisor | AI-assisted integration using self-learning knowledge base | Not Included | Fully Included | Fully Included
+
+[HYBRID & OPERATIONS]
+Edge integration cell | Runtimes within your private cloud or private on-prem landscape | Not Included | 1+ | 1+
+SAP Alert Notification (ANS) | Create and receive real-time events about services & apps | Not Included | Optional Add-on | Fully Included
+SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts | Not Included | Optional Add-on | Fully Included
+`;
+              const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = 'SAP_Integration_Suite_Feature_Comparison.txt';
+              a.click();
+              URL.revokeObjectURL(url);
             };
 
-            return (
-              <div className="space-y-6">
-                {/* Header Card with Years Commitment Switcher */}
-                <div className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-xs flex flex-wrap items-center justify-between gap-4">
-                  <div>
-                    <span className="text-xs font-bold text-indigo-600 uppercase tracking-wider">Step 5 of 6</span>
-                    <h2 className="text-2xl font-black text-slate-900 mt-1">Select your SAP BTP Integration Suite edition</h2>
-                    <p className="text-sm text-slate-500 mt-0.5">
-                      Choose the edition that best fits your requirements and sizing. Each edition includes different features and capabilities.
-                    </p>
+            // =========================================================================
+            // SUBVIEW 2: DEDICATED EDITION FEATURE DETAIL VIEW (Matching Image 2 Left)
+            // =========================================================================
+            if (step5SubView === 'edition-detail') {
+              const isStarter = detailEdition === 'Starter Edition';
+              const isStandard = detailEdition === 'Standard Edition';
+              const isEnhanced = detailEdition === 'Enhanced Edition';
+
+              const monthlyPrice = isStarter ? '1,728' : isStandard ? '5,339' : '7,688';
+              const annualPrice = isStarter ? '20,736' : isStandard ? '64,068' : '92,256';
+              const subtitle = isStarter
+                ? 'Best for small and simple integration landscapes'
+                : isStandard
+                ? 'Ideal for enterprise integration needs'
+                : 'For high-volume and advanced integration scenarios';
+
+              // 13 detailed features matching Image 2 Left
+              const detailFeatures = [
+                {
+                  id: 'tenants',
+                  name: 'Tenants',
+                  desc: 'Number of tenants included',
+                  icon: <Building2 className="w-4 h-4 text-blue-600" />,
+                  bg: 'bg-blue-50',
+                  badge: isStarter ? (
+                    <span className="text-xs font-semibold text-slate-800">1 per year</span>
+                  ) : (
+                    <span className="text-xs font-semibold text-slate-800">1+ per year</span>
+                  ),
+                },
+                {
+                  id: 'messages',
+                  name: 'Messages included per month',
+                  desc: 'Monthly message entitlement (250 KB per message)',
+                  icon: <Mail className="w-4 h-4 text-blue-600" />,
+                  bg: 'bg-blue-50',
+                  badge: (
+                    <span className="text-xs font-semibold text-slate-800 font-mono">
+                      {isStarter ? '50,000' : isStandard ? '10,000' : '500,000'}
+                    </span>
+                  ),
+                },
+                {
+                  id: 'freemsg',
+                  name: 'Free messages',
+                  desc: 'Unlimited SAP-to-SAP application integrations with prebuilt content',
+                  icon: <Share2 className="w-4 h-4 text-blue-600" />,
+                  bg: 'bg-blue-50',
+                  badge: (
+                    <span className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs font-bold">
+                      ✓
+                    </span>
+                  ),
+                },
+                {
+                  id: 'prebuilt',
+                  name: 'Prebuilt content',
+                  desc: 'More than 3,400 prebuilt integrations for SAP, third-party, and e-government applications',
+                  icon: <Download className="w-4 h-4 text-blue-600" />,
+                  bg: 'bg-blue-50',
+                  badge: (
+                    <span className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs font-bold">
+                      ✓
+                    </span>
+                  ),
+                },
+                {
+                  id: 'cpi',
+                  name: 'Cloud Integration',
+                  desc: 'A2A, B2B, and B2G integration scenarios',
+                  icon: <Cloud className="w-4 h-4 text-blue-600" />,
+                  bg: 'bg-blue-50',
+                  badge: isStarter ? (
+                    <span className="text-xs font-semibold text-blue-700 bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-200 flex items-center gap-1">
+                      <Info className="w-3.5 h-3.5 text-blue-600" /> 10 custom iFlow cap
+                    </span>
+                  ) : (
+                    <span className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs font-bold">
+                      ✓
+                    </span>
+                  ),
+                },
+                {
+                  id: 'b2b',
+                  name: 'B2B electronic interchange libraries',
+                  desc: 'B2B electronic interchange libraries, acknowledgment framework, and trading partner management',
+                  icon: <RefreshCw className="w-4 h-4 text-purple-600" />,
+                  bg: 'bg-purple-50',
+                  badge: isStarter ? (
+                    <span className="w-5 h-5 rounded-full bg-rose-100 text-rose-500 flex items-center justify-center text-xs font-bold">
+                      –
+                    </span>
+                  ) : (
+                    <span className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs font-bold">
+                      ✓
+                    </span>
+                  ),
+                },
+                {
+                  id: 'assessment',
+                  name: 'Integration Assessment',
+                  desc: 'Guided and systematic design and execution of your enterprise integration strategy',
+                  icon: <ShieldCheck className="w-4 h-4 text-purple-600" />,
+                  bg: 'bg-purple-50',
+                  badge: isStarter ? (
+                    <span className="w-5 h-5 rounded-full bg-rose-100 text-rose-500 flex items-center justify-center text-xs font-bold">
+                      –
+                    </span>
+                  ) : (
+                    <span className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs font-bold">
+                      ✓
+                    </span>
+                  ),
+                },
+                {
+                  id: 'openconn',
+                  name: 'Open Connectors',
+                  desc: 'More than 200 connectors to third-party apps',
+                  icon: <Puzzle className="w-4 h-4 text-purple-600" />,
+                  bg: 'bg-purple-50',
+                  badge: isStarter ? (
+                    <span className="w-5 h-5 rounded-full bg-rose-100 text-rose-500 flex items-center justify-center text-xs font-bold">
+                      –
+                    </span>
+                  ) : (
+                    <span className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs font-bold">
+                      ✓
+                    </span>
+                  ),
+                },
+                {
+                  id: 'apim',
+                  name: 'API Management',
+                  desc: 'Full lifecycle API management including creating developer portals',
+                  icon: <Layers className="w-4 h-4 text-purple-600" />,
+                  bg: 'bg-purple-50',
+                  badge: isStarter ? (
+                    <span className="w-5 h-5 rounded-full bg-rose-100 text-rose-500 flex items-center justify-center text-xs font-bold">
+                      –
+                    </span>
+                  ) : (
+                    <span className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs font-bold">
+                      ✓
+                    </span>
+                  ),
+                },
+                {
+                  id: 'advisor',
+                  name: 'Integration Advisor',
+                  desc: 'AI-assisted integration using the self-learning and self-improving knowledge base for B2B and EDI integration',
+                  icon: <Brain className="w-4 h-4 text-purple-600" />,
+                  bg: 'bg-purple-50',
+                  badge: isStarter ? (
+                    <span className="w-5 h-5 rounded-full bg-rose-100 text-rose-500 flex items-center justify-center text-xs font-bold">
+                      –
+                    </span>
+                  ) : (
+                    <span className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs font-bold">
+                      ✓
+                    </span>
+                  ),
+                },
+                {
+                  id: 'eic',
+                  name: 'Edge integration cell',
+                  desc: 'Runtimes within your private cloud or private on-premises landscape',
+                  icon: <Server className="w-4 h-4 text-blue-600" />,
+                  bg: 'bg-blue-50',
+                  badge: isStarter ? (
+                    <span className="w-5 h-5 rounded-full bg-rose-100 text-rose-500 flex items-center justify-center text-xs font-bold">
+                      –
+                    </span>
+                  ) : (
+                    <span className="text-xs font-semibold text-slate-800">1+</span>
+                  ),
+                },
+                {
+                  id: 'ans',
+                  name: 'SAP Alert Notification Service for SAP BTP (ANS)',
+                  desc: 'Create and receive real-time events about your services and applications',
+                  icon: <Bell className="w-4 h-4 text-blue-600" />,
+                  bg: 'bg-blue-50',
+                  badge: isEnhanced ? (
+                    <span className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs font-bold">
+                      ✓
+                    </span>
+                  ) : (
+                    <span className="w-5 h-5 rounded-full bg-rose-100 text-rose-500 flex items-center justify-center text-xs font-bold">
+                      –
+                    </span>
+                  ),
+                },
+                {
+                  id: 'tms',
+                  name: 'SAP Cloud Transport Management (TMS)',
+                  desc: 'Export, import and ship APIs and related artifacts from the development or test environment to the production environment',
+                  icon: <Truck className="w-4 h-4 text-blue-600" />,
+                  bg: 'bg-blue-50',
+                  badge: isEnhanced ? (
+                    <span className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs font-bold">
+                      ✓
+                    </span>
+                  ) : (
+                    <span className="w-5 h-5 rounded-full bg-rose-100 text-rose-500 flex items-center justify-center text-xs font-bold">
+                      –
+                    </span>
+                  ),
+                },
+              ];
+
+              return (
+                <div className="space-y-6 animate-fadeIn">
+                  {/* Back to Edition Selection Link */}
+                  <button
+                    type="button"
+                    onClick={() => setStep5SubView('cards')}
+                    className="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1.5 transition-colors"
+                  >
+                    <ArrowLeft className="w-3.5 h-3.5" /> Back to Edition Selection
+                  </button>
+
+                  {/* Header Box Matching Image 2 Left */}
+                  <div className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-7 shadow-xs">
+                    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+                      <div className="flex items-start gap-4">
+                        <div
+                          className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 ${
+                            isStarter
+                              ? 'bg-blue-50 text-blue-600 border border-blue-100'
+                              : isStandard
+                              ? 'bg-indigo-50 text-indigo-600 border border-indigo-100'
+                              : 'bg-amber-50 text-amber-600 border border-amber-100'
+                          }`}
+                        >
+                          {isStarter && <Box className="w-6 h-6" />}
+                          {isStandard && <Layers className="w-6 h-6" />}
+                          {isEnhanced && <Crown className="w-6 h-6" />}
+                        </div>
+                        <div>
+                          <h2 className="text-xl font-black text-slate-900">{detailEdition}</h2>
+                          <p className="text-xs text-slate-500 mt-1">{subtitle}</p>
+                        </div>
+                      </div>
+
+                      <div className="flex flex-wrap items-center gap-4 lg:gap-6">
+                        <div className="text-right">
+                          <div className="text-2xl font-black text-slate-900 font-mono">
+                            USD {monthlyPrice} <span className="text-xs font-normal text-slate-500">/ month</span>
+                          </div>
+                          <div className="text-xs text-slate-500 mt-0.5 font-mono">
+                            (USD {annualPrice} / year)
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => handleSelectEdition(detailEdition)}
+                            className={`px-5 py-2.5 rounded-xl text-xs font-bold transition-all shadow-xs active:scale-95 ${
+                              currentEd === detailEdition
+                                ? 'bg-indigo-600 text-white'
+                                : 'bg-indigo-600 hover:bg-indigo-700 text-white'
+                            }`}
+                          >
+                            {currentEd === detailEdition ? 'Selected ✓' : 'Select Edition'}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setStep5SubView('comparison')}
+                            className="px-4 py-2.5 bg-white border border-slate-300 hover:border-slate-400 text-slate-700 hover:bg-slate-50 rounded-xl text-xs font-bold transition-all"
+                          >
+                            Compare Editions
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Navigation Tabs Matching Image 2 Left */}
+                    <div className="mt-8 border-b border-slate-200">
+                      <div className="flex items-center space-x-6 text-xs font-bold overflow-x-auto">
+                        <button
+                          type="button"
+                          onClick={() => setDetailTab('features')}
+                          className={`pb-3 border-b-2 transition-all whitespace-nowrap ${
+                            detailTab === 'features'
+                              ? 'border-indigo-600 text-indigo-700 font-black'
+                              : 'border-transparent text-slate-500 hover:text-slate-800'
+                          }`}
+                        >
+                          Features
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setDetailTab('what-you-get')}
+                          className={`pb-3 border-b-2 transition-all whitespace-nowrap ${
+                            detailTab === 'what-you-get'
+                              ? 'border-indigo-600 text-indigo-700 font-black'
+                              : 'border-transparent text-slate-500 hover:text-slate-800'
+                          }`}
+                        >
+                          What You Get
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setDetailTab('use-cases')}
+                          className={`pb-3 border-b-2 transition-all whitespace-nowrap ${
+                            detailTab === 'use-cases'
+                              ? 'border-indigo-600 text-indigo-700 font-black'
+                              : 'border-transparent text-slate-500 hover:text-slate-800'
+                          }`}
+                        >
+                          Use Cases
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setDetailTab('add-ons')}
+                          className={`pb-3 border-b-2 transition-all whitespace-nowrap ${
+                            detailTab === 'add-ons'
+                              ? 'border-indigo-600 text-indigo-700 font-black'
+                              : 'border-transparent text-slate-500 hover:text-slate-800'
+                          }`}
+                        >
+                          Add-ons (Available)
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setDetailTab('docs')}
+                          className={`pb-3 border-b-2 transition-all whitespace-nowrap ${
+                            detailTab === 'docs'
+                              ? 'border-indigo-600 text-indigo-700 font-black'
+                              : 'border-transparent text-slate-500 hover:text-slate-800'
+                          }`}
+                        >
+                          SAP Documentation
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* TAB 1: Features List Matching Image 2 Left */}
+                    {detailTab === 'features' && (
+                      <div className="pt-6 space-y-6">
+                        <div className="flex flex-wrap items-center justify-between gap-3">
+                          <div>
+                            <h3 className="text-base font-black text-slate-900">Included Features</h3>
+                            <p className="text-xs text-slate-500 mt-0.5">
+                              All the following features are included in SAP Integration Suite, {detailEdition.toLowerCase()}.
+                            </p>
+                          </div>
+                          {/* Legend on right */}
+                          <div className="flex items-center gap-4 text-xs">
+                            <span className="flex items-center gap-1.5 text-slate-700">
+                              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span> Included
+                            </span>
+                            <span className="flex items-center gap-1.5 text-slate-700">
+                              <span className="w-2.5 h-2.5 rounded-full bg-rose-400 inline-block"></span> Not Included
+                            </span>
+                            <span className="flex items-center gap-1.5 text-slate-700">
+                              <Info className="w-3.5 h-3.5 text-blue-600 inline-block" /> Limited / Conditional
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* 13 Itemized Feature Rows */}
+                        <div className="divide-y divide-slate-100 border-t border-slate-100">
+                          {detailFeatures.map((feat) => (
+                            <div key={feat.id} className="py-3.5 flex items-center justify-between gap-4">
+                              <div className="flex items-start gap-3">
+                                <div className={`w-8 h-8 rounded-xl ${feat.bg} flex items-center justify-center shrink-0 mt-0.5`}>
+                                  {feat.icon}
+                                </div>
+                                <div>
+                                  <h4 className="text-xs font-bold text-slate-900">{feat.name}</h4>
+                                  <p className="text-[11px] text-slate-500 mt-0.5">{feat.desc}</p>
+                                </div>
+                              </div>
+                              <div className="shrink-0">{feat.badge}</div>
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Note Box Matching Image 2 Left */}
+                        <div className="p-4 bg-indigo-50/50 rounded-xl border border-indigo-100/80 flex items-start gap-3">
+                          <Lightbulb className="w-4 h-4 text-indigo-600 shrink-0 mt-0.5" />
+                          <div className="text-xs text-indigo-950">
+                            <span className="font-bold">Note:</span> Message size is calculated based on 250 KB per message. Additional messages can be purchased as an add-on.
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* TAB 2: What You Get */}
+                    {detailTab === 'what-you-get' && (
+                      <div className="pt-6 space-y-4">
+                        <h3 className="text-base font-black text-slate-900">What You Get with {detailEdition}</h3>
+                        <p className="text-xs text-slate-500">
+                          Enterprise infrastructure, SLAs, and fully managed cloud infrastructure guaranteed by SAP BTP.
+                        </p>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                          <div className="p-4 rounded-xl border border-slate-200 bg-slate-50/50 space-y-1.5">
+                            <h4 className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+                              <ShieldCheck className="w-4 h-4 text-emerald-600" /> High Availability SLA
+                            </h4>
+                            <p className="text-xs text-slate-600">
+                              99.9% uptime SLA with active-active regional clustering and automated disaster recovery.
+                            </p>
+                          </div>
+                          <div className="p-4 rounded-xl border border-slate-200 bg-slate-50/50 space-y-1.5">
+                            <h4 className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+                              <Cloud className="w-4 h-4 text-blue-600" /> Multi-Cloud Hyperscaler Hosting
+                            </h4>
+                            <p className="text-xs text-slate-600">
+                              Deploy natively across AWS, Microsoft Azure, or Google Cloud Platform regions worldwide.
+                            </p>
+                          </div>
+                          <div className="p-4 rounded-xl border border-slate-200 bg-slate-50/50 space-y-1.5">
+                            <h4 className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+                              <Server className="w-4 h-4 text-indigo-600" /> Dedicated Tenant Isolation
+                            </h4>
+                            <p className="text-xs text-slate-600">
+                              Hardware and network isolation ensuring enterprise data security, compliance, and SOC2 / ISO compliance.
+                            </p>
+                          </div>
+                          <div className="p-4 rounded-xl border border-slate-200 bg-slate-50/50 space-y-1.5">
+                            <h4 className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+                              <Zap className="w-4 h-4 text-amber-600" /> Automated Lifecycle Updates
+                            </h4>
+                            <p className="text-xs text-slate-600">
+                              Zero-downtime security patches, adapter library enhancements, and kernel version upgrades managed by SAP.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* TAB 3: Use Cases */}
+                    {detailTab === 'use-cases' && (
+                      <div className="pt-6 space-y-4">
+                        <h3 className="text-base font-black text-slate-900">Recommended Integration Use Cases</h3>
+                        <p className="text-xs text-slate-500">
+                          Scenarios best suited for the {detailEdition} architectural tier.
+                        </p>
+                        <div className="space-y-3 pt-2">
+                          <div className="p-4 rounded-xl border border-slate-200 bg-white space-y-1">
+                            <div className="text-xs font-bold text-slate-900">Application-to-Application (A2A) Core ERP Workflows</div>
+                            <div className="text-xs text-slate-600">
+                              Real-time synchronous and asynchronous orchestration between SAP S/4HANA, SuccessFactors, Salesforce, and core databases.
+                            </div>
+                          </div>
+                          <div className="p-4 rounded-xl border border-slate-200 bg-white space-y-1">
+                            <div className="text-xs font-bold text-slate-900">Business-to-Business (B2B) Supply Chain & EDI Integration</div>
+                            <div className="text-xs text-slate-600">
+                              AS2, OFTP2, and EDIFACT messaging with external vendors, shipping carriers, and global partners using Trading Partner Management.
+                            </div>
+                          </div>
+                          <div className="p-4 rounded-xl border border-slate-200 bg-white space-y-1">
+                            <div className="text-xs font-bold text-slate-900">Hybrid Cloud-to-Ground & Edge Computing</div>
+                            <div className="text-xs text-slate-600">
+                              Deploy Edge Integration Cell locally in factory networks and private cloud datacenters for sub-millisecond local processing.
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* TAB 4: Add-ons (Available) */}
+                    {detailTab === 'add-ons' && (
+                      <div className="pt-6 space-y-4">
+                        <h3 className="text-base font-black text-slate-900">Available Add-ons for {detailEdition}</h3>
+                        <p className="text-xs text-slate-500">
+                          Extend this edition with additional message capacity, data space sovereignty, and edge tenants.
+                        </p>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+                          <div className="p-4 rounded-xl border border-slate-200 bg-white space-y-3">
+                            <div>
+                              <div className="text-xs font-bold text-slate-900">Additional Messages</div>
+                              <div className="text-[11px] text-slate-500 mt-0.5">USD 7.00/mo (USD 84.00/yr) per 10K block</div>
+                            </div>
+                            <div className="text-xs font-bold text-indigo-600 font-mono">Current: {packs} blocks</div>
+                            <button
+                              type="button"
+                              onClick={() => handleUpdatePacks(packs + 50)}
+                              className="w-full py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-bold rounded-lg transition-colors"
+                            >
+                              + Add 50 Blocks
+                            </button>
+                          </div>
+                          <div className="p-4 rounded-xl border border-slate-200 bg-white space-y-3">
+                            <div>
+                              <div className="text-xs font-bold text-slate-900">Data Space Integration</div>
+                              <div className="text-[11px] text-slate-500 mt-0.5">USD 75.00/mo (USD 900.00/yr) per pkg</div>
+                            </div>
+                            <div className="text-xs font-bold text-indigo-600 font-mono">Current: {dataSpacePackages} pkg</div>
+                            <button
+                              type="button"
+                              onClick={() => handleUpdateDataSpace(dataSpacePackages + 1)}
+                              className="w-full py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-bold rounded-lg transition-colors"
+                            >
+                              + Add Package
+                            </button>
+                          </div>
+                          <div className="p-4 rounded-xl border border-slate-200 bg-white space-y-3">
+                            <div>
+                              <div className="text-xs font-bold text-slate-900">Additional EIC Tenant</div>
+                              <div className="text-[11px] text-slate-500 mt-0.5">USD 3,455.00/mo (USD 41,460.00/yr)</div>
+                            </div>
+                            <div className="text-xs font-bold text-indigo-600 font-mono">Current: {additionalEicTenants} tenants</div>
+                            <button
+                              type="button"
+                              onClick={() => handleUpdateEic(additionalEicTenants + 1)}
+                              className="w-full py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-bold rounded-lg transition-colors"
+                            >
+                              + Add EIC Tenant
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* TAB 5: SAP Documentation */}
+                    {detailTab === 'docs' && (
+                      <div className="pt-6 space-y-4">
+                        <h3 className="text-base font-black text-slate-900">Official SAP Resources</h3>
+                        <p className="text-xs text-slate-500">
+                          Authoritative documentation and pricing calculators from SAP.
+                        </p>
+                        <div className="space-y-3 pt-2">
+                          <a
+                            href="https://www.sap.com/products/technology-platform/integration-suite/pricing.html"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="p-4 rounded-xl border border-slate-200 hover:border-indigo-300 bg-white flex items-center justify-between transition-colors group block"
+                          >
+                            <div>
+                              <div className="text-xs font-bold text-slate-900 group-hover:text-indigo-600 flex items-center gap-1.5">
+                                Official SAP Integration Suite Pricing Guide <ExternalLink className="w-3.5 h-3.5" />
+                              </div>
+                              <div className="text-xs text-slate-500 mt-0.5">Official SAP pricing page, terms, and packaging breakdown.</div>
+                            </div>
+                            <span className="text-slate-400 group-hover:text-indigo-600 text-xs font-bold">&gt;</span>
+                          </a>
+                          <a
+                            href="https://discovery-center.cloud.sap/serviceCatalog/integration-suite"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="p-4 rounded-xl border border-slate-200 hover:border-indigo-300 bg-white flex items-center justify-between transition-colors group block"
+                          >
+                            <div>
+                              <div className="text-xs font-bold text-slate-900 group-hover:text-indigo-600 flex items-center gap-1.5">
+                                SAP Discovery Center Service Catalog <ExternalLink className="w-3.5 h-3.5" />
+                              </div>
+                              <div className="text-xs text-slate-500 mt-0.5">Explore service plans, technical metrics, and regional availability.</div>
+                            </div>
+                            <span className="text-slate-400 group-hover:text-indigo-600 text-xs font-bold">&gt;</span>
+                          </a>
+                        </div>
+                      </div>
+                    )}
                   </div>
 
-                  {/* Commitment Term Switcher (Years while selecting) */}
-                  <div className="flex items-center space-x-1.5 p-1.5 bg-slate-100/90 rounded-2xl border border-slate-200 shadow-2xs">
-                    <span className="text-[11px] font-black text-slate-500 px-2.5 uppercase tracking-wider flex items-center gap-1">
-                      Term:
-                    </span>
+                  {/* Bottom Navigation for Subview 2 */}
+                  <div className="flex items-center justify-between pt-4">
                     <button
                       type="button"
-                      onClick={() => setContractYears(1)}
-                      className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
-                        contractYears === 1
-                          ? 'bg-white text-indigo-700 shadow-xs border border-indigo-200/80 font-black'
-                          : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
-                      }`}
+                      onClick={() => setStep5SubView('cards')}
+                      className="px-5 py-2.5 text-xs font-bold text-slate-600 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors flex items-center gap-1.5"
                     >
-                      1 Year (Annual)
+                      <ArrowLeft className="w-3.5 h-3.5" /> Back
                     </button>
                     <button
                       type="button"
-                      onClick={() => setContractYears(3)}
-                      className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
-                        contractYears === 3
-                          ? 'bg-white text-indigo-700 shadow-xs border border-indigo-200/80 font-black'
-                          : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
-                      }`}
+                      onClick={() => {
+                        handleSelectEdition(detailEdition);
+                        setStep5SubView('cards');
+                      }}
+                      className="px-6 py-2.5 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-xs transition-all active:scale-95 flex items-center gap-1.5"
                     >
-                      3 Years (36 Mo)
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setContractYears(5)}
-                      className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
-                        contractYears === 5
-                          ? 'bg-white text-indigo-700 shadow-xs border border-indigo-200/80 font-black'
-                          : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
-                      }`}
-                    >
-                      5 Years (60 Mo)
+                      Select {detailEdition} <ArrowRight className="w-3.5 h-3.5" />
                     </button>
                   </div>
                 </div>
+              );
+            }
 
-                {/* 2-Column Responsive Layout Matching Reference Screenshot */}
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-                  {/* Left Column (8 cols): Cards, Accordions, AI Callout */}
-                  <div className="lg:col-span-8 space-y-6">
-                    {/* AI Recommendation Callout Banner */}
-                    <div id="ai-recommendation-section" className="space-y-4 scroll-mt-6">
-                      <div className="p-4 bg-indigo-50/70 border border-indigo-100 rounded-2xl flex flex-wrap items-center justify-between gap-3 shadow-2xs">
-                        <div className="flex items-center gap-3">
-                          <div className="w-9 h-9 rounded-xl bg-indigo-100 flex items-center justify-center text-indigo-600 shadow-2xs">
-                            <Lightbulb className="w-5 h-5" />
-                          </div>
-                          <div>
-                            <h4 className="text-xs font-bold text-indigo-950">Not sure which edition to choose?</h4>
-                            <p className="text-[11px] text-indigo-700">Get AI-based recommendations powered by NVIDIA Llama 3.2 NIM based on your landscape metrics.</p>
-                          </div>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={handleGetLiveAiRecommendation}
-                          disabled={aiLoading}
-                          className="px-3.5 py-1.5 bg-white border border-indigo-200 hover:border-indigo-400 text-indigo-700 hover:bg-indigo-50/60 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-2xs transition-all active:scale-95 disabled:opacity-60"
-                        >
-                          {aiLoading ? (
-                            <>
-                              <Loader2 className="w-3.5 h-3.5 text-indigo-600 animate-spin" />
-                              Analyzing Landscape...
-                            </>
-                          ) : (
-                            <>
-                              <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
-                              Get Recommendation
-                            </>
-                          )}
-                        </button>
+            // =========================================================================
+            // SUBVIEW 3: FEATURE COMPARISON MATRIX (Matching Image 2 Right / Image 3)
+            // =========================================================================
+            if (step5SubView === 'comparison') {
+              return (
+                <div className="space-y-6 animate-fadeIn">
+                  {/* Header Box Matching Image 2 Right / Image 3 */}
+                  <div className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-7 shadow-xs">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-200">
+                      <div>
+                        <h2 className="text-xl font-black text-slate-900">Feature Comparison</h2>
+                        <p className="text-xs text-slate-500 mt-1">
+                          Compare starter, standard, and enhanced editions of SAP Integration Suite.
+                        </p>
                       </div>
-
-                      {/* AI Recommendation Expansion Card */}
-                      {showAiRecommendation && (
-                        <div className="p-5 bg-gradient-to-br from-indigo-50/90 via-purple-50/40 to-white rounded-2xl border border-indigo-200 space-y-3.5 shadow-xs animate-fadeIn">
-                          {aiLoading ? (
-                            <div className="p-6 flex flex-col items-center justify-center gap-3 text-center">
-                              <Loader2 className="w-7 h-7 text-indigo-600 animate-spin" />
-                              <div>
-                                <div className="text-sm font-bold text-indigo-950">ValueLens AI is Evaluating Your Landscape</div>
-                                <div className="text-xs text-indigo-600 mt-0.5">
-                                  Evaluating {totalIflows} interfaces, {complexIflows} complex iFlows, and {monthlyThroughput.toLocaleString()} msg/mo with NVIDIA Llama 3.2 NIM...
-                                </div>
-                              </div>
-                            </div>
-                          ) : aiRecommendationData ? (
-                            <>
-                              <div className="flex items-start justify-between gap-3">
-                                <div className="flex items-start gap-2.5">
-                                  <div className="w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-xs shrink-0 mt-0.5">
-                                    <Sparkles className="w-4 h-4" />
-                                  </div>
-                                  <div>
-                                    <div className="flex flex-wrap items-center gap-2">
-                                      <span className="text-xs font-black text-indigo-950 uppercase tracking-wider">
-                                        AI Recommended Edition:
-                                      </span>
-                                      <span className="text-sm font-black text-indigo-700 bg-indigo-100/90 px-2.5 py-0.5 rounded-lg border border-indigo-200">
-                                        {aiRecommendationData.recommendedEdition}
-                                      </span>
-                                      {aiRecommendationData.confidenceScore && (
-                                        <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100/90 px-2 py-0.5 rounded-full border border-emerald-200">
-                                          {aiRecommendationData.confidenceScore}% Confidence Fit
-                                        </span>
-                                      )}
-                                    </div>
-                                    {aiRecommendationData.headline && (
-                                      <p className="text-xs font-semibold text-slate-700 mt-1">
-                                        {aiRecommendationData.headline}
-                                      </p>
-                                    )}
-                                  </div>
-                                </div>
-                                <button
-                                  type="button"
-                                  onClick={() => setShowAiRecommendation(false)}
-                                  className="text-xs text-slate-400 hover:text-slate-600 font-bold p-1 rounded-lg hover:bg-slate-100"
-                                  title="Close recommendation"
-                                >
-                                  ✕
-                                </button>
-                              </div>
-
-                              <div className="text-xs text-slate-700 leading-relaxed bg-white/90 p-3.5 rounded-xl border border-indigo-100 shadow-2xs">
-                                {aiRecommendationData.reasoning}
-                              </div>
-
-                              {aiRecommendationData.keyBenefits && aiRecommendationData.keyBenefits.length > 0 && (
-                                <div className="space-y-1.5">
-                                  <div className="text-[11px] font-bold text-indigo-900 uppercase tracking-wider">
-                                    Key Benefits Identified by AI:
-                                  </div>
-                                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                                    {aiRecommendationData.keyBenefits.map((benefit, idx) => (
-                                      <div key={idx} className="flex items-start gap-2 text-xs text-slate-700 bg-white/80 p-2.5 rounded-xl border border-indigo-100/80">
-                                        <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
-                                        <span>{benefit}</span>
-                                      </div>
-                                    ))}
-                                  </div>
-                                </div>
-                              )}
-
-                              <div className="pt-2 flex flex-wrap items-center justify-between gap-3 border-t border-indigo-100">
-                                <div className="flex items-center gap-3 text-[11px] text-slate-500">
-                                  <span>Evaluated: {totalIflows} interfaces ({complexIflows} complex), {monthlyThroughput.toLocaleString()} msg/mo.</span>
-                                  <button
-                                    type="button"
-                                    onClick={fetchLiveAiRecommendation}
-                                    disabled={aiLoading}
-                                    className="text-indigo-600 hover:text-indigo-800 font-bold underline flex items-center gap-1"
-                                  >
-                                    <RefreshCw className="w-3 h-3" /> Re-run AI
-                                  </button>
-                                </div>
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    handleSelectEdition(
-                                      aiRecommendationData.recommendedEdition,
-                                      aiRecommendationData.suggestedUnits || (aiRecommendationData.recommendedEdition === 'Standard Edition' ? 3 : 1)
-                                    );
-                                    if (aiRecommendationData.suggestedMessagePacks !== undefined && aiRecommendationData.suggestedMessagePacks > 0) {
-                                      handleUpdatePacks(aiRecommendationData.suggestedMessagePacks);
-                                    }
-                                  }}
-                                  className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow-xs transition-all active:scale-95 flex items-center gap-1.5"
-                                >
-                                  <CheckCircle2 className="w-3.5 h-3.5" />
-                                  Apply {aiRecommendationData.recommendedEdition}
-                                </button>
-                              </div>
-                            </>
-                          ) : null}
-                        </div>
-                      )}
+                      <button
+                        type="button"
+                        onClick={handleDownloadComparison}
+                        className="px-4 py-2 bg-white border border-slate-300 hover:border-slate-400 text-slate-700 hover:bg-slate-50 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors self-start sm:self-auto shadow-2xs"
+                      >
+                        <Download className="w-3.5 h-3.5 text-slate-600" /> Download Comparison
+                      </button>
                     </div>
 
-                    {/* 3 Main Edition Cards */}
+                    {/* Matrix Table with 3 Categorized Groups */}
+                    <div className="mt-4 overflow-x-auto">
+                      <table className="w-full text-xs text-left">
+                        <thead>
+                          <tr className="border-b border-slate-200 text-slate-700 font-bold text-xs">
+                            <th className="py-3 px-3 w-1/4">Feature</th>
+                            <th className="py-3 px-3 w-1/2">Description</th>
+                            <th className="py-3 px-3 text-center w-[8%]">Starter</th>
+                            <th className="py-3 px-3 text-center w-[8%]">Standard</th>
+                            <th className="py-3 px-3 text-center w-[8%]">Enhanced</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-100">
+                          {/* CATEGORY 1: General */}
+                          <tr className="bg-indigo-50/40">
+                            <td colSpan={5} className="py-2.5 px-3 font-black text-indigo-950 text-xs uppercase tracking-wider">
+                              General
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="py-3 px-3 font-semibold text-slate-900">Tenants</td>
+                            <td className="py-3 px-3 text-slate-600">Number of tenants included</td>
+                            <td className="py-3 px-3 text-center font-semibold text-slate-800">1+</td>
+                            <td className="py-3 px-3 text-center font-semibold text-slate-800">1+</td>
+                            <td className="py-3 px-3 text-center font-semibold text-slate-800">1+</td>
+                          </tr>
+                          <tr>
+                            <td className="py-3 px-3 font-semibold text-slate-900">Messages included per month</td>
+                            <td className="py-3 px-3 text-slate-600">Monthly message entitlement (250 KB per message)</td>
+                            <td className="py-3 px-3 text-center font-bold text-slate-800 font-mono">50K</td>
+                            <td className="py-3 px-3 text-center font-bold text-slate-800 font-mono">10K</td>
+                            <td className="py-3 px-3 text-center font-bold text-slate-800 font-mono">500K</td>
+                          </tr>
+                          <tr>
+                            <td className="py-3 px-3 font-semibold text-slate-900">Free messages</td>
+                            <td className="py-3 px-3 text-slate-600">Unlimited SAP-to-SAP application integrations with prebuilt content</td>
+                            <td className="py-3 px-3 text-center">
+                              <span className="inline-flex w-5 h-5 rounded-full bg-emerald-100 text-emerald-600 items-center justify-center text-xs font-bold">✓</span>
+                            </td>
+                            <td className="py-3 px-3 text-center">
+                              <span className="inline-flex w-5 h-5 rounded-full bg-emerald-100 text-emerald-600 items-center justify-center text-xs font-bold">✓</span>
+                            </td>
+                            <td className="py-3 px-3 text-center">
+                              <span className="inline-flex w-5 h-5 rounded-full bg-emerald-100 text-emerald-600 items-center justify-center text-xs font-bold">✓</span>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="py-3 px-3 font-semibold text-slate-900">Prebuilt content</td>
+                            <td className="py-3 px-3 text-slate-600">More than 3,400 prebuilt integrations for SAP, third-party, and e-government applications</td>
+                            <td className="py-3 px-3 text-center">
+                              <span className="inline-flex w-5 h-5 rounded-full bg-emerald-100 text-emerald-600 items-center justify-center text-xs font-bold">✓</span>
+                            </td>
+                            <td className="py-3 px-3 text-center">
+                              <span className="inline-flex w-5 h-5 rounded-full bg-emerald-100 text-emerald-600 items-center justify-center text-xs font-bold">✓</span>
+                            </td>
+                            <td className="py-3 px-3 text-center">
+                              <span className="inline-flex w-5 h-5 rounded-full bg-emerald-100 text-emerald-600 items-center justify-center text-xs font-bold">✓</span>
+                            </td>
+                          </tr>
+
+                          {/* CATEGORY 2: Integration Capabilities */}
+                          <tr className="bg-indigo-50/40">
+                            <td colSpan={5} className="py-2.5 px-3 font-black text-indigo-950 text-xs uppercase tracking-wider">
+                              Integration Capabilities
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="py-3 px-3 font-semibold text-slate-900">Cloud Integration</td>
+                            <td className="py-3 px-3 text-slate-600">A2A, B2B, and B2G integration scenarios</td>
+                            <td className="py-3 px-3 text-center text-xs font-medium text-slate-700">10 custom iFlow cap</td>
+                            <td className="py-3 px-3 text-center">
+                              <span className="inline-flex w-5 h-5 rounded-full bg-emerald-100 text-emerald-600 items-center justify-center text-xs font-bold">✓</span>
+                            </td>
+                            <td className="py-3 px-3 text-center">
+                              <span className="inline-flex w-5 h-5 rounded-full bg-emerald-100 text-emerald-600 items-center justify-center text-xs font-bold">✓</span>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="py-3 px-3 font-semibold text-slate-900">B2B electronic interchange libraries</td>
+                            <td className="py-3 px-3 text-slate-600">B2B electronic interchange libraries, acknowledgment framework, and trading partner management</td>
+                            <td className="py-3 px-3 text-center text-slate-400 font-bold">—</td>
+                            <td className="py-3 px-3 text-center">
+                              <span className="inline-flex w-5 h-5 rounded-full bg-emerald-100 text-emerald-600 items-center justify-center text-xs font-bold">✓</span>
+                            </td>
+                            <td className="py-3 px-3 text-center">
+                              <span className="inline-flex w-5 h-5 rounded-full bg-emerald-100 text-emerald-600 items-center justify-center text-xs font-bold">✓</span>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="py-3 px-3 font-semibold text-slate-900">Integration Assessment</td>
+                            <td className="py-3 px-3 text-slate-600">Guided and systematic design and execution of your enterprise integration strategy</td>
+                            <td className="py-3 px-3 text-center text-slate-400 font-bold">—</td>
+                            <td className="py-3 px-3 text-center">
+                              <span className="inline-flex w-5 h-5 rounded-full bg-emerald-100 text-emerald-600 items-center justify-center text-xs font-bold">✓</span>
+                            </td>
+                            <td className="py-3 px-3 text-center">
+                              <span className="inline-flex w-5 h-5 rounded-full bg-emerald-100 text-emerald-600 items-center justify-center text-xs font-bold">✓</span>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="py-3 px-3 font-semibold text-slate-900">Open Connectors</td>
+                            <td className="py-3 px-3 text-slate-600">More than 200 connectors to third-party apps</td>
+                            <td className="py-3 px-3 text-center text-slate-400 font-bold">—</td>
+                            <td className="py-3 px-3 text-center">
+                              <span className="inline-flex w-5 h-5 rounded-full bg-emerald-100 text-emerald-600 items-center justify-center text-xs font-bold">✓</span>
+                            </td>
+                            <td className="py-3 px-3 text-center">
+                              <span className="inline-flex w-5 h-5 rounded-full bg-emerald-100 text-emerald-600 items-center justify-center text-xs font-bold">✓</span>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="py-3 px-3 font-semibold text-slate-900">API Management</td>
+                            <td className="py-3 px-3 text-slate-600">Full lifecycle API management including creating developer portals</td>
+                            <td className="py-3 px-3 text-center text-slate-400 font-bold">—</td>
+                            <td className="py-3 px-3 text-center">
+                              <span className="inline-flex w-5 h-5 rounded-full bg-emerald-100 text-emerald-600 items-center justify-center text-xs font-bold">✓</span>
+                            </td>
+                            <td className="py-3 px-3 text-center">
+                              <span className="inline-flex w-5 h-5 rounded-full bg-emerald-100 text-emerald-600 items-center justify-center text-xs font-bold">✓</span>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="py-3 px-3 font-semibold text-slate-900">Integration Advisor</td>
+                            <td className="py-3 px-3 text-slate-600">AI-assisted integration using the self-learning and self-improving knowledge base for B2B and EDI integration</td>
+                            <td className="py-3 px-3 text-center text-slate-400 font-bold">—</td>
+                            <td className="py-3 px-3 text-center">
+                              <span className="inline-flex w-5 h-5 rounded-full bg-emerald-100 text-emerald-600 items-center justify-center text-xs font-bold">✓</span>
+                            </td>
+                            <td className="py-3 px-3 text-center">
+                              <span className="inline-flex w-5 h-5 rounded-full bg-emerald-100 text-emerald-600 items-center justify-center text-xs font-bold">✓</span>
+                            </td>
+                          </tr>
+
+                          {/* CATEGORY 3: Hybrid & Operations */}
+                          <tr className="bg-indigo-50/40">
+                            <td colSpan={5} className="py-2.5 px-3 font-black text-indigo-950 text-xs uppercase tracking-wider">
+                              Hybrid & Operations
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="py-3 px-3 font-semibold text-slate-900">Edge integration cell</td>
+                            <td className="py-3 px-3 text-slate-600">Runtimes within your private cloud or private on-premises landscape</td>
+                            <td className="py-3 px-3 text-center text-slate-400 font-bold">—</td>
+                            <td className="py-3 px-3 text-center font-semibold text-slate-800">1+</td>
+                            <td className="py-3 px-3 text-center font-semibold text-slate-800">1+</td>
+                          </tr>
+                          <tr>
+                            <td className="py-3 px-3 font-semibold text-slate-900">SAP Alert Notification Service for SAP BTP (ANS)</td>
+                            <td className="py-3 px-3 text-slate-600">Create and receive real-time events about your services and applications</td>
+                            <td className="py-3 px-3 text-center text-slate-400 font-bold">—</td>
+                            <td className="py-3 px-3 text-center text-slate-400 font-bold">—</td>
+                            <td className="py-3 px-3 text-center">
+                              <span className="inline-flex w-5 h-5 rounded-full bg-emerald-100 text-emerald-600 items-center justify-center text-xs font-bold">✓</span>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="py-3 px-3 font-semibold text-slate-900">SAP Cloud Transport Management (TMS)</td>
+                            <td className="py-3 px-3 text-slate-600">Export, import and ship APIs and related artifacts from the development or test environment to the production environment</td>
+                            <td className="py-3 px-3 text-center text-slate-400 font-bold">—</td>
+                            <td className="py-3 px-3 text-center text-slate-400 font-bold">—</td>
+                            <td className="py-3 px-3 text-center">
+                              <span className="inline-flex w-5 h-5 rounded-full bg-emerald-100 text-emerald-600 items-center justify-center text-xs font-bold">✓</span>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+
+                    {/* Legend at bottom left */}
+                    <div className="mt-6 pt-4 border-t border-slate-100 flex items-center gap-6 text-xs text-slate-600">
+                      <span className="flex items-center gap-1.5 font-medium">
+                        <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold">✓</span> Fully Included
+                      </span>
+                      <span className="flex items-center gap-1.5 font-medium">
+                        <span className="w-4 h-4 rounded-full bg-rose-100 text-rose-500 flex items-center justify-center text-[10px] font-bold">–</span> Not Included
+                      </span>
+                      <span className="flex items-center gap-1.5 font-medium">
+                        <Info className="w-3.5 h-3.5 text-blue-600" /> Limited / Conditional
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Bottom Navigation for Subview 3 */}
+                  <div className="flex items-center justify-between pt-4">
+                    <button
+                      type="button"
+                      onClick={() => setStep5SubView('cards')}
+                      className="px-5 py-2.5 text-xs font-bold text-slate-600 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors flex items-center gap-1.5"
+                    >
+                      <ArrowLeft className="w-3.5 h-3.5" /> Back
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setStep5SubView('cards');
+                        setShowAddOns(true);
+                        setTimeout(() => {
+                          document.getElementById('add-ons-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }, 80);
+                      }}
+                      className="px-6 py-2.5 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-xs transition-all active:scale-95 flex items-center gap-1.5"
+                    >
+                      Next: Add-ons <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+              );
+            }
+
+            // =========================================================================
+            // SUBVIEW 1: MAIN CARDS & SIDEBAR VIEW (Matching Image 1)
+            // =========================================================================
+            return (
+              <div className="space-y-6">
+                {/* Header Row Matching Image 1 */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div>
+                    <span className="text-xs font-black text-indigo-600 uppercase tracking-wider">STEP 5 OF 6</span>
+                    <h2 className="text-2xl font-black text-slate-900 mt-1">Select your SAP BTP Integration Suite edition</h2>
+                    <p className="text-xs text-slate-500 mt-0.5">
+                      Choose the edition that best fits your requirements and sizing.
+                    </p>
+                  </div>
+
+                  {/* Generate AI Insights Card Matching Image 1 */}
+                  <div
+                    onClick={fetchLiveAiRecommendation}
+                    className="cursor-pointer bg-white border border-indigo-100 hover:border-indigo-300 rounded-2xl p-3.5 px-4 shadow-xs hover:shadow-sm transition-all flex items-center gap-3 group max-w-xs shrink-0 active:scale-95"
+                    title="Click to run live AI recommendations"
+                  >
+                    <div className="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                      {aiLoading ? (
+                        <Loader2 className="w-4 h-4 text-indigo-600 animate-spin" />
+                      ) : (
+                        <Sparkles className="w-4 h-4 text-indigo-600" />
+                      )}
+                    </div>
+                    <div>
+                      <div className="text-xs font-black text-slate-900 flex items-center gap-1.5">
+                        Generate AI Insights
+                      </div>
+                      <p className="text-[11px] text-slate-500 leading-tight mt-0.5">
+                        Get AI-powered recommendations based on your inputs.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* AI Recommendation Expansion Card (if active) */}
+                {showAiRecommendation && (
+                  <div id="ai-recommendation-section" className="p-5 bg-gradient-to-br from-indigo-50/90 via-purple-50/40 to-white rounded-2xl border border-indigo-200 space-y-3.5 shadow-xs animate-fadeIn scroll-mt-6">
+                    {aiLoading ? (
+                      <div className="p-6 flex flex-col items-center justify-center gap-3 text-center">
+                        <Loader2 className="w-7 h-7 text-indigo-600 animate-spin" />
+                        <div>
+                          <div className="text-sm font-bold text-indigo-950">ValueLens AI is Evaluating Your Landscape</div>
+                          <div className="text-xs text-indigo-600 mt-0.5">
+                            Evaluating {totalIflows} interfaces, {complexIflows} complex iFlows, and {monthlyThroughput.toLocaleString()} msg/mo with NVIDIA Llama 3.2 NIM...
+                          </div>
+                        </div>
+                      </div>
+                    ) : aiRecommendationData ? (
+                      <>
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex items-start gap-2.5">
+                            <div className="w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-xs shrink-0 mt-0.5">
+                              <Sparkles className="w-4 h-4" />
+                            </div>
+                            <div>
+                              <div className="flex flex-wrap items-center gap-2">
+                                <span className="text-xs font-black text-indigo-950 uppercase tracking-wider">
+                                  AI Recommended Edition:
+                                </span>
+                                <span className="text-sm font-black text-indigo-700 bg-indigo-100/90 px-2.5 py-0.5 rounded-lg border border-indigo-200">
+                                  {aiRecommendationData.recommendedEdition}
+                                </span>
+                                {aiRecommendationData.confidenceScore && (
+                                  <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100/90 px-2 py-0.5 rounded-full border border-emerald-200">
+                                    {aiRecommendationData.confidenceScore}% Confidence Fit
+                                  </span>
+                                )}
+                              </div>
+                              {aiRecommendationData.headline && (
+                                <p className="text-xs font-semibold text-slate-700 mt-1">
+                                  {aiRecommendationData.headline}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setShowAiRecommendation(false)}
+                            className="text-xs text-slate-400 hover:text-slate-600 font-bold p-1 rounded-lg hover:bg-slate-100"
+                            title="Close recommendation"
+                          >
+                            ✕
+                          </button>
+                        </div>
+
+                        <div className="text-xs text-slate-700 leading-relaxed bg-white/90 p-3.5 rounded-xl border border-indigo-100 shadow-2xs">
+                          {aiRecommendationData.reasoning}
+                        </div>
+
+                        {aiRecommendationData.keyBenefits && aiRecommendationData.keyBenefits.length > 0 && (
+                          <div className="space-y-1.5">
+                            <div className="text-[11px] font-bold text-indigo-900 uppercase tracking-wider">
+                              Key Benefits Identified by AI:
+                            </div>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                              {aiRecommendationData.keyBenefits.map((benefit, idx) => (
+                                <div key={idx} className="flex items-start gap-2 text-xs text-slate-700 bg-white/80 p-2.5 rounded-xl border border-indigo-100/80">
+                                  <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
+                                  <span>{benefit}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        <div className="pt-2 flex flex-wrap items-center justify-between gap-3 border-t border-indigo-100">
+                          <div className="flex items-center gap-3 text-[11px] text-slate-500">
+                            <span>Evaluated: {totalIflows} interfaces ({complexIflows} complex), {monthlyThroughput.toLocaleString()} msg/mo.</span>
+                            <button
+                              type="button"
+                              onClick={fetchLiveAiRecommendation}
+                              disabled={aiLoading}
+                              className="text-indigo-600 hover:text-indigo-800 font-bold underline flex items-center gap-1"
+                            >
+                              <RefreshCw className="w-3 h-3" /> Re-run AI
+                            </button>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              handleSelectEdition(
+                                aiRecommendationData.recommendedEdition,
+                                aiRecommendationData.suggestedUnits || (aiRecommendationData.recommendedEdition === 'Standard Edition' ? 3 : 1)
+                              );
+                              if (aiRecommendationData.suggestedMessagePacks !== undefined && aiRecommendationData.suggestedMessagePacks > 0) {
+                                handleUpdatePacks(aiRecommendationData.suggestedMessagePacks);
+                              }
+                            }}
+                            className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow-xs transition-all active:scale-95 flex items-center gap-1.5"
+                          >
+                            <CheckCircle2 className="w-3.5 h-3.5" />
+                            Apply {aiRecommendationData.recommendedEdition}
+                          </button>
+                        </div>
+                      </>
+                    ) : null}
+                  </div>
+                )}
+
+                {/* Main 2-Column Responsive Layout Matching Image 1 */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                  {/* Left Column (8 cols): 3 Edition Cards & Action Cards */}
+                  <div className="lg:col-span-8 space-y-5">
+                    {/* 3 Main Edition Cards Matching Image 1 */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       {/* 1. Starter Edition */}
                       <div
@@ -1702,47 +2513,43 @@ export function AssessmentWizard() {
                             : 'border-slate-200 hover:border-slate-300 bg-white shadow-2xs'
                         }`}
                       >
-                        <div className="space-y-4">
+                        <div className="space-y-3.5">
                           <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600">
                             <Box className="w-5 h-5" />
                           </div>
                           <div>
                             <h3 className="text-base font-black text-slate-900">Starter Edition</h3>
-                            <p className="text-xs text-slate-500 mt-0.5">Best for small and simple integration landscapes</p>
+                            <p className="text-[11px] text-slate-500 mt-0.5 leading-snug">Best for small and simple integration landscapes</p>
                           </div>
 
                           <div className="pt-1">
-                            <div className="text-xl font-black text-slate-900 font-mono">
+                            <div className="text-xl font-black text-indigo-600 font-mono">
                               USD 1,728 <span className="text-xs font-normal text-slate-500">/ month</span>
                             </div>
-                            <div className="text-[11px] text-slate-500 mt-0.5">
-                              {contractYears === 1 && '(USD 20,736 / year)'}
-                              {contractYears === 3 && 'USD 62,208 total (36-mo term)'}
-                              {contractYears === 5 && 'USD 103,680 total (60-mo term)'}
+                            <div className="text-[11px] text-slate-500 mt-0.5 font-mono">
+                              (USD 20,736 / year)
                             </div>
                           </div>
 
-                          {/* Initially collapsed; only shown when Starter Edition is selected */}
-                          {currentEd === 'Starter Edition' && (
-                            <ul className="space-y-2 text-xs text-slate-600 pt-2 border-t border-slate-100 animate-fadeIn">
-                              <li className="flex items-start gap-2">
-                                <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
-                                <span>50K messages per month</span>
-                              </li>
-                              <li className="flex items-start gap-2">
-                                <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
-                                <span>Access to 3,400+ prebuilt integrations</span>
-                              </li>
-                              <li className="flex items-start gap-2">
-                                <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
-                                <span>1 tenant per year</span>
-                              </li>
-                              <li className="flex items-start gap-2">
-                                <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
-                                <span>Cloud Integration (10 custom iFlow cap)</span>
-                              </li>
-                            </ul>
-                          )}
+                          {/* Checklist Matching Image 1 */}
+                          <ul className="space-y-2 text-xs text-slate-700 pt-2 border-t border-slate-100">
+                            <li className="flex items-start gap-2">
+                              <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
+                              <span>50K messages per month</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
+                              <span>Access to 3,400+ prebuilt integrations</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
+                              <span>1 tenant per year</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
+                              <span>Cloud Integration (10 custom iFlow cap)</span>
+                            </li>
+                          </ul>
                         </div>
 
                         <div className="pt-5 space-y-2">
@@ -1760,11 +2567,11 @@ export function AssessmentWizard() {
                             type="button"
                             onClick={(e) => {
                               e.stopPropagation();
-                              handleOpenComparison();
+                              handleOpenDetail('Starter Edition');
                             }}
-                            className="w-full text-[11px] font-semibold text-indigo-600 hover:text-indigo-800 text-center flex items-center justify-center gap-1"
+                            className="w-full text-xs font-bold text-indigo-600 hover:text-indigo-800 text-center flex items-center justify-center gap-1 transition-colors"
                           >
-                            View all features &gt;
+                            View all features →
                           </button>
                         </div>
                       </div>
@@ -1782,55 +2589,51 @@ export function AssessmentWizard() {
                           ★ Recommended
                         </span>
 
-                        <div className="space-y-4">
+                        <div className="space-y-3.5">
                           <div className="w-10 h-10 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600">
                             <Layers className="w-5 h-5" />
                           </div>
                           <div>
                             <h3 className="text-base font-black text-slate-900">Standard Edition</h3>
-                            <p className="text-xs text-slate-500 mt-0.5">Ideal for enterprise integration needs</p>
+                            <p className="text-[11px] text-slate-500 mt-0.5 leading-snug">Ideal for enterprise integration needs</p>
                           </div>
 
                           <div className="pt-1">
-                            <div className="text-xl font-black text-slate-900 font-mono">
+                            <div className="text-xl font-black text-indigo-600 font-mono">
                               USD 5,339 <span className="text-xs font-normal text-slate-500">/ month</span>
                             </div>
-                            <div className="text-[11px] text-slate-500 mt-0.5">
-                              {contractYears === 1 && '(USD 64,068 / year)'}
-                              {contractYears === 3 && 'USD 192,204 total (36-mo term)'}
-                              {contractYears === 5 && 'USD 320,340 total (60-mo term)'}
+                            <div className="text-[11px] text-slate-500 mt-0.5 font-mono">
+                              (USD 64,068 / year)
                             </div>
                           </div>
 
-                          {/* Initially collapsed; only shown when Standard Edition is selected */}
-                          {currentEd === 'Standard Edition' && (
-                            <ul className="space-y-2 text-xs text-slate-600 pt-2 border-t border-slate-100 animate-fadeIn">
-                              <li className="flex items-start gap-2">
-                                <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
-                                <span>API Management</span>
-                              </li>
-                              <li className="flex items-start gap-2">
-                                <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
-                                <span>B2B capabilities</span>
-                              </li>
-                              <li className="flex items-start gap-2">
-                                <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
-                                <span>Open Connectors (200+)</span>
-                              </li>
-                              <li className="flex items-start gap-2">
-                                <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
-                                <span>Integration Advisor</span>
-                              </li>
-                              <li className="flex items-start gap-2">
-                                <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
-                                <span>Integration Assessment</span>
-                              </li>
-                              <li className="flex items-start gap-2">
-                                <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
-                                <span>Edge integration cell (1+ tenant)</span>
-                              </li>
-                            </ul>
-                          )}
+                          {/* Checklist Matching Image 1 */}
+                          <ul className="space-y-2 text-xs text-slate-700 pt-2 border-t border-slate-100">
+                            <li className="flex items-start gap-2">
+                              <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
+                              <span>API Management</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
+                              <span>B2B capabilities</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
+                              <span>Open Connectors (200+)</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
+                              <span>Integration Advisor</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
+                              <span>Integration Assessment</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
+                              <span>Edge integration cell (1+ tenant)</span>
+                            </li>
+                          </ul>
                         </div>
 
                         <div className="pt-5 space-y-2">
@@ -1848,11 +2651,11 @@ export function AssessmentWizard() {
                             type="button"
                             onClick={(e) => {
                               e.stopPropagation();
-                              handleOpenComparison();
+                              handleOpenDetail('Standard Edition');
                             }}
-                            className="w-full text-[11px] font-semibold text-indigo-600 hover:text-indigo-800 text-center flex items-center justify-center gap-1"
+                            className="w-full text-xs font-bold text-indigo-600 hover:text-indigo-800 text-center flex items-center justify-center gap-1 transition-colors"
                           >
-                            View all features &gt;
+                            View all features →
                           </button>
                         </div>
                       </div>
@@ -1866,59 +2669,55 @@ export function AssessmentWizard() {
                             : 'border-slate-200 hover:border-slate-300 bg-white shadow-2xs'
                         }`}
                       >
-                        <div className="space-y-4">
+                        <div className="space-y-3.5">
                           <div className="w-10 h-10 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center text-amber-600">
                             <Crown className="w-5 h-5" />
                           </div>
                           <div>
                             <h3 className="text-base font-black text-slate-900">Enhanced Edition</h3>
-                            <p className="text-xs text-slate-500 mt-0.5">For high-volume and advanced integration scenarios</p>
+                            <p className="text-[11px] text-slate-500 mt-0.5 leading-snug">For high-volume and advanced integration scenarios</p>
                           </div>
 
                           <div className="pt-1">
-                            <div className="text-xl font-black text-slate-900 font-mono">
+                            <div className="text-xl font-black text-indigo-600 font-mono">
                               USD 7,688 <span className="text-xs font-normal text-slate-500">/ month</span>
                             </div>
-                            <div className="text-[11px] text-slate-500 mt-0.5">
-                              {contractYears === 1 && '(USD 92,256 / year)'}
-                              {contractYears === 3 && 'USD 276,768 total (36-mo term)'}
-                              {contractYears === 5 && 'USD 461,280 total (60-mo term)'}
+                            <div className="text-[11px] text-slate-500 mt-0.5 font-mono">
+                              (USD 92,256 / year)
                             </div>
                           </div>
 
-                          {/* Initially collapsed; only shown when Enhanced Edition is selected */}
-                          {currentEd === 'Enhanced Edition' && (
-                            <ul className="space-y-2 text-xs text-slate-600 pt-2 border-t border-slate-100 animate-fadeIn">
-                              <li className="flex items-start gap-2">
-                                <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
-                                <span>All Standard features</span>
-                              </li>
-                              <li className="flex items-start gap-2">
-                                <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
-                                <span>500K messages per month</span>
-                              </li>
-                              <li className="flex items-start gap-2">
-                                <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
-                                <span>Alert Notification Service (ANS)</span>
-                              </li>
-                              <li className="flex items-start gap-2">
-                                <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
-                                <span>Cloud Transport Management (TMS)</span>
-                              </li>
-                              <li className="flex items-start gap-2">
-                                <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
-                                <span>Document AI (100 docs/month)</span>
-                              </li>
-                              <li className="flex items-start gap-2">
-                                <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
-                                <span>Advanced Event Mesh (AEM 100)</span>
-                              </li>
-                              <li className="flex items-start gap-2">
-                                <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
-                                <span>Integration Suite AI capabilities</span>
-                              </li>
-                            </ul>
-                          )}
+                          {/* Checklist Matching Image 1 */}
+                          <ul className="space-y-2 text-xs text-slate-700 pt-2 border-t border-slate-100">
+                            <li className="flex items-start gap-2">
+                              <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
+                              <span>All Standard features</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
+                              <span>500K messages per month</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
+                              <span>Alert Notification Service</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
+                              <span>Cloud Transport Management</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
+                              <span>Document AI (100 docs/month)</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
+                              <span>Advanced Event Mesh (AEM 100)</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
+                              <span>AI capabilities</span>
+                            </li>
+                          </ul>
                         </div>
 
                         <div className="pt-5 space-y-2">
@@ -1936,806 +2735,503 @@ export function AssessmentWizard() {
                             type="button"
                             onClick={(e) => {
                               e.stopPropagation();
-                              handleOpenComparison();
+                              handleOpenDetail('Enhanced Edition');
                             }}
-                            className="w-full text-[11px] font-semibold text-indigo-600 hover:text-indigo-800 text-center flex items-center justify-center gap-1"
+                            className="w-full text-xs font-bold text-indigo-600 hover:text-indigo-800 text-center flex items-center justify-center gap-1 transition-colors"
                           >
-                            View all features &gt;
+                            View all features →
                           </button>
                         </div>
                       </div>
                     </div>
 
-                    {/* Expandable Accordion 1: Which plan is right for me? */}
-                    <div id="feature-comparison-section" className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs transition-all scroll-mt-6">
-                      <div className="flex flex-wrap items-center justify-between gap-3">
-                        <div className="flex items-center gap-3">
-                          <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
-                            <Scale className="w-5 h-5" />
-                          </div>
-                          <div>
-                            <h4 className="text-sm font-bold text-slate-900">Which plan is right for me?</h4>
-                            <p className="text-xs text-slate-500">Compare starter, standard, and enhanced options. View detailed feature comparison.</p>
-                          </div>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => setShowFeatureComparison(!showFeatureComparison)}
-                          className="px-3.5 py-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 flex items-center gap-1.5 transition-colors"
-                        >
-                          <span>{showFeatureComparison ? 'Hide Comparison' : 'View Feature Comparison'}</span>
-                          {showFeatureComparison ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
-                        </button>
-                      </div>
-
-                      {showFeatureComparison && (
-                        <div className="mt-5 pt-5 border-t border-slate-100 overflow-x-auto">
-                          <table className="w-full text-xs text-left">
-                            <thead>
-                              <tr className="border-b border-slate-200 text-slate-500 font-bold uppercase text-[10px] tracking-wider">
-                                <th className="py-2.5 px-3">Capability / Feature</th>
-                                <th className="py-2.5 px-3">Starter Edition</th>
-                                <th className="py-2.5 px-3 bg-indigo-50/50 text-indigo-950 font-black">Standard Edition (Recommended)</th>
-                                <th className="py-2.5 px-3">Enhanced Edition</th>
-                              </tr>
-                            </thead>
-                            <tbody className="divide-y divide-slate-100">
-                              <tr>
-                                <td className="py-2.5 px-3 font-semibold text-slate-900">Target Fit</td>
-                                <td className="py-2.5 px-3 text-slate-600">Small, simple landscapes</td>
-                                <td className="py-2.5 px-3 bg-indigo-50/30 text-indigo-900 font-medium">Enterprise integration core</td>
-                                <td className="py-2.5 px-3 text-slate-600">High-volume & advanced AI/AEM</td>
-                              </tr>
-                              <tr>
-                                <td className="py-2.5 px-3 font-semibold text-slate-900">Included Messages</td>
-                                <td className="py-2.5 px-3 text-slate-600">50K / month</td>
-                                <td className="py-2.5 px-3 bg-indigo-50/30 text-indigo-900 font-medium">10K / month</td>
-                                <td className="py-2.5 px-3 text-slate-600">500K / month</td>
-                              </tr>
-                              <tr>
-                                <td className="py-2.5 px-3 font-semibold text-slate-900">Free SAP-to-SAP Messages</td>
-                                <td className="py-2.5 px-3 text-emerald-600 font-bold">✓ Unlimited</td>
-                                <td className="py-2.5 px-3 bg-indigo-50/30 text-emerald-600 font-bold">✓ Unlimited</td>
-                                <td className="py-2.5 px-3 text-emerald-600 font-bold">✓ Unlimited</td>
-                              </tr>
-                              <tr>
-                                <td className="py-2.5 px-3 font-semibold text-slate-900">Prebuilt Integrations</td>
-                                <td className="py-2.5 px-3 text-slate-600">3,400+ packages</td>
-                                <td className="py-2.5 px-3 bg-indigo-50/30 text-indigo-900 font-medium">3,400+ packages</td>
-                                <td className="py-2.5 px-3 text-slate-600">3,400+ packages</td>
-                              </tr>
-                              <tr>
-                                <td className="py-2.5 px-3 font-semibold text-slate-900">Custom iFlow Entitlement</td>
-                                <td className="py-2.5 px-3 text-amber-700 font-bold">Cap of 10 custom iFlows</td>
-                                <td className="py-2.5 px-3 bg-indigo-50/30 text-emerald-600 font-bold">✓ Unlimited</td>
-                                <td className="py-2.5 px-3 text-emerald-600 font-bold">✓ Unlimited</td>
-                              </tr>
-                              <tr>
-                                <td className="py-2.5 px-3 font-semibold text-slate-900">API Lifecycle Management</td>
-                                <td className="py-2.5 px-3 text-slate-400">✕ Not included</td>
-                                <td className="py-2.5 px-3 bg-indigo-50/30 text-emerald-600 font-bold">✓ Fully included</td>
-                                <td className="py-2.5 px-3 text-emerald-600 font-bold">✓ Fully included</td>
-                              </tr>
-                              <tr>
-                                <td className="py-2.5 px-3 font-semibold text-slate-900">B2B / EDI Trading Partner Mgmt</td>
-                                <td className="py-2.5 px-3 text-slate-400">✕ Not included</td>
-                                <td className="py-2.5 px-3 bg-indigo-50/30 text-emerald-600 font-bold">✓ Fully included</td>
-                                <td className="py-2.5 px-3 text-emerald-600 font-bold">✓ Fully included</td>
-                              </tr>
-                              <tr>
-                                <td className="py-2.5 px-3 font-semibold text-slate-900">Open Connectors (200+ SaaS)</td>
-                                <td className="py-2.5 px-3 text-slate-400">✕ Not included</td>
-                                <td className="py-2.5 px-3 bg-indigo-50/30 text-emerald-600 font-bold">✓ Fully included</td>
-                                <td className="py-2.5 px-3 text-emerald-600 font-bold">✓ Fully included</td>
-                              </tr>
-                              <tr>
-                                <td className="py-2.5 px-3 font-semibold text-slate-900">Integration Advisor (AI-assisted)</td>
-                                <td className="py-2.5 px-3 text-slate-400">✕ Not included</td>
-                                <td className="py-2.5 px-3 bg-indigo-50/30 text-emerald-600 font-bold">✓ Fully included</td>
-                                <td className="py-2.5 px-3 text-emerald-600 font-bold">✓ Fully included</td>
-                              </tr>
-                              <tr>
-                                <td className="py-2.5 px-3 font-semibold text-slate-900">Edge Integration Cell</td>
-                                <td className="py-2.5 px-3 text-slate-400">✕ Not included</td>
-                                <td className="py-2.5 px-3 bg-indigo-50/30 text-indigo-900 font-medium">✓ 1+ runtime tenant</td>
-                                <td className="py-2.5 px-3 text-indigo-900 font-medium">✓ 1+ runtime tenant</td>
-                              </tr>
-                              <tr>
-                                <td className="py-2.5 px-3 font-semibold text-slate-900">Alert Notification (ANS)</td>
-                                <td className="py-2.5 px-3 text-slate-400">✕ Not included</td>
-                                <td className="py-2.5 px-3 bg-indigo-50/30 text-slate-500">Optional Add-on</td>
-                                <td className="py-2.5 px-3 text-emerald-600 font-bold">✓ 100K API calls/mo</td>
-                              </tr>
-                              <tr>
-                                <td className="py-2.5 px-3 font-semibold text-slate-900">Cloud Transport Mgmt (TMS)</td>
-                                <td className="py-2.5 px-3 text-slate-400">✕ Not included</td>
-                                <td className="py-2.5 px-3 bg-indigo-50/30 text-slate-500">Optional Add-on</td>
-                                <td className="py-2.5 px-3 text-emerald-600 font-bold">✓ 25 GB/month</td>
-                              </tr>
-                              <tr>
-                                <td className="py-2.5 px-3 font-semibold text-slate-900">SAP Document AI</td>
-                                <td className="py-2.5 px-3 text-slate-400">✕ Not included</td>
-                                <td className="py-2.5 px-3 bg-indigo-50/30 text-slate-500">Optional Add-on</td>
-                                <td className="py-2.5 px-3 text-emerald-600 font-bold">✓ 100 docs/month</td>
-                              </tr>
-                              <tr>
-                                <td className="py-2.5 px-3 font-semibold text-slate-900">Advanced Event Mesh (AEM)</td>
-                                <td className="py-2.5 px-3 text-slate-400">✕ Not included</td>
-                                <td className="py-2.5 px-3 bg-indigo-50/30 text-slate-500">Separate subscription</td>
-                                <td className="py-2.5 px-3 text-emerald-600 font-bold">✓ 1 x AEM 100 tenant</td>
-                              </tr>
-                              <tr>
-                                <td className="py-2.5 px-3 font-semibold text-slate-900">Integration Suite AI</td>
-                                <td className="py-2.5 px-3 text-slate-400">✕ Not included</td>
-                                <td className="py-2.5 px-3 bg-indigo-50/30 text-slate-500">Fair-use waiver</td>
-                                <td className="py-2.5 px-3 text-emerald-600 font-bold">✓ iFlow Gen & Optimization</td>
-                              </tr>
-                            </tbody>
-                          </table>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Expandable Accordion 2: Add-ons to enhance your plan */}
-                    <div id="add-ons-section" className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs transition-all scroll-mt-6">
-                      <div className="flex flex-wrap items-center justify-between gap-3">
-                        <div className="flex items-center gap-3">
-                          <div className="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center">
-                            <Puzzle className="w-5 h-5" />
-                          </div>
-                          <div>
-                            <h4 className="text-sm font-bold text-slate-900">Add-ons to enhance your plan</h4>
-                            <p className="text-xs text-slate-500">Add additional capabilities to meet your specific requirements.</p>
-                          </div>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => setShowAddOns(!showAddOns)}
-                          className="px-3.5 py-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 flex items-center gap-1.5 transition-colors"
-                        >
-                          <span>{showAddOns ? 'Hide Add-ons' : 'View Add-ons'}</span>
-                          {showAddOns ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
-                        </button>
-                      </div>
-
-                      {showAddOns && (
-                        <div className="mt-5 pt-5 border-t border-slate-100 space-y-4">
-                          <div className="flex items-center justify-between">
-                            <span className="text-xs text-slate-500">
-                              Select one or more add-ons to customize your solution, or leave unselected for base edition only.
-                            </span>
-                            {totalSelectedAddOnsCount > 0 && (
-                              <button
-                                type="button"
-                                onClick={handleClearAllAddOns}
-                                className="text-xs font-bold text-rose-600 hover:text-rose-800 transition-colors"
-                              >
-                                Clear all add-ons
-                              </button>
-                            )}
-                          </div>
-
-                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            {/* 1. Additional Messages */}
-                            <div
-                              className={`p-4 rounded-xl border transition-all flex flex-col justify-between ${
-                                packs > 0
-                                  ? 'border-indigo-600 ring-2 ring-indigo-500/20 bg-indigo-50/20 shadow-xs'
-                                  : 'border-slate-200 bg-white hover:border-slate-300 shadow-2xs'
-                              }`}
-                            >
-                              <div className="space-y-2.5">
-                                <div className="flex items-center justify-between">
-                                  <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
-                                    <MessageSquare className="w-4 h-4" />
-                                  </div>
-                                  <span
-                                    className={`px-2 py-0.5 rounded-full text-[10px] font-black ${
-                                      packs > 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'
-                                    }`}
-                                  >
-                                    {packs > 0 ? `✓ In Plan (${packs} blocks)` : 'Optional'}
-                                  </span>
-                                </div>
-
-                                <div>
-                                  <h5 className="text-xs font-black text-slate-900">Additional Messages</h5>
-                                  <p className="text-[11px] text-slate-500 mt-0.5">
-                                    Blocks of 10,000 monthly transactions to process integrations and APIs.
-                                  </p>
-                                </div>
-
-                                <div className="pt-1">
-                                  <div className="text-sm font-black text-indigo-900 font-mono">
-                                    USD 7.00 <span className="text-[10px] font-normal text-slate-500">/ mo</span>
-                                  </div>
-                                  <div className="text-[10px] text-slate-500 mt-0.5">
-                                    {contractYears === 1 && 'USD 84.00 / 10K-month block / yr'}
-                                    {contractYears === 3 && 'USD 252.00 total / block (3-yr term)'}
-                                    {contractYears === 5 && 'USD 420.00 total / block (5-yr term)'}
-                                  </div>
-                                </div>
-                              </div>
-
-                              <div className="pt-4 border-t border-slate-100 mt-3 space-y-2">
-                                {packs === 0 ? (
-                                  <button
-                                    type="button"
-                                    onClick={() => handleUpdatePacks(50)}
-                                    className="w-full py-1.5 rounded-xl border border-indigo-200 text-indigo-600 hover:bg-indigo-50 text-xs font-bold transition-all flex items-center justify-center gap-1 active:scale-95"
-                                  >
-                                    <Plus className="w-3.5 h-3.5" /> Add to Plan
-                                  </button>
-                                ) : (
-                                  <div className="space-y-1.5">
-                                    <div className="flex items-center justify-between text-[11px]">
-                                      <span className="font-semibold text-slate-700">Quantity (10K blocks):</span>
-                                      <span className="font-mono font-bold text-indigo-700">{packs} blocks</span>
-                                    </div>
-                                    <div className="flex items-center gap-1.5">
-                                      <button
-                                        type="button"
-                                        onClick={() => handleUpdatePacks(packs - 50)}
-                                        className="w-7 h-7 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-100 flex items-center justify-center font-bold text-xs"
-                                      >
-                                        -
-                                      </button>
-                                      <input
-                                        type="number"
-                                        min="0"
-                                        step="50"
-                                        value={packs}
-                                        onChange={(e) => handleUpdatePacks(parseInt(e.target.value) || 0)}
-                                        className="w-full text-center font-mono text-xs border border-slate-300 rounded-lg py-1 bg-white"
-                                      />
-                                      <button
-                                        type="button"
-                                        onClick={() => handleUpdatePacks(packs + 50)}
-                                        className="w-7 h-7 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-100 flex items-center justify-center font-bold text-xs"
-                                      >
-                                        +
-                                      </button>
-                                    </div>
-                                    <div className="flex items-center justify-between pt-1">
-                                      <span className="text-[10px] text-slate-400 font-mono">
-                                        +{(packs * 10).toLocaleString()}K msgs/mo
-                                      </span>
-                                      <button
-                                        type="button"
-                                        onClick={() => handleUpdatePacks(0)}
-                                        className="text-[10px] font-bold text-rose-600 hover:text-rose-800"
-                                      >
-                                        Remove
-                                      </button>
-                                    </div>
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-
-                            {/* 2. Data Space Integration */}
-                            <div
-                              className={`p-4 rounded-xl border transition-all flex flex-col justify-between ${
-                                dataSpacePackages > 0
-                                  ? 'border-indigo-600 ring-2 ring-indigo-500/20 bg-indigo-50/20 shadow-xs'
-                                  : 'border-slate-200 bg-white hover:border-slate-300 shadow-2xs'
-                              }`}
-                            >
-                              <div className="space-y-2.5">
-                                <div className="flex items-center justify-between">
-                                  <div className="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center">
-                                    <Database className="w-4 h-4" />
-                                  </div>
-                                  <span
-                                    className={`px-2 py-0.5 rounded-full text-[10px] font-black ${
-                                      dataSpacePackages > 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'
-                                    }`}
-                                  >
-                                    {dataSpacePackages > 0 ? `✓ In Plan (${dataSpacePackages} pkg)` : 'Optional'}
-                                  </span>
-                                </div>
-
-                                <div>
-                                  <h5 className="text-xs font-black text-slate-900">Data Space Integration</h5>
-                                  <p className="text-[11px] text-slate-500 mt-0.5">
-                                    Supports secure, sovereign data exchange across industrial ecosystems (DSI & DIV).
-                                  </p>
-                                </div>
-
-                                <div className="pt-1">
-                                  <div className="text-sm font-black text-indigo-900 font-mono">
-                                    USD 75.00 <span className="text-[10px] font-normal text-slate-500">/ mo</span>
-                                  </div>
-                                  <div className="text-[10px] text-slate-500 mt-0.5">
-                                    {contractYears === 1 && 'USD 900.00 / pkg / year'}
-                                    {contractYears === 3 && 'USD 2,700.00 total / pkg (3-yr term)'}
-                                    {contractYears === 5 && 'USD 4,500.00 total / pkg (5-yr term)'}
-                                  </div>
-                                </div>
-                              </div>
-
-                              <div className="pt-4 border-t border-slate-100 mt-3 space-y-2">
-                                {dataSpacePackages === 0 ? (
-                                  <button
-                                    type="button"
-                                    onClick={() => handleUpdateDataSpace(1)}
-                                    className="w-full py-1.5 rounded-xl border border-indigo-200 text-indigo-600 hover:bg-indigo-50 text-xs font-bold transition-all flex items-center justify-center gap-1 active:scale-95"
-                                  >
-                                    <Plus className="w-3.5 h-3.5" /> Add to Plan
-                                  </button>
-                                ) : (
-                                  <div className="space-y-1.5">
-                                    <div className="flex items-center justify-between text-[11px]">
-                                      <span className="font-semibold text-slate-700">Tenants / Packages:</span>
-                                      <span className="font-mono font-bold text-indigo-700">{dataSpacePackages} pkg</span>
-                                    </div>
-                                    <div className="flex items-center gap-1.5">
-                                      <button
-                                        type="button"
-                                        onClick={() => handleUpdateDataSpace(dataSpacePackages - 1)}
-                                        className="w-7 h-7 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-100 flex items-center justify-center font-bold text-xs"
-                                      >
-                                        -
-                                      </button>
-                                      <input
-                                        type="number"
-                                        min="0"
-                                        max="20"
-                                        value={dataSpacePackages}
-                                        onChange={(e) => handleUpdateDataSpace(parseInt(e.target.value) || 0)}
-                                        className="w-full text-center font-mono text-xs border border-slate-300 rounded-lg py-1 bg-white"
-                                      />
-                                      <button
-                                        type="button"
-                                        onClick={() => handleUpdateDataSpace(dataSpacePackages + 1)}
-                                        className="w-7 h-7 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-100 flex items-center justify-center font-bold text-xs"
-                                      >
-                                        +
-                                      </button>
-                                    </div>
-                                    <div className="flex items-center justify-between pt-1">
-                                      <span className="text-[10px] text-slate-400 font-mono">
-                                        +USD {(dataSpacePackages * 900).toLocaleString()}/yr
-                                      </span>
-                                      <button
-                                        type="button"
-                                        onClick={() => handleUpdateDataSpace(0)}
-                                        className="text-[10px] font-bold text-rose-600 hover:text-rose-800"
-                                      >
-                                        Remove
-                                      </button>
-                                    </div>
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-
-                            {/* 3. Additional EIC Tenant */}
-                            <div
-                              className={`p-4 rounded-xl border transition-all flex flex-col justify-between ${
-                                additionalEicTenants > 0
-                                  ? 'border-indigo-600 ring-2 ring-indigo-500/20 bg-indigo-50/20 shadow-xs'
-                                  : 'border-slate-200 bg-white hover:border-slate-300 shadow-2xs'
-                              }`}
-                            >
-                              <div className="space-y-2.5">
-                                <div className="flex items-center justify-between">
-                                  <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
-                                    <Server className="w-4 h-4" />
-                                  </div>
-                                  <span
-                                    className={`px-2 py-0.5 rounded-full text-[10px] font-black ${
-                                      additionalEicTenants > 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'
-                                    }`}
-                                  >
-                                    {additionalEicTenants > 0 ? `✓ In Plan (${additionalEicTenants} tenant)` : 'Optional'}
-                                  </span>
-                                </div>
-
-                                <div>
-                                  <h5 className="text-xs font-black text-slate-900">Additional EIC Tenant</h5>
-                                  <p className="text-[11px] text-slate-500 mt-0.5">
-                                    Additional runtime tenants for private cloud or on-prem deployment landscapes.
-                                  </p>
-                                </div>
-
-                                <div className="pt-1">
-                                  <div className="text-sm font-black text-indigo-900 font-mono">
-                                    USD 3,455.00 <span className="text-[10px] font-normal text-slate-500">/ mo</span>
-                                  </div>
-                                  <div className="text-[10px] text-slate-500 mt-0.5">
-                                    {contractYears === 1 && 'USD 41,460.00 / tenant / yr'}
-                                    {contractYears === 3 && 'USD 124,380.00 total / tenant (3-yr term)'}
-                                    {contractYears === 5 && 'USD 207,300.00 total / tenant (5-yr term)'}
-                                  </div>
-                                </div>
-                              </div>
-
-                              <div className="pt-4 border-t border-slate-100 mt-3 space-y-2">
-                                {additionalEicTenants === 0 ? (
-                                  <button
-                                    type="button"
-                                    onClick={() => handleUpdateEic(1)}
-                                    className="w-full py-1.5 rounded-xl border border-indigo-200 text-indigo-600 hover:bg-indigo-50 text-xs font-bold transition-all flex items-center justify-center gap-1 active:scale-95"
-                                  >
-                                    <Plus className="w-3.5 h-3.5" /> Add to Plan
-                                  </button>
-                                ) : (
-                                  <div className="space-y-1.5">
-                                    <div className="flex items-center justify-between text-[11px]">
-                                      <span className="font-semibold text-slate-700">Tenants:</span>
-                                      <span className="font-mono font-bold text-indigo-700">{additionalEicTenants} tenant(s)</span>
-                                    </div>
-                                    <div className="flex items-center gap-1.5">
-                                      <button
-                                        type="button"
-                                        onClick={() => handleUpdateEic(additionalEicTenants - 1)}
-                                        className="w-7 h-7 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-100 flex items-center justify-center font-bold text-xs"
-                                      >
-                                        -
-                                      </button>
-                                      <input
-                                        type="number"
-                                        min="0"
-                                        max="20"
-                                        value={additionalEicTenants}
-                                        onChange={(e) => handleUpdateEic(parseInt(e.target.value) || 0)}
-                                        className="w-full text-center font-mono text-xs border border-slate-300 rounded-lg py-1 bg-white"
-                                      />
-                                      <button
-                                        type="button"
-                                        onClick={() => handleUpdateEic(additionalEicTenants + 1)}
-                                        className="w-7 h-7 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-100 flex items-center justify-center font-bold text-xs"
-                                      >
-                                        +
-                                      </button>
-                                    </div>
-                                    <div className="flex items-center justify-between pt-1">
-                                      <span className="text-[10px] text-slate-400 font-mono">
-                                        +USD {(additionalEicTenants * 41460).toLocaleString()}/yr
-                                      </span>
-                                      <button
-                                        type="button"
-                                        onClick={() => handleUpdateEic(0)}
-                                        className="text-[10px] font-bold text-rose-600 hover:text-rose-800"
-                                      >
-                                        Remove
-                                      </button>
-                                    </div>
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Right Column (4 cols): Your Selection Sidebar & Quick Links */}
-                  <div className="lg:col-span-4 space-y-6">
-                    {/* Your Selection Card Matching Reference UI */}
-                    <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-5">
-                      <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-                        <h3 className="text-base font-black text-slate-900">Your Selection</h3>
-                        <button
-                          type="button"
-                          onClick={handleOpenComparison}
-                          className="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1"
-                        >
-                          <Pencil className="w-3.5 h-3.5" /> Edit
-                        </button>
-                      </div>
-
-                      {/* Selected Edition Summary */}
-                      <div className="flex items-start gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100">
-                        <div className="w-9 h-9 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center shrink-0">
-                          {currentEd === 'Starter Edition' && <Box className="w-5 h-5" />}
-                          {currentEd === 'Standard Edition' && <Layers className="w-5 h-5" />}
-                          {currentEd === 'Enhanced Edition' && <Crown className="w-5 h-5" />}
+                    {/* Two Horizontal Action Cards Matching Image 1 */}
+                    {/* Action Card 1: Which plan is right for me? */}
+                    <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                      <div className="flex items-start sm:items-center gap-3.5">
+                        <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                          <Scale className="w-5 h-5" />
                         </div>
                         <div>
-                          <div className="text-sm font-black text-slate-900">{currentEd}</div>
-                          <div className="text-xs font-black text-indigo-900 font-mono mt-0.5">
-                            USD {currentEd === 'Starter Edition' ? '1,728' : currentEd === 'Standard Edition' ? '5,339' : '7,688'} <span className="text-[10px] font-normal text-slate-500">/ month</span>
-                          </div>
-                          <div className="text-[10px] text-slate-500">
-                            (USD {baseUnitAnnual.toLocaleString()} / year)
-                          </div>
+                          <h4 className="text-sm font-black text-slate-900">Which plan is right for me?</h4>
+                          <p className="text-xs text-slate-500 mt-0.5">
+                            Compare starter, standard, and enhanced options. View detailed feature comparison.
+                          </p>
                         </div>
                       </div>
-
-                      {/* Production Units Interactive Stepper */}
-                      <div className="space-y-1.5 pt-1">
-                        <div className="flex items-center justify-between text-xs">
-                          <span className="font-semibold text-slate-700 flex items-center gap-1">
-                            Production Units
-                            <span title="SAP Integration Suite tenant units (typically 3 for Dev, Test, Prod in enterprise landscapes)">
-                              <Info className="w-3.5 h-3.5 text-slate-400 cursor-help" />
-                            </span>
-                          </span>
-                          <span className="font-mono font-bold text-slate-900">{units} units</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <button
-                            type="button"
-                            onClick={() => handleUpdateUnits(units - 1)}
-                            className="w-8 h-8 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-100 flex items-center justify-center font-bold text-sm disabled:opacity-40"
-                            disabled={units <= 1}
-                          >
-                            -
-                          </button>
-                          <input
-                            type="number"
-                            min="1"
-                            max="20"
-                            value={units}
-                            onChange={(e) => handleUpdateUnits(parseInt(e.target.value) || 1)}
-                            className="w-full text-center font-mono text-sm border border-slate-300 rounded-lg py-1 bg-white"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => handleUpdateUnits(units + 1)}
-                            className="w-8 h-8 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-100 flex items-center justify-center font-bold text-sm"
-                          >
-                            +
-                          </button>
-                        </div>
-                        <p className="text-[10px] text-slate-400">USD {baseUnitAnnual.toLocaleString()} per unit per year</p>
-                      </div>
-
-                      {/* Selected Add-ons Itemized Breakdown */}
-                      <div className="space-y-2 pt-2 border-t border-slate-100">
-                        <div className="flex items-center justify-between text-xs">
-                          <span className="font-semibold text-slate-700 flex items-center gap-1.5">
-                            Add-ons
-                            {totalSelectedAddOnsCount > 0 && (
-                              <span className="w-4 h-4 rounded-full bg-indigo-100 text-indigo-700 text-[10px] font-black flex items-center justify-center">
-                                {totalSelectedAddOnsCount}
-                              </span>
-                            )}
-                          </span>
-                          {totalSelectedAddOnsCount > 0 ? (
-                            <button
-                              type="button"
-                              onClick={handleClearAllAddOns}
-                              className="text-[10px] font-bold text-rose-600 hover:text-rose-800"
-                            >
-                              Clear all
-                            </button>
-                          ) : (
-                            <span className="text-[10px] text-slate-400">None selected ($0)</span>
-                          )}
-                        </div>
-
-                        {totalSelectedAddOnsCount === 0 ? (
-                          <div className="p-3 bg-slate-50 rounded-xl border border-dashed border-slate-200 flex items-center justify-between">
-                            <span className="text-[11px] text-slate-500">No add-ons selected</span>
-                            <button
-                              type="button"
-                              onClick={handleOpenAddOns}
-                              className="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 bg-white px-2 py-1 rounded-lg border border-indigo-200 hover:bg-indigo-50/50 transition-colors flex items-center gap-1"
-                            >
-                              <Plus className="w-3 h-3" /> Select Add-ons
-                            </button>
-                          </div>
-                        ) : (
-                          <div className="space-y-2">
-                            {/* Messages in Sidebar */}
-                            {packs > 0 && (
-                              <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-100 flex items-center justify-between gap-2">
-                                <div className="min-w-0">
-                                  <div className="text-xs font-bold text-slate-900 truncate">
-                                    Additional Messages
-                                  </div>
-                                  <div className="text-[10px] text-slate-500 font-mono">
-                                    {packs} blocks ({contractYears === 1 ? `+$${(packs * 84).toLocaleString()}/yr` : `+$${(packs * 84 * contractYears).toLocaleString()} total`})
-                                  </div>
-                                </div>
-                                <div className="flex items-center gap-1 shrink-0">
-                                  <button
-                                    type="button"
-                                    onClick={() => handleUpdatePacks(packs - 50)}
-                                    className="w-5 h-5 rounded bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 flex items-center justify-center text-[10px] font-bold"
-                                    disabled={packs <= 0}
-                                  >
-                                    -
-                                  </button>
-                                  <span className="text-[10px] font-mono font-bold w-6 text-center">{packs}</span>
-                                  <button
-                                    type="button"
-                                    onClick={() => handleUpdatePacks(packs + 50)}
-                                    className="w-5 h-5 rounded bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 flex items-center justify-center text-[10px] font-bold"
-                                  >
-                                    +
-                                  </button>
-                                  <button
-                                    type="button"
-                                    onClick={() => handleUpdatePacks(0)}
-                                    className="w-5 h-5 rounded hover:bg-rose-50 text-slate-400 hover:text-rose-600 flex items-center justify-center text-xs ml-0.5"
-                                    title="Remove add-on"
-                                  >
-                                    <X className="w-3 h-3" />
-                                  </button>
-                                </div>
-                              </div>
-                            )}
-
-                            {/* Data Space in Sidebar */}
-                            {dataSpacePackages > 0 && (
-                              <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-100 flex items-center justify-between gap-2">
-                                <div className="min-w-0">
-                                  <div className="text-xs font-bold text-slate-900 truncate">
-                                    Data Space Integration
-                                  </div>
-                                  <div className="text-[10px] text-slate-500 font-mono">
-                                    {dataSpacePackages} pkg ({contractYears === 1 ? `+$${(dataSpacePackages * 900).toLocaleString()}/yr` : `+$${(dataSpacePackages * 900 * contractYears).toLocaleString()} total`})
-                                  </div>
-                                </div>
-                                <div className="flex items-center gap-1 shrink-0">
-                                  <button
-                                    type="button"
-                                    onClick={() => handleUpdateDataSpace(dataSpacePackages - 1)}
-                                    className="w-5 h-5 rounded bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 flex items-center justify-center text-[10px] font-bold"
-                                  >
-                                    -
-                                  </button>
-                                  <span className="text-[10px] font-mono font-bold w-5 text-center">{dataSpacePackages}</span>
-                                  <button
-                                    type="button"
-                                    onClick={() => handleUpdateDataSpace(dataSpacePackages + 1)}
-                                    className="w-5 h-5 rounded bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 flex items-center justify-center text-[10px] font-bold"
-                                  >
-                                    +
-                                  </button>
-                                  <button
-                                    type="button"
-                                    onClick={() => handleUpdateDataSpace(0)}
-                                    className="w-5 h-5 rounded hover:bg-rose-50 text-slate-400 hover:text-rose-600 flex items-center justify-center text-xs ml-0.5"
-                                    title="Remove add-on"
-                                  >
-                                    <X className="w-3 h-3" />
-                                  </button>
-                                </div>
-                              </div>
-                            )}
-
-                            {/* EIC Tenant in Sidebar */}
-                            {additionalEicTenants > 0 && (
-                              <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-100 flex items-center justify-between gap-2">
-                                <div className="min-w-0">
-                                  <div className="text-xs font-bold text-slate-900 truncate">
-                                    Additional EIC Tenant
-                                  </div>
-                                  <div className="text-[10px] text-slate-500 font-mono">
-                                    {additionalEicTenants} tenant(s) ({contractYears === 1 ? `+$${(additionalEicTenants * 41460).toLocaleString()}/yr` : `+$${(additionalEicTenants * 41460 * contractYears).toLocaleString()} total`})
-                                  </div>
-                                </div>
-                                <div className="flex items-center gap-1 shrink-0">
-                                  <button
-                                    type="button"
-                                    onClick={() => handleUpdateEic(additionalEicTenants - 1)}
-                                    className="w-5 h-5 rounded bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 flex items-center justify-center text-[10px] font-bold"
-                                  >
-                                    -
-                                  </button>
-                                  <span className="text-[10px] font-mono font-bold w-5 text-center">{additionalEicTenants}</span>
-                                  <button
-                                    type="button"
-                                    onClick={() => handleUpdateEic(additionalEicTenants + 1)}
-                                    className="w-5 h-5 rounded bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 flex items-center justify-center text-[10px] font-bold"
-                                  >
-                                    +
-                                  </button>
-                                  <button
-                                    type="button"
-                                    onClick={() => handleUpdateEic(0)}
-                                    className="w-5 h-5 rounded hover:bg-rose-50 text-slate-400 hover:text-rose-600 flex items-center justify-center text-xs ml-0.5"
-                                    title="Remove add-on"
-                                  >
-                                    <X className="w-3 h-3" />
-                                  </button>
-                                </div>
-                              </div>
-                            )}
-
-                            <div className="text-[10px] font-mono text-indigo-700 font-bold text-right pt-0.5">
-                              Add-ons Total: {contractYears === 1 ? `USD ${annualizedAddOnsCost.toLocaleString()} / yr` : `USD ${(annualizedAddOnsCost * contractYears).toLocaleString()} (${contractYears}-yr)`}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Estimated Annual Cost / Term Cost Box */}
-                      <div className="pt-4 border-t border-slate-100 space-y-1">
-                        <div className="flex items-center justify-between text-xs text-slate-600">
-                          <span className="font-medium flex items-center gap-1">
-                            {contractYears === 1 ? 'Estimated Annual Cost' : `${contractYears}-Year Total Commitment`}
-                            <span title="Total cloud configuration cost including base edition units and message packs">
-                              <Info className="w-3.5 h-3.5 text-slate-400 cursor-help" />
-                            </span>
-                          </span>
-                        </div>
-                        <div className="text-2xl font-black text-indigo-700 font-mono tracking-tight">
-                          USD {contractYears === 1 ? estimatedAnnualCost.toLocaleString() : termTotalCost.toLocaleString()}
-                        </div>
-                        {contractYears > 1 && (
-                          <div className="text-[11px] text-slate-500 font-mono">
-                            (Annualized: USD {estimatedAnnualCost.toLocaleString()} / year)
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Primary CTA Button */}
                       <button
                         type="button"
-                        onClick={() => setCurrentStep(6)}
-                        className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow-md shadow-indigo-600/20 flex items-center justify-center gap-2 transition-all active:scale-95"
+                        onClick={handleOpenComparison}
+                        className="px-4 py-2 bg-white border border-indigo-200 hover:border-indigo-400 text-indigo-600 hover:bg-indigo-50/50 rounded-xl text-xs font-bold transition-all self-start sm:self-auto shrink-0 flex items-center gap-1"
                       >
-                        Next: Review & Results <ArrowRight className="w-4 h-4" />
+                        View Feature Comparison →
                       </button>
                     </div>
 
-                    {/* Quick Links Card Matching Reference Screenshot */}
-                    <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-3">
-                      <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider">Quick Links</h4>
-                      <div className="space-y-2">
-                        <button
-                          type="button"
-                          onClick={handleOpenComparison}
-                          className="w-full p-3 rounded-xl border border-slate-100 hover:border-indigo-200 bg-slate-50/50 hover:bg-indigo-50/30 flex items-center justify-between text-left transition-all group"
-                        >
-                          <div className="flex items-center gap-2.5">
-                            <div className="w-7 h-7 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0">
-                              <Scale className="w-4 h-4" />
-                            </div>
-                            <div>
-                              <div className="text-xs font-bold text-slate-800 group-hover:text-indigo-700">Compare Editions</div>
-                              <div className="text-[10px] text-slate-500">Side-by-side feature comparison</div>
-                            </div>
-                          </div>
-                          <span className="text-slate-400 group-hover:text-indigo-600 text-xs">&gt;</span>
-                        </button>
+                    {/* Action Card 2: Add-ons to enhance your plan */}
+                    <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                      <div className="flex items-start sm:items-center gap-3.5">
+                        <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
+                          <Puzzle className="w-5 h-5" />
+                        </div>
+                        <div>
+                          <h4 className="text-sm font-black text-slate-900">Add-ons to enhance your plan</h4>
+                          <p className="text-xs text-slate-500 mt-0.5">
+                            Add additional capabilities to meet your specific requirements.
+                          </p>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleToggleAddOns}
+                        className="px-4 py-2 bg-white border border-indigo-200 hover:border-indigo-400 text-indigo-600 hover:bg-indigo-50/50 rounded-xl text-xs font-bold transition-all self-start sm:self-auto shrink-0 flex items-center gap-1"
+                      >
+                        {showAddOns ? 'Hide Add-ons ↑' : 'View Add-ons →'}
+                      </button>
+                    </div>
 
-                        <button
-                          type="button"
-                          onClick={handleOpenAddOns}
-                          className="w-full p-3 rounded-xl border border-slate-100 hover:border-indigo-200 bg-slate-50/50 hover:bg-indigo-50/30 flex items-center justify-between text-left transition-all group"
-                        >
-                          <div className="flex items-center gap-2.5">
-                            <div className="w-7 h-7 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center shrink-0">
-                              <Puzzle className="w-4 h-4" />
-                            </div>
-                            <div>
-                              <div className="text-xs font-bold text-slate-800 group-hover:text-indigo-700">View Add-ons</div>
-                              <div className="text-[10px] text-slate-500">Enhance your plan with additional services</div>
-                            </div>
+                    {/* Interactive Add-ons Expandable Section */}
+                    {showAddOns && (
+                      <div id="add-ons-section" className="bg-white rounded-2xl border border-indigo-100 p-5 shadow-xs space-y-4 animate-fadeIn scroll-mt-6">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <h4 className="text-sm font-black text-slate-900">Configure Optional Add-ons</h4>
+                            <p className="text-xs text-slate-500 mt-0.5">
+                              Select one or more add-ons to customize your solution, or leave unselected for base edition only.
+                            </p>
                           </div>
-                          <span className="text-slate-400 group-hover:text-indigo-600 text-xs">&gt;</span>
-                        </button>
+                          {totalSelectedAddOnsCount > 0 && (
+                            <button
+                              type="button"
+                              onClick={handleClearAllAddOns}
+                              className="text-xs font-bold text-rose-600 hover:text-rose-800 transition-colors"
+                            >
+                              Clear all add-ons
+                            </button>
+                          )}
+                        </div>
 
-                        <button
-                          type="button"
-                          onClick={handleGetLiveAiRecommendation}
-                          className="w-full p-3 rounded-xl border border-slate-100 hover:border-indigo-200 bg-slate-50/50 hover:bg-indigo-50/30 flex items-center justify-between text-left transition-all group"
-                        >
-                          <div className="flex items-center gap-2.5">
-                            <div className="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">
-                              <Sparkles className="w-4 h-4" />
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          {/* 1. Additional Messages */}
+                          <div
+                            className={`p-4 rounded-xl border transition-all flex flex-col justify-between ${
+                              packs > 0
+                                ? 'border-indigo-600 ring-2 ring-indigo-500/20 bg-indigo-50/20 shadow-xs'
+                                : 'border-slate-200 bg-white hover:border-slate-300 shadow-2xs'
+                            }`}
+                          >
+                            <div className="space-y-2">
+                              <div className="flex items-center justify-between">
+                                <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                                  <MessageSquare className="w-4 h-4" />
+                                </div>
+                                <span
+                                  className={`px-2 py-0.5 rounded-full text-[10px] font-black ${
+                                    packs > 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'
+                                  }`}
+                                >
+                                  {packs > 0 ? `✓ In Plan (${packs} packs)` : 'Optional'}
+                                </span>
+                              </div>
+                              <div>
+                                <h5 className="text-xs font-black text-slate-900">Additional Messages</h5>
+                                <p className="text-[11px] text-slate-500 mt-0.5 leading-snug">
+                                  Blocks of 10,000 monthly transactions to process integrations and APIs.
+                                </p>
+                              </div>
+                              <div className="pt-1">
+                                <div className="text-sm font-black text-indigo-900 font-mono">
+                                  USD 7.00 <span className="text-[10px] font-normal text-slate-500">/ mo</span>
+                                </div>
+                                <div className="text-[10px] text-slate-500 mt-0.5">USD 84.00 / 10K-pack / yr</div>
+                              </div>
                             </div>
-                            <div>
-                              <div className="text-xs font-bold text-slate-800 group-hover:text-indigo-700">Get AI Recommendation</div>
-                              <div className="text-[10px] text-slate-500">Let AI suggest the best edition for your needs</div>
+
+                            <div className="pt-4 border-t border-slate-100 mt-3 space-y-2">
+                              <div className="flex items-center justify-between text-[11px]">
+                                <span className="font-semibold text-slate-700">Quantity (packs):</span>
+                                <span className="font-mono font-bold text-indigo-700">{packs} packs</span>
+                              </div>
+                              <div className="flex items-center gap-1.5">
+                                <button
+                                  type="button"
+                                  onClick={() => handleUpdatePacks(packs - 50)}
+                                  className="w-7 h-7 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-100 flex items-center justify-center font-bold text-xs"
+                                >
+                                  -
+                                </button>
+                                <input
+                                  type="number"
+                                  min="0"
+                                  step="50"
+                                  value={packs}
+                                  onChange={(e) => handleUpdatePacks(parseInt(e.target.value) || 0)}
+                                  className="w-full text-center font-mono text-xs border border-slate-300 rounded-lg py-1 bg-white"
+                                />
+                                <button
+                                  type="button"
+                                  onClick={() => handleUpdatePacks(packs + 50)}
+                                  className="w-7 h-7 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-100 flex items-center justify-center font-bold text-xs"
+                                >
+                                  +
+                                </button>
+                              </div>
+                              <div className="flex items-center justify-between pt-1">
+                                <span className="text-[10px] text-slate-400 font-mono">
+                                  +USD {(packs * 84).toLocaleString()}/yr
+                                </span>
+                                {packs > 0 && (
+                                  <button
+                                    type="button"
+                                    onClick={() => handleUpdatePacks(0)}
+                                    className="text-[10px] font-bold text-rose-600 hover:text-rose-800"
+                                  >
+                                    Remove
+                                  </button>
+                                )}
+                              </div>
                             </div>
                           </div>
-                          <span className="text-slate-400 group-hover:text-indigo-600 text-xs">&gt;</span>
+
+                          {/* 2. Data Space Integration */}
+                          <div
+                            className={`p-4 rounded-xl border transition-all flex flex-col justify-between ${
+                              dataSpacePackages > 0
+                                ? 'border-indigo-600 ring-2 ring-indigo-500/20 bg-indigo-50/20 shadow-xs'
+                                : 'border-slate-200 bg-white hover:border-slate-300 shadow-2xs'
+                            }`}
+                          >
+                            <div className="space-y-2">
+                              <div className="flex items-center justify-between">
+                                <div className="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center">
+                                  <Database className="w-4 h-4" />
+                                </div>
+                                <span
+                                  className={`px-2 py-0.5 rounded-full text-[10px] font-black ${
+                                    dataSpacePackages > 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'
+                                  }`}
+                                >
+                                  {dataSpacePackages > 0 ? `✓ In Plan (${dataSpacePackages} pkg)` : 'Optional'}
+                                </span>
+                              </div>
+                              <div>
+                                <h5 className="text-xs font-black text-slate-900">Data Space Integration</h5>
+                                <p className="text-[11px] text-slate-500 mt-0.5 leading-snug">
+                                  Supports secure, sovereign data exchange across industrial ecosystems.
+                                </p>
+                              </div>
+                              <div className="pt-1">
+                                <div className="text-sm font-black text-indigo-900 font-mono">
+                                  USD 75.00 <span className="text-[10px] font-normal text-slate-500">/ mo</span>
+                                </div>
+                                <div className="text-[10px] text-slate-500 mt-0.5">USD 900.00 / pkg / year</div>
+                              </div>
+                            </div>
+
+                            <div className="pt-4 border-t border-slate-100 mt-3 space-y-2">
+                              <div className="flex items-center justify-between text-[11px]">
+                                <span className="font-semibold text-slate-700">Packages:</span>
+                                <span className="font-mono font-bold text-indigo-700">{dataSpacePackages} pkg</span>
+                              </div>
+                              <div className="flex items-center gap-1.5">
+                                <button
+                                  type="button"
+                                  onClick={() => handleUpdateDataSpace(dataSpacePackages - 1)}
+                                  className="w-7 h-7 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-100 flex items-center justify-center font-bold text-xs"
+                                >
+                                  -
+                                </button>
+                                <input
+                                  type="number"
+                                  min="0"
+                                  max="20"
+                                  value={dataSpacePackages}
+                                  onChange={(e) => handleUpdateDataSpace(parseInt(e.target.value) || 0)}
+                                  className="w-full text-center font-mono text-xs border border-slate-300 rounded-lg py-1 bg-white"
+                                />
+                                <button
+                                  type="button"
+                                  onClick={() => handleUpdateDataSpace(dataSpacePackages + 1)}
+                                  className="w-7 h-7 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-100 flex items-center justify-center font-bold text-xs"
+                                >
+                                  +
+                                </button>
+                              </div>
+                              <div className="flex items-center justify-between pt-1">
+                                <span className="text-[10px] text-slate-400 font-mono">
+                                  +USD {(dataSpacePackages * 900).toLocaleString()}/yr
+                                </span>
+                                {dataSpacePackages > 0 && (
+                                  <button
+                                    type="button"
+                                    onClick={() => handleUpdateDataSpace(0)}
+                                    className="text-[10px] font-bold text-rose-600 hover:text-rose-800"
+                                  >
+                                    Remove
+                                  </button>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* 3. Additional EIC Tenant */}
+                          <div
+                            className={`p-4 rounded-xl border transition-all flex flex-col justify-between ${
+                              additionalEicTenants > 0
+                                ? 'border-indigo-600 ring-2 ring-indigo-500/20 bg-indigo-50/20 shadow-xs'
+                                : 'border-slate-200 bg-white hover:border-slate-300 shadow-2xs'
+                            }`}
+                          >
+                            <div className="space-y-2">
+                              <div className="flex items-center justify-between">
+                                <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                                  <Server className="w-4 h-4" />
+                                </div>
+                                <span
+                                  className={`px-2 py-0.5 rounded-full text-[10px] font-black ${
+                                    additionalEicTenants > 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'
+                                  }`}
+                                >
+                                  {additionalEicTenants > 0 ? `✓ In Plan (${additionalEicTenants} tenant)` : 'Optional'}
+                                </span>
+                              </div>
+                              <div>
+                                <h5 className="text-xs font-black text-slate-900">Additional EIC Tenant</h5>
+                                <p className="text-[11px] text-slate-500 mt-0.5 leading-snug">
+                                  Additional runtime tenants for private cloud or on-prem deployments.
+                                </p>
+                              </div>
+                              <div className="pt-1">
+                                <div className="text-sm font-black text-indigo-900 font-mono">
+                                  USD 3,455.00 <span className="text-[10px] font-normal text-slate-500">/ mo</span>
+                                </div>
+                                <div className="text-[10px] text-slate-500 mt-0.5">USD 41,460.00 / tenant / yr</div>
+                              </div>
+                            </div>
+
+                            <div className="pt-4 border-t border-slate-100 mt-3 space-y-2">
+                              <div className="flex items-center justify-between text-[11px]">
+                                <span className="font-semibold text-slate-700">Tenants:</span>
+                                <span className="font-mono font-bold text-indigo-700">{additionalEicTenants} tenant(s)</span>
+                              </div>
+                              <div className="flex items-center gap-1.5">
+                                <button
+                                  type="button"
+                                  onClick={() => handleUpdateEic(additionalEicTenants - 1)}
+                                  className="w-7 h-7 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-100 flex items-center justify-center font-bold text-xs"
+                                >
+                                  -
+                                </button>
+                                <input
+                                  type="number"
+                                  min="0"
+                                  max="20"
+                                  value={additionalEicTenants}
+                                  onChange={(e) => handleUpdateEic(parseInt(e.target.value) || 0)}
+                                  className="w-full text-center font-mono text-xs border border-slate-300 rounded-lg py-1 bg-white"
+                                />
+                                <button
+                                  type="button"
+                                  onClick={() => handleUpdateEic(additionalEicTenants + 1)}
+                                  className="w-7 h-7 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-100 flex items-center justify-center font-bold text-xs"
+                                >
+                                  +
+                                </button>
+                              </div>
+                              <div className="flex items-center justify-between pt-1">
+                                <span className="text-[10px] text-slate-400 font-mono">
+                                  +USD {(additionalEicTenants * 41460).toLocaleString()}/yr
+                                </span>
+                                {additionalEicTenants > 0 && (
+                                  <button
+                                    type="button"
+                                    onClick={() => handleUpdateEic(0)}
+                                    className="text-[10px] font-bold text-rose-600 hover:text-rose-800"
+                                  >
+                                    Remove
+                                  </button>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Right Column (4 cols): Live Economics Summary Matching Image 1 */}
+                  <div className="lg:col-span-4 space-y-4">
+                    <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-5">
+                      {/* Live Economics Header with Toggle Switch */}
+                      <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                        <h3 className="text-sm font-black text-slate-900">Live Economics Summary</h3>
+                        <button
+                          type="button"
+                          onClick={() => setLiveEconomicsEnabled(!liveEconomicsEnabled)}
+                          className={`w-11 h-6 rounded-full transition-colors relative p-0.5 focus:outline-hidden ${
+                            liveEconomicsEnabled ? 'bg-indigo-600' : 'bg-slate-200'
+                          }`}
+                          title="Toggle Live Economics Summary"
+                        >
+                          <span
+                            className={`w-5 h-5 rounded-full bg-white shadow-xs block transition-transform ${
+                              liveEconomicsEnabled ? 'translate-x-5' : 'translate-x-0'
+                            }`}
+                          />
                         </button>
                       </div>
+
+                      {liveEconomicsEnabled && (
+                        <div className="space-y-4 animate-fadeIn">
+                          {/* Selected Edition Compact Box */}
+                          <div className="space-y-1.5">
+                            <div className="flex items-center justify-between text-xs text-slate-600">
+                              <span className="font-semibold">Selected Edition</span>
+                              <ChevronUp className="w-3.5 h-3.5 text-slate-400" />
+                            </div>
+                            <div className="flex items-center gap-3 p-3 bg-slate-50/80 rounded-xl border border-slate-100">
+                              <div className="w-9 h-9 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center shrink-0">
+                                {currentEd === 'Starter Edition' && <Box className="w-5 h-5" />}
+                                {currentEd === 'Standard Edition' && <Layers className="w-5 h-5" />}
+                                {currentEd === 'Enhanced Edition' && <Crown className="w-5 h-5" />}
+                              </div>
+                              <div>
+                                <div className="text-xs font-black text-slate-900">{currentEd}</div>
+                                <div className="text-xs font-bold text-indigo-600 font-mono">
+                                  USD {currentEd === 'Starter Edition' ? '1,728' : currentEd === 'Standard Edition' ? '5,339' : '7,688'} <span className="text-[10px] font-normal text-slate-500">/ month</span>
+                                </div>
+                                <div className="text-[10px] text-slate-400 font-mono">
+                                  (USD {baseUnitAnnual.toLocaleString()} / year)
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Production Units Stepper Matching Image 1 */}
+                          <div className="space-y-1.5">
+                            <div className="flex items-center justify-between text-xs">
+                              <span className="font-semibold text-slate-700 flex items-center gap-1">
+                                Production Units
+                                <span title="SAP Integration Suite tenant units (typically 3 for Dev, Test, Prod in enterprise landscapes)">
+                                  <Info className="w-3.5 h-3.5 text-slate-400 cursor-help" />
+                                </span>
+                              </span>
+                              <span className="font-mono font-bold text-slate-900">{units} units</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <button
+                                type="button"
+                                onClick={() => handleUpdateUnits(units - 1)}
+                                className="w-8 h-8 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-100 flex items-center justify-center font-bold text-sm disabled:opacity-40"
+                                disabled={units <= 1}
+                              >
+                                -
+                              </button>
+                              <div className="w-full py-1 text-center font-mono text-xs font-bold border border-slate-300 rounded-lg bg-white">
+                                {units}
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => handleUpdateUnits(units + 1)}
+                                className="w-8 h-8 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-100 flex items-center justify-center font-bold text-sm"
+                              >
+                                +
+                              </button>
+                            </div>
+                          </div>
+
+                          {/* Additional Messages Stepper Matching Image 1 */}
+                          <div className="space-y-1.5">
+                            <div className="flex items-center justify-between text-xs">
+                              <span className="font-semibold text-slate-700 flex items-center gap-1">
+                                Additional Messages
+                                <span title="Blocks of 10,000 monthly transactions ($7/mo = $84/yr each)">
+                                  <Info className="w-3.5 h-3.5 text-slate-400 cursor-help" />
+                                </span>
+                              </span>
+                              <span className="font-mono font-bold text-slate-900">{packs} packs</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <button
+                                type="button"
+                                onClick={() => handleUpdatePacks(packs - 50)}
+                                className="w-8 h-8 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-100 flex items-center justify-center font-bold text-sm disabled:opacity-40"
+                                disabled={packs <= 0}
+                              >
+                                -
+                              </button>
+                              <div className="w-full py-1 text-center font-mono text-xs font-bold border border-slate-300 rounded-lg bg-white">
+                                {packs}
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => handleUpdatePacks(packs + 50)}
+                                className="w-8 h-8 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-100 flex items-center justify-center font-bold text-sm"
+                              >
+                                +
+                              </button>
+                            </div>
+                          </div>
+
+                          {/* Itemized Cost Breakdown Lines Matching Image 1 */}
+                          <div className="pt-3 border-t border-slate-100 space-y-2 text-xs">
+                            <div className="flex items-center justify-between text-slate-600">
+                              <span>Base Subscription (Annual)</span>
+                              <span className="font-mono font-bold text-slate-900">
+                                USD {annualizedBaseCost.toLocaleString()}
+                              </span>
+                            </div>
+                            {packs > 0 && (
+                              <div className="flex items-center justify-between text-slate-600">
+                                <span>Additional Messages</span>
+                                <span className="font-mono font-bold text-slate-900">
+                                  USD {annualizedPacksCost.toLocaleString()}
+                                </span>
+                              </div>
+                            )}
+                            {dataSpacePackages > 0 && (
+                              <div className="flex items-center justify-between text-slate-600">
+                                <span>Data Space Packages</span>
+                                <span className="font-mono font-bold text-slate-900">
+                                  USD {annualizedDataSpaceCost.toLocaleString()}
+                                </span>
+                              </div>
+                            )}
+                            {additionalEicTenants > 0 && (
+                              <div className="flex items-center justify-between text-slate-600">
+                                <span>Additional EIC Tenants</span>
+                                <span className="font-mono font-bold text-slate-900">
+                                  USD {annualizedEicCost.toLocaleString()}
+                                </span>
+                              </div>
+                            )}
+                            <div className="flex items-center justify-between text-slate-900 font-bold pt-1 border-t border-slate-100">
+                              <span>Total Annual Cost</span>
+                              <span className="font-mono text-sm font-black text-slate-900">
+                                USD {estimatedAnnualCost.toLocaleString()}
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Highlight Mint Green Card Matching Image 1 */}
+                          <div className="p-4 bg-emerald-50/70 border border-emerald-200/80 rounded-2xl space-y-1">
+                            <div className="text-xs font-bold text-emerald-800">
+                              Estimated 3-Year TCO
+                            </div>
+                            <div className="text-2xl font-black text-emerald-700 font-mono tracking-tight">
+                              USD {termTotalCost.toLocaleString()}
+                            </div>
+                            <div className="text-[11px] text-emerald-600">
+                              (including selected add-ons)
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
 
-                {/* Bottom Navigation Controls */}
+                {/* Bottom Navigation Controls Matching Image 1 */}
                 <div className="flex items-center justify-between pt-6 border-t border-slate-200">
                   <button
                     type="button"
@@ -3236,8 +3732,8 @@ export function AssessmentWizard() {
 
         </div>
 
-        {/* Right Sticky Sidebar: Live Economics Summary (Visible for input steps 1 to 6) */}
-        {currentStep < 7 && (
+        {/* Right Sticky Sidebar: Live Economics Summary (Visible for input steps 1 to 4, and 6) */}
+        {currentStep !== 5 && currentStep < 7 && (
           <div className="space-y-4">
             <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs sticky top-20 space-y-4">
               <div className="flex items-center justify-between border-b border-slate-100 pb-3">
