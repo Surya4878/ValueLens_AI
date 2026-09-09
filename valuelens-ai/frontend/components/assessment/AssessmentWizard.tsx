@@ -40,6 +40,10 @@ import {
   Truck,
   Building2,
   Mail,
+  Settings,
+  BarChart2,
+  TrendingUp,
+  Rocket,
 } from 'lucide-react';
 import { Assessment, RoiCalculationResult } from '@/types';
 import { api } from '@/lib/api';
@@ -72,6 +76,31 @@ export function AssessmentWizard() {
     suggestedMessagePacks?: number;
   } | null>(null);
 
+  // Step 1 Company Name matching UI specification
+  const [companyName, setCompanyName] = useState<string>('ABC Retail Ltd.');
+
+  // Step 2 Extended Form State matching UI specification
+  const [piPoVersion, setPiPoVersion] = useState<string>('PO 7.5');
+  const [sapBackendSystem, setSapBackendSystem] = useState<string>('SAP ECC');
+  const [hasB2bIntegrations, setHasB2bIntegrations] = useState<'Yes' | 'No' | 'Not sure'>('Yes');
+  const [b2bStandards, setB2bStandards] = useState<string[]>([
+    'EDIFACT',
+    'ANSI X12',
+    'XML / cXML',
+  ]);
+  const [b2bProtocols, setB2bProtocols] = useState<string[]>([
+    'AS2',
+    'SFTP',
+    'HTTPS / REST',
+  ]);
+  const [ediDocumentTypes, setEdiDocumentTypes] = useState<string[]>([
+    'ORDERS — Purchase Order',
+    'INVOIC — Invoice',
+    'ORDRSP — Order Response',
+  ]);
+  const [hasGroundToGround, setHasGroundToGround] = useState<'Yes' | 'No' | 'Not sure'>('Yes');
+  const [groundToGroundInterfaces, setGroundToGroundInterfaces] = useState<number>(310);
+
   // Form State initialized with authoritative benchmark values matching the specification screenshot
   const [assessment, setAssessment] = useState<Assessment>({
     name: 'Enterprise SAP PI/PO to BTP Migration Assessment',
@@ -83,30 +112,30 @@ export function AssessmentWizard() {
       companyInformation: {
         companySize: '200',
         industry: 'Retail',
-        migrationTimeline: '6 Months',
+        migrationTimeline: '6 Months (Accelerated)',
         integrationComplexity: 'MODERATE',
         availabilityRequirements: 'HIGH',
-        complianceRequirements: 'REGULATED',
+        complianceRequirements: 'STANDARD',
         customDevelopment: 'MODERATE',
         monitoringMaturity: 'ENHANCED',
       },
       environmentAssessment: {
-        integrationVolume: 'Medium',
+        integrationVolume: 'High',
         systemComplexity: 'Moderate',
         availabilityRequirements: 'High',
-        customDevelopment: 'Moderate',
-        complianceRequirements: 'Regulated',
+        customDevelopment: 'Medium',
+        complianceRequirements: 'Standard',
         monitoring: 'Enhanced',
-        simpleInterfaces: 800,
-        mediumInterfaces: 200,
-        complexInterfaces: 50,
-        totalInterfaces: 1050,
+        simpleInterfaces: 950,
+        mediumInterfaces: 240,
+        complexInterfaces: 60,
+        totalInterfaces: 1250,
       },
       volumetrics: {
         currentMessageThroughput: '200000',
         indicativeMessageThroughput: '300000',
         apiCount: 45,
-        b2bInterfaces: 20,
+        b2bInterfaces: 85,
       },
       sapPiPoAnnualCostBreakdown: {
         licensing: {
@@ -222,6 +251,59 @@ export function AssessmentWizard() {
       : 594.86;
   const netFiveYearBenefitPreview = annualSavingsPreview * 5 - migrationCostPreview;
 
+  // Step 2 Helper: Automatically derive integration-volume category from interface count
+  const handleInterfacesChange = (val: number) => {
+    const total = isNaN(val) || val < 0 ? 0 : val;
+    let volume = 'Medium';
+    if (total < 200) {
+      volume = 'Low';
+    } else if (total > 1000) {
+      volume = 'High';
+    }
+
+    const simple = Math.round(total * 0.76);
+    const medium = Math.round(total * 0.19);
+    const complex = Math.max(0, total - simple - medium);
+
+    setAssessment((prev) => ({
+      ...prev,
+      sourceSystem: {
+        ...prev.sourceSystem,
+        environmentAssessment: {
+          ...prev.sourceSystem.environmentAssessment,
+          totalInterfaces: total,
+          integrationVolume: volume,
+          simpleInterfaces: simple,
+          mediumInterfaces: medium,
+          complexInterfaces: complex,
+        },
+      },
+    }));
+  };
+
+  // Step 2 Helper: Toggle B2B standards selection
+  const toggleB2bStandard = (std: string) => {
+    setB2bStandards((prev) =>
+      prev.includes(std) ? prev.filter((s) => s !== std) : [...prev, std]
+    );
+  };
+
+  // Step 2 Helper: Toggle communication protocol selection
+  const toggleB2bProtocol = (proto: string) => {
+    setB2bProtocols((prev) =>
+      prev.includes(proto) ? prev.filter((p) => p !== proto) : [...prev, proto]
+    );
+  };
+
+  // Step 2 Helper: Toggle EDI document types selection
+  const toggleEdiDocType = (docType: string) => {
+    setEdiDocumentTypes((prev) =>
+      prev.includes(docType)
+        ? prev.filter((d) => d !== docType)
+        : [...prev, docType]
+    );
+  };
+
   // Prefill Standard Demo
   const handlePrefillDemo = async () => {
     try {
@@ -297,14 +379,15 @@ export function AssessmentWizard() {
     }
   };
 
-  // 6 Milestones corresponding to the official SAP BTP edition selection workflow
+  // 7 Milestones matching the authoritative assessment workflow in screenshot
   const milestones = [
-    { id: 1, label: 'Current Landscape', step: 1 },
-    { id: 2, label: 'Requirements', step: 2 },
-    { id: 3, label: 'Sizing', step: 3 },
-    { id: 4, label: 'Cost Parameters', step: 4 },
-    { id: 5, label: 'Select Edition', step: 5 },
-    { id: 6, label: 'Review & Results', step: 6 },
+    { id: 1, label: 'Organization', step: 1 },
+    { id: 2, label: 'Current Landscape', step: 2 },
+    { id: 3, label: 'Requirements', step: 3 },
+    { id: 4, label: 'Sizing', step: 4 },
+    { id: 5, label: 'Cost Parameters', step: 5 },
+    { id: 6, label: 'Select Edition', step: 6 },
+    { id: 7, label: 'Review & Results', step: 7 },
   ];
 
   const getActiveMilestone = () => {
@@ -313,37 +396,81 @@ export function AssessmentWizard() {
     if (currentStep === 3) return 3;
     if (currentStep === 4) return 4;
     if (currentStep === 5) return 5;
-    return 6;
+    if (currentStep === 6) return 6;
+    return 7;
   };
 
   const activeMilestoneId = getActiveMilestone();
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
-      {/* Top Banner & Heading */}
-      <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-slate-200">
-        <div>
-          <div className="flex items-center space-x-2">
-            <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-              SAP BTP Migration ROI Calculator
+      {/* Hero Banner Matching Screenshot */}
+      <div className="relative rounded-2xl bg-gradient-to-r from-blue-50/90 via-sky-50/50 to-indigo-50/80 border border-blue-100/90 p-6 sm:p-8 overflow-hidden shadow-xs">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+          {/* Left Column: Heading & Feature Badges */}
+          <div className="lg:col-span-7 z-10 space-y-3">
+            <div className="text-[11px] font-bold text-blue-600 tracking-wider uppercase">
+              PLAN | MODERNIZE | OPTIMIZE | REALIZE VALUE
+            </div>
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight">
+              SAP PI/PO to SAP BTP Migration Advisor
             </h1>
-            <span className="text-xs px-2.5 py-0.5 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 font-bold uppercase tracking-wider">
-              SAP PI/PO to BTP
-            </span>
-          </div>
-          <p className="text-sm text-slate-500 mt-1">
-            Modernize. Integrate. Automate. Realize Value. Your journey to a connected, intelligent enterprise.
-          </p>
-        </div>
+            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-xl">
+              Assess your current landscape. Plan with confidence. Accelerate your journey to a connected, intelligent enterprise with Incture&apos;s Business ValueLens AI.
+            </p>
 
-        <div className="flex items-center space-x-3">
-          <button
-            type="button"
-            onClick={handlePrefillDemo}
-            className="px-3.5 py-2 text-xs font-semibold text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 shadow-xs transition-colors"
-          >
-            Prefill Standard Demo Case
-          </button>
+            {/* 4 Feature Pills in a row */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3">
+              <div className="flex items-center space-x-2.5 p-1.5">
+                <div className="w-8 h-8 rounded-full bg-blue-100/80 flex items-center justify-center shrink-0">
+                  <BarChart2 className="w-4 h-4 text-blue-600" />
+                </div>
+                <div>
+                  <div className="text-[11px] font-bold text-slate-800 leading-tight">Data-Driven</div>
+                  <div className="text-[10px] text-slate-500 leading-tight">Insights</div>
+                </div>
+              </div>
+
+              <div className="flex items-center space-x-2.5 p-1.5">
+                <div className="w-8 h-8 rounded-full bg-blue-100/80 flex items-center justify-center shrink-0">
+                  <Settings className="w-4 h-4 text-blue-600" />
+                </div>
+                <div>
+                  <div className="text-[11px] font-bold text-slate-800 leading-tight">Tailored</div>
+                  <div className="text-[10px] text-slate-500 leading-tight">Recommendations</div>
+                </div>
+              </div>
+
+              <div className="flex items-center space-x-2.5 p-1.5">
+                <div className="w-8 h-8 rounded-full bg-blue-100/80 flex items-center justify-center shrink-0">
+                  <Database className="w-4 h-4 text-blue-600" />
+                </div>
+                <div>
+                  <div className="text-[11px] font-bold text-slate-800 leading-tight">Clear Business</div>
+                  <div className="text-[10px] text-slate-500 leading-tight">Value</div>
+                </div>
+              </div>
+
+              <div className="flex items-center space-x-2.5 p-1.5">
+                <div className="w-8 h-8 rounded-full bg-blue-100/80 flex items-center justify-center shrink-0">
+                  <Rocket className="w-4 h-4 text-blue-600" />
+                </div>
+                <div>
+                  <div className="text-[11px] font-bold text-slate-800 leading-tight">Faster Path</div>
+                  <div className="text-[10px] text-slate-500 leading-tight">to Innovation</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column: Panoramic Artwork matching screenshot */}
+          <div className="lg:col-span-5 flex items-center justify-end relative h-48 sm:h-52 overflow-hidden rounded-xl">
+            <img
+              src="/images/banner-right.png"
+              alt="From Integration To What's Next"
+              className="h-full w-auto max-w-full object-contain object-right pointer-events-none mix-blend-multiply"
+            />
+          </div>
         </div>
       </div>
 
@@ -354,15 +481,16 @@ export function AssessmentWizard() {
         </div>
       )}
 
-      {/* 5-Milestone Stepper Bar Matching Screenshot 1 */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-xs">
-        <div className="flex items-center justify-between max-w-4xl mx-auto relative">
+      {/* 7-Milestone Stepper Bar Matching Screenshot */}
+      <div className="bg-white rounded-2xl border border-slate-200/90 p-4 shadow-xs">
+        <div className="flex items-start justify-between max-w-5xl mx-auto relative px-4 sm:px-6">
           {/* Connector line behind circles */}
-          <div className="absolute top-4 left-6 right-6 h-0.5 bg-slate-200 -z-0" />
+          <div className="absolute top-4 left-10 right-10 h-0.5 bg-slate-200 -z-0" />
+          {/* Active progress line */}
           <div
-            className="absolute top-4 left-6 h-0.5 bg-indigo-600 transition-all duration-300 -z-0"
+            className="absolute top-4 left-10 h-0.5 bg-blue-600 transition-all duration-300 -z-0"
             style={{
-              width: `${((activeMilestoneId - 1) / (milestones.length - 1)) * 95}%`,
+              width: `${((Math.max(1, activeMilestoneId) - 1) / (milestones.length - 1)) * 92}%`,
             }}
           />
 
@@ -373,42 +501,48 @@ export function AssessmentWizard() {
             return (
               <div
                 key={m.id}
-                className="flex flex-col items-center relative z-10 cursor-pointer group"
+                className="flex flex-col items-center relative z-10 cursor-pointer group select-none"
                 onClick={() => {
-                  // Direct navigation to milestone's primary step
                   if (m.id === 1) setCurrentStep(1);
                   if (m.id === 2) setCurrentStep(2);
                   if (m.id === 3) setCurrentStep(3);
                   if (m.id === 4) setCurrentStep(4);
                   if (m.id === 5) setCurrentStep(5);
-                  if (m.id === 6) {
+                  if (m.id === 6) setCurrentStep(6);
+                  if (m.id === 7) {
                     if (calculationResult) setCurrentStep(7);
                     else setCurrentStep(6);
                   }
                 }}
               >
                 <div
-                  className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all shadow-xs ${
+                  className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
                     isCurrent
-                      ? 'bg-indigo-600 text-white ring-4 ring-indigo-100 scale-110'
+                      ? 'bg-blue-600 text-white shadow-xs'
                       : isCompleted
-                      ? 'bg-indigo-600 text-white'
-                      : 'bg-white text-slate-400 border-2 border-slate-300'
+                      ? 'bg-teal-400 text-white shadow-xs'
+                      : 'bg-white text-slate-400 border border-slate-300'
                   }`}
                 >
-                  {isCompleted ? '✓' : m.id}
+                  {isCompleted ? (
+                    <Check className="w-4 h-4 stroke-[2.5]" />
+                  ) : (
+                    m.id
+                  )}
                 </div>
-                <span
-                  className={`text-[11px] mt-2 font-medium tracking-tight text-center max-w-[110px] leading-tight ${
-                    isCurrent
-                      ? 'text-indigo-600 font-bold'
-                      : isCompleted
-                      ? 'text-slate-800 font-semibold'
-                      : 'text-slate-400'
-                  }`}
-                >
-                  {m.label}
-                </span>
+                <div className="flex flex-col items-center mt-2 text-center">
+                  <span
+                    className={`text-xs mt-0.5 leading-tight ${
+                      isCurrent
+                        ? 'text-blue-600 font-bold'
+                        : isCompleted
+                        ? 'text-slate-700 font-medium'
+                        : 'text-slate-400'
+                    }`}
+                  >
+                    {m.label}
+                  </span>
+                </div>
               </div>
             );
           })}
@@ -421,349 +555,674 @@ export function AssessmentWizard() {
         <div className={`${currentStep === 5 || currentStep === 7 ? 'lg:col-span-1' : 'lg:col-span-2'} space-y-6`}>
           
           {/* ========================================================================= */}
-          {/* STEP 1 (Slide 2): Company Information                                     */}
+          {/* STEP 1: Tell us about your organization                                   */}
           {/* ========================================================================= */}
           {currentStep === 1 && (
-            <div className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-xs space-y-6">
+            <div className="bg-white rounded-2xl border border-slate-200/90 p-6 sm:p-8 shadow-xs space-y-6">
               <div className="border-b border-slate-100 pb-4">
-                <span className="text-xs font-bold text-indigo-600 uppercase tracking-wider">Step 1 of 6</span>
-                <h2 className="text-xl font-black text-slate-900 mt-1">Tell us about your organization</h2>
-                <p className="text-sm text-slate-500 mt-0.5">
-                  This information helps us provide a more accurate ROI analysis.
+                <span className="text-xs font-bold text-blue-600 uppercase tracking-wider">
+                  STEP 1 OF 7
+                </span>
+                <h2 className="text-2xl font-bold text-slate-900 mt-1">
+                  Tell us about your organization
+                </h2>
+                <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
+                  This information helps us provide a more accurate analysis and personalized recommendations.
                 </p>
               </div>
 
-              <div className="space-y-5 max-w-xl">
+              <div className="space-y-5">
+                {/* 1. Business / Company Name */}
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
-                    Number of Employees <span className="text-rose-500">*</span>
+                  <label className="block text-xs font-semibold text-slate-800 mb-2">
+                    Business / Company Name <span className="text-red-500">*</span>
                   </label>
                   <input
-                    type="number"
-                    value={assessment.sourceSystem.companyInformation.companySize}
-                    onChange={(e) =>
-                      setAssessment({
-                        ...assessment,
-                        sourceSystem: {
-                          ...assessment.sourceSystem,
-                          companyInformation: {
-                            ...assessment.sourceSystem.companyInformation,
-                            companySize: e.target.value,
-                          },
-                        },
-                      })
-                    }
-                    placeholder="e.g. 200"
-                    className="w-full text-sm border border-slate-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                    type="text"
+                    value={companyName}
+                    onChange={(e) => {
+                      setCompanyName(e.target.value);
+                      setAssessment((prev) => ({ ...prev, name: e.target.value }));
+                    }}
+                    placeholder="ABC Retail Ltd."
+                    className="w-full text-xs font-medium border border-slate-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none bg-white text-slate-900"
                   />
                 </div>
 
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
-                    Industry <span className="text-rose-500">*</span>
-                  </label>
-                  <select
-                    value={assessment.sourceSystem.companyInformation.industry}
-                    onChange={(e) =>
-                      setAssessment({
-                        ...assessment,
-                        sourceSystem: {
-                          ...assessment.sourceSystem,
-                          companyInformation: {
-                            ...assessment.sourceSystem.companyInformation,
-                            industry: e.target.value,
+                {/* 2-Column: Employees & Industry */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-800 mb-2">
+                      Number of Employees <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="number"
+                      value={assessment.sourceSystem.companyInformation.companySize}
+                      onChange={(e) =>
+                        setAssessment({
+                          ...assessment,
+                          sourceSystem: {
+                            ...assessment.sourceSystem,
+                            companyInformation: {
+                              ...assessment.sourceSystem.companyInformation,
+                              companySize: e.target.value,
+                            },
                           },
-                        },
-                      })
-                    }
-                    className="w-full text-sm border border-slate-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white"
-                  >
-                    <option value="Retail">Retail</option>
-                    <option value="Manufacturing & Supply Chain">Manufacturing & Supply Chain</option>
-                    <option value="Financial Services & Banking">Financial Services & Banking</option>
-                    <option value="Healthcare & Life Sciences">Healthcare & Life Sciences</option>
-                    <option value="Telecommunications">Telecommunications</option>
-                    <option value="Energy & Utilities">Energy & Utilities</option>
-                    <option value="Technology & Software">Technology & Software</option>
-                    <option value="Consumer Products">Consumer Products</option>
-                  </select>
+                        })
+                      }
+                      placeholder="200"
+                      className="w-full text-xs font-medium border border-slate-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none bg-white text-slate-900"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-800 mb-2">
+                      Industry <span className="text-red-500">*</span>
+                    </label>
+                    <div className="relative">
+                      <select
+                        value={assessment.sourceSystem.companyInformation.industry}
+                        onChange={(e) =>
+                          setAssessment({
+                            ...assessment,
+                            sourceSystem: {
+                              ...assessment.sourceSystem,
+                              companyInformation: {
+                                ...assessment.sourceSystem.companyInformation,
+                                industry: e.target.value,
+                              },
+                            },
+                          })
+                        }
+                        className="w-full text-xs font-medium border border-slate-300 rounded-xl px-4 py-3 pr-8 appearance-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none bg-white text-slate-900"
+                      >
+                        <option value="Retail">Retail</option>
+                        <option value="Manufacturing & Supply Chain">Manufacturing & Supply Chain</option>
+                        <option value="Financial Services & Banking">Financial Services & Banking</option>
+                        <option value="Healthcare & Life Sciences">Healthcare & Life Sciences</option>
+                        <option value="Telecommunications">Telecommunications</option>
+                        <option value="Energy & Utilities">Energy & Utilities</option>
+                        <option value="Technology & Software">Technology & Software</option>
+                        <option value="Consumer Products">Consumer Products</option>
+                      </select>
+                      <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-3.5 pointer-events-none" />
+                    </div>
+                  </div>
                 </div>
 
+                {/* Row 3: Migration Timeline */}
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
-                    Migration Timeline <span className="text-rose-500">*</span>
+                  <label className="block text-xs font-semibold text-slate-800 mb-2">
+                    Migration Timeline <span className="text-red-500">*</span>
                   </label>
-                  <select
-                    value={assessment.sourceSystem.companyInformation.migrationTimeline}
-                    onChange={(e) =>
-                      setAssessment({
-                        ...assessment,
-                        sourceSystem: {
-                          ...assessment.sourceSystem,
-                          companyInformation: {
-                            ...assessment.sourceSystem.companyInformation,
-                            migrationTimeline: e.target.value,
+                  <div className="relative">
+                    <select
+                      value={assessment.sourceSystem.companyInformation.migrationTimeline}
+                      onChange={(e) =>
+                        setAssessment({
+                          ...assessment,
+                          sourceSystem: {
+                            ...assessment.sourceSystem,
+                            companyInformation: {
+                              ...assessment.sourceSystem.companyInformation,
+                              migrationTimeline: e.target.value,
+                            },
                           },
-                        },
-                      })
-                    }
-                    className="w-full text-sm border border-slate-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white"
-                  >
-                    <option value="6 Months">6 Months (Accelerated)</option>
-                    <option value="9 Months">9 Months (Targeted)</option>
-                    <option value="12-18 Months">12-18 Months (Standard Enterprise)</option>
-                    <option value="18-24 Months">18-24 Months (Phased Wave)</option>
-                  </select>
+                        })
+                      }
+                      className="w-full text-xs font-medium border border-slate-300 rounded-xl px-4 py-3 pr-8 appearance-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none bg-white text-slate-900"
+                    >
+                      <option value="6 Months (Accelerated)">6 Months (Accelerated)</option>
+                      <option value="9 Months (Targeted)">9 Months (Targeted)</option>
+                      <option value="12-18 Months (Standard Enterprise)">12-18 Months (Standard Enterprise)</option>
+                      <option value="18-24 Months (Phased Wave)">18-24 Months (Phased Wave)</option>
+                    </select>
+                    <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-3.5 pointer-events-none" />
+                  </div>
                 </div>
               </div>
 
               {/* Navigation Controls */}
               <div className="flex items-center justify-between pt-6 border-t border-slate-100">
-                <Link
-                  href="/"
-                  className="px-5 py-2.5 text-xs font-bold text-slate-600 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors"
+                <button
+                  type="button"
+                  onClick={() => router.push('/')}
+                  className="px-5 py-2.5 text-xs font-bold text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors flex items-center space-x-1.5 shadow-xs"
                 >
-                  ← Back to Overview
-                </Link>
+                  <ArrowLeft className="w-3.5 h-3.5" />
+                  <span>Back</span>
+                </button>
                 <button
                   type="button"
                   onClick={() => setCurrentStep(2)}
-                  className="px-6 py-2.5 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-xs transition-all active:scale-95"
+                  className="px-6 py-2.5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-xs transition-all active:scale-95 flex items-center space-x-1.5"
                 >
-                  Continue →
+                  <span>Continue</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
                 </button>
               </div>
             </div>
           )}
 
           {/* ========================================================================= */}
-          {/* STEP 2 (Slide 3): Current SAP PI/PO Environment                            */}
+          {/* STEP 2: Assess your current SAP PI/PO environment                        */}
           {/* ========================================================================= */}
           {currentStep === 2 && (
-            <div className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-xs space-y-6">
-              <div className="border-b border-slate-100 pb-4">
-                <span className="text-xs font-bold text-indigo-600 uppercase tracking-wider">Step 2 of 6</span>
-                <h2 className="text-xl font-black text-slate-900 mt-1">Assess your current SAP PI/PO environment</h2>
+            <div className="space-y-6">
+              {/* Step Header */}
+              <div>
+                <span className="text-xs font-bold text-blue-600 uppercase tracking-wider">
+                  STEP 2 OF 7
+                </span>
+                <h2 className="text-2xl font-bold text-slate-900 mt-1">
+                  Assess your current SAP PI/PO environment
+                </h2>
                 <p className="text-sm text-slate-500 mt-0.5">
-                  Help us understand your integration landscape and complexity drivers.
+                  Help us understand your PI/PO landscape, integration footprint, and complexity.
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                {/* 1. Integration Volume */}
-                <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-3">
-                  <label className="block text-xs font-bold text-slate-800 uppercase tracking-wider">
-                    Integration Volume
-                  </label>
-                  <div className="flex items-center space-x-4">
-                    {['Low', 'Medium', 'High'].map((opt) => (
-                      <label key={opt} className="flex items-center space-x-2 text-xs font-medium text-slate-700 cursor-pointer">
-                        <input
-                          type="radio"
-                          name="integrationVolume"
-                          value={opt}
-                          checked={assessment.sourceSystem.environmentAssessment.integrationVolume.toLowerCase() === opt.toLowerCase()}
-                          onChange={() =>
-                            setAssessment({
-                              ...assessment,
-                              sourceSystem: {
-                                ...assessment.sourceSystem,
-                                environmentAssessment: {
-                                  ...assessment.sourceSystem.environmentAssessment,
-                                  integrationVolume: opt,
-                                },
-                              },
-                            })
-                          }
-                          className="w-4 h-4 text-indigo-600 focus:ring-indigo-500"
-                        />
-                        <span>{opt}</span>
+              {/* A. Current PI/PO Landscape Card */}
+              <div className="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs space-y-5">
+                <div className="flex items-center space-x-2.5 border-b border-slate-100 pb-3">
+                  <Layers className="w-5 h-5 text-blue-600" />
+                  <h3 className="text-base font-bold text-slate-900">
+                    A. Current PI/PO Landscape
+                  </h3>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {/* Q1: Version */}
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-800 mb-2">
+                      1. Which SAP PI/PO version are you currently using? <span className="text-red-500">*</span>
+                    </label>
+                    <div className="relative">
+                      <select
+                        value={piPoVersion}
+                        onChange={(e) => setPiPoVersion(e.target.value)}
+                        className="w-full text-xs font-medium text-slate-800 border border-slate-300 rounded-xl px-3.5 py-2.5 pr-8 appearance-none bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none"
+                      >
+                        <option value="PI 7.3">PI 7.3</option>
+                        <option value="PI 7.31">PI 7.31</option>
+                        <option value="PI 7.4">PI 7.4</option>
+                        <option value="PO 7.4">PO 7.4</option>
+                        <option value="PO 7.5">PO 7.5</option>
+                        <option value="Other">Other</option>
+                        <option value="Not sure">Not sure</option>
+                      </select>
+                      <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-3 pointer-events-none" />
+                    </div>
+                  </div>
+
+                  {/* Q2: Interface Count */}
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-800 mb-2">
+                      2. Approximately how many interfaces are currently running on SAP PI/PO? <span className="text-red-500">*</span>
+                    </label>
+                    <div className="flex rounded-xl border border-slate-300 overflow-hidden focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500">
+                      <input
+                        type="number"
+                        value={assessment.sourceSystem.environmentAssessment.totalInterfaces}
+                        onChange={(e) => handleInterfacesChange(parseInt(e.target.value) || 0)}
+                        className="w-full text-xs font-medium px-3.5 py-2.5 focus:outline-none bg-white text-slate-900"
+                        placeholder="1250"
+                      />
+                      <div className="bg-slate-50 border-l border-slate-200 px-3.5 flex items-center justify-center text-xs text-slate-500 font-medium select-none">
+                        interfaces
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Q3: Backend System */}
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-800 mb-2">
+                      3. Which SAP backend system is currently connected to PI/PO? <span className="text-red-500">*</span>
+                    </label>
+                    <div className="relative">
+                      <select
+                        value={sapBackendSystem}
+                        onChange={(e) => setSapBackendSystem(e.target.value)}
+                        className="w-full text-xs font-medium text-slate-800 border border-slate-300 rounded-xl px-3.5 py-2.5 pr-8 appearance-none bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none"
+                      >
+                        <option value="SAP ECC">SAP ECC</option>
+                        <option value="SAP S/4HANA">SAP S/4HANA</option>
+                        <option value="Both ECC and S/4HANA">Both ECC and S/4HANA</option>
+                        <option value="Other">Other</option>
+                        <option value="Not sure">Not sure</option>
+                      </select>
+                      <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-3 pointer-events-none" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* B. Integration Characteristics Card */}
+              <div className="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs space-y-5">
+                <div className="flex items-center space-x-2.5 border-b border-slate-100 pb-3">
+                  <Share2 className="w-5 h-5 text-blue-600" />
+                  <h3 className="text-base font-bold text-slate-900">
+                    B. Integration Characteristics
+                  </h3>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  {/* Q4: B2B/EDI */}
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-800 mb-2">
+                        4. Do you use B2B/EDI integrations in your SAP PI/PO landscape? <span className="text-red-500">*</span>
                       </label>
-                    ))}
+                      <div className="flex items-center space-x-5">
+                        {(['Yes', 'No', 'Not sure'] as const).map((opt) => (
+                          <label key={opt} className="flex items-center space-x-2 cursor-pointer select-none">
+                            <input
+                              type="radio"
+                              name="hasB2bIntegrations"
+                              value={opt}
+                              checked={hasB2bIntegrations === opt}
+                              onChange={() => setHasB2bIntegrations(opt)}
+                              className="w-4 h-4 text-blue-600 border-slate-300 focus:ring-blue-500"
+                            />
+                            <span className="text-xs text-slate-700 font-medium">{opt}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+
+                    {hasB2bIntegrations === 'Yes' && (
+                      <div className="space-y-4 pt-1">
+                        {/* Which B2B standards and communication protocols do you use? */}
+                        <div className="p-4 bg-slate-50/70 rounded-xl border border-slate-200/80 space-y-4">
+                          <div>
+                            <label className="block text-xs font-bold text-slate-900">
+                              Which B2B standards and communication protocols do you use?
+                            </label>
+                            <span className="text-xs font-semibold text-blue-700 block mt-1.5">
+                              B2B / EDI Standard <span className="text-slate-500 font-normal">(Select all that apply)</span>
+                            </span>
+                          </div>
+                          <div className="grid grid-cols-2 gap-2.5">
+                            {[
+                              'EDIFACT',
+                              'ANSI X12',
+                              'EANCOM',
+                              'TRADACOMS',
+                              'Odette',
+                              'VDA',
+                              'XML / cXML',
+                              'Other',
+                            ].map((std) => (
+                              <label key={std} className="flex items-center space-x-2 cursor-pointer select-none">
+                                <input
+                                  type="checkbox"
+                                  checked={b2bStandards.includes(std)}
+                                  onChange={() => toggleB2bStandard(std)}
+                                  className="w-4 h-4 rounded text-blue-600 border-slate-300 focus:ring-blue-500"
+                                />
+                                <span className="text-xs text-slate-700 font-medium">{std}</span>
+                              </label>
+                            ))}
+                          </div>
+
+                          {/* Communication Protocol */}
+                          <div className="pt-3 border-t border-slate-200/70">
+                            <span className="text-xs font-semibold text-blue-700 block mb-2">
+                              Communication Protocol <span className="text-slate-500 font-normal">(Select all that apply)</span>
+                            </span>
+                            <div className="grid grid-cols-2 gap-2.5">
+                              {[
+                                'AS2',
+                                'OFTP / OFTP2',
+                                'SFTP',
+                                'HTTPS / REST',
+                                'SOAP / Web Services',
+                                'RNIF (RosettaNet)',
+                                'Other',
+                              ].map((proto) => (
+                                <label key={proto} className="flex items-center space-x-2 cursor-pointer select-none">
+                                  <input
+                                    type="checkbox"
+                                    checked={b2bProtocols.includes(proto)}
+                                    onChange={() => toggleB2bProtocol(proto)}
+                                    className="w-4 h-4 rounded text-blue-600 border-slate-300 focus:ring-blue-500"
+                                  />
+                                  <span className="text-xs text-slate-700 font-medium">{proto}</span>
+                                </label>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* EDI Document Types Box */}
+                        <div className="p-4 bg-slate-50/70 rounded-xl border border-slate-200/80 space-y-3">
+                          <label className="block text-xs font-semibold text-slate-800">
+                            Which EDI document types are currently used? <span className="text-slate-500 font-normal">(Select all that apply)</span>
+                          </label>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                            {[
+                              { code: 'ORDERS — Purchase Order', label: 'ORDERS — Purchase Order' },
+                              { code: 'INVOIC — Invoice', label: 'INVOIC — Invoice' },
+                              { code: 'ORDRSP — Order Response', label: 'ORDRSP — Order Response' },
+                              { code: 'DELFOR — Delivery Schedule', label: 'DELFOR — Delivery Schedule' },
+                              { code: 'DESADV — Despatch Advice', label: 'DESADV — Despatch Advice' },
+                              { code: 'Other', label: 'Other' },
+                            ].map((item) => (
+                              <label key={item.code} className="flex items-center space-x-2 cursor-pointer select-none">
+                                <input
+                                  type="checkbox"
+                                  checked={ediDocumentTypes.includes(item.code)}
+                                  onChange={() => toggleEdiDocType(item.code)}
+                                  className="w-4 h-4 rounded text-blue-600 border-slate-300 focus:ring-blue-500"
+                                />
+                                <span className="text-xs text-slate-700 font-medium">{item.label}</span>
+                              </label>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* B2B/EDI Interfaces Count */}
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-800 mb-2">
+                            Approximately how many B2B/EDI interfaces do you have? <span className="text-red-500">*</span>
+                          </label>
+                          <div className="flex rounded-xl border border-slate-300 overflow-hidden focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500">
+                            <input
+                              type="number"
+                              value={assessment.sourceSystem.volumetrics.b2bInterfaces}
+                              onChange={(e) =>
+                                setAssessment({
+                                  ...assessment,
+                                  sourceSystem: {
+                                    ...assessment.sourceSystem,
+                                    volumetrics: {
+                                      ...assessment.sourceSystem.volumetrics,
+                                      b2bInterfaces: parseInt(e.target.value) || 0,
+                                    },
+                                  },
+                                })
+                              }
+                              className="w-full text-xs font-medium px-3.5 py-2.5 focus:outline-none bg-white text-slate-900"
+                              placeholder="85"
+                            />
+                            <div className="bg-slate-50 border-l border-slate-200 px-3.5 flex items-center justify-center text-xs text-slate-500 font-medium select-none">
+                              interfaces
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Q5: Ground-to-ground */}
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-800 mb-2">
+                        5. Do you have ground-to-ground (on-premise-to-on-premise) integrations running through SAP PI/PO? <span className="text-red-500">*</span>
+                      </label>
+                      <div className="flex items-center space-x-5">
+                        {(['Yes', 'No', 'Not sure'] as const).map((opt) => (
+                          <label key={opt} className="flex items-center space-x-2 cursor-pointer select-none">
+                            <input
+                              type="radio"
+                              name="hasGroundToGround"
+                              value={opt}
+                              checked={hasGroundToGround === opt}
+                              onChange={() => setHasGroundToGround(opt)}
+                              className="w-4 h-4 text-blue-600 border-slate-300 focus:ring-blue-500"
+                            />
+                            <span className="text-xs text-slate-700 font-medium">{opt}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+
+                    {hasGroundToGround === 'Yes' && (
+                      <div className="space-y-4 pt-1">
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-800 mb-2">
+                            Approximately how many ground-to-ground interfaces do you have? <span className="text-red-500">*</span>
+                          </label>
+                          <div className="flex rounded-xl border border-slate-300 overflow-hidden focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500">
+                            <input
+                              type="number"
+                              value={groundToGroundInterfaces}
+                              onChange={(e) => setGroundToGroundInterfaces(parseInt(e.target.value) || 0)}
+                              className="w-full text-xs font-medium px-3.5 py-2.5 focus:outline-none bg-white text-slate-900"
+                              placeholder="310"
+                            />
+                            <div className="bg-slate-50 border-l border-slate-200 px-3.5 flex items-center justify-center text-xs text-slate-500 font-medium select-none">
+                              interfaces
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* C. Landscape Characteristics Card */}
+              <div className="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs space-y-6">
+                <div className="flex items-center space-x-2.5 border-b border-slate-100 pb-3">
+                  <Settings className="w-5 h-5 text-blue-600" />
+                  <h3 className="text-base font-bold text-slate-900">
+                    C. Landscape Characteristics
+                  </h3>
+                </div>
+
+                {/* Top Row: Q6, Q7, Q8 */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {/* Q6: Complexity */}
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-800 mb-3">
+                      6. How complex is your current PI/PO integration landscape? <span className="text-red-500">*</span>
+                    </label>
+                    <div className="grid grid-cols-2 gap-y-2.5 gap-x-4">
+                      {['Simple', 'Moderate', 'Complex'].map((opt) => (
+                        <label key={opt} className="flex items-center space-x-2 cursor-pointer select-none">
+                          <input
+                            type="radio"
+                            name="systemComplexity"
+                            value={opt}
+                            checked={assessment.sourceSystem.environmentAssessment.systemComplexity.toLowerCase() === opt.toLowerCase()}
+                            onChange={() =>
+                              setAssessment({
+                                ...assessment,
+                                sourceSystem: {
+                                  ...assessment.sourceSystem,
+                                  environmentAssessment: {
+                                    ...assessment.sourceSystem.environmentAssessment,
+                                    systemComplexity: opt,
+                                  },
+                                  companyInformation: {
+                                    ...assessment.sourceSystem.companyInformation,
+                                    integrationComplexity: opt.toUpperCase(),
+                                  },
+                                },
+                              })
+                            }
+                            className="w-4 h-4 text-blue-600 border-slate-300 focus:ring-blue-500"
+                          />
+                          <span className="text-xs text-slate-700 font-medium">{opt}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Q7: Availability */}
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-800 mb-3">
+                      7. What level of availability is required for your integration landscape? <span className="text-red-500">*</span>
+                    </label>
+                    <div className="grid grid-cols-2 gap-y-2.5 gap-x-4">
+                      {['Standard', 'High', 'Mission Critical'].map((opt) => (
+                        <label key={opt} className={`flex items-center space-x-2 cursor-pointer select-none ${opt === 'Mission Critical' ? 'col-span-2' : ''}`}>
+                          <input
+                            type="radio"
+                            name="availabilityRequirements"
+                            value={opt}
+                            checked={assessment.sourceSystem.environmentAssessment.availabilityRequirements.toLowerCase().includes(opt.toLowerCase())}
+                            onChange={() =>
+                              setAssessment({
+                                ...assessment,
+                                sourceSystem: {
+                                  ...assessment.sourceSystem,
+                                  environmentAssessment: {
+                                    ...assessment.sourceSystem.environmentAssessment,
+                                    availabilityRequirements: opt,
+                                  },
+                                  companyInformation: {
+                                    ...assessment.sourceSystem.companyInformation,
+                                    availabilityRequirements: opt.toUpperCase(),
+                                  },
+                                },
+                              })
+                            }
+                            className="w-4 h-4 text-blue-600 border-slate-300 focus:ring-blue-500"
+                          />
+                          <span className="text-xs text-slate-700 font-medium">{opt}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Q8: Custom Development */}
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-800 mb-3">
+                      8. How much custom development exists in your PI/PO integrations? <span className="text-red-500">*</span>
+                    </label>
+                    <div className="grid grid-cols-2 gap-y-2.5 gap-x-4">
+                      {['Low', 'Medium', 'High', 'Not sure'].map((opt) => (
+                        <label key={opt} className="flex items-center space-x-2 cursor-pointer select-none">
+                          <input
+                            type="radio"
+                            name="customDevelopment"
+                            value={opt}
+                            checked={
+                              assessment.sourceSystem.environmentAssessment.customDevelopment.toLowerCase() === opt.toLowerCase() ||
+                              (opt === 'Medium' && assessment.sourceSystem.environmentAssessment.customDevelopment.toLowerCase() === 'moderate')
+                            }
+                            onChange={() =>
+                              setAssessment({
+                                ...assessment,
+                                sourceSystem: {
+                                  ...assessment.sourceSystem,
+                                  environmentAssessment: {
+                                    ...assessment.sourceSystem.environmentAssessment,
+                                    customDevelopment: opt,
+                                  },
+                                  companyInformation: {
+                                    ...assessment.sourceSystem.companyInformation,
+                                    customDevelopment: opt.toUpperCase(),
+                                  },
+                                },
+                              })
+                            }
+                            className="w-4 h-4 text-blue-600 border-slate-300 focus:ring-blue-500"
+                          />
+                          <span className="text-xs text-slate-700 font-medium">{opt}</span>
+                        </label>
+                      ))}
+                    </div>
                   </div>
                 </div>
 
-                {/* 2. System Complexity */}
-                <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-3">
-                  <label className="block text-xs font-bold text-slate-800 uppercase tracking-wider">
-                    System Complexity
-                  </label>
-                  <div className="flex items-center space-x-4">
-                    {['Simple', 'Moderate', 'Complex'].map((opt) => (
-                      <label key={opt} className="flex items-center space-x-2 text-xs font-medium text-slate-700 cursor-pointer">
-                        <input
-                          type="radio"
-                          name="systemComplexity"
-                          value={opt}
-                          checked={assessment.sourceSystem.environmentAssessment.systemComplexity.toLowerCase() === opt.toLowerCase()}
-                          onChange={() =>
-                            setAssessment({
-                              ...assessment,
-                              sourceSystem: {
-                                ...assessment.sourceSystem,
-                                environmentAssessment: {
-                                  ...assessment.sourceSystem.environmentAssessment,
-                                  systemComplexity: opt,
+                {/* Bottom Row: Q9, Q10 */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-slate-100">
+                  {/* Q9: Compliance */}
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-800 mb-3">
+                      9. What level of compliance requirements applies to your integration landscape? <span className="text-red-500">*</span>
+                    </label>
+                    <div className="grid grid-cols-2 gap-y-2.5 gap-x-4">
+                      {['Standard', 'Regulated', 'Highly Regulated'].map((opt) => (
+                        <label key={opt} className={`flex items-center space-x-2 cursor-pointer select-none ${opt === 'Highly Regulated' ? 'col-span-2' : ''}`}>
+                          <input
+                            type="radio"
+                            name="complianceRequirements"
+                            value={opt}
+                            checked={assessment.sourceSystem.environmentAssessment.complianceRequirements.toLowerCase().includes(opt.toLowerCase())}
+                            onChange={() =>
+                              setAssessment({
+                                ...assessment,
+                                sourceSystem: {
+                                  ...assessment.sourceSystem,
+                                  environmentAssessment: {
+                                    ...assessment.sourceSystem.environmentAssessment,
+                                    complianceRequirements: opt,
+                                  },
+                                  companyInformation: {
+                                    ...assessment.sourceSystem.companyInformation,
+                                    complianceRequirements: opt.toUpperCase(),
+                                  },
                                 },
-                              },
-                            })
-                          }
-                          className="w-4 h-4 text-indigo-600 focus:ring-indigo-500"
-                        />
-                        <span>{opt}</span>
-                      </label>
-                    ))}
+                              })
+                            }
+                            className="w-4 h-4 text-blue-600 border-slate-300 focus:ring-blue-500"
+                          />
+                          <span className="text-xs text-slate-700 font-medium">{opt}</span>
+                        </label>
+                      ))}
+                    </div>
                   </div>
-                </div>
 
-                {/* 3. Availability Requirements */}
-                <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-3">
-                  <label className="block text-xs font-bold text-slate-800 uppercase tracking-wider">
-                    Availability Requirements
-                  </label>
-                  <div className="flex items-center space-x-4">
-                    {['Standard', 'High', 'Mission Critical'].map((opt) => (
-                      <label key={opt} className="flex items-center space-x-2 text-xs font-medium text-slate-700 cursor-pointer">
-                        <input
-                          type="radio"
-                          name="availabilityRequirements"
-                          value={opt}
-                          checked={assessment.sourceSystem.environmentAssessment.availabilityRequirements.toLowerCase().includes(opt.toLowerCase())}
-                          onChange={() =>
-                            setAssessment({
-                              ...assessment,
-                              sourceSystem: {
-                                ...assessment.sourceSystem,
-                                environmentAssessment: {
-                                  ...assessment.sourceSystem.environmentAssessment,
-                                  availabilityRequirements: opt,
+                  {/* Q10: Monitoring */}
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-800 mb-3">
+                      10. What level of monitoring is required for your integration landscape? <span className="text-red-500">*</span>
+                    </label>
+                    <div className="grid grid-cols-2 gap-y-2.5 gap-x-4">
+                      {['Standard', 'Enhanced', 'Advanced'].map((opt) => (
+                        <label key={opt} className={`flex items-center space-x-2 cursor-pointer select-none ${opt === 'Advanced' ? 'col-span-2' : ''}`}>
+                          <input
+                            type="radio"
+                            name="monitoring"
+                            value={opt}
+                            checked={assessment.sourceSystem.environmentAssessment.monitoring.toLowerCase() === opt.toLowerCase()}
+                            onChange={() =>
+                              setAssessment({
+                                ...assessment,
+                                sourceSystem: {
+                                  ...assessment.sourceSystem,
+                                  environmentAssessment: {
+                                    ...assessment.sourceSystem.environmentAssessment,
+                                    monitoring: opt,
+                                  },
+                                  companyInformation: {
+                                    ...assessment.sourceSystem.companyInformation,
+                                    monitoringMaturity: opt.toUpperCase(),
+                                  },
                                 },
-                              },
-                            })
-                          }
-                          className="w-4 h-4 text-indigo-600 focus:ring-indigo-500"
-                        />
-                        <span>{opt}</span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-
-                {/* 4. Custom Development */}
-                <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-3">
-                  <label className="block text-xs font-bold text-slate-800 uppercase tracking-wider">
-                    Custom Development
-                  </label>
-                  <div className="flex items-center space-x-4">
-                    {['Low', 'Moderate', 'High'].map((opt) => (
-                      <label key={opt} className="flex items-center space-x-2 text-xs font-medium text-slate-700 cursor-pointer">
-                        <input
-                          type="radio"
-                          name="customDevelopment"
-                          value={opt}
-                          checked={assessment.sourceSystem.environmentAssessment.customDevelopment.toLowerCase() === opt.toLowerCase()}
-                          onChange={() =>
-                            setAssessment({
-                              ...assessment,
-                              sourceSystem: {
-                                ...assessment.sourceSystem,
-                                environmentAssessment: {
-                                  ...assessment.sourceSystem.environmentAssessment,
-                                  customDevelopment: opt,
-                                },
-                              },
-                            })
-                          }
-                          className="w-4 h-4 text-indigo-600 focus:ring-indigo-500"
-                        />
-                        <span>{opt}</span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-
-                {/* 5. Compliance Requirements */}
-                <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-3">
-                  <label className="block text-xs font-bold text-slate-800 uppercase tracking-wider">
-                    Compliance Requirements
-                  </label>
-                  <div className="flex items-center space-x-4">
-                    {['Standard', 'Regulated', 'Highly Regulated'].map((opt) => (
-                      <label key={opt} className="flex items-center space-x-2 text-xs font-medium text-slate-700 cursor-pointer">
-                        <input
-                          type="radio"
-                          name="complianceRequirements"
-                          value={opt}
-                          checked={assessment.sourceSystem.environmentAssessment.complianceRequirements.toLowerCase().includes(opt.toLowerCase())}
-                          onChange={() =>
-                            setAssessment({
-                              ...assessment,
-                              sourceSystem: {
-                                ...assessment.sourceSystem,
-                                environmentAssessment: {
-                                  ...assessment.sourceSystem.environmentAssessment,
-                                  complianceRequirements: opt,
-                                },
-                              },
-                            })
-                          }
-                          className="w-4 h-4 text-indigo-600 focus:ring-indigo-500"
-                        />
-                        <span>{opt}</span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-
-                {/* 6. Monitoring */}
-                <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-3">
-                  <label className="block text-xs font-bold text-slate-800 uppercase tracking-wider">
-                    Monitoring
-                  </label>
-                  <div className="flex items-center space-x-4">
-                    {['Standard', 'Enhanced', 'Advanced'].map((opt) => (
-                      <label key={opt} className="flex items-center space-x-2 text-xs font-medium text-slate-700 cursor-pointer">
-                        <input
-                          type="radio"
-                          name="monitoring"
-                          value={opt}
-                          checked={assessment.sourceSystem.environmentAssessment.monitoring.toLowerCase() === opt.toLowerCase()}
-                          onChange={() =>
-                            setAssessment({
-                              ...assessment,
-                              sourceSystem: {
-                                ...assessment.sourceSystem,
-                                environmentAssessment: {
-                                  ...assessment.sourceSystem.environmentAssessment,
-                                  monitoring: opt,
-                                },
-                              },
-                            })
-                          }
-                          className="w-4 h-4 text-indigo-600 focus:ring-indigo-500"
-                        />
-                        <span>{opt}</span>
-                      </label>
-                    ))}
+                              })
+                            }
+                            className="w-4 h-4 text-blue-600 border-slate-300 focus:ring-blue-500"
+                          />
+                          <span className="text-xs text-slate-700 font-medium">{opt}</span>
+                        </label>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
 
               {/* Navigation Controls */}
-              <div className="flex items-center justify-between pt-6 border-t border-slate-100">
+              <div className="flex items-center justify-between pt-4">
                 <button
                   type="button"
                   onClick={() => setCurrentStep(1)}
-                  className="px-5 py-2.5 text-xs font-bold text-slate-600 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors"
+                  className="px-5 py-2.5 text-xs font-bold text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors flex items-center space-x-1.5 shadow-xs"
                 >
-                  ← Back
+                  <ArrowLeft className="w-3.5 h-3.5" />
+                  <span>Back</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => setCurrentStep(3)}
-                  className="px-6 py-2.5 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-xs transition-all active:scale-95"
+                  className="px-6 py-2.5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-xs transition-all active:scale-95 flex items-center space-x-1.5"
                 >
-                  Continue →
+                  <span>Continue</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
                 </button>
               </div>
             </div>
@@ -3732,60 +4191,144 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
 
         </div>
 
-        {/* Right Sticky Sidebar: Live Economics Summary (Visible for input steps 1 to 4, and 6) */}
+        {/* Right Sticky Sidebar */}
         {currentStep !== 5 && currentStep < 7 && (
-          <div className="space-y-4">
-            <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs sticky top-20 space-y-4">
-              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                <h3 className="text-xs font-bold text-slate-700 uppercase tracking-wider">
-                  Live Economics Summary
+          <div className="space-y-5">
+            {/* Step 2: Assessment Progress Card */}
+            {currentStep === 2 && (
+              <div className="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs space-y-3">
+                <h3 className="text-sm font-bold text-slate-900">
+                  Assessment Progress
                 </h3>
-                <span className="text-[10px] bg-emerald-50 text-emerald-700 font-bold px-2 py-0.5 rounded-full border border-emerald-200">
-                  Dynamic
-                </span>
-              </div>
-
-              <div className="space-y-3">
-                <div className="p-3 bg-slate-50 rounded-xl flex justify-between items-center">
-                  <span className="text-xs text-slate-600 font-medium">Current Platform TCO</span>
-                  <span className="text-sm font-extrabold text-slate-900 font-mono">
-                    {formatCurrency(currentTcoPreview, assessment.currency)}
-                  </span>
+                {/* Progress Bar */}
+                <div className="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+                  <div
+                    className="bg-blue-600 h-2.5 rounded-full transition-all duration-300"
+                    style={{ width: `${Math.round((currentStep / 7) * 100)}%` }}
+                  />
                 </div>
-
-                <div className="p-3 bg-slate-50 rounded-xl flex justify-between items-center">
-                  <span className="text-xs text-slate-600 font-medium">BTP Target TCO</span>
-                  <span className="text-sm font-extrabold text-indigo-600 font-mono">
-                    {formatCurrency(targetTcoPreview, assessment.currency)}
-                  </span>
-                </div>
-
-                <div className="p-3 bg-emerald-50 rounded-xl flex justify-between items-center border border-emerald-200">
-                  <span className="text-xs text-emerald-800 font-bold">Projected Annual Savings</span>
-                  <span className="text-sm font-extrabold text-emerald-700 font-mono">
-                    {formatCurrency(annualSavingsPreview, assessment.currency)}
-                  </span>
-                </div>
-
-                <div className="p-3 bg-slate-50 rounded-xl flex justify-between items-center">
-                  <span className="text-xs text-slate-600 font-medium">One-Time Migration Cost</span>
-                  <span className="text-sm font-extrabold text-slate-900 font-mono">
-                    {formatCurrency(migrationCostPreview, assessment.currency)}
-                  </span>
-                </div>
-
-                <div className="pt-2 border-t border-slate-100 flex justify-between items-center text-xs">
-                  <span className="text-slate-500">Estimated Payback:</span>
-                  <span className="font-bold text-emerald-600 font-mono">
-                    {annualSavingsPreview > 0
-                      ? `${((migrationCostPreview / annualSavingsPreview) * 12).toFixed(1)} Months`
-                      : 'N/A'}
-                  </span>
+                <div className="flex justify-between items-center text-xs text-slate-500 pt-0.5">
+                  <span>{currentStep} of 7 steps completed</span>
+                  <span className="font-bold text-slate-800">{Math.round((currentStep / 7) * 100)}%</span>
                 </div>
               </div>
+            )}
 
+            {/* Step 2: Help & Information Card */}
+            {currentStep === 2 && (
+              <div className="bg-blue-50/40 rounded-2xl border border-blue-100/90 p-6 shadow-xs space-y-4">
+                <div className="flex items-center space-x-2 text-blue-700">
+                  <Info className="w-5 h-5 text-blue-600" />
+                  <h3 className="text-sm font-bold text-blue-900">
+                    Help & Information
+                  </h3>
+                </div>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  This information helps us analyze your current PI/PO environment and provide accurate migration recommendations and cost estimates.
+                </p>
+                <div className="pt-1">
+                  <h4 className="text-xs font-bold text-blue-700 mb-2">Why we ask this?</h4>
+                  <ul className="space-y-1.5 text-xs text-slate-600">
+                    <li className="flex items-start space-x-2">
+                      <span className="text-blue-500 font-bold">•</span>
+                      <span>Understand your integration footprint</span>
+                    </li>
+                    <li className="flex items-start space-x-2">
+                      <span className="text-blue-500 font-bold">•</span>
+                      <span>Assess migration complexity</span>
+                    </li>
+                    <li className="flex items-start space-x-2">
+                      <span className="text-blue-500 font-bold">•</span>
+                      <span>Identify key migration drivers</span>
+                    </li>
+                    <li className="flex items-start space-x-2">
+                      <span className="text-blue-500 font-bold">•</span>
+                      <span>Provide accurate TCO and ROI analysis</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            )}
 
-            </div>
+            {/* Live Economics Summary Card for Steps other than Step 2 */}
+            {currentStep !== 2 && (
+              <div className="bg-white rounded-2xl border border-slate-200/90 p-6 shadow-xs sticky top-20 space-y-4">
+                <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                  <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+                    LIVE ECONOMICS SUMMARY
+                  </h3>
+                  <span className="text-[10px] bg-emerald-50 text-emerald-700 font-bold px-2 py-0.5 rounded-full border border-emerald-200">
+                    Dynamic
+                  </span>
+                </div>
+
+                <div className="space-y-3.5 text-xs">
+                  <div className="flex justify-between items-center px-1">
+                    <span className="text-slate-600 font-medium">Current Platform TCO</span>
+                    <span className="text-sm font-extrabold text-slate-900 font-mono">
+                      {formatCurrency(currentTcoPreview, assessment.currency)}
+                    </span>
+                  </div>
+
+                  <div className="flex justify-between items-center px-1">
+                    <span className="text-slate-600 font-medium">BTP Target TCO</span>
+                    <span className="text-sm font-extrabold text-blue-600 font-mono">
+                      {formatCurrency(targetTcoPreview, assessment.currency)}
+                    </span>
+                  </div>
+
+                  {/* Projected Annual Savings - Highlighted Green Container */}
+                  <div className="p-3 bg-emerald-50/70 rounded-xl flex justify-between items-center border border-emerald-200/90">
+                    <span className="text-xs text-emerald-800 font-bold">Projected Annual Savings</span>
+                    <span className="text-sm font-extrabold text-emerald-700 font-mono">
+                      {formatCurrency(annualSavingsPreview, assessment.currency)}
+                    </span>
+                  </div>
+
+                  <div className="flex justify-between items-center px-1">
+                    <span className="text-slate-600 font-medium">One-Time Migration Cost</span>
+                    <span className="text-sm font-extrabold text-slate-900 font-mono">
+                      {formatCurrency(migrationCostPreview, assessment.currency)}
+                    </span>
+                  </div>
+
+                  <div className="flex justify-between items-center px-1 pt-1">
+                    <span className="text-slate-600 font-medium">Estimated Payback</span>
+                    <span className="text-sm font-bold text-emerald-600 font-mono">
+                      {annualSavingsPreview > 0
+                        ? `${((migrationCostPreview / annualSavingsPreview) * 12).toFixed(1)} Months`
+                        : 'N/A'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Step 1: Why we ask for this information? Card */}
+            {currentStep === 1 && (
+              <div className="bg-white rounded-2xl border border-blue-100/90 p-6 shadow-xs space-y-3">
+                <div className="flex items-center space-x-2 text-blue-600">
+                  <Info className="w-4 h-4" />
+                  <h4 className="text-xs font-bold text-blue-700">
+                    Why we ask for this information?
+                  </h4>
+                </div>
+                <ul className="space-y-2 text-xs text-slate-600 pl-1">
+                  <li className="flex items-start space-x-2">
+                    <span className="text-blue-500 font-bold">•</span>
+                    <span>Provides context for industry-specific benchmarks</span>
+                  </li>
+                  <li className="flex items-start space-x-2">
+                    <span className="text-blue-500 font-bold">•</span>
+                    <span>Helps us estimate the right sizing and costs</span>
+                  </li>
+                  <li className="flex items-start space-x-2">
+                    <span className="text-blue-500 font-bold">•</span>
+                    <span>Enables more accurate ROI and savings analysis</span>
+                  </li>
+                </ul>
+              </div>
+            )}
           </div>
         )}
       </div>
