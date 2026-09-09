@@ -27,6 +27,9 @@ import {
   Server,
   Database,
   MessageSquare,
+  Loader2,
+  RefreshCw,
+  CheckCircle2,
 } from 'lucide-react';
 import { Assessment, RoiCalculationResult } from '@/types';
 import { api } from '@/lib/api';
@@ -44,6 +47,16 @@ export function AssessmentWizard() {
   const [showFeatureComparison, setShowFeatureComparison] = useState(false);
   const [showAddOns, setShowAddOns] = useState(false);
   const [showAiRecommendation, setShowAiRecommendation] = useState(false);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiRecommendationData, setAiRecommendationData] = useState<{
+    recommendedEdition: string;
+    confidenceScore?: number;
+    headline?: string;
+    reasoning: string;
+    keyBenefits?: string[];
+    suggestedUnits?: number;
+    suggestedMessagePacks?: number;
+  } | null>(null);
 
   // Form State initialized with authoritative benchmark values matching the specification screenshot
   const [assessment, setAssessment] = useState<Assessment>({
@@ -1409,22 +1422,79 @@ export function AssessmentWizard() {
               updateConfig(currentEd, units, 0, 0, 0);
             };
 
+            const handleOpenComparison = () => {
+              setShowFeatureComparison(true);
+              setTimeout(() => {
+                const el = document.getElementById('feature-comparison-section');
+                if (el) {
+                  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+              }, 60);
+            };
+
+            const handleOpenAddOns = () => {
+              setShowAddOns(true);
+              setTimeout(() => {
+                const el = document.getElementById('add-ons-section');
+                if (el) {
+                  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+              }, 60);
+            };
+
             // Recommendation analysis based on SAP rules from PDF report
             const totalIflows = assessment.sourceSystem.environmentAssessment.totalInterfaces || 0;
             const complexIflows = assessment.sourceSystem.environmentAssessment.complexInterfaces || 0;
             const b2bCount = assessment.sourceSystem.volumetrics.b2bInterfaces || 0;
             const monthlyThroughput = parseInt(assessment.sourceSystem.volumetrics.indicativeMessageThroughput || '0') || 300000;
 
-            let recommendedEd = 'Standard Edition';
-            let recommendationReason = 'Standard Edition is the recommended enterprise baseline. It provides full API Management, B2B/EDI libraries, Integration Advisor, and Edge Integration Cell runtimes without the 10 custom iFlow limit of Starter Edition.';
+            let fallbackRecommendedEd = 'Standard Edition';
+            let fallbackReason = 'Standard Edition is the recommended enterprise baseline. It provides full API Management, B2B/EDI libraries, Integration Advisor, and Edge Integration Cell runtimes without the 10 custom iFlow limit of Starter Edition.';
 
             if (monthlyThroughput > 400000 || complexIflows > 100) {
-              recommendedEd = 'Enhanced Edition';
-              recommendationReason = 'With heavy message volumes (>400K/month) and high operational complexity, Enhanced Edition is optimal. It includes 500K messages/month, SAP Alert Notification (ANS), Cloud Transport Management (TMS), Document AI, and a dedicated Advanced Event Mesh (AEM 100) tenant.';
+              fallbackRecommendedEd = 'Enhanced Edition';
+              fallbackReason = 'With heavy message volumes (>400K/month) and high operational complexity, Enhanced Edition is optimal. It includes 500K messages/month, SAP Alert Notification (ANS), Cloud Transport Management (TMS), Document AI, and a dedicated Advanced Event Mesh (AEM 100) tenant.';
             } else if (totalIflows <= 10 && complexIflows === 0 && b2bCount === 0 && monthlyThroughput <= 50000) {
-              recommendedEd = 'Starter Edition';
-              recommendationReason = 'Your integration scope is small and simple (<10 custom iFlows, <50K messages/mo). Starter Edition provides standard Cloud Integration capabilities at minimal cost.';
+              fallbackRecommendedEd = 'Starter Edition';
+              fallbackReason = 'Your integration scope is small and simple (<10 custom iFlows, <50K messages/mo). Starter Edition provides standard Cloud Integration capabilities at minimal cost.';
             }
+
+            const fetchLiveAiRecommendation = async () => {
+              if (aiLoading) return;
+              setAiLoading(true);
+              try {
+                const res = await api.recommendEdition(assessment);
+                setAiRecommendationData(res);
+              } catch (err: unknown) {
+                console.warn('Backend AI endpoint unreachable, using landscape heuristics:', err);
+                setAiRecommendationData({
+                  recommendedEdition: fallbackRecommendedEd,
+                  confidenceScore: 94,
+                  headline: `${fallbackRecommendedEd} is the optimal tier based on your integration scope.`,
+                  reasoning: fallbackReason,
+                  suggestedUnits: fallbackRecommendedEd === 'Standard Edition' ? 3 : 1,
+                  suggestedMessagePacks: monthlyThroughput > 100000 ? 50 : 0,
+                  keyBenefits: [
+                    fallbackRecommendedEd === 'Starter Edition' ? 'Cost-effective starter footprint' : 'Enterprise B2B, EDI and API Management runtime',
+                    'High-availability cloud SLAs with automated scaling',
+                    'Pre-built integrations with 3,400+ SAP and third-party packages',
+                  ],
+                });
+              } finally {
+                setAiLoading(false);
+              }
+            };
+
+            const handleGetLiveAiRecommendation = () => {
+              setShowAiRecommendation(true);
+              setTimeout(() => {
+                const el = document.getElementById('ai-recommendation-section');
+                if (el) {
+                  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+              }, 60);
+              fetchLiveAiRecommendation();
+            };
 
             return (
               <div className="space-y-6">
@@ -1484,64 +1554,142 @@ export function AssessmentWizard() {
                   {/* Left Column (8 cols): Cards, Accordions, AI Callout */}
                   <div className="lg:col-span-8 space-y-6">
                     {/* AI Recommendation Callout Banner */}
-                    <div className="p-4 bg-indigo-50/70 border border-indigo-100 rounded-2xl flex flex-wrap items-center justify-between gap-3 shadow-2xs">
-                      <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-xl bg-indigo-100 flex items-center justify-center text-indigo-600 shadow-2xs">
-                          <Lightbulb className="w-5 h-5" />
-                        </div>
-                        <div>
-                          <h4 className="text-xs font-bold text-indigo-950">Not sure which edition to choose?</h4>
-                          <p className="text-[11px] text-indigo-700">Get AI-based recommendations based on your inputs.</p>
-                        </div>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => setShowAiRecommendation(!showAiRecommendation)}
-                        className="px-3.5 py-1.5 bg-white border border-indigo-200 hover:border-indigo-400 text-indigo-700 hover:bg-indigo-50/60 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-2xs transition-all active:scale-95"
-                      >
-                        <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
-                        Get Recommendation
-                      </button>
-                    </div>
-
-                    {/* AI Recommendation Expansion Card */}
-                    {showAiRecommendation && (
-                      <div className="p-5 bg-gradient-to-br from-indigo-50/90 via-purple-50/50 to-white rounded-2xl border border-indigo-200 space-y-3 shadow-xs animate-fadeIn">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <Sparkles className="w-4 h-4 text-indigo-600" />
-                            <span className="text-xs font-black text-indigo-950 uppercase tracking-wider">
-                              AI Recommendation: {recommendedEd}
-                            </span>
+                    <div id="ai-recommendation-section" className="space-y-4 scroll-mt-6">
+                      <div className="p-4 bg-indigo-50/70 border border-indigo-100 rounded-2xl flex flex-wrap items-center justify-between gap-3 shadow-2xs">
+                        <div className="flex items-center gap-3">
+                          <div className="w-9 h-9 rounded-xl bg-indigo-100 flex items-center justify-center text-indigo-600 shadow-2xs">
+                            <Lightbulb className="w-5 h-5" />
                           </div>
-                          <button
-                            type="button"
-                            onClick={() => setShowAiRecommendation(false)}
-                            className="text-xs text-slate-400 hover:text-slate-600 font-bold"
-                          >
-                            ✕
-                          </button>
+                          <div>
+                            <h4 className="text-xs font-bold text-indigo-950">Not sure which edition to choose?</h4>
+                            <p className="text-[11px] text-indigo-700">Get AI-based recommendations powered by NVIDIA Llama 3.2 NIM based on your landscape metrics.</p>
+                          </div>
                         </div>
-                        <p className="text-xs text-slate-700 leading-relaxed">
-                          {recommendationReason}
-                        </p>
-                        <div className="pt-2 flex flex-wrap items-center justify-between gap-3 border-t border-indigo-100">
-                          <span className="text-[11px] text-slate-500">
-                            Evaluated against: {totalIflows} interfaces, {complexIflows} complex iFlows, and {monthlyThroughput.toLocaleString()} msg/mo.
-                          </span>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              handleSelectEdition(recommendedEd, recommendedEd === 'Standard Edition' ? 3 : 1);
-                              setShowAiRecommendation(false);
-                            }}
-                            className="px-4 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow-xs transition-all active:scale-95"
-                          >
-                            Apply {recommendedEd}
-                          </button>
-                        </div>
+                        <button
+                          type="button"
+                          onClick={handleGetLiveAiRecommendation}
+                          disabled={aiLoading}
+                          className="px-3.5 py-1.5 bg-white border border-indigo-200 hover:border-indigo-400 text-indigo-700 hover:bg-indigo-50/60 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-2xs transition-all active:scale-95 disabled:opacity-60"
+                        >
+                          {aiLoading ? (
+                            <>
+                              <Loader2 className="w-3.5 h-3.5 text-indigo-600 animate-spin" />
+                              Analyzing Landscape...
+                            </>
+                          ) : (
+                            <>
+                              <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
+                              Get Recommendation
+                            </>
+                          )}
+                        </button>
                       </div>
-                    )}
+
+                      {/* AI Recommendation Expansion Card */}
+                      {showAiRecommendation && (
+                        <div className="p-5 bg-gradient-to-br from-indigo-50/90 via-purple-50/40 to-white rounded-2xl border border-indigo-200 space-y-3.5 shadow-xs animate-fadeIn">
+                          {aiLoading ? (
+                            <div className="p-6 flex flex-col items-center justify-center gap-3 text-center">
+                              <Loader2 className="w-7 h-7 text-indigo-600 animate-spin" />
+                              <div>
+                                <div className="text-sm font-bold text-indigo-950">ValueLens AI is Evaluating Your Landscape</div>
+                                <div className="text-xs text-indigo-600 mt-0.5">
+                                  Evaluating {totalIflows} interfaces, {complexIflows} complex iFlows, and {monthlyThroughput.toLocaleString()} msg/mo with NVIDIA Llama 3.2 NIM...
+                                </div>
+                              </div>
+                            </div>
+                          ) : aiRecommendationData ? (
+                            <>
+                              <div className="flex items-start justify-between gap-3">
+                                <div className="flex items-start gap-2.5">
+                                  <div className="w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-xs shrink-0 mt-0.5">
+                                    <Sparkles className="w-4 h-4" />
+                                  </div>
+                                  <div>
+                                    <div className="flex flex-wrap items-center gap-2">
+                                      <span className="text-xs font-black text-indigo-950 uppercase tracking-wider">
+                                        AI Recommended Edition:
+                                      </span>
+                                      <span className="text-sm font-black text-indigo-700 bg-indigo-100/90 px-2.5 py-0.5 rounded-lg border border-indigo-200">
+                                        {aiRecommendationData.recommendedEdition}
+                                      </span>
+                                      {aiRecommendationData.confidenceScore && (
+                                        <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100/90 px-2 py-0.5 rounded-full border border-emerald-200">
+                                          {aiRecommendationData.confidenceScore}% Confidence Fit
+                                        </span>
+                                      )}
+                                    </div>
+                                    {aiRecommendationData.headline && (
+                                      <p className="text-xs font-semibold text-slate-700 mt-1">
+                                        {aiRecommendationData.headline}
+                                      </p>
+                                    )}
+                                  </div>
+                                </div>
+                                <button
+                                  type="button"
+                                  onClick={() => setShowAiRecommendation(false)}
+                                  className="text-xs text-slate-400 hover:text-slate-600 font-bold p-1 rounded-lg hover:bg-slate-100"
+                                  title="Close recommendation"
+                                >
+                                  ✕
+                                </button>
+                              </div>
+
+                              <div className="text-xs text-slate-700 leading-relaxed bg-white/90 p-3.5 rounded-xl border border-indigo-100 shadow-2xs">
+                                {aiRecommendationData.reasoning}
+                              </div>
+
+                              {aiRecommendationData.keyBenefits && aiRecommendationData.keyBenefits.length > 0 && (
+                                <div className="space-y-1.5">
+                                  <div className="text-[11px] font-bold text-indigo-900 uppercase tracking-wider">
+                                    Key Benefits Identified by AI:
+                                  </div>
+                                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                    {aiRecommendationData.keyBenefits.map((benefit, idx) => (
+                                      <div key={idx} className="flex items-start gap-2 text-xs text-slate-700 bg-white/80 p-2.5 rounded-xl border border-indigo-100/80">
+                                        <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
+                                        <span>{benefit}</span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+
+                              <div className="pt-2 flex flex-wrap items-center justify-between gap-3 border-t border-indigo-100">
+                                <div className="flex items-center gap-3 text-[11px] text-slate-500">
+                                  <span>Evaluated: {totalIflows} interfaces ({complexIflows} complex), {monthlyThroughput.toLocaleString()} msg/mo.</span>
+                                  <button
+                                    type="button"
+                                    onClick={fetchLiveAiRecommendation}
+                                    disabled={aiLoading}
+                                    className="text-indigo-600 hover:text-indigo-800 font-bold underline flex items-center gap-1"
+                                  >
+                                    <RefreshCw className="w-3 h-3" /> Re-run AI
+                                  </button>
+                                </div>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    handleSelectEdition(
+                                      aiRecommendationData.recommendedEdition,
+                                      aiRecommendationData.suggestedUnits || (aiRecommendationData.recommendedEdition === 'Standard Edition' ? 3 : 1)
+                                    );
+                                    if (aiRecommendationData.suggestedMessagePacks !== undefined && aiRecommendationData.suggestedMessagePacks > 0) {
+                                      handleUpdatePacks(aiRecommendationData.suggestedMessagePacks);
+                                    }
+                                  }}
+                                  className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow-xs transition-all active:scale-95 flex items-center gap-1.5"
+                                >
+                                  <CheckCircle2 className="w-3.5 h-3.5" />
+                                  Apply {aiRecommendationData.recommendedEdition}
+                                </button>
+                              </div>
+                            </>
+                          ) : null}
+                        </div>
+                      )}
+                    </div>
 
                     {/* 3 Main Edition Cards */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -1574,24 +1722,27 @@ export function AssessmentWizard() {
                             </div>
                           </div>
 
-                          <ul className="space-y-2 text-xs text-slate-600 pt-2 border-t border-slate-100">
-                            <li className="flex items-start gap-2">
-                              <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
-                              <span>50K messages per month</span>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
-                              <span>Access to 3,400+ prebuilt integrations</span>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
-                              <span>1 tenant per year</span>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
-                              <span>Cloud Integration (10 custom iFlow cap)</span>
-                            </li>
-                          </ul>
+                          {/* Initially collapsed; only shown when Starter Edition is selected */}
+                          {currentEd === 'Starter Edition' && (
+                            <ul className="space-y-2 text-xs text-slate-600 pt-2 border-t border-slate-100 animate-fadeIn">
+                              <li className="flex items-start gap-2">
+                                <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
+                                <span>50K messages per month</span>
+                              </li>
+                              <li className="flex items-start gap-2">
+                                <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
+                                <span>Access to 3,400+ prebuilt integrations</span>
+                              </li>
+                              <li className="flex items-start gap-2">
+                                <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
+                                <span>1 tenant per year</span>
+                              </li>
+                              <li className="flex items-start gap-2">
+                                <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
+                                <span>Cloud Integration (10 custom iFlow cap)</span>
+                              </li>
+                            </ul>
+                          )}
                         </div>
 
                         <div className="pt-5 space-y-2">
@@ -1609,7 +1760,7 @@ export function AssessmentWizard() {
                             type="button"
                             onClick={(e) => {
                               e.stopPropagation();
-                              setShowFeatureComparison(true);
+                              handleOpenComparison();
                             }}
                             className="w-full text-[11px] font-semibold text-indigo-600 hover:text-indigo-800 text-center flex items-center justify-center gap-1"
                           >
@@ -1651,32 +1802,35 @@ export function AssessmentWizard() {
                             </div>
                           </div>
 
-                          <ul className="space-y-2 text-xs text-slate-600 pt-2 border-t border-slate-100">
-                            <li className="flex items-start gap-2">
-                              <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
-                              <span>API Management</span>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
-                              <span>B2B capabilities</span>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
-                              <span>Open Connectors (200+)</span>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
-                              <span>Integration Advisor</span>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
-                              <span>Integration Assessment</span>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
-                              <span>Edge integration cell (1+ tenant)</span>
-                            </li>
-                          </ul>
+                          {/* Initially collapsed; only shown when Standard Edition is selected */}
+                          {currentEd === 'Standard Edition' && (
+                            <ul className="space-y-2 text-xs text-slate-600 pt-2 border-t border-slate-100 animate-fadeIn">
+                              <li className="flex items-start gap-2">
+                                <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
+                                <span>API Management</span>
+                              </li>
+                              <li className="flex items-start gap-2">
+                                <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
+                                <span>B2B capabilities</span>
+                              </li>
+                              <li className="flex items-start gap-2">
+                                <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
+                                <span>Open Connectors (200+)</span>
+                              </li>
+                              <li className="flex items-start gap-2">
+                                <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
+                                <span>Integration Advisor</span>
+                              </li>
+                              <li className="flex items-start gap-2">
+                                <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
+                                <span>Integration Assessment</span>
+                              </li>
+                              <li className="flex items-start gap-2">
+                                <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
+                                <span>Edge integration cell (1+ tenant)</span>
+                              </li>
+                            </ul>
+                          )}
                         </div>
 
                         <div className="pt-5 space-y-2">
@@ -1694,7 +1848,7 @@ export function AssessmentWizard() {
                             type="button"
                             onClick={(e) => {
                               e.stopPropagation();
-                              setShowFeatureComparison(true);
+                              handleOpenComparison();
                             }}
                             className="w-full text-[11px] font-semibold text-indigo-600 hover:text-indigo-800 text-center flex items-center justify-center gap-1"
                           >
@@ -1732,36 +1886,39 @@ export function AssessmentWizard() {
                             </div>
                           </div>
 
-                          <ul className="space-y-2 text-xs text-slate-600 pt-2 border-t border-slate-100">
-                            <li className="flex items-start gap-2">
-                              <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
-                              <span>All Standard features</span>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
-                              <span>500K messages per month</span>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
-                              <span>Alert Notification Service (ANS)</span>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
-                              <span>Cloud Transport Management (TMS)</span>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
-                              <span>Document AI (100 docs/month)</span>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
-                              <span>Advanced Event Mesh (AEM 100)</span>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
-                              <span>Integration Suite AI capabilities</span>
-                            </li>
-                          </ul>
+                          {/* Initially collapsed; only shown when Enhanced Edition is selected */}
+                          {currentEd === 'Enhanced Edition' && (
+                            <ul className="space-y-2 text-xs text-slate-600 pt-2 border-t border-slate-100 animate-fadeIn">
+                              <li className="flex items-start gap-2">
+                                <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
+                                <span>All Standard features</span>
+                              </li>
+                              <li className="flex items-start gap-2">
+                                <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
+                                <span>500K messages per month</span>
+                              </li>
+                              <li className="flex items-start gap-2">
+                                <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
+                                <span>Alert Notification Service (ANS)</span>
+                              </li>
+                              <li className="flex items-start gap-2">
+                                <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
+                                <span>Cloud Transport Management (TMS)</span>
+                              </li>
+                              <li className="flex items-start gap-2">
+                                <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
+                                <span>Document AI (100 docs/month)</span>
+                              </li>
+                              <li className="flex items-start gap-2">
+                                <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
+                                <span>Advanced Event Mesh (AEM 100)</span>
+                              </li>
+                              <li className="flex items-start gap-2">
+                                <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">✓</span>
+                                <span>Integration Suite AI capabilities</span>
+                              </li>
+                            </ul>
+                          )}
                         </div>
 
                         <div className="pt-5 space-y-2">
@@ -1779,7 +1936,7 @@ export function AssessmentWizard() {
                             type="button"
                             onClick={(e) => {
                               e.stopPropagation();
-                              setShowFeatureComparison(true);
+                              handleOpenComparison();
                             }}
                             className="w-full text-[11px] font-semibold text-indigo-600 hover:text-indigo-800 text-center flex items-center justify-center gap-1"
                           >
@@ -1790,7 +1947,7 @@ export function AssessmentWizard() {
                     </div>
 
                     {/* Expandable Accordion 1: Which plan is right for me? */}
-                    <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs transition-all">
+                    <div id="feature-comparison-section" className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs transition-all scroll-mt-6">
                       <div className="flex flex-wrap items-center justify-between gap-3">
                         <div className="flex items-center gap-3">
                           <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
@@ -1920,7 +2077,7 @@ export function AssessmentWizard() {
                     </div>
 
                     {/* Expandable Accordion 2: Add-ons to enhance your plan */}
-                    <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs transition-all">
+                    <div id="add-ons-section" className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs transition-all scroll-mt-6">
                       <div className="flex flex-wrap items-center justify-between gap-3">
                         <div className="flex items-center gap-3">
                           <div className="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center">
@@ -2263,7 +2420,7 @@ export function AssessmentWizard() {
                         <h3 className="text-base font-black text-slate-900">Your Selection</h3>
                         <button
                           type="button"
-                          onClick={() => setShowFeatureComparison(true)}
+                          onClick={handleOpenComparison}
                           className="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1"
                         >
                           <Pencil className="w-3.5 h-3.5" /> Edit
@@ -2356,7 +2513,7 @@ export function AssessmentWizard() {
                             <span className="text-[11px] text-slate-500">No add-ons selected</span>
                             <button
                               type="button"
-                              onClick={() => setShowAddOns(true)}
+                              onClick={handleOpenAddOns}
                               className="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 bg-white px-2 py-1 rounded-lg border border-indigo-200 hover:bg-indigo-50/50 transition-colors flex items-center gap-1"
                             >
                               <Plus className="w-3 h-3" /> Select Add-ons
@@ -2525,7 +2682,7 @@ export function AssessmentWizard() {
                       <div className="space-y-2">
                         <button
                           type="button"
-                          onClick={() => setShowFeatureComparison(true)}
+                          onClick={handleOpenComparison}
                           className="w-full p-3 rounded-xl border border-slate-100 hover:border-indigo-200 bg-slate-50/50 hover:bg-indigo-50/30 flex items-center justify-between text-left transition-all group"
                         >
                           <div className="flex items-center gap-2.5">
@@ -2542,7 +2699,7 @@ export function AssessmentWizard() {
 
                         <button
                           type="button"
-                          onClick={() => setShowAddOns(true)}
+                          onClick={handleOpenAddOns}
                           className="w-full p-3 rounded-xl border border-slate-100 hover:border-indigo-200 bg-slate-50/50 hover:bg-indigo-50/30 flex items-center justify-between text-left transition-all group"
                         >
                           <div className="flex items-center gap-2.5">
@@ -2559,7 +2716,7 @@ export function AssessmentWizard() {
 
                         <button
                           type="button"
-                          onClick={() => setShowAiRecommendation(true)}
+                          onClick={handleGetLiveAiRecommendation}
                           className="w-full p-3 rounded-xl border border-slate-100 hover:border-indigo-200 bg-slate-50/50 hover:bg-indigo-50/30 flex items-center justify-between text-left transition-all group"
                         >
                           <div className="flex items-center gap-2.5">

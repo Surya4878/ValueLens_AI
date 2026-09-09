@@ -114,6 +114,30 @@ export const api = {
     return this.analyzeWithAI({ assessmentId });
   },
 
+  async recommendEdition(assessment: Assessment): Promise<{
+    recommendedEdition: string;
+    confidenceScore: number;
+    headline: string;
+    reasoning: string;
+    suggestedUnits: number;
+    suggestedMessagePacks: number;
+    keyBenefits: string[];
+  }> {
+    const res = await fetchJson<ApiResponse<{
+      recommendedEdition: string;
+      confidenceScore: number;
+      headline: string;
+      reasoning: string;
+      suggestedUnits: number;
+      suggestedMessagePacks: number;
+      keyBenefits: string[];
+    }>>('/api/v1/ai/recommend-edition', {
+      method: 'POST',
+      body: JSON.stringify(assessment),
+    });
+    return res.data;
+  },
+
   async getChartInsight(chartId: string, chartData?: unknown, assessmentId?: string): Promise<ChartInsightResponse> {
     const res = await fetchJson<ApiResponse<ChartInsightResponse>>('/api/v1/ai/chart-insight', {
       method: 'POST',

@@ -102,4 +102,14 @@ public class AiAnalysisController {
         String result = aiAnalysisService.debugNvidiaConnectivity();
         return ResponseEntity.ok(ApiResponseDto.success("Debug complete", Map.of("result", result)));
     }
+
+    @PostMapping({"/api/v1/ai/recommend-edition", "/api/ai/recommend-edition"})
+    @Operation(summary = "Recommend SAP BTP Edition with AI", description = "Analyzes customer landscape parameters and generates live AI recommendation")
+    public ResponseEntity<ApiResponseDto<Map<String, Object>>> recommendEdition(@RequestBody(required = false) AssessmentDto assessment) {
+        if (assessment == null) {
+            assessment = assessmentService.buildDemoAssessment();
+        }
+        Map<String, Object> recommendation = aiAnalysisService.recommendEdition(assessment);
+        return ResponseEntity.ok(ApiResponseDto.success("AI edition recommendation generated", recommendation));
+    }
 }

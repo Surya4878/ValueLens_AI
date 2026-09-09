@@ -18,7 +18,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -632,6 +634,143 @@ public class AiAnalysisService {
         } catch (Exception e) {
             log.error("DEBUG: NVIDIA connectivity EXCEPTION: {}", e.getMessage(), e);
             return "EXCEPTION: " + e.getMessage();
+        }
+    }
+
+    public Map<String, Object> recommendEdition(AssessmentDto assessment) {
+        if (assessment == null) {
+            assessment = new AssessmentDto();
+        }
+
+        var env = assessment.getSourceSystem() != null && assessment.getSourceSystem().getEnvironmentAssessment() != null
+                ? assessment.getSourceSystem().getEnvironmentAssessment()
+                : new AssessmentDto.EnvironmentAssessmentDto();
+        var vol = assessment.getSourceSystem() != null && assessment.getSourceSystem().getVolumetrics() != null
+                ? assessment.getSourceSystem().getVolumetrics()
+                : new AssessmentDto.VolumetricsDto();
+
+        int totalIflows = env.getTotalInterfaces() > 0 ? env.getTotalInterfaces() : 1050;
+        int complexIflows = env.getComplexInterfaces();
+        int mediumIflows = env.getMediumInterfaces();
+        int simpleIflows = env.getSimpleInterfaces();
+        int b2bCount = vol.getB2bInterfaces();
+        int apiCount = vol.getApiCount();
+        String throughputStr = vol.getIndicativeMessageThroughput() != null ? vol.getIndicativeMessageThroughput() : "300000";
+        long throughput = 300000L;
+        try {
+            throughput = Long.parseLong(throughputStr.replaceAll("[^0-9]", ""));
+        } catch (Exception ignored) {}
+
+        String systemPrompt = "You are ValueLens AI's Chief SAP BTP Integration Enterprise Architect. " +
+                "Evaluate the client's integration metrics and determine the most cost-effective and architecturally sound SAP BTP Integration Suite edition.\n\n" +
+                "Available editions:\n" +
+                "1. 'Starter Edition' ($1,728/mo, 50K included msgs/mo, max 10 custom iFlows, prebuilt content only). Best for small landscapes with <=10 interfaces and no complex B2B/EDI.\n" +
+                "2. 'Standard Edition' ($5,339/mo, 10K msgs/mo, unlimited custom iFlows, full API Management, B2B/EDI libraries, Open Connectors, Integration Advisor, Edge Integration Cell 1+ tenant). The enterprise integration baseline.\n" +
+                "3. 'Enhanced Edition' ($7,688/mo, 500K msgs/mo, Alert Notification Service 100K calls, Cloud Transport Mgmt 25GB, Document AI 100 docs, dedicated Advanced Event Mesh AEM 100 tenant, AI-assisted iFlow generation). Best for high-volume (>400K msgs/mo), mission-critical, or event-driven landscapes.\n\n" +
+                "Respond ONLY with a valid JSON object matching this structure (no markdown fences, no conversational preamble):\n" +
+                "{\n" +
+                "  \"recommendedEdition\": \"Standard Edition\" | \"Starter Edition\" | \"Enhanced Edition\",\n" +
+                "  \"confidenceScore\": 93,\n" +
+                "  \"headline\": \"One concise sentence stating why this edition is optimal\",\n" +
+                "  \"reasoning\": \"2-3 clear sentences analyzing the specific interface counts, throughput volume, and technical requirements.\",\n" +
+                "  \"suggestedUnits\": 1 or 3,\n" +
+                "  \"suggestedMessagePacks\": 0 or 50 or 400,\n" +
+                "  \"keyBenefits\": [\n" +
+                "    \"Benefit 1\",\n" +
+                "    \"Benefit 2\",\n" +
+                "    \"Benefit 3\"\n" +
+                "  ]\n" +
+                "}";
+
+        String userPayload = String.format(
+                "Client Landscape Profile:\n" +
+                "- Total Interfaces: %d (Simple: %d, Medium: %d, Complex: %d)\n" +
+                "- Monthly Message Throughput: %,d messages/month\n" +
+                "- B2B/EDI Interfaces: %d\n" +
+                "- Published APIs: %d\n" +
+                "- Availability Requirement: %s\n" +
+                "- Monitoring Requirement: %s\n" +
+                "- Compliance: %s\n\n" +
+                "Provide your definitive AI architectural recommendation in JSON format.",
+                totalIflows, simpleIflows, mediumIflows, complexIflows,
+                throughput, b2bCount, apiCount,
+                env.getAvailabilityRequirements() != null ? env.getAvailabilityRequirements() : "High",
+                env.getMonitoring() != null ? env.getMonitoring() : "Enhanced",
+                env.getComplianceRequirements() != null ? env.getComplianceRequirements() : "Regulated"
+        );
+
+        try {
+            log.info("Requesting live AI edition recommendation from NVIDIA NIM for {} interfaces, {} msg/mo", totalIflows, throughput);
+            String rawAiResponse = nvidiaAiClient.callChatCompletion(systemPrompt, userPayload, 600);
+            if (rawAiResponse != null && !rawAiResponse.isBlank()) {
+                String cleanJson = rawAiResponse.trim();
+                if (cleanJson.contains("```json")) {
+                    int start = cleanJson.indexOf("```json") + 7;
+                    int end = cleanJson.indexOf("```", start);
+                    if (end > start) cleanJson = cleanJson.substring(start, end).trim();
+                } else if (cleanJson.contains("```")) {
+                    int start = cleanJson.indexOf("```") + 3;
+                    int end = cleanJson.indexOf("```", start);
+                    if (end > start) cleanJson = cleanJson.substring(start, end).trim();
+                }
+                int firstBrace = cleanJson.indexOf('{');
+                int lastBrace = cleanJson.lastIndexOf('}');
+                if (firstBrace != -1 && lastBrace > firstBrace) {
+                    cleanJson = cleanJson.substring(firstBrace, lastBrace + 1).trim();
+                }
+
+                JsonNode rootNode = objectMapper.readTree(cleanJson);
+                if (rootNode.has("recommendedEdition") && rootNode.has("reasoning")) {
+                    List<String> benefits = new ArrayList<>();
+                    if (rootNode.has("keyBenefits") && rootNode.get("keyBenefits").isArray()) {
+                        rootNode.get("keyBenefits").forEach(b -> benefits.add(b.asText()));
+                    }
+                    return Map.of(
+                            "recommendedEdition", rootNode.get("recommendedEdition").asText(),
+                            "confidenceScore", rootNode.has("confidenceScore") ? rootNode.get("confidenceScore").asInt() : 94,
+                            "headline", rootNode.has("headline") ? rootNode.get("headline").asText() : "Optimal Architecture Match",
+                            "reasoning", rootNode.get("reasoning").asText(),
+                            "suggestedUnits", rootNode.has("suggestedUnits") ? rootNode.get("suggestedUnits").asInt() : (rootNode.get("recommendedEdition").asText().contains("Standard") ? 3 : 1),
+                            "suggestedMessagePacks", rootNode.has("suggestedMessagePacks") ? rootNode.get("suggestedMessagePacks").asInt() : 0,
+                            "keyBenefits", benefits
+                    );
+                }
+            }
+        } catch (Exception e) {
+            log.warn("NVIDIA NIM call failed for recommendEdition, falling back to deterministic advice", e);
+        }
+
+        // Fallback heuristic if offline
+        if (throughput > 400000 || complexIflows > 100) {
+            return Map.of(
+                    "recommendedEdition", "Enhanced Edition",
+                    "confidenceScore", 95,
+                    "headline", "Enhanced Edition recommended for high-volume enterprise workloads",
+                    "reasoning", String.format("With %,d monthly messages and %d complex interfaces, Enhanced Edition provides 500K included messages/mo, dedicated Advanced Event Mesh (AEM 100), and automated AI script optimization.", throughput, complexIflows),
+                    "suggestedUnits", 1,
+                    "suggestedMessagePacks", Math.max(0, (int) ((throughput - 500000) / 10000)),
+                    "keyBenefits", List.of("500K messages included monthly", "Dedicated AEM 100 event broker", "Enterprise Alert Notification & Cloud Transport Management")
+            );
+        } else if (totalIflows <= 10 && complexIflows == 0 && b2bCount == 0 && throughput <= 50000) {
+            return Map.of(
+                    "recommendedEdition", "Starter Edition",
+                    "confidenceScore", 90,
+                    "headline", "Starter Edition offers lean footprint for compact integration needs",
+                    "reasoning", String.format("Your landscape of %d interfaces and %,d msgs/mo is well within Starter Edition limits (50K messages, 10 custom iFlows), saving substantial licensing capital.", totalIflows, throughput),
+                    "suggestedUnits", 1,
+                    "suggestedMessagePacks", 0,
+                    "keyBenefits", List.of("Lowest base price ($1,728/mo)", "3,400+ prebuilt integration packages", "Unlimited free SAP-to-SAP messages")
+            );
+        } else {
+            return Map.of(
+                    "recommendedEdition", "Standard Edition",
+                    "confidenceScore", 93,
+                    "headline", "Standard Edition represents the optimal enterprise integration baseline",
+                    "reasoning", String.format("With %d total interfaces (%d B2B) and %,d monthly throughput, Standard Edition avoids the 10 custom iFlow cap and delivers full API Management, B2B libraries, and Edge Integration Cell runtimes.", totalIflows, b2bCount, throughput),
+                    "suggestedUnits", 3,
+                    "suggestedMessagePacks", Math.max(0, (int) ((throughput - 30000) / 10000)),
+                    "keyBenefits", List.of("Unlimited custom iFlow development", "Full API Lifecycle Management & Developer Portal", "AI-assisted Integration Advisor & B2B/EDI libraries", "Edge Integration Cell (1+ runtime tenant)")
+            );
         }
     }
 }
