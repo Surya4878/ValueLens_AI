@@ -10,7 +10,7 @@ export function TopNavbar() {
   const navLinks = [
     { label: 'Home', href: '/' },
     { label: 'Packages', href: '/offerings' },
-    { label: 'Assessment', href: '/assessment' },
+    { label: 'Business Value', href: '/assessment' },
     { label: 'Dashboard', href: '/dashboard/demo-assessment-1' },
     { label: 'Scenarios', href: '/scenarios/demo-assessment-1' },
   ];

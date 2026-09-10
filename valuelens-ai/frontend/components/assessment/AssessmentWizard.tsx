@@ -44,15 +44,92 @@ import {
   BarChart2,
   TrendingUp,
   Rocket,
+  Gift,
 } from 'lucide-react';
 import { Assessment, RoiCalculationResult } from '@/types';
 import { api } from '@/lib/api';
 import { formatCurrency } from '@/lib/formatters';
 
+export const PLATFORM_OPTIONS = [
+  {
+    id: 'sap-pipo',
+    name: 'SAP PI/PO',
+    cardTitle: 'SAP PI/PO → SAP BTP',
+    description: 'Discover the business value of migrating and modernizing your SAP PI/PO landscape.',
+    currentTco: 730000,
+    targetTco: 313084,
+    annualSavingsPct: 57.11,
+    annualSavingsUsd: 416916,
+    paybackMonths: '< 9 Months',
+    paybackExact: '8.6 Months',
+    fiveYearRoi: '594.86%',
+    fiveYearNetBenefit: '$1,784,580',
+    intSwitchAccelerationPct: '60% Faster Migration',
+    intSwitchEffortReductionPct: '40% Lower Effort',
+    intSwitchHighlight: 'Automated NetWeaver dual-stack & AEX mapping conversion with 95%+ golden template accuracy',
+    migrationCost: 300000,
+  },
+  {
+    id: 'mulesoft',
+    name: 'MuleSoft',
+    cardTitle: 'MuleSoft → SAP BTP',
+    description: 'Discover the business value of migrating your MuleSoft integrations to SAP BTP Integration Suite.',
+    currentTco: 850000,
+    targetTco: 335000,
+    annualSavingsPct: 60.59,
+    annualSavingsUsd: 515000,
+    paybackMonths: '< 8 Months',
+    paybackExact: '7.8 Months',
+    fiveYearRoi: '620.40%',
+    fiveYearNetBenefit: '$2,225,000',
+    intSwitchAccelerationPct: '55% Faster Migration',
+    intSwitchEffortReductionPct: '45% Lower Effort',
+    intSwitchHighlight: 'Automated RAML API spec conversion and DataWeave to Groovy/BTP transformation scripts',
+    migrationCost: 350000,
+  },
+  {
+    id: 'sap-neo',
+    name: 'SAP CPI (Neo)',
+    cardTitle: 'SAP CPI (Neo) → SAP BTP',
+    description: 'Discover the business value of migrating and modernizing your SAP CPI (Neo) integrations.',
+    currentTco: 420000,
+    targetTco: 215000,
+    annualSavingsPct: 48.81,
+    annualSavingsUsd: 205000,
+    paybackMonths: '< 6 Months',
+    paybackExact: '5.8 Months',
+    fiveYearRoi: '482.50%',
+    fiveYearNetBenefit: '$900,000',
+    intSwitchAccelerationPct: '70% Faster Migration',
+    intSwitchEffortReductionPct: '50% Lower Effort',
+    intSwitchHighlight: 'Direct 1-click artifact & credential migration from SAP Neo to Multi-Cloud Cloud Foundry/Kyma',
+    migrationCost: 180000,
+  },
+  {
+    id: 'boomi',
+    name: 'Boomi',
+    cardTitle: 'Boomi → SAP BTP',
+    description: 'Discover the business value of migrating your Boomi integrations to SAP BTP Integration Suite.',
+    currentTco: 680000,
+    targetTco: 295000,
+    annualSavingsPct: 56.62,
+    annualSavingsUsd: 385000,
+    paybackMonths: '< 9 Months',
+    paybackExact: '8.4 Months',
+    fiveYearRoi: '543.20%',
+    fiveYearNetBenefit: '$1,605,000',
+    intSwitchAccelerationPct: '50% Faster Migration',
+    intSwitchEffortReductionPct: '35% Lower Effort',
+    intSwitchHighlight: 'Converts Boomi connector shapes & map shapes directly into SAP Integration Suite iFlows',
+    migrationCost: 280000,
+  },
+];
+
 export function AssessmentWizard() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [currentStep, setCurrentStep] = useState<number>(1);
+  const [currentStep, setCurrentStep] = useState<number>(0);
+  const [selectedPlatform, setSelectedPlatform] = useState<string>('sap-pipo');
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [calculationResult, setCalculationResult] = useState<RoiCalculationResult | null>(null);
 
@@ -401,9 +478,427 @@ export function AssessmentWizard() {
   };
 
   const activeMilestoneId = getActiveMilestone();
+  const activePlat = PLATFORM_OPTIONS.find((p) => p.id === selectedPlatform) || PLATFORM_OPTIONS[0];
+
+  const handleSelectPlatform = (platId: string) => {
+    setSelectedPlatform(platId);
+    const plat = PLATFORM_OPTIONS.find((p) => p.id === platId);
+    if (plat) {
+      setAssessment((prev) => ({
+        ...prev,
+        name: `${plat.name} to SAP BTP Migration Assessment`,
+        sourceSystem: {
+          ...prev.sourceSystem,
+          platform: plat.name,
+          sapPiPoAnnualCostBreakdown: {
+            ...prev.sourceSystem.sapPiPoAnnualCostBreakdown,
+            licensing: { ...prev.sourceSystem.sapPiPoAnnualCostBreakdown.licensing, subtotal: Math.round(plat.currentTco * 0.45) },
+            infrastructure: { ...prev.sourceSystem.sapPiPoAnnualCostBreakdown.infrastructure, subtotal: Math.round(plat.currentTco * 0.25) },
+            support: { ...prev.sourceSystem.sapPiPoAnnualCostBreakdown.support, subtotal: Math.round(plat.currentTco * 0.15) },
+            operations: { ...prev.sourceSystem.sapPiPoAnnualCostBreakdown.operations, subtotal: Math.round(plat.currentTco * 0.15) },
+          },
+        },
+      }));
+    }
+  };
+
+  if (currentStep === 0) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+        {/* Breadcrumbs Matching Screenshot */}
+        <div className="flex items-center space-x-2 text-xs font-medium text-slate-500">
+          <Link href="/" className="hover:text-blue-600 transition-colors">
+            Home
+          </Link>
+          <span>&gt;</span>
+          <span className="text-slate-900 font-semibold">Business Value</span>
+        </div>
+
+        {/* Hero Banner Matching Reference Screenshot */}
+        <div className="relative rounded-3xl bg-gradient-to-r from-[#eef6ff] via-[#f4f8fe] to-white border border-blue-100/90 p-6 sm:p-8 lg:p-10 shadow-xs overflow-hidden">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            {/* Left Column: Heading & Feature Badges */}
+            <div className="lg:col-span-7 z-10 space-y-3">
+              <div className="text-[11px] font-bold text-blue-600 tracking-wider uppercase">
+                INTEGRATION MODERNIZATION
+              </div>
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight">
+                Discover Business Value
+              </h1>
+              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-xl">
+                Choose your current integration platform to understand the business value of your migration to SAP BTP Integration Suite with Incture&apos;s Business ValueLens AI.
+              </p>
+
+              {/* 4 Feature Pills in a row */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3">
+                <div className="flex items-center space-x-2.5 p-1.5">
+                  <div className="w-8 h-8 rounded-full bg-blue-100/80 flex items-center justify-center shrink-0">
+                    <BarChart2 className="w-4 h-4 text-blue-600" />
+                  </div>
+                  <div>
+                    <div className="text-[11px] font-bold text-slate-800 leading-tight">Data-driven</div>
+                    <div className="text-[10px] text-slate-500 leading-tight">insights</div>
+                  </div>
+                </div>
+
+                <div className="flex items-center space-x-2.5 p-1.5">
+                  <div className="w-8 h-8 rounded-full bg-blue-100/80 flex items-center justify-center shrink-0">
+                    <Settings className="w-4 h-4 text-blue-600" />
+                  </div>
+                  <div>
+                    <div className="text-[11px] font-bold text-slate-800 leading-tight">Tailored</div>
+                    <div className="text-[10px] text-slate-500 leading-tight">recommendations</div>
+                  </div>
+                </div>
+
+                <div className="flex items-center space-x-2.5 p-1.5">
+                  <div className="w-8 h-8 rounded-full bg-blue-100/80 flex items-center justify-center shrink-0">
+                    <FileText className="w-4 h-4 text-blue-600" />
+                  </div>
+                  <div>
+                    <div className="text-[11px] font-bold text-slate-800 leading-tight">Clear business</div>
+                    <div className="text-[10px] text-slate-500 leading-tight">value</div>
+                  </div>
+                </div>
+
+                <div className="flex items-center space-x-2.5 p-1.5">
+                  <div className="w-8 h-8 rounded-full bg-blue-100/80 flex items-center justify-center shrink-0">
+                    <Zap className="w-4 h-4 text-blue-600" />
+                  </div>
+                  <div>
+                    <div className="text-[11px] font-bold text-slate-800 leading-tight">Faster path</div>
+                    <div className="text-[10px] text-slate-500 leading-tight">to innovation</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column: Skyline Graphic Matching Screenshot */}
+            <div className="lg:col-span-5 flex items-center justify-end relative h-48 sm:h-56 overflow-hidden rounded-2xl">
+              <img
+                src="/images/discover-value-banner-right.png"
+                alt="From Integration To What's Next"
+                className="h-full w-auto max-w-full object-contain object-right pointer-events-none select-none"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Platform Selection Section */}
+        <div className="space-y-4">
+          <div>
+            <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+              Select your current integration platform
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-500 mt-1">
+              Choose the platform you are currently using to begin your business value analysis.
+            </p>
+          </div>
+
+          {/* 4 Cards Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+            {PLATFORM_OPTIONS.map((plat) => {
+              const isSelected = selectedPlatform === plat.id;
+              return (
+                <div
+                  key={plat.id}
+                  onClick={() => handleSelectPlatform(plat.id)}
+                  className={`relative rounded-2xl p-5 bg-white cursor-pointer transition-all flex flex-col justify-between select-none ${
+                    isSelected
+                      ? 'border-2 border-blue-600 ring-4 ring-blue-500/10 shadow-md scale-[1.01]'
+                      : 'border border-slate-200/90 hover:border-slate-300 hover:shadow-xs shadow-2xs'
+                  }`}
+                >
+                  {/* Top-Right Radio Circle */}
+                  <div className="absolute top-4 right-4">
+                    <div
+                      className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${
+                        isSelected ? 'border-blue-600 bg-blue-600' : 'border-slate-300 bg-white'
+                      }`}
+                    >
+                      {isSelected && <div className="w-2 h-2 rounded-full bg-white" />}
+                    </div>
+                  </div>
+
+                  {/* Card Top Diagram: Source -> Target */}
+                  <div className="pt-2 pb-5 flex items-center justify-center space-x-3">
+                    {/* Source Logo */}
+                    <div className="flex flex-col items-center justify-center min-w-[75px]">
+                      {plat.id === 'sap-pipo' && (
+                        <>
+                          <img src="/images/sap-logo.svg" alt="SAP" className="h-6 w-auto object-contain" />
+                          <span className="text-[11px] font-bold text-[#0b1b36] mt-1.5">SAP PI/PO</span>
+                        </>
+                      )}
+                      {plat.id === 'mulesoft' && (
+                        <>
+                          <img src="/images/logos/logo_mulesoft.png" alt="MuleSoft" className="h-7 w-7 object-contain" />
+                          <span className="text-[11px] font-bold text-[#0b1b36] mt-1">MuleSoft</span>
+                        </>
+                      )}
+                      {plat.id === 'sap-neo' && (
+                        <>
+                          <img src="/images/sap-logo.svg" alt="SAP" className="h-6 w-auto object-contain" />
+                          <span className="text-[11px] font-bold text-[#0b1b36] mt-1.5">SAP CPI (Neo)</span>
+                        </>
+                      )}
+                      {plat.id === 'boomi' && (
+                        <>
+                          <div className="flex items-center text-lg font-black tracking-tight text-[#0a2240]">
+                            <span>boom</span>
+                            <span className="text-[#ff595a]">i</span>
+                          </div>
+                          <span className="text-[11px] font-bold text-[#0b1b36] mt-1">Boomi</span>
+                        </>
+                      )}
+                    </div>
+
+                    {/* Middle Arrow */}
+                    <div className="text-slate-400 font-light text-xl px-1">→</div>
+
+                    {/* Target BTP Block */}
+                    <div className="flex flex-col items-center justify-center min-w-[85px]">
+                      <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none">
+                        <defs>
+                          <linearGradient id={`cloudGrad-${plat.id}`} x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stopColor="#38bdf8" />
+                            <stop offset="100%" stopColor="#0284c7" />
+                          </linearGradient>
+                        </defs>
+                        <path
+                          d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"
+                          fill={`url(#cloudGrad-${plat.id})`}
+                        />
+                      </svg>
+                      <span className="text-[10px] font-bold text-[#0b1b36] leading-tight text-center mt-1">
+                        SAP BTP<br />Integration Suite
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Card Bottom: Title & Description */}
+                  <div className="text-center pt-2 border-t border-slate-100">
+                    <h3 className="text-sm sm:text-[15px] font-bold text-slate-900">
+                      {plat.cardTitle}
+                    </h3>
+                    <p className="text-xs text-slate-500 mt-1.5 leading-relaxed">
+                      {plat.description}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Incture IntSwitch Return Value & Pricing Breakdown */}
+        <div className="bg-gradient-to-r from-blue-50/80 via-indigo-50/40 to-sky-50/70 rounded-2xl border border-blue-200/90 p-5 sm:p-6 shadow-xs space-y-4">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-blue-200/70 pb-3">
+            <div className="flex items-center space-x-2.5">
+              <div className="w-8 h-8 rounded-lg bg-[#0066cc] text-white flex items-center justify-center font-black text-xs shadow-xs">
+                IS
+              </div>
+              <div>
+                <div className="flex items-center space-x-2">
+                  <span className="text-xs font-bold text-[#0066cc] uppercase tracking-wider">
+                    Incture IntSwitch™ Business Value &amp; ROI
+                  </span>
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold border border-emerald-200">
+                    Verified Economics
+                  </span>
+                </div>
+                <h4 className="text-base sm:text-lg font-black text-slate-900 mt-0.5">
+                  {activePlat.name} to SAP BTP Migration Value Metrics
+                </h4>
+              </div>
+            </div>
+            <Link
+              href="/intswitch"
+              className="inline-flex items-center space-x-1 text-xs font-bold text-[#0066cc] hover:text-blue-800 transition-colors"
+            >
+              <span>Explore IntSwitch™ Platform</span>
+              <span>→</span>
+            </Link>
+          </div>
+
+          {/* 4 Key Value Metric Cards */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+            <div className="bg-white rounded-xl p-4 border border-blue-100 shadow-2xs">
+              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                Potential Annual Savings
+              </span>
+              <span className="text-2xl sm:text-3xl font-black text-emerald-600 font-mono block mt-1">
+                {activePlat.annualSavingsPct}%
+              </span>
+              <span className="text-[11px] text-slate-500 mt-0.5 block">
+                Save ${activePlat.annualSavingsUsd.toLocaleString()} / year
+              </span>
+            </div>
+
+            <div className="bg-white rounded-xl p-4 border border-blue-100 shadow-2xs">
+              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                Estimated Payback
+              </span>
+              <span className="text-2xl sm:text-3xl font-black text-[#0066cc] font-mono block mt-1">
+                {activePlat.paybackMonths}
+              </span>
+              <span className="text-[11px] text-slate-500 mt-0.5 block">
+                Break-even in {activePlat.paybackExact}
+              </span>
+            </div>
+
+            <div className="bg-white rounded-xl p-4 border border-blue-100 shadow-2xs">
+              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                5-Year Cumulative ROI
+              </span>
+              <span className="text-2xl sm:text-3xl font-black text-indigo-700 font-mono block mt-1">
+                {activePlat.fiveYearRoi}
+              </span>
+              <span className="text-[11px] text-slate-500 mt-0.5 block">
+                {activePlat.fiveYearNetBenefit} Net Benefit
+              </span>
+            </div>
+
+            <div className="bg-white rounded-xl p-4 border border-blue-100 shadow-2xs">
+              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                IntSwitch™ Acceleration
+              </span>
+              <span className="text-2xl sm:text-3xl font-black text-purple-700 font-mono block mt-1">
+                {activePlat.intSwitchAccelerationPct.split(' ')[0]}
+              </span>
+              <span className="text-[11px] text-slate-500 mt-0.5 block">
+                {activePlat.intSwitchEffortReductionPct}
+              </span>
+            </div>
+          </div>
+
+          {/* Baseline Pricing Breakdown */}
+          <div className="flex flex-wrap items-center justify-between gap-3 text-xs bg-white/90 rounded-xl p-3.5 border border-blue-100/90">
+            <div className="flex items-center space-x-2">
+              <span className="font-semibold text-slate-600">Current Run-Rate:</span>
+              <span className="font-extrabold text-slate-900 font-mono">${activePlat.currentTco.toLocaleString()} / yr</span>
+              <span className="text-slate-400">→</span>
+              <span className="font-semibold text-slate-600">Target SAP BTP TCO:</span>
+              <span className="font-extrabold text-[#0066cc] font-mono">${activePlat.targetTco.toLocaleString()} / yr</span>
+            </div>
+            <div className="text-[11px] text-slate-600 font-medium">
+              <span className="text-[#0066cc] font-bold">IntSwitch™ Advantage:</span> {activePlat.intSwitchHighlight}
+            </div>
+          </div>
+        </div>
+
+        {/* 5-Item "What you'll get" Box Matching Reference Screenshot */}
+        <div className="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 shadow-xs">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 divide-y sm:divide-y-0 sm:divide-x divide-slate-100">
+            {/* 1. What you'll get */}
+            <div className="flex items-start space-x-3 pt-2 sm:pt-0 sm:px-2">
+              <div className="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 mt-0.5">
+                <Gift className="w-4 h-4" />
+              </div>
+              <div>
+                <h4 className="text-xs font-bold text-slate-900">What you&apos;ll get</h4>
+                <p className="text-[11px] text-slate-500 leading-snug mt-0.5">
+                  A comprehensive analysis with clear insights and business value.
+                </p>
+              </div>
+            </div>
+
+            {/* 2. Tailored Analysis */}
+            <div className="flex items-start space-x-3 pt-2 sm:pt-0 sm:px-2">
+              <div className="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 mt-0.5">
+                <FileText className="w-4 h-4" />
+              </div>
+              <div>
+                <h4 className="text-xs font-bold text-slate-900">Tailored Analysis</h4>
+                <p className="text-[11px] text-slate-500 leading-snug mt-0.5">
+                  Based on your integration landscape and requirements.
+                </p>
+              </div>
+            </div>
+
+            {/* 3. Migration Sizing */}
+            <div className="flex items-start space-x-3 pt-2 sm:pt-0 sm:px-2">
+              <div className="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 mt-0.5">
+                <TrendingUp className="w-4 h-4" />
+              </div>
+              <div>
+                <h4 className="text-xs font-bold text-slate-900">Migration Sizing</h4>
+                <p className="text-[11px] text-slate-500 leading-snug mt-0.5">
+                  Estimate effort, complexity and timelines.
+                </p>
+              </div>
+            </div>
+
+            {/* 4. TCO & ROI */}
+            <div className="flex items-start space-x-3 pt-2 sm:pt-0 sm:px-2">
+              <div className="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 mt-0.5">
+                <Database className="w-4 h-4" />
+              </div>
+              <div>
+                <h4 className="text-xs font-bold text-slate-900">TCO &amp; ROI</h4>
+                <p className="text-[11px] text-slate-500 leading-snug mt-0.5">
+                  Understand potential savings and business value.
+                </p>
+              </div>
+            </div>
+
+            {/* 5. Actionable Recommendations */}
+            <div className="flex items-start space-x-3 pt-2 sm:pt-0 sm:px-2">
+              <div className="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 mt-0.5">
+                <Lightbulb className="w-4 h-4" />
+              </div>
+              <div>
+                <h4 className="text-xs font-bold text-slate-900">Actionable Recommendations</h4>
+                <p className="text-[11px] text-slate-500 leading-snug mt-0.5">
+                  Get next steps to accelerate your migration journey.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Navigation Buttons Matching Screenshot */}
+        <div className="flex items-center justify-between pt-2">
+          <Link
+            href="/"
+            className="inline-flex items-center space-x-2 text-xs sm:text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors"
+          >
+            <span>←</span>
+            <span>Back to Home</span>
+          </Link>
+          <button
+            type="button"
+            onClick={() => setCurrentStep(1)}
+            className="inline-flex items-center space-x-2 px-6 py-3 bg-[#0066cc] hover:bg-blue-700 text-white rounded-xl text-xs sm:text-sm font-bold shadow-md shadow-blue-500/20 active:scale-95 transition-all"
+          >
+            <span>Continue to Business Value</span>
+            <span>→</span>
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+      {/* Breadcrumb & Selected Platform Bar */}
+      <div className="flex flex-wrap items-center justify-between gap-3 text-xs">
+        <div className="flex items-center space-x-2 text-slate-500 font-medium">
+          <Link href="/" className="hover:text-blue-600 transition-colors">Home</Link>
+          <span>&gt;</span>
+          <button onClick={() => setCurrentStep(0)} className="hover:text-blue-600 transition-colors">Business Value</button>
+          <span>&gt;</span>
+          <span className="text-slate-900 font-semibold">{activePlat.name}</span>
+        </div>
+        <button
+          type="button"
+          onClick={() => setCurrentStep(0)}
+          className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 font-bold text-xs border border-blue-200 transition-colors"
+        >
+          <span>← Change Platform ({activePlat.name})</span>
+        </button>
+      </div>
+
       {/* Hero Banner Matching Screenshot */}
       <div className="relative rounded-2xl bg-gradient-to-r from-blue-50/90 via-sky-50/50 to-indigo-50/80 border border-blue-100/90 p-6 sm:p-8 overflow-hidden shadow-xs">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
@@ -413,7 +908,7 @@ export function AssessmentWizard() {
               PLAN | MODERNIZE | OPTIMIZE | REALIZE VALUE
             </div>
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight">
-              SAP PI/PO to SAP BTP Migration Advisor
+              {activePlat.name} to SAP BTP Migration
             </h1>
             <p className="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-xl">
               Assess your current landscape. Plan with confidence. Accelerate your journey to a connected, intelligent enterprise with Incture&apos;s Business ValueLens AI.
@@ -516,13 +1011,12 @@ export function AssessmentWizard() {
                 }}
               >
                 <div
-                  className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
-                    isCurrent
+                  className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${isCurrent
                       ? 'bg-blue-600 text-white shadow-xs'
                       : isCompleted
-                      ? 'bg-teal-400 text-white shadow-xs'
-                      : 'bg-white text-slate-400 border border-slate-300'
-                  }`}
+                        ? 'bg-teal-400 text-white shadow-xs'
+                        : 'bg-white text-slate-400 border border-slate-300'
+                    }`}
                 >
                   {isCompleted ? (
                     <Check className="w-4 h-4 stroke-[2.5]" />
@@ -532,13 +1026,12 @@ export function AssessmentWizard() {
                 </div>
                 <div className="flex flex-col items-center mt-2 text-center">
                   <span
-                    className={`text-xs mt-0.5 leading-tight ${
-                      isCurrent
+                    className={`text-xs mt-0.5 leading-tight ${isCurrent
                         ? 'text-blue-600 font-bold'
                         : isCompleted
-                        ? 'text-slate-700 font-medium'
-                        : 'text-slate-400'
-                    }`}
+                          ? 'text-slate-700 font-medium'
+                          : 'text-slate-400'
+                      }`}
                   >
                     {m.label}
                   </span>
@@ -553,7 +1046,7 @@ export function AssessmentWizard() {
       <div className={`grid grid-cols-1 ${currentStep === 5 || currentStep === 7 ? 'lg:grid-cols-1' : 'lg:grid-cols-3'} gap-6`}>
         {/* Main Content Area */}
         <div className={`${currentStep === 5 || currentStep === 7 ? 'lg:col-span-1' : 'lg:col-span-2'} space-y-6`}>
-          
+
           {/* ========================================================================= */}
           {/* STEP 1: Tell us about your organization                                   */}
           {/* ========================================================================= */}
@@ -686,11 +1179,11 @@ export function AssessmentWizard() {
               <div className="flex items-center justify-between pt-6 border-t border-slate-100">
                 <button
                   type="button"
-                  onClick={() => router.push('/')}
+                  onClick={() => setCurrentStep(0)}
                   className="px-5 py-2.5 text-xs font-bold text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors flex items-center space-x-1.5 shadow-xs"
                 >
                   <ArrowLeft className="w-3.5 h-3.5" />
-                  <span>Back</span>
+                  <span>Back to Platform Selection</span>
                 </button>
                 <button
                   type="button"
@@ -1764,7 +2257,7 @@ export function AssessmentWizard() {
                 {/* Right: Visual Bar Chart Comparison */}
                 <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6 flex flex-col items-center justify-center space-y-4">
                   <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Volume Growth Profile</span>
-                  
+
                   <div className="flex items-end space-x-8 h-48 pt-6">
                     {/* Current Bar */}
                     <div className="flex flex-col items-center space-y-2">
@@ -2011,8 +2504,8 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
               const subtitle = isStarter
                 ? 'Best for small and simple integration landscapes'
                 : isStandard
-                ? 'Ideal for enterprise integration needs'
-                : 'For high-volume and advanced integration scenarios';
+                  ? 'Ideal for enterprise integration needs'
+                  : 'For high-volume and advanced integration scenarios';
 
               // 13 detailed features matching Image 2 Left
               const detailFeatures = [
@@ -2224,13 +2717,12 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
                     <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
                       <div className="flex items-start gap-4">
                         <div
-                          className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 ${
-                            isStarter
+                          className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 ${isStarter
                               ? 'bg-blue-50 text-blue-600 border border-blue-100'
                               : isStandard
-                              ? 'bg-indigo-50 text-indigo-600 border border-indigo-100'
-                              : 'bg-amber-50 text-amber-600 border border-amber-100'
-                          }`}
+                                ? 'bg-indigo-50 text-indigo-600 border border-indigo-100'
+                                : 'bg-amber-50 text-amber-600 border border-amber-100'
+                            }`}
                         >
                           {isStarter && <Box className="w-6 h-6" />}
                           {isStandard && <Layers className="w-6 h-6" />}
@@ -2255,11 +2747,10 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
                           <button
                             type="button"
                             onClick={() => handleSelectEdition(detailEdition)}
-                            className={`px-5 py-2.5 rounded-xl text-xs font-bold transition-all shadow-xs active:scale-95 ${
-                              currentEd === detailEdition
+                            className={`px-5 py-2.5 rounded-xl text-xs font-bold transition-all shadow-xs active:scale-95 ${currentEd === detailEdition
                                 ? 'bg-indigo-600 text-white'
                                 : 'bg-indigo-600 hover:bg-indigo-700 text-white'
-                            }`}
+                              }`}
                           >
                             {currentEd === detailEdition ? 'Selected ✓' : 'Select Edition'}
                           </button>
@@ -2280,55 +2771,50 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
                         <button
                           type="button"
                           onClick={() => setDetailTab('features')}
-                          className={`pb-3 border-b-2 transition-all whitespace-nowrap ${
-                            detailTab === 'features'
+                          className={`pb-3 border-b-2 transition-all whitespace-nowrap ${detailTab === 'features'
                               ? 'border-indigo-600 text-indigo-700 font-black'
                               : 'border-transparent text-slate-500 hover:text-slate-800'
-                          }`}
+                            }`}
                         >
                           Features
                         </button>
                         <button
                           type="button"
                           onClick={() => setDetailTab('what-you-get')}
-                          className={`pb-3 border-b-2 transition-all whitespace-nowrap ${
-                            detailTab === 'what-you-get'
+                          className={`pb-3 border-b-2 transition-all whitespace-nowrap ${detailTab === 'what-you-get'
                               ? 'border-indigo-600 text-indigo-700 font-black'
                               : 'border-transparent text-slate-500 hover:text-slate-800'
-                          }`}
+                            }`}
                         >
                           What You Get
                         </button>
                         <button
                           type="button"
                           onClick={() => setDetailTab('use-cases')}
-                          className={`pb-3 border-b-2 transition-all whitespace-nowrap ${
-                            detailTab === 'use-cases'
+                          className={`pb-3 border-b-2 transition-all whitespace-nowrap ${detailTab === 'use-cases'
                               ? 'border-indigo-600 text-indigo-700 font-black'
                               : 'border-transparent text-slate-500 hover:text-slate-800'
-                          }`}
+                            }`}
                         >
                           Use Cases
                         </button>
                         <button
                           type="button"
                           onClick={() => setDetailTab('add-ons')}
-                          className={`pb-3 border-b-2 transition-all whitespace-nowrap ${
-                            detailTab === 'add-ons'
+                          className={`pb-3 border-b-2 transition-all whitespace-nowrap ${detailTab === 'add-ons'
                               ? 'border-indigo-600 text-indigo-700 font-black'
                               : 'border-transparent text-slate-500 hover:text-slate-800'
-                          }`}
+                            }`}
                         >
                           Add-ons (Available)
                         </button>
                         <button
                           type="button"
                           onClick={() => setDetailTab('docs')}
-                          className={`pb-3 border-b-2 transition-all whitespace-nowrap ${
-                            detailTab === 'docs'
+                          className={`pb-3 border-b-2 transition-all whitespace-nowrap ${detailTab === 'docs'
                               ? 'border-indigo-600 text-indigo-700 font-black'
                               : 'border-transparent text-slate-500 hover:text-slate-800'
-                          }`}
+                            }`}
                         >
                           SAP Documentation
                         </button>
@@ -2966,11 +3452,10 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
                       {/* 1. Starter Edition */}
                       <div
                         onClick={() => handleSelectEdition('Starter Edition', 1)}
-                        className={`p-5 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between relative ${
-                          currentEd === 'Starter Edition'
+                        className={`p-5 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between relative ${currentEd === 'Starter Edition'
                             ? 'border-indigo-600 ring-2 ring-indigo-500/20 bg-indigo-50/20 shadow-md'
                             : 'border-slate-200 hover:border-slate-300 bg-white shadow-2xs'
-                        }`}
+                          }`}
                       >
                         <div className="space-y-3.5">
                           <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600">
@@ -3014,11 +3499,10 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
                         <div className="pt-5 space-y-2">
                           <button
                             type="button"
-                            className={`w-full py-2 rounded-xl text-xs font-bold transition-all shadow-2xs ${
-                              currentEd === 'Starter Edition'
+                            className={`w-full py-2 rounded-xl text-xs font-bold transition-all shadow-2xs ${currentEd === 'Starter Edition'
                                 ? 'bg-indigo-600 text-white shadow-xs'
                                 : 'bg-white border border-indigo-200 text-indigo-600 hover:bg-indigo-50/50'
-                            }`}
+                              }`}
                           >
                             {currentEd === 'Starter Edition' ? 'Selected ✓' : 'Select'}
                           </button>
@@ -3038,11 +3522,10 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
                       {/* 2. Standard Edition (Recommended) */}
                       <div
                         onClick={() => handleSelectEdition('Standard Edition', 3)}
-                        className={`p-5 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between relative ${
-                          currentEd === 'Standard Edition'
+                        className={`p-5 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between relative ${currentEd === 'Standard Edition'
                             ? 'border-indigo-600 ring-2 ring-indigo-500/20 bg-indigo-50/20 shadow-md'
                             : 'border-slate-200 hover:border-slate-300 bg-white shadow-2xs'
-                        }`}
+                          }`}
                       >
                         <span className="absolute -top-2.5 right-4 bg-indigo-600 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full shadow-xs flex items-center gap-1">
                           ★ Recommended
@@ -3098,11 +3581,10 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
                         <div className="pt-5 space-y-2">
                           <button
                             type="button"
-                            className={`w-full py-2 rounded-xl text-xs font-bold transition-all shadow-2xs ${
-                              currentEd === 'Standard Edition'
+                            className={`w-full py-2 rounded-xl text-xs font-bold transition-all shadow-2xs ${currentEd === 'Standard Edition'
                                 ? 'bg-indigo-600 text-white shadow-xs'
                                 : 'bg-white border border-indigo-200 text-indigo-600 hover:bg-indigo-50/50'
-                            }`}
+                              }`}
                           >
                             {currentEd === 'Standard Edition' ? 'Selected ✓' : 'Select'}
                           </button>
@@ -3122,11 +3604,10 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
                       {/* 3. Enhanced Edition */}
                       <div
                         onClick={() => handleSelectEdition('Enhanced Edition', 1)}
-                        className={`p-5 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between relative ${
-                          currentEd === 'Enhanced Edition'
+                        className={`p-5 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between relative ${currentEd === 'Enhanced Edition'
                             ? 'border-indigo-600 ring-2 ring-indigo-500/20 bg-indigo-50/20 shadow-md'
                             : 'border-slate-200 hover:border-slate-300 bg-white shadow-2xs'
-                        }`}
+                          }`}
                       >
                         <div className="space-y-3.5">
                           <div className="w-10 h-10 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center text-amber-600">
@@ -3182,11 +3663,10 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
                         <div className="pt-5 space-y-2">
                           <button
                             type="button"
-                            className={`w-full py-2 rounded-xl text-xs font-bold transition-all shadow-2xs ${
-                              currentEd === 'Enhanced Edition'
+                            className={`w-full py-2 rounded-xl text-xs font-bold transition-all shadow-2xs ${currentEd === 'Enhanced Edition'
                                 ? 'bg-indigo-600 text-white shadow-xs'
                                 : 'bg-white border border-indigo-200 text-indigo-600 hover:bg-indigo-50/50'
-                            }`}
+                              }`}
                           >
                             {currentEd === 'Enhanced Edition' ? 'Selected ✓' : 'Select'}
                           </button>
@@ -3273,11 +3753,10 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                           {/* 1. Additional Messages */}
                           <div
-                            className={`p-4 rounded-xl border transition-all flex flex-col justify-between ${
-                              packs > 0
+                            className={`p-4 rounded-xl border transition-all flex flex-col justify-between ${packs > 0
                                 ? 'border-indigo-600 ring-2 ring-indigo-500/20 bg-indigo-50/20 shadow-xs'
                                 : 'border-slate-200 bg-white hover:border-slate-300 shadow-2xs'
-                            }`}
+                              }`}
                           >
                             <div className="space-y-2">
                               <div className="flex items-center justify-between">
@@ -3285,9 +3764,8 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
                                   <MessageSquare className="w-4 h-4" />
                                 </div>
                                 <span
-                                  className={`px-2 py-0.5 rounded-full text-[10px] font-black ${
-                                    packs > 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'
-                                  }`}
+                                  className={`px-2 py-0.5 rounded-full text-[10px] font-black ${packs > 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'
+                                    }`}
                                 >
                                   {packs > 0 ? `✓ In Plan (${packs} packs)` : 'Optional'}
                                 </span>
@@ -3354,11 +3832,10 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
 
                           {/* 2. Data Space Integration */}
                           <div
-                            className={`p-4 rounded-xl border transition-all flex flex-col justify-between ${
-                              dataSpacePackages > 0
+                            className={`p-4 rounded-xl border transition-all flex flex-col justify-between ${dataSpacePackages > 0
                                 ? 'border-indigo-600 ring-2 ring-indigo-500/20 bg-indigo-50/20 shadow-xs'
                                 : 'border-slate-200 bg-white hover:border-slate-300 shadow-2xs'
-                            }`}
+                              }`}
                           >
                             <div className="space-y-2">
                               <div className="flex items-center justify-between">
@@ -3366,9 +3843,8 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
                                   <Database className="w-4 h-4" />
                                 </div>
                                 <span
-                                  className={`px-2 py-0.5 rounded-full text-[10px] font-black ${
-                                    dataSpacePackages > 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'
-                                  }`}
+                                  className={`px-2 py-0.5 rounded-full text-[10px] font-black ${dataSpacePackages > 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'
+                                    }`}
                                 >
                                   {dataSpacePackages > 0 ? `✓ In Plan (${dataSpacePackages} pkg)` : 'Optional'}
                                 </span>
@@ -3435,11 +3911,10 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
 
                           {/* 3. Additional EIC Tenant */}
                           <div
-                            className={`p-4 rounded-xl border transition-all flex flex-col justify-between ${
-                              additionalEicTenants > 0
+                            className={`p-4 rounded-xl border transition-all flex flex-col justify-between ${additionalEicTenants > 0
                                 ? 'border-indigo-600 ring-2 ring-indigo-500/20 bg-indigo-50/20 shadow-xs'
                                 : 'border-slate-200 bg-white hover:border-slate-300 shadow-2xs'
-                            }`}
+                              }`}
                           >
                             <div className="space-y-2">
                               <div className="flex items-center justify-between">
@@ -3447,9 +3922,8 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
                                   <Server className="w-4 h-4" />
                                 </div>
                                 <span
-                                  className={`px-2 py-0.5 rounded-full text-[10px] font-black ${
-                                    additionalEicTenants > 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'
-                                  }`}
+                                  className={`px-2 py-0.5 rounded-full text-[10px] font-black ${additionalEicTenants > 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'
+                                    }`}
                                 >
                                   {additionalEicTenants > 0 ? `✓ In Plan (${additionalEicTenants} tenant)` : 'Optional'}
                                 </span>
@@ -3527,15 +4001,13 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
                         <button
                           type="button"
                           onClick={() => setLiveEconomicsEnabled(!liveEconomicsEnabled)}
-                          className={`w-11 h-6 rounded-full transition-colors relative p-0.5 focus:outline-hidden ${
-                            liveEconomicsEnabled ? 'bg-indigo-600' : 'bg-slate-200'
-                          }`}
+                          className={`w-11 h-6 rounded-full transition-colors relative p-0.5 focus:outline-hidden ${liveEconomicsEnabled ? 'bg-indigo-600' : 'bg-slate-200'
+                            }`}
                           title="Toggle Live Economics Summary"
                         >
                           <span
-                            className={`w-5 h-5 rounded-full bg-white shadow-xs block transition-transform ${
-                              liveEconomicsEnabled ? 'translate-x-5' : 'translate-x-0'
-                            }`}
+                            className={`w-5 h-5 rounded-full bg-white shadow-xs block transition-transform ${liveEconomicsEnabled ? 'translate-x-5' : 'translate-x-0'
+                              }`}
                           />
                         </button>
                       </div>
