@@ -38,20 +38,12 @@ export default function RootLayout({
                   className="h-5 w-auto object-contain"
                 />
               </a>
-              <span className="h-4 w-px bg-slate-300"></span>
-              <div className="w-6 h-6 rounded-md bg-gradient-to-tr from-indigo-600 to-purple-600 flex items-center justify-center text-white text-xs">
-                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-              </div>
-              <div>
-                <div className="flex items-center space-x-1 leading-none">
-                  <span className="text-[11px] font-normal text-slate-700">Business</span>
-                  <span className="text-[11px] font-black text-slate-900">ValueLens</span>
-                  <span className="text-[9px] px-1 py-0.2 rounded font-bold uppercase bg-purple-600 text-white ml-0.5">AI</span>
-                </div>
-                <p className="text-[8px] font-bold text-slate-400 tracking-wider uppercase mt-0.5">Migration Economics</p>
-              </div>
+              <span className="h-5 w-px bg-slate-300"></span>
+              <img
+                src="/images/business-valuelens-ai-logo.png?v=newlogo"
+                alt="Business ValueLens AI"
+                className="h-7 sm:h-8 w-auto object-contain"
+              />
             </div>
 
             {/* Middle: Slogan */}

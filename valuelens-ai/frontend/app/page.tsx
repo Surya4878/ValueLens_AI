@@ -8,212 +8,363 @@ export default function HomePage() {
     {
       num: '01',
       title: 'Landscape & Inventory Discovery',
-      desc: 'Catalog SAP PI/PO interfaces, monthly message volumes, third-party adapters, and legacy ABAP/Java mapping complexity.',
+      desc: 'Catalog source middleware platform interfaces, monthly message volumes, third-party adapters, and legacy ABAP/Java mapping complexity.',
+      icon: (
+        <svg className="w-4 h-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
+        </svg>
+      ),
     },
     {
       num: '02',
       title: 'Baseline TCO Modeling',
       desc: 'Quantify current operational run-rate across perpetual licensing, on-premise hardware, vendor maintenance, and support teams.',
+      icon: (
+        <svg className="w-4 h-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+        </svg>
+      ),
     },
     {
       num: '03',
       title: 'Target SAP BTP Sizing',
       desc: 'Configure optimal SAP Integration Suite editions, tenant allocations, and annual message pack capacities tailored to workload demand.',
+      icon: (
+        <svg className="w-4 h-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <circle cx="12" cy="12" r="9" strokeWidth={2} />
+          <circle cx="12" cy="12" r="5" strokeWidth={2} />
+          <circle cx="12" cy="12" r="1.5" fill="currentColor" />
+        </svg>
+      ),
     },
     {
       num: '04',
       title: 'Financial ROI & Payback Analysis',
       desc: 'Project multi-year cost reductions, net economic benefit, capital requirements, and verified break-even payback timelines.',
+      icon: (
+        <svg className="w-4 h-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+        </svg>
+      ),
     },
     {
       num: '05',
       title: 'AI Decision Intelligence',
-      desc: 'Synthesize strategic migration feasibility, identify risk drivers, evaluate architectural trade-offs, and recommend executive actions.',
+      desc: 'Synthesize migration feasibility, identify risk drivers, evaluate architectural trade-offs, and recommend executive actions.',
+      icon: (
+        <svg className="w-4 h-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+        </svg>
+      ),
     },
     {
       num: '06',
       title: 'Executive Investment Business Case',
       desc: 'Deliver audit-ready board presentations, interactive scenario simulations, and verifiable business cases for C-level sign-off.',
+      icon: (
+        <svg className="w-4 h-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+      ),
     },
   ];
 
   return (
-    <div className="space-y-20 pb-20">
-      {/* Hero Section */}
-      <section className="relative pt-12 sm:pt-20 pb-12 overflow-hidden bg-gradient-to-b from-slate-900 via-indigo-950 to-slate-900 text-white">
-        {/* Glow blobs */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-indigo-500/20 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute top-1/3 right-10 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-12">
+      {/* 1. Hero Section */}
+      <section className="bg-gradient-to-r from-[#eef5fc] via-[#f2f7fc] to-[#e8f2fa] rounded-3xl border border-blue-100/80 p-6 sm:p-8 lg:p-10 shadow-xs overflow-hidden">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 items-center">
+          {/* Left Column: Headings, Subtitle & CTAs */}
+          <div className="lg:col-span-6 space-y-6">
+            {/* Tagline */}
+            <p className="text-[11px] sm:text-xs font-bold text-slate-400 tracking-widest uppercase">
+              ASSESS &nbsp;|&nbsp; PLAN &nbsp;|&nbsp; MIGRATE &nbsp;|&nbsp; REALIZE VALUE
+            </p>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center space-y-8">
-          {/* Top Pill */}
-          <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/15 text-xs font-semibold backdrop-blur-md">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-slate-200">ValueLens AI • SAP PI/PO to SAP BTP Migration Economics</span>
-          </div>
+            {/* Main Headline */}
+            <h1 className="text-3xl sm:text-4xl lg:text-[40px] font-black text-slate-900 leading-[1.14] tracking-tight">
+              Turn Your Integration<br />
+              Migration into<br />
+              <span className="text-[#0066cc]">Business Value.</span>
+            </h1>
 
-          {/* Main Title */}
-          <h1 className="text-4xl sm:text-6xl font-black tracking-tight text-white max-w-4xl mx-auto leading-tight">
-            The Executive Standard for{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-300 to-emerald-400">
-              SAP PI/PO to BTP Economics
-            </span>
-          </h1>
+            {/* Paragraph */}
+            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
+              Business ValueLens AI helps you assess, plan, and quantify the business impact of migrating SAP Neo CPI, SAP PI/PO, MuleSoft, and Boomi to SAP BTP Integration Suite with AI-powered insights and data-driven TCO, ROI, and recommendations.
+            </p>
 
-          {/* Subtitle */}
-          <p className="text-base sm:text-xl text-slate-300 max-w-3xl mx-auto leading-relaxed font-normal">
-            Authoritative, deterministic financial modeling combined with autonomous AI decision intelligence.
-            Evaluate your transition from legacy SAP PI/PO NetWeaver dual-stack to SAP BTP Integration Suite with zero financial hallucinations.
-          </p>
+            {/* Powered by IntSwitch Card -> Links to /intswitch */}
+            <div className="pt-0.5">
+              <Link
+                href="/intswitch"
+                title="IntSwitch — Incture Migration Tool"
+                className="group inline-flex flex-col bg-white/95 backdrop-blur-md rounded-xl p-2.5 sm:py-2.5 sm:px-3.5 border border-blue-100/90 shadow-xs hover:shadow-md hover:border-blue-300 transition-all cursor-pointer w-fit max-w-[420px]"
+              >
+                {/* Powered by label */}
+                <div className="text-[10.5px] font-bold text-purple-600 tracking-wide mb-1">
+                  Powered by
+                </div>
 
-          {/* CTAs */}
-          <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
-            <Link
-              href="/dashboard/demo-assessment-1"
-              className="px-7 py-3.5 rounded-xl text-sm font-bold bg-gradient-to-r from-indigo-600 via-indigo-500 to-purple-600 text-white shadow-xl shadow-indigo-600/30 hover:shadow-indigo-600/50 hover:scale-105 active:scale-95 transition-all flex items-center space-x-2"
-            >
-              <span>Explore SAP PI/PO Case Study</span>
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-              </svg>
-            </Link>
+                <div className="flex items-center space-x-3">
+                  {/* Left: Power Icon + IntSwitch & Incture Migration Tool */}
+                  <div className="flex items-center space-x-2 shrink-0">
+                    <div className="w-8 h-8 rounded-lg bg-blue-50/90 border border-blue-100 flex items-center justify-center text-[#0066cc] shrink-0 group-hover:scale-105 transition-transform">
+                      <svg className="w-4.5 h-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.4} d="M12 2v9" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.4} d="M18.36 6.64a9 9 0 11-12.73 0" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-extrabold text-[#0066cc] leading-none group-hover:text-blue-700 transition-colors">
+                        IntSwitch
+                      </h4>
+                      <p className="text-[10px] text-slate-500 font-medium leading-tight mt-0.5">
+                        Incture Migration And <br />Automation Tool
+                      </p>
+                    </div>
+                  </div>
 
-            <Link
-              href="/assessment"
-              className="px-7 py-3.5 rounded-xl text-sm font-bold bg-white/10 hover:bg-white/20 text-white border border-white/20 backdrop-blur-md transition-colors"
-            >
-              Start Custom Assessment
-            </Link>
-          </div>
+                  {/* Divider */}
+                  <div className="h-7 w-px bg-slate-200 shrink-0 mx-1" />
 
+                  {/* Middle Text: Accelerate your migration journey */}
+                  <div className="shrink-0 pr-1">
+                    <p className="text-[11.5px] sm:text-xs font-semibold text-slate-700 leading-tight">
+                      Accelerate your<br />migration journey
+                    </p>
+                  </div>
 
-        </div>
-      </section>
-
-      {/* Featured Proof Point / Case Study Highlights */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-gradient-to-br from-white to-slate-50 rounded-3xl border border-slate-200/80 p-8 shadow-xl shadow-slate-200/50">
-          <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
-            <div>
-              <span className="text-xs font-bold text-indigo-600 uppercase tracking-wider">
-                Benchmark Production Case Study
-              </span>
-              <h2 className="text-2xl font-black text-slate-900 mt-1">
-                Global Enterprise Migration from SAP PI/PO 7.5
-              </h2>
-            </div>
-            <Link
-              href="/dashboard/demo-assessment-1"
-              className="text-xs font-bold text-indigo-600 hover:text-indigo-700 flex items-center space-x-1"
-            >
-              <span>View Full Interactive Dashboard</span>
-              <span>→</span>
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-            <div className="p-5 bg-white rounded-2xl border border-slate-200/80 shadow-xs">
-              <span className="text-xs text-slate-500 font-medium uppercase block">Current TCO</span>
-              <span className="text-2xl sm:text-3xl font-black text-slate-900 font-mono block mt-1">
-                $730,000
-              </span>
-              <span className="text-[11px] text-slate-400 mt-1 block">Annual Run-Rate</span>
+                  {/* Right Circle Arrow Button */}
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-blue-50 border border-blue-100 text-[#0066cc] group-hover:bg-[#0066cc] group-hover:text-white flex items-center justify-center transition-all shrink-0 shadow-xs">
+                    <span className="text-xs sm:text-sm leading-none">→</span>
+                  </div>
+                </div>
+              </Link>
             </div>
 
-            <div className="p-5 bg-white rounded-2xl border border-slate-200/80 shadow-xs">
-              <span className="text-xs text-slate-500 font-medium uppercase block">BTP Target TCO</span>
-              <span className="text-2xl sm:text-3xl font-black text-indigo-600 font-mono block mt-1">
-                $313,084
-              </span>
-              <span className="text-[11px] text-emerald-600 font-bold mt-1 block">-57.11% Cost Reduction</span>
-            </div>
-
-            <div className="p-5 bg-white rounded-2xl border border-slate-200/80 shadow-xs">
-              <span className="text-xs text-slate-500 font-medium uppercase block">Break-Even Horizon</span>
-              <span className="text-2xl sm:text-3xl font-black text-emerald-600 font-mono block mt-1">
-                8.64 Mo
-              </span>
-              <span className="text-[11px] text-slate-400 mt-1 block">$300,000 Migration Cost</span>
-            </div>
-
-            <div className="p-5 bg-white rounded-2xl border border-slate-200/80 shadow-xs">
-              <span className="text-xs text-slate-500 font-medium uppercase block">5-Year Net Benefit</span>
-              <span className="text-2xl sm:text-3xl font-black text-indigo-900 font-mono block mt-1">
-                $1,784,580
-              </span>
-              <span className="text-[11px] text-indigo-600 font-bold mt-1 block">594.86% 5-Yr ROI</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Specialized SAP PI/PO Platform Feature Section */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-        <div className="text-center space-y-2 max-w-2xl mx-auto">
-          <span className="text-xs font-bold text-indigo-600 uppercase tracking-wider">
-            Specialized Architecture
-          </span>
-          <h2 className="text-3xl font-black text-slate-900 tracking-tight">
-            SAP PI/PO to SAP BTP Migration Architecture
-          </h2>
-          <p className="text-sm text-slate-500">
-            Calibrated specifically for NetWeaver dual-stack and AEX migration to cloud-native SAP Integration Suite.
-          </p>
-        </div>
-
-        <div className="bg-white rounded-3xl border border-slate-200 p-8 shadow-xs max-w-4xl mx-auto space-y-6">
-          <div className="space-y-4">
-            <div className="flex items-center space-x-3">
-              <div className="p-3 bg-indigo-50 text-indigo-600 rounded-2xl">
-                <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                </svg>
+            {/* 3 Action Buttons strictly in ONE Row with Subtext */}
+            <div className="grid grid-cols-3 gap-2.5 sm:gap-3 pt-1 w-full">
+              {/* Button 1: Explore Package Offerings (Navigates to /offerings) */}
+              <div className="flex flex-col">
+                <Link
+                  href="/offerings"
+                  className="inline-flex items-center justify-center space-x-1 px-2 sm:px-2.5 py-2.5 rounded-lg text-[10.5px] sm:text-[11.5px] xl:text-xs font-bold bg-[#0066cc] hover:bg-[#0052a3] text-white shadow-xs transition-colors cursor-pointer text-center whitespace-nowrap"
+                >
+                  <span>Explore Package Offerings</span>
+                  <span className="text-xs shrink-0">→</span>
+                </Link>
+                <span className="text-[10px] text-slate-500 font-medium mt-1.5 text-center leading-tight">
+                  Discover how Incture can help
+                </span>
               </div>
-              <div>
-                <h3 className="text-xl font-bold text-slate-900">SAP PI/PO (NetWeaver Dual-Stack & AEX)</h3>
-                <span className="text-xs font-bold text-rose-600 bg-rose-50 px-2.5 py-0.5 rounded-full border border-rose-200 inline-block mt-0.5">
-                  End-of-Life: Standard Support Ends 2027 / 2030
+
+              {/* Button 2: Customer Success (Redirects to https://incture.com/case-studies/) */}
+              <div className="flex flex-col">
+                <a
+                  href="https://incture.com/case-studies/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center space-x-1 px-2 sm:px-2.5 py-2.5 rounded-lg text-[10.5px] sm:text-[11.5px] xl:text-xs font-bold bg-white hover:bg-slate-50 text-[#0066cc] border border-[#0066cc]/40 shadow-xs transition-colors cursor-pointer text-center whitespace-nowrap"
+                >
+                  <span>Customer Success</span>
+                  <span className="text-xs shrink-0">→</span>
+                </a>
+                <span className="text-[10px] text-slate-500 font-medium mt-1.5 text-center leading-tight">
+                  See real-world transformation stories
+                </span>
+              </div>
+
+              {/* Button 3: Start Custom Assessment */}
+              <div className="flex flex-col">
+                <Link
+                  href="/assessment"
+                  className="inline-flex items-center justify-center space-x-1 px-2 sm:px-2.5 py-2.5 rounded-lg text-[10.5px] sm:text-[11.5px] xl:text-xs font-bold bg-[#7928ca] hover:bg-[#6820b0] text-white shadow-xs transition-colors cursor-pointer text-center whitespace-nowrap"
+                >
+                  <span>Discover Business Value</span>
+                  <span className="text-xs shrink-0">→</span>
+                </Link>
+                <span className="text-[10px] text-slate-500 font-medium mt-1.5 text-center leading-tight">
+                  Get your personalized business case
                 </span>
               </div>
             </div>
+          </div>
 
-            <p className="text-sm text-slate-600 leading-relaxed">
-              Eliminate expensive on-premise hardware footprints, high third-party adapter contracts, and legacy ABAP/Java user-defined function bottlenecks by modernizing to SAP BTP Integration Suite.
-            </p>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-              <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200">
-                <span className="text-xs text-slate-500 block font-medium">Expected TCO Reduction</span>
-                <span className="text-xl font-black text-emerald-600 font-mono mt-1 block">57.11% Annual Savings</span>
-              </div>
-              <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200">
-                <span className="text-xs text-slate-500 block font-medium">Average Payback</span>
-                <span className="text-xl font-black text-indigo-600 font-mono mt-1 block">&lt; 9 Months Payback</span>
-              </div>
+          {/* Right Column: Hero Architecture Diagram */}
+          <div className="lg:col-span-6 flex justify-center lg:justify-end items-center">
+            <div className="w-full rounded-2xl overflow-hidden shadow-md border border-slate-200/80 bg-white hover:shadow-lg transition-all">
+              <img
+                src="/images/hero-architecture-diagram.jpg?v=platforms"
+                alt="Integration Migration Architecture to SAP BTP Integration Suite"
+                className="w-full h-auto object-contain block"
+              />
             </div>
           </div>
         </div>
       </section>
 
-      {/* 6-Step Workflow */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-        <div className="text-center space-y-2 max-w-2xl mx-auto">
-          <h2 className="text-3xl font-black text-slate-900 tracking-tight">
+      {/* 2. Value Proposition Badges (4 Horizontal Badges in White Card) */}
+      <section className="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {/* Badge 1 */}
+          <div className="flex items-center space-x-4">
+            <div className="w-11 h-11 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center text-[#0066cc] shrink-0">
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+            </div>
+            <div>
+              <h4 className="text-xs font-bold text-slate-900 leading-tight">Lower TCO with AI Insights</h4>
+              <p className="text-[11px] text-slate-500 mt-0.5 leading-snug">Identify cost savings and optimize investments</p>
+            </div>
+          </div>
+
+          {/* Badge 2 */}
+          <div className="flex items-center space-x-4">
+            <div className="w-11 h-11 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center text-[#0066cc] shrink-0">
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <circle cx="12" cy="12" r="9" strokeWidth={2} />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 7v5l3 3" />
+              </svg>
+            </div>
+            <div>
+              <h4 className="text-xs font-bold text-slate-900 leading-tight">Faster Time to Value</h4>
+              <p className="text-[11px] text-slate-500 mt-0.5 leading-snug">Accelerate migration planning and execution</p>
+            </div>
+          </div>
+
+          {/* Badge 3 */}
+          <div className="flex items-center space-x-4">
+            <div className="w-11 h-11 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center text-[#0066cc] shrink-0">
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                <circle cx="12" cy="12" r="3" strokeWidth={2} />
+              </svg>
+            </div>
+            <div>
+              <h4 className="text-xs font-bold text-slate-900 leading-tight">Informed AI-Driven Decisions</h4>
+              <p className="text-[11px] text-slate-500 mt-0.5 leading-snug">Leverage AI for accurate recommendations</p>
+            </div>
+          </div>
+
+          {/* Badge 4 */}
+          <div className="flex items-center space-x-4">
+            <div className="w-11 h-11 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center text-[#0066cc] shrink-0">
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
+              </svg>
+            </div>
+            <div>
+              <h4 className="text-xs font-bold text-slate-900 leading-tight">Quantifiable Business Value</h4>
+              <p className="text-[11px] text-slate-500 mt-0.5 leading-snug">Measure ROI, payback and long-term business impact</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 3. The 6-Step ValueLens Process */}
+      <section className="space-y-6">
+        <div className="text-center space-y-1 max-w-2xl mx-auto">
+          <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
             The 6-Step ValueLens Process
           </h2>
-          <p className="text-sm text-slate-500">
+          <p className="text-xs sm:text-sm text-slate-500 font-normal">
             From raw interface telemetry to audit-ready executive investment proposals.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {steps.map((step, idx) => (
-            <div key={idx} className="p-6 bg-white rounded-2xl border border-slate-200 shadow-xs space-y-2">
-              <span className="text-2xl font-black text-indigo-600 font-mono">{step.num}</span>
-              <h3 className="text-base font-bold text-slate-900">{step.title}</h3>
-              <p className="text-xs text-slate-600 leading-relaxed">{step.desc}</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {steps.map((step) => (
+            <div
+              key={step.num}
+              className="p-6 bg-white rounded-2xl border border-slate-200/80 shadow-xs hover:shadow-md transition-shadow space-y-3"
+            >
+              <div className="flex items-center space-x-3">
+                <span className="text-lg font-black text-indigo-600 font-mono">{step.num}</span>
+                <div className="w-8 h-8 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center">
+                  {step.icon}
+                </div>
+              </div>
+              <h3 className="text-sm font-bold text-slate-900 leading-snug">{step.title}</h3>
+              <p className="text-xs text-slate-500 leading-relaxed">{step.desc}</p>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* 4. Featured Migration Scenario: SAP PI/PO to SAP BTP */}
+      <section className="relative rounded-3xl overflow-hidden shadow-xs border border-slate-200/90 bg-white hover:shadow-md transition-shadow">
+        <img
+          src="/images/featured-sap-pipo-scenario.png?v=2"
+          alt="Featured Migration Scenario: SAP PI/PO to SAP BTP"
+          className="w-full h-auto object-contain block select-none"
+        />
+        {/* Exact Clickable Overlay for 'Assess Your SAP PI/PO Landscape' Button */}
+        <Link
+          href="/assessment"
+          style={{
+            left: '73.34%',
+            top: '81.77%',
+            width: '22.27%',
+            height: '9.38%',
+          }}
+          className="absolute rounded-lg cursor-pointer transition-all hover:bg-white/10 active:bg-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+          title="Assess Your SAP PI/PO Landscape"
+        />
+      </section>
+
+      {/* 5. Benchmark Production Case Study */}
+      <section className="bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-8 shadow-xs max-w-5xl mx-auto space-y-6">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <span className="text-[11px] font-bold text-indigo-600 uppercase tracking-widest block">
+              BENCHMARK PRODUCTION CASE STUDY
+            </span>
+            <h3 className="text-xl sm:text-2xl font-black text-slate-900 mt-1">
+              Global Enterprise Migration from SAP PI/PO 7.5
+            </h3>
+          </div>
+          <Link
+            href="/dashboard/demo-assessment-1"
+            className="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center space-x-1 transition-colors"
+          >
+            <span>View Full Interactive Dashboard</span>
+            <span>→</span>
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+          <div className="p-4 bg-slate-50/50 rounded-xl border border-slate-200/70">
+            <span className="text-[10px] text-slate-500 font-semibold uppercase tracking-wider block">CURRENT TCO</span>
+            <span className="text-2xl sm:text-3xl font-black text-slate-900 font-mono block mt-1">
+              $730,000
+            </span>
+            <span className="text-[11px] text-slate-400 mt-1 block">Annual Run-Rate</span>
+          </div>
+
+          <div className="p-4 bg-slate-50/50 rounded-xl border border-slate-200/70">
+            <span className="text-[10px] text-slate-500 font-semibold uppercase tracking-wider block">BTP TARGET TCO</span>
+            <span className="text-2xl sm:text-3xl font-black text-indigo-600 font-mono block mt-1">
+              $313,084
+            </span>
+            <span className="text-[11px] text-emerald-600 font-bold mt-1 block">-57.11% Cost Reduction</span>
+          </div>
+
+          <div className="p-4 bg-slate-50/50 rounded-xl border border-slate-200/70">
+            <span className="text-[10px] text-slate-500 font-semibold uppercase tracking-wider block">BREAK-EVEN HORIZON</span>
+            <span className="text-2xl sm:text-3xl font-black text-emerald-600 font-mono block mt-1">
+              8.64 Mo
+            </span>
+            <span className="text-[11px] text-slate-400 mt-1 block">$300,000 Migration Cost</span>
+          </div>
+
+          <div className="p-4 bg-slate-50/50 rounded-xl border border-slate-200/70">
+            <span className="text-[10px] text-slate-500 font-semibold uppercase tracking-wider block">5-YEAR NET BENEFIT</span>
+            <span className="text-2xl sm:text-3xl font-black text-indigo-900 font-mono block mt-1">
+              $1,784,580
+            </span>
+            <span className="text-[11px] text-indigo-600 font-bold mt-1 block">594.86% 5-Yr ROI</span>
+          </div>
         </div>
       </section>
     </div>
