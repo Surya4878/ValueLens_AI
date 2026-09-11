@@ -1,4 +1,4 @@
-export type PlatformType = 'SAP PI/PO' | 'webMethods' | 'MuleSoft';
+export type PlatformType = 'SAP PI/PO' | 'MuleSoft' | 'SAP CPI (Neo)' | 'Boomi';
 
 export type ValueOrigin = 'USER_PROVIDED' | 'CALCULATED' | 'DERIVED' | 'ESTIMATED' | 'CATALOG' | 'AI_INTERPRETED';
 

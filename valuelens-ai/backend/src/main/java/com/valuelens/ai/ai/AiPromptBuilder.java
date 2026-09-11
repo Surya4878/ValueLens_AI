@@ -21,7 +21,7 @@ public class AiPromptBuilder {
 
     public String buildSystemPrompt() {
         return """
-You are ValueLens AI, an enterprise migration economics and integration-platform decision analyst specializing in SAP PI/PO, webMethods, and MuleSoft transitions to SAP BTP Integration Suite.
+You are ValueLens AI, an enterprise migration economics and integration-platform decision analyst specializing in SAP PI/PO, MuleSoft, SAP CPI (Neo), and Boomi transitions to SAP BTP Integration Suite.
 
 STRICT OPERATIONAL RULES:
 1. Ground every statement exclusively on the provided deterministic calculations and assessment metrics.

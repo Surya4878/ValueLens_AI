@@ -190,5 +190,38 @@ export const api = {
 
   getExportCsvUrl(assessmentId: string): string {
     return `${API_BASE_URL}/api/v1/export/csv`;
+  },
+
+  // Platforms, Packages & Sizing
+  async getPlatforms(): Promise<Array<{ id: string; name: string; cardTitle: string; description: string }>> {
+    const res = await fetchJson<ApiResponse<Array<{ id: string; name: string; cardTitle: string; description: string }>>>('/api/v1/platforms');
+    return res.data;
+  },
+
+  async getPackages(platformId: string): Promise<Array<{ id: string; name: string; price: number; durationWeeks: number; scopeSummary: string; interfaceLimit: string; applicationLimit: string }>> {
+    const res = await fetchJson<ApiResponse<Array<{ id: string; name: string; price: number; durationWeeks: number; scopeSummary: string; interfaceLimit: string; applicationLimit: string }>>>(`/api/v1/platforms/${platformId}/packages`);
+    return res.data;
+  },
+
+  async calculateSizing(params: Record<string, unknown>): Promise<{
+    recommendedEdition: string;
+    recommendedUnits: number;
+    additionalMessagePacks: number;
+    additionalEicTenants: number;
+    needsAem: boolean;
+    explanation: string;
+  }> {
+    const res = await fetchJson<ApiResponse<{
+      recommendedEdition: string;
+      recommendedUnits: number;
+      additionalMessagePacks: number;
+      additionalEicTenants: number;
+      needsAem: boolean;
+      explanation: string;
+    }>>('/api/v1/platforms/sizing', {
+      method: 'POST',
+      body: JSON.stringify(params),
+    });
+    return res.data;
   }
 };

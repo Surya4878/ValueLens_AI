@@ -45,7 +45,7 @@ export default function DashboardPage() {
       case 'tco-comparison':
         return {
           chartId,
-          finding: `Target-state annual TCO ($${(targetTco / 1000).toFixed(0)}K) delivers a ${savingsPct.toFixed(1)}% operating cost reduction versus the legacy SAP PI/PO platform ($${(currentTco / 1000).toFixed(0)}K).`,
+          finding: `Target-state annual TCO ($${(targetTco / 1000).toFixed(0)}K) delivers a ${savingsPct.toFixed(1)}% operating cost reduction versus the legacy ${assessment?.sourcePlatform || 'SAP PI/PO'} platform ($${(currentTco / 1000).toFixed(0)}K).`,
           businessImpact: `Annual recurring savings of ${formatCurrency(annualSavings, currency)} establish immediate operating margin expansion. Over a 5-year operating lifecycle, cumulative operational expenditure drops from ${formatCurrency(currentTco * 5, currency)} to ${formatCurrency(targetTco * 5, currency)}, delivering a net operating cost reduction of ${formatCurrency(annualSavings * 5, currency)}.`,
           recommendation: 'Validate cloud hyper-scaler connectivity and right-size SAP BTP tenant message packs to protect operating margin.',
           aiStatus: 'AI GENERATED',
@@ -153,7 +153,7 @@ export default function DashboardPage() {
     return {
       decision: 'FAVORABLE',
       confidence: 0.91,
-      executiveSummary: `Transitioning from legacy SAP PI/PO to SAP BTP Integration Suite presents an overwhelming business justification. Recouping the ${formatCurrency(migrationCost, currency)} transition expenditure within ${breakEvenMonths.toFixed(1)} months delivers an internal rate of return superior to standard IT modernization benchmarks. Decommissioning legacy hardware and perpetual licensing contracts contributes ${formatCurrency(annualSavings, currency)} in perpetual annual run-rate efficiency.`,
+      executiveSummary: `Transitioning from legacy ${assessment?.sourcePlatform || 'SAP PI/PO'} to SAP BTP Integration Suite presents an overwhelming business justification. Recouping the ${formatCurrency(migrationCost, currency)} transition expenditure within ${breakEvenMonths.toFixed(1)} months delivers an internal rate of return superior to standard IT modernization benchmarks. Decommissioning legacy hardware and perpetual licensing contracts contributes ${formatCurrency(annualSavings, currency)} in perpetual annual run-rate efficiency.`,
       financialAssessment: `Baseline TCO of ${formatCurrency(currentTco, currency)} is reduced to ${formatCurrency(targetTco, currency)} in the target architecture (${savingsPct.toFixed(1)}% annual run-rate reduction). The one-time migration capital of ${formatCurrency(migrationCost, currency)} breaks even in ${breakEvenMonths.toFixed(1)} months, generating a 5-Year Net Benefit of ${formatCurrency(fiveYearNetBenefit, currency)} (${fiveYearRoi.toFixed(2)}% ROI).`,
       keyInsights: [
         `Immediate positive cash flow achieved at month ${breakEvenMonths.toFixed(1)}, well inside standard enterprise 18-month payback guidelines.`,
@@ -164,15 +164,15 @@ export default function DashboardPage() {
       risks: [
         {
           severity: 'HIGH',
-          title: 'Legacy Custom ABAP & Java Mappings (UDFs)',
-          reason: 'Existing PI/PO system contains complex Java/ABAP user-defined functions that cannot be converted via standard 1:1 migration.',
+          title: 'Legacy Custom Mappings & Logic',
+          reason: `Existing ${assessment?.sourcePlatform || 'SAP PI/PO'} system contains custom mappings and scripts that require automated conversion.`,
           potentialImpact: 'Estimated 15-20% additional refactoring effort if not discovered early.',
-          mitigation: 'Use SAP Migration Assessment tool to automatically catalog UDFs and replace with standard Groovy scripts.',
+          mitigation: 'Use IntSwitch™ assessment and automated conversion tools to catalog assets and replace with standard BTP artifacts.',
         },
         {
           severity: 'MEDIUM',
           title: 'Dual-Running Operational Overhead',
-          reason: 'Running legacy PI/PO alongside BTP during transition waves incurs overlapping operational support.',
+          reason: `Running legacy ${assessment?.sourcePlatform || 'SAP PI/PO'} alongside BTP during transition waves incurs overlapping operational support.`,
           potentialImpact: 'Temporary $15k/mo increase in run costs during active wave migration.',
           mitigation: 'Implement phased cutover waves grouped by business domains (e.g., Finance first, Logistics second).',
         },
@@ -204,7 +204,7 @@ export default function DashboardPage() {
         {
           priority: 'MEDIUM',
           action: 'Conduct Integration Developer BTP Upskilling Bootcamp',
-          reason: 'Familiarize PI/PO developers with BTP Groovy scripts, Camel routing, and API Management.',
+          reason: `Familiarize existing ${assessment?.sourcePlatform || 'integration'} developers with BTP Groovy scripts, Camel routing, and API Management.`,
           expectedImpact: 'Increases refactoring velocity by 35%.',
           owner: 'Integration Practice Lead',
           timing: 'Weeks 3-5',
@@ -777,7 +777,7 @@ export default function DashboardPage() {
                     className="w-20 bg-indigo-600 rounded-t-xl transition-all duration-300 shadow-sm"
                     style={{ height: `${currentBarHeightPx}px` }}
                   />
-                  <span className="text-[11px] font-bold text-slate-700">Current (SAP PI/PO)</span>
+                  <span className="text-[11px] font-bold text-slate-700">Current ({assessment?.sourcePlatform || 'SAP PI/PO'})</span>
                 </div>
 
                 {/* Floating savings indicator */}

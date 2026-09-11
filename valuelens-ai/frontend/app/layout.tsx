@@ -8,7 +8,7 @@ const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 export const metadata: Metadata = {
   title: 'ValueLens AI — AI-Powered Migration Economics & Decision Intelligence',
   description:
-    'Enterprise platform for analyzing integration migration economics from SAP PI/PO, webMethods, and MuleSoft to SAP BTP Integration Suite.',
+    'Enterprise platform for analyzing integration migration economics from SAP PI/PO, MuleSoft, SAP CPI (Neo), and Boomi to SAP BTP Integration Suite.',
 };
 
 export default function RootLayout({
