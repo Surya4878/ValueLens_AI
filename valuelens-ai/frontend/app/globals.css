@@ -70,3 +70,14 @@
 .fin-glow {
   box-shadow: 0 0 25px -5px rgba(16, 185, 129, 0.15);
 }
+
+/* Remove spin buttons / increase & decrease stepper arrows from number inputs */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type=number] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}

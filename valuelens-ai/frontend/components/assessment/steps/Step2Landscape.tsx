@@ -14,7 +14,7 @@ import {
   Network,
   Puzzle,
 } from 'lucide-react';
-import { PlatformId, PlatformConfig } from '@/data/platformAssessmentConfig';
+import { PlatformId, PlatformConfig, matchIncturePackage } from '@/data/platformAssessmentConfig';
 
 import { Assessment } from '@/types';
 
@@ -35,89 +35,177 @@ export const Step2Landscape: React.FC<Step2Props> = ({
   onBack,
   onContinue,
 }) => {
-  // PI/PO state
-  const [piPoVersion, setPiPoVersion] = React.useState<string>('PO 7.5');
+  // PI/PO state (defaults all empty/zero initially)
+  const [piPoVersion, setPiPoVersion] = React.useState<string>('');
   const [piPoInterfacesCount, setPiPoInterfacesCountState] = React.useState<number>(
-    assessment.sourceSystem.environmentAssessment.totalInterfaces || 1250
+    assessment.sourceSystem.environmentAssessment.totalInterfaces || 0
   );
-  const [piPoApplicationsCount, setPiPoApplicationsCount] = React.useState<number>(15);
-  const [sapBackendSystem, setSapBackendSystem] = React.useState<string>('SAP ECC');
-  const [hasB2bIntegrations, setHasB2bIntegrations] = React.useState<'Yes' | 'No' | 'Not sure'>('Yes');
-  const [b2bStandards, setB2bStandards] = React.useState<string[]>([
-    'EDIFACT',
-    'ANSI X12',
-    'XML / cXML',
-  ]);
-  const [b2bProtocols, setB2bProtocols] = React.useState<string[]>([
-    'AS2',
-    'SFTP',
-    'HTTPS / REST',
-  ]);
-  const [ediDocumentTypes, setEdiDocumentTypes] = React.useState<string[]>([
-    'ORDERS — Purchase Order',
-    'INVOIC — Invoice',
-    'ORDRSP — Order Response',
-  ]);
+  const [piPoApplicationsCount, setPiPoApplicationsCount] = React.useState<number>(0);
+  const [sapBackendSystem, setSapBackendSystem] = React.useState<string>('');
+  const [hasB2bIntegrations, setHasB2bIntegrations] = React.useState<'Yes' | 'No' | 'Not sure' | ''>('');
+  const [b2bStandards, setB2bStandards] = React.useState<string[]>([]);
+  const [b2bProtocols, setB2bProtocols] = React.useState<string[]>([]);
+  const [ediDocumentTypes, setEdiDocumentTypes] = React.useState<string[]>([]);
   const [b2bInterfacesCount, setB2bInterfacesCount] = React.useState<number>(
-    assessment.sourceSystem.volumetrics.b2bInterfaces || 85
+    assessment.sourceSystem.volumetrics.b2bInterfaces || 0
   );
-  const [hasGroundToGround, setHasGroundToGround] = React.useState<'Yes' | 'No' | 'Not sure'>('Yes');
-  const [groundToGroundInterfaces, setGroundToGroundInterfaces] = React.useState<number>(310);
-  const [piPoComplexity, setPiPoComplexity] = React.useState<'Simple' | 'Moderate' | 'Complex'>('Moderate');
-  const [hasJavaMappings, setHasJavaMappings] = React.useState<boolean>(true);
-  const [hasXsltMappings, setHasXsltMappings] = React.useState<boolean>(true);
-  const [hasUdf, setHasUdf] = React.useState<boolean>(true);
+  const [hasGroundToGround, setHasGroundToGround] = React.useState<'Yes' | 'No' | 'Not sure' | ''>('');
+  const [groundToGroundInterfaces, setGroundToGroundInterfaces] = React.useState<number>(0);
+  const [piPoComplexity, setPiPoComplexity] = React.useState<'Simple' | 'Moderate' | 'Complex' | ''>('');
+  const [hasJavaMappings, setHasJavaMappings] = React.useState<boolean>(false);
+  const [hasXsltMappings, setHasXsltMappings] = React.useState<boolean>(false);
+  const [hasUdf, setHasUdf] = React.useState<boolean>(false);
   const [hasCcBpm, setHasCcBpm] = React.useState<boolean>(false);
-  const [hasCustomAdapterModules, setHasCustomAdapterModules] = React.useState<boolean>(true);
+  const [hasCustomAdapterModules, setHasCustomAdapterModules] = React.useState<boolean>(false);
 
   // MuleSoft state
-  const [muleDeploymentModel, setMuleDeploymentModel] = React.useState<string>('CloudHub 2.0');
-  const [muleTotalApis, setMuleTotalApis] = React.useState<number>(45);
-  const [muleSystemApis, setMuleSystemApis] = React.useState<number>(20);
-  const [muleProcessApis, setMuleProcessApis] = React.useState<number>(15);
-  const [muleExperienceApis, setMuleExperienceApis] = React.useState<number>(10);
-  const [muleApplicationsCount, setMuleApplicationsCount] = React.useState<number>(12);
-  const [muleFlowsCount, setMuleFlowsCount] = React.useState<number>(180);
-  const [muleApiLedUsage, setMuleApiLedUsage] = React.useState<'Yes' | 'Partial' | 'No'>('Yes');
-  const [muleHasB2b, setMuleHasB2b] = React.useState<'Yes' | 'No' | 'Not sure'>('Yes');
-  const [muleTradingPartnersCount, setMuleTradingPartnersCount] = React.useState<number>(25);
-  const [muleHasCustomConnectors, setMuleHasCustomConnectors] = React.useState<boolean>(true);
-  const [muleHasCustomPolicies, setMuleHasCustomPolicies] = React.useState<boolean>(true);
-  const [muleHasOnPremDeps, setMuleHasOnPremDeps] = React.useState<boolean>(true);
-  const [muleComplexity, setMuleComplexity] = React.useState<'Simple' | 'Moderate' | 'Complex'>('Moderate');
+  const [muleDeploymentModel, setMuleDeploymentModel] = React.useState<string>('');
+  const [muleTotalApis, setMuleTotalApis] = React.useState<number>(0);
+  const [muleSystemApis, setMuleSystemApis] = React.useState<number>(0);
+  const [muleProcessApis, setMuleProcessApis] = React.useState<number>(0);
+  const [muleExperienceApis, setMuleExperienceApis] = React.useState<number>(0);
+  const [muleApplicationsCount, setMuleApplicationsCount] = React.useState<number>(0);
+  const [muleFlowsCount, setMuleFlowsCount] = React.useState<number>(0);
+  const [muleApiLedUsage, setMuleApiLedUsage] = React.useState<'Yes' | 'Partial' | 'No' | ''>('');
+  const [muleHasB2b, setMuleHasB2b] = React.useState<'Yes' | 'No' | 'Not sure' | ''>('');
+  const [muleTradingPartnersCount, setMuleTradingPartnersCount] = React.useState<number>(0);
+  const [muleHasCustomConnectors, setMuleHasCustomConnectors] = React.useState<boolean>(false);
+  const [muleHasCustomPolicies, setMuleHasCustomPolicies] = React.useState<boolean>(false);
+  const [muleHasOnPremDeps, setMuleHasOnPremDeps] = React.useState<boolean>(false);
+  const [muleComplexity, setMuleComplexity] = React.useState<'Simple' | 'Moderate' | 'Complex' | ''>('');
 
   // SAP CPI (Neo) state
-  const [neoFlowsCount, setNeoFlowsCount] = React.useState<number>(65);
-  const [neoApplicationsCount, setNeoApplicationsCount] = React.useState<number>(8);
-  const [neoMonthlyMessageVol, setNeoMonthlyMessageVol] = React.useState<string>('250000');
-  const [neoComplexity, setNeoComplexity] = React.useState<'Simple' | 'Moderate' | 'Complex'>('Moderate');
-  const [neoHasCustomScripts, setNeoHasCustomScripts] = React.useState<boolean>(true);
-  const [neoHasMappings, setNeoHasMappings] = React.useState<boolean>(true);
+  const [neoFlowsCount, setNeoFlowsCount] = React.useState<number>(0);
+  const [neoApplicationsCount, setNeoApplicationsCount] = React.useState<number>(0);
+  const [neoMonthlyMessageVol, setNeoMonthlyMessageVol] = React.useState<string>('');
+  const [neoComplexity, setNeoComplexity] = React.useState<'Simple' | 'Moderate' | 'Complex' | ''>('');
+  const [neoHasCustomScripts, setNeoHasCustomScripts] = React.useState<boolean>(false);
+  const [neoHasMappings, setNeoHasMappings] = React.useState<boolean>(false);
   const [neoHasCustomAdapters, setNeoHasCustomAdapters] = React.useState<boolean>(false);
-  const [neoHasB2b, setNeoHasB2b] = React.useState<'Yes' | 'No' | 'Not sure'>('No');
-  const [neoCustomDevLevel, setNeoCustomDevLevel] = React.useState<'Low' | 'Medium' | 'High'>('Medium');
-  const [neoScope, setNeoScope] = React.useState<string>('Single Tenant Multi-Package');
+  const [neoHasB2b, setNeoHasB2b] = React.useState<'Yes' | 'No' | 'Not sure' | ''>('');
+  const [neoCustomDevLevel, setNeoCustomDevLevel] = React.useState<'Low' | 'Medium' | 'High' | ''>('');
+  const [neoScope, setNeoScope] = React.useState<string>('');
 
   // Boomi state
-  const [boomiProcessCount, setBoomiProcessCount] = React.useState<number>(110);
-  const [boomiApplicationsCount, setBoomiApplicationsCount] = React.useState<number>(10);
-  const [boomiConnectorsCount, setBoomiConnectorsCount] = React.useState<number>(35);
-  const [boomiCustomConnectorsCount, setBoomiCustomConnectorsCount] = React.useState<number>(4);
-  const [boomiHasB2b, setBoomiHasB2b] = React.useState<'Yes' | 'No' | 'Not sure'>('Yes');
-  const [boomiTradingPartnersCount, setBoomiTradingPartnersCount] = React.useState<number>(18);
-  const [boomiHasCustomLogic, setBoomiHasCustomLogic] = React.useState<boolean>(true);
-  const [boomiHasCustomScripting, setBoomiHasCustomScripting] = React.useState<boolean>(true);
-  const [boomiMappingComplexity, setBoomiMappingComplexity] = React.useState<'Simple' | 'Moderate' | 'Complex'>('Moderate');
-  const [boomiOnPremDeps, setBoomiOnPremDeps] = React.useState<string>('Local Atom Runtime');
+  const [boomiProcessCount, setBoomiProcessCount] = React.useState<number>(0);
+  const [boomiApplicationsCount, setBoomiApplicationsCount] = React.useState<number>(0);
+  const [boomiConnectorsCount, setBoomiConnectorsCount] = React.useState<number>(0);
+  const [boomiCustomConnectorsCount, setBoomiCustomConnectorsCount] = React.useState<number>(0);
+  const [boomiHasB2b, setBoomiHasB2b] = React.useState<'Yes' | 'No' | 'Not sure' | ''>('');
+  const [boomiTradingPartnersCount, setBoomiTradingPartnersCount] = React.useState<number>(0);
+  const [boomiHasCustomLogic, setBoomiHasCustomLogic] = React.useState<boolean>(false);
+  const [boomiHasCustomScripting, setBoomiHasCustomScripting] = React.useState<boolean>(false);
+  const [boomiMappingComplexity, setBoomiMappingComplexity] = React.useState<'Simple' | 'Moderate' | 'Complex' | ''>('');
+  const [boomiOnPremDeps, setBoomiOnPremDeps] = React.useState<string>('');
+
+  // Compute active scope for Incture package matching
+  const currentScopeCount =
+    platformId === 'sap-pipo'
+      ? piPoInterfacesCount
+      : platformId === 'mulesoft'
+        ? muleTotalApis
+        : platformId === 'sap-neo'
+          ? neoFlowsCount
+          : boomiProcessCount;
+
+  const currentAppsCount =
+    platformId === 'sap-pipo'
+      ? piPoApplicationsCount
+      : platformId === 'mulesoft'
+        ? muleApplicationsCount
+        : platformId === 'sap-neo'
+          ? neoApplicationsCount
+          : boomiApplicationsCount;
+
+  const currentComplexity =
+    (platformId === 'sap-pipo'
+      ? piPoComplexity
+      : platformId === 'mulesoft'
+        ? muleComplexity
+        : platformId === 'sap-neo'
+          ? neoComplexity
+          : boomiMappingComplexity) || 'Simple';
+
+  // Real-time Incture Package Matching (Range / Package-Based Model)
+  const matchedResult = React.useMemo(() => {
+    return matchIncturePackage(platformId, currentScopeCount, currentAppsCount, currentComplexity);
+  }, [platformId, currentScopeCount, currentAppsCount, currentComplexity]);
+
+  // Synchronize matched package pricing to assessment state
+  React.useEffect(() => {
+    if (currentScopeCount <= 0) {
+      if (assessment.migrationRelatedDetails?.totalMigrationCost !== 0) {
+        onUpdateAssessment({
+          ...assessment,
+          sourceSystem: {
+            ...assessment.sourceSystem,
+            environmentAssessment: {
+              ...assessment.sourceSystem.environmentAssessment,
+              totalInterfaces: 0,
+              simpleInterfaces: 0,
+              mediumInterfaces: 0,
+              complexInterfaces: 0,
+            },
+          },
+          migrationRelatedDetails: {
+            ...assessment.migrationRelatedDetails,
+            totalMigrationCost: 0,
+            baseMigrationCost: 0,
+            developmentCost: 0,
+            testingCost: 0,
+            architectureCost: 0,
+            projectManagementCost: 0,
+            contingencyCost: 0,
+            trainingCost: 0,
+            deploymentCutoverCost: 0,
+            documentationCost: 0,
+          },
+        });
+      }
+      return;
+    }
+
+    const pkg = matchedResult.package;
+    if (pkg && pkg.price !== assessment.migrationRelatedDetails?.totalMigrationCost) {
+      onUpdateAssessment({
+        ...assessment,
+        sourceSystem: {
+          ...assessment.sourceSystem,
+          companyInformation: {
+            ...assessment.sourceSystem.companyInformation,
+            migrationTimeline: `${pkg.timelineMonths} (Incture ${pkg.name})`,
+          },
+          environmentAssessment: {
+            ...assessment.sourceSystem.environmentAssessment,
+            totalInterfaces: currentScopeCount,
+            systemComplexity: currentComplexity,
+          },
+        },
+        migrationRelatedDetails: {
+          ...assessment.migrationRelatedDetails,
+          totalMigrationCost: pkg.price,
+          baseMigrationCost: pkg.price,
+          developmentCost: Math.round(pkg.price * 0.60),
+          testingCost: Math.round(pkg.price * 0.20),
+          architectureCost: Math.round(pkg.price * 0.10),
+          projectManagementCost: Math.round(pkg.price * 0.10),
+          contingencyCost: 0,
+          trainingCost: 0,
+          deploymentCutoverCost: 0,
+          documentationCost: 0,
+        },
+      });
+    }
+  }, [matchedResult, currentScopeCount, currentComplexity]);
 
   const setPiPoInterfacesCount = (val: number) => {
     setPiPoInterfacesCountState(val);
-    const simple = Math.round(val * 0.76);
-    const medium = Math.round(val * 0.19);
+    const simple = Math.round(val * 0.80);
+    const medium = Math.round(val * 0.15);
     const complex = Math.max(0, val - simple - medium);
-    let volume = 'Medium';
-    if (val < 200) volume = 'Low';
-    else if (val > 1000) volume = 'High';
+    let volume = 'Low';
+    if (val > 100) volume = 'Medium';
+    if (val > 500) volume = 'High';
 
     onUpdateAssessment({
       ...assessment,
@@ -183,6 +271,7 @@ export const Step2Landscape: React.FC<Step2Props> = ({
                     onChange={(e) => setPiPoVersion(e.target.value)}
                     className="w-full text-xs font-medium text-slate-800 border border-slate-300 rounded-xl px-3.5 py-2.5 pr-8 appearance-none bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   >
+                    <option value="">Select PI/PO Version</option>
                     <option value="PI 7.0">PI 7.0</option>
                     <option value="PI 7.1">PI 7.1</option>
                     <option value="PI 7.3">PI 7.3</option>
@@ -203,10 +292,14 @@ export const Step2Landscape: React.FC<Step2Props> = ({
                 <div className="flex rounded-xl border border-slate-300 overflow-hidden focus-within:ring-2 focus-within:ring-blue-500">
                   <input
                     type="number"
-                    value={piPoInterfacesCount}
-                    onChange={(e) => setPiPoInterfacesCount(parseInt(e.target.value) || 0)}
-                    className="w-full text-xs font-medium px-3 py-2.5 focus:outline-none bg-white text-slate-900"
-                    placeholder="1250"
+                    min="0"
+                    value={piPoInterfacesCount === 0 ? '' : piPoInterfacesCount}
+                    onKeyDown={(e) => {
+                      if (['-', '+', 'e', 'E', '.'].includes(e.key)) e.preventDefault();
+                    }}
+                    onChange={(e) => setPiPoInterfacesCount(Math.max(0, parseInt(e.target.value) || 0))}
+                    className="w-full text-xs font-medium px-3 py-2.5 focus:outline-none bg-white text-slate-900 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    placeholder="0"
                   />
                   <div className="bg-slate-50 border-l border-slate-200 px-3 flex items-center text-xs text-slate-500">
                     interfaces
@@ -222,10 +315,14 @@ export const Step2Landscape: React.FC<Step2Props> = ({
                 <div className="flex rounded-xl border border-slate-300 overflow-hidden focus-within:ring-2 focus-within:ring-blue-500">
                   <input
                     type="number"
-                    value={piPoApplicationsCount}
-                    onChange={(e) => setPiPoApplicationsCount(parseInt(e.target.value) || 0)}
-                    className="w-full text-xs font-medium px-3 py-2.5 focus:outline-none bg-white text-slate-900"
-                    placeholder="12"
+                    min="0"
+                    value={piPoApplicationsCount === 0 ? '' : piPoApplicationsCount}
+                    onKeyDown={(e) => {
+                      if (['-', '+', 'e', 'E', '.'].includes(e.key)) e.preventDefault();
+                    }}
+                    onChange={(e) => setPiPoApplicationsCount(Math.max(0, parseInt(e.target.value) || 0))}
+                    className="w-full text-xs font-medium px-3 py-2.5 focus:outline-none bg-white text-slate-900 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    placeholder="0"
                   />
                   <div className="bg-slate-50 border-l border-slate-200 px-3 flex items-center text-xs text-slate-500">
                     apps
@@ -244,6 +341,7 @@ export const Step2Landscape: React.FC<Step2Props> = ({
                     onChange={(e) => setSapBackendSystem(e.target.value)}
                     className="w-full text-xs font-medium text-slate-800 border border-slate-300 rounded-xl px-3.5 py-2.5 pr-8 appearance-none bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   >
+                    <option value="">Select Connected Backend</option>
                     <option value="SAP ECC">SAP ECC</option>
                     <option value="SAP S/4HANA">SAP S/4HANA</option>
                     <option value="Both ECC and S/4HANA">Both ECC and S/4HANA</option>
@@ -313,10 +411,14 @@ export const Step2Landscape: React.FC<Step2Props> = ({
                       </label>
                       <input
                         type="number"
-                        value={b2bInterfacesCount}
-                        onChange={(e) => setB2bInterfacesCount(parseInt(e.target.value) || 0)}
-                        className="w-full text-xs border border-slate-300 rounded-lg p-2 bg-white"
-                        placeholder="85"
+                        min="0"
+                        value={b2bInterfacesCount === 0 ? '' : b2bInterfacesCount}
+                        onKeyDown={(e) => {
+                          if (['-', '+', 'e', 'E', '.'].includes(e.key)) e.preventDefault();
+                        }}
+                        onChange={(e) => setB2bInterfacesCount(Math.max(0, parseInt(e.target.value) || 0))}
+                        className="w-full text-xs border border-slate-300 rounded-lg p-2 bg-white [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        placeholder="0"
                       />
                     </div>
                   </div>
@@ -353,10 +455,14 @@ export const Step2Landscape: React.FC<Step2Props> = ({
                     </label>
                     <input
                       type="number"
-                      value={groundToGroundInterfaces}
-                      onChange={(e) => setGroundToGroundInterfaces(parseInt(e.target.value) || 0)}
-                      className="w-full text-xs border border-slate-300 rounded-lg p-2 bg-white"
-                      placeholder="310"
+                      min="0"
+                      value={groundToGroundInterfaces === 0 ? '' : groundToGroundInterfaces}
+                      onKeyDown={(e) => {
+                        if (['-', '+', 'e', 'E', '.'].includes(e.key)) e.preventDefault();
+                      }}
+                      onChange={(e) => setGroundToGroundInterfaces(Math.max(0, parseInt(e.target.value) || 0))}
+                      className="w-full text-xs border border-slate-300 rounded-lg p-2 bg-white [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                      placeholder="0"
                     />
                     <span className="text-[11px] text-slate-500 block">
                       Will help determine Edge Integration Cell requirements on SAP BTP.
@@ -455,6 +561,7 @@ export const Step2Landscape: React.FC<Step2Props> = ({
                     onChange={(e) => setMuleDeploymentModel(e.target.value)}
                     className="w-full text-xs font-medium text-slate-800 border border-slate-300 rounded-xl px-3.5 py-2.5 pr-8 appearance-none bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   >
+                    <option value="">Select Deployment Model</option>
                     <option value="CloudHub 1.0">CloudHub 1.0</option>
                     <option value="CloudHub 2.0">CloudHub 2.0</option>
                     <option value="Runtime Fabric (RTF)">Runtime Fabric (RTF)</option>
@@ -472,10 +579,10 @@ export const Step2Landscape: React.FC<Step2Props> = ({
                 <div className="flex rounded-xl border border-slate-300 overflow-hidden focus-within:ring-2 focus-within:ring-blue-500">
                   <input
                     type="number"
-                    value={muleTotalApis}
+                    value={muleTotalApis === 0 ? '' : muleTotalApis}
                     onChange={(e) => setMuleTotalApis(parseInt(e.target.value) || 0)}
                     className="w-full text-xs font-medium px-3 py-2.5 focus:outline-none bg-white text-slate-900"
-                    placeholder="95"
+                    placeholder="e.g. 95"
                   />
                   <div className="bg-slate-50 border-l border-slate-200 px-3 flex items-center text-xs text-slate-500">
                     APIs
@@ -490,10 +597,10 @@ export const Step2Landscape: React.FC<Step2Props> = ({
                 <div className="flex rounded-xl border border-slate-300 overflow-hidden focus-within:ring-2 focus-within:ring-blue-500">
                   <input
                     type="number"
-                    value={muleApplicationsCount}
+                    value={muleApplicationsCount === 0 ? '' : muleApplicationsCount}
                     onChange={(e) => setMuleApplicationsCount(parseInt(e.target.value) || 0)}
                     className="w-full text-xs font-medium px-3 py-2.5 focus:outline-none bg-white text-slate-900"
-                    placeholder="14"
+                    placeholder="e.g. 14"
                   />
                   <div className="bg-slate-50 border-l border-slate-200 px-3 flex items-center text-xs text-slate-500">
                     apps
@@ -508,10 +615,10 @@ export const Step2Landscape: React.FC<Step2Props> = ({
                 <div className="flex rounded-xl border border-slate-300 overflow-hidden focus-within:ring-2 focus-within:ring-blue-500">
                   <input
                     type="number"
-                    value={muleFlowsCount}
+                    value={muleFlowsCount === 0 ? '' : muleFlowsCount}
                     onChange={(e) => setMuleFlowsCount(parseInt(e.target.value) || 0)}
                     className="w-full text-xs font-medium px-3 py-2.5 focus:outline-none bg-white text-slate-900"
-                    placeholder="280"
+                    placeholder="e.g. 280"
                   />
                   <div className="bg-slate-50 border-l border-slate-200 px-3 flex items-center text-xs text-slate-500">
                     flows
@@ -530,27 +637,30 @@ export const Step2Landscape: React.FC<Step2Props> = ({
                   <label className="block text-[11px] font-semibold text-slate-600 mb-1">System APIs (Core data)</label>
                   <input
                     type="number"
-                    value={muleSystemApis}
+                    value={muleSystemApis === 0 ? '' : muleSystemApis}
                     onChange={(e) => setMuleSystemApis(parseInt(e.target.value) || 0)}
                     className="w-full text-xs border border-slate-300 rounded-lg p-2 bg-white"
+                    placeholder="0"
                   />
                 </div>
                 <div>
                   <label className="block text-[11px] font-semibold text-slate-600 mb-1">Process APIs (Business logic)</label>
                   <input
                     type="number"
-                    value={muleProcessApis}
+                    value={muleProcessApis === 0 ? '' : muleProcessApis}
                     onChange={(e) => setMuleProcessApis(parseInt(e.target.value) || 0)}
                     className="w-full text-xs border border-slate-300 rounded-lg p-2 bg-white"
+                    placeholder="0"
                   />
                 </div>
                 <div>
                   <label className="block text-[11px] font-semibold text-slate-600 mb-1">Experience APIs (Consumers)</label>
                   <input
                     type="number"
-                    value={muleExperienceApis}
+                    value={muleExperienceApis === 0 ? '' : muleExperienceApis}
                     onChange={(e) => setMuleExperienceApis(parseInt(e.target.value) || 0)}
                     className="w-full text-xs border border-slate-300 rounded-lg p-2 bg-white"
+                    placeholder="0"
                   />
                 </div>
               </div>
@@ -712,6 +822,7 @@ export const Step2Landscape: React.FC<Step2Props> = ({
                     onChange={(e) => setNeoScope(e.target.value)}
                     className="w-full text-xs font-medium text-slate-800 border border-slate-300 rounded-xl px-3.5 py-2.5 pr-8 appearance-none bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   >
+                    <option value="">Select Neo Scope</option>
                     <option value="Single Tenant">Single Tenant</option>
                     <option value="Multi-Tenant">Multi-Tenant</option>
                     <option value="Multiple Global Subaccounts">Multiple Global Subaccounts</option>
@@ -727,10 +838,10 @@ export const Step2Landscape: React.FC<Step2Props> = ({
                 <div className="flex rounded-xl border border-slate-300 overflow-hidden focus-within:ring-2 focus-within:ring-blue-500">
                   <input
                     type="number"
-                    value={neoFlowsCount}
+                    value={neoFlowsCount === 0 ? '' : neoFlowsCount}
                     onChange={(e) => setNeoFlowsCount(parseInt(e.target.value) || 0)}
                     className="w-full text-xs font-medium px-3 py-2.5 focus:outline-none bg-white text-slate-900"
-                    placeholder="140"
+                    placeholder="e.g. 140"
                   />
                   <div className="bg-slate-50 border-l border-slate-200 px-3 flex items-center text-xs text-slate-500">
                     iFlows
@@ -745,10 +856,10 @@ export const Step2Landscape: React.FC<Step2Props> = ({
                 <div className="flex rounded-xl border border-slate-300 overflow-hidden focus-within:ring-2 focus-within:ring-blue-500">
                   <input
                     type="number"
-                    value={neoApplicationsCount}
+                    value={neoApplicationsCount === 0 ? '' : neoApplicationsCount}
                     onChange={(e) => setNeoApplicationsCount(parseInt(e.target.value) || 0)}
                     className="w-full text-xs font-medium px-3 py-2.5 focus:outline-none bg-white text-slate-900"
-                    placeholder="8"
+                    placeholder="e.g. 8"
                   />
                   <div className="bg-slate-50 border-l border-slate-200 px-3 flex items-center text-xs text-slate-500">
                     apps
@@ -766,7 +877,7 @@ export const Step2Landscape: React.FC<Step2Props> = ({
                     value={neoMonthlyMessageVol}
                     onChange={(e) => setNeoMonthlyMessageVol(e.target.value)}
                     className="w-full text-xs font-medium px-3 py-2.5 focus:outline-none bg-white text-slate-900"
-                    placeholder="450000"
+                    placeholder="e.g. 450000"
                   />
                   <div className="bg-slate-50 border-l border-slate-200 px-3 flex items-center text-xs text-slate-500">
                     msg/mo
@@ -871,6 +982,7 @@ export const Step2Landscape: React.FC<Step2Props> = ({
                     onChange={(e) => setBoomiOnPremDeps(e.target.value)}
                     className="w-full text-xs font-medium text-slate-800 border border-slate-300 rounded-xl px-3.5 py-2.5 pr-8 appearance-none bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   >
+                    <option value="">Select Runtime Architecture</option>
                     <option value="Cloud Atom only">Cloud Atom only</option>
                     <option value="Local On-prem Atoms">Local On-prem Atoms</option>
                     <option value="Molecule Clusters">Molecule Clusters (High-Availability)</option>
@@ -887,10 +999,10 @@ export const Step2Landscape: React.FC<Step2Props> = ({
                 <div className="flex rounded-xl border border-slate-300 overflow-hidden focus-within:ring-2 focus-within:ring-blue-500">
                   <input
                     type="number"
-                    value={boomiProcessCount}
+                    value={boomiProcessCount === 0 ? '' : boomiProcessCount}
                     onChange={(e) => setBoomiProcessCount(parseInt(e.target.value) || 0)}
                     className="w-full text-xs font-medium px-3 py-2.5 focus:outline-none bg-white text-slate-900"
-                    placeholder="110"
+                    placeholder="e.g. 110"
                   />
                   <div className="bg-slate-50 border-l border-slate-200 px-3 flex items-center text-xs text-slate-500">
                     processes
@@ -905,10 +1017,10 @@ export const Step2Landscape: React.FC<Step2Props> = ({
                 <div className="flex rounded-xl border border-slate-300 overflow-hidden focus-within:ring-2 focus-within:ring-blue-500">
                   <input
                     type="number"
-                    value={boomiApplicationsCount}
+                    value={boomiApplicationsCount === 0 ? '' : boomiApplicationsCount}
                     onChange={(e) => setBoomiApplicationsCount(parseInt(e.target.value) || 0)}
                     className="w-full text-xs font-medium px-3 py-2.5 focus:outline-none bg-white text-slate-900"
-                    placeholder="10"
+                    placeholder="e.g. 10"
                   />
                   <div className="bg-slate-50 border-l border-slate-200 px-3 flex items-center text-xs text-slate-500">
                     apps
@@ -923,10 +1035,10 @@ export const Step2Landscape: React.FC<Step2Props> = ({
                 <div className="flex rounded-xl border border-slate-300 overflow-hidden focus-within:ring-2 focus-within:ring-blue-500">
                   <input
                     type="number"
-                    value={boomiConnectorsCount}
+                    value={boomiConnectorsCount === 0 ? '' : boomiConnectorsCount}
                     onChange={(e) => setBoomiConnectorsCount(parseInt(e.target.value) || 0)}
                     className="w-full text-xs font-medium px-3 py-2.5 focus:outline-none bg-white text-slate-900"
-                    placeholder="18"
+                    placeholder="e.g. 18"
                   />
                   <div className="bg-slate-50 border-l border-slate-200 px-3 flex items-center text-xs text-slate-500">
                     connectors
@@ -995,6 +1107,84 @@ export const Step2Landscape: React.FC<Step2Props> = ({
                   />
                   <span>Has proprietary custom connectors ({boomiCustomConnectorsCount})</span>
                 </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Matched Incture Migration Package Banner (Range / Package-Based Model) */}
+      {currentScopeCount <= 0 ? (
+        <div className="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
+                Incture Migration Package Matching
+              </span>
+              <span className="text-xs text-amber-600 font-medium">Awaiting Scope Input</span>
+            </div>
+            <h3 className="text-base font-bold text-slate-900">
+              Enter interface &amp; application scope above to match an Incture package tier
+            </h3>
+            <p className="text-xs text-slate-500">
+              The matching Incture migration package, indicative cost, and timeline will automatically appear here once you enter your scope.
+            </p>
+          </div>
+          <div className="text-right shrink-0 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-600">
+            Current Scope: <span className="text-slate-900 font-bold font-mono">0 Interfaces</span>
+          </div>
+        </div>
+      ) : (
+        <div className="bg-white rounded-2xl border border-blue-200/80 p-6 shadow-xs relative overflow-hidden space-y-4">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-slate-100 pb-4">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
+                  Incture Migration Package Matching
+                </span>
+                <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 flex items-center gap-1">
+                  ✓ Package Range Match
+                </span>
+              </div>
+              <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+                Applicable Package: <span className="text-blue-700 font-black">{matchedResult.package.name}</span>
+              </h3>
+              <p className="text-xs text-slate-600 max-w-2xl leading-relaxed">
+                {matchedResult.suitabilityNote} Indicative pricing &amp; timeline are fixed directly from Incture migration offering data.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-4 bg-slate-50 px-5 py-3 rounded-xl border border-slate-200 shrink-0">
+              <div>
+                <span className="text-[10px] uppercase font-bold text-slate-500 block">Indicative Cost</span>
+                <span className="text-xl font-black font-mono text-emerald-600">
+                  ${matchedResult.package.price.toLocaleString()}
+                </span>
+              </div>
+              <div className="w-px h-8 bg-slate-200" />
+              <div>
+                <span className="text-[10px] uppercase font-bold text-slate-500 block">Indicative Timeline</span>
+                <span className="text-xl font-black font-mono text-slate-900">
+                  {matchedResult.package.timelineMonths}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+            <div className="bg-slate-50/80 rounded-xl p-3 border border-slate-200/80">
+              <span className="text-blue-700 text-[11px] block font-bold">Delivery Team</span>
+              <span className="text-slate-800 font-medium">{matchedResult.package.team}</span>
+            </div>
+            <div className="bg-slate-50/80 rounded-xl p-3 border border-slate-200/80">
+              <span className="text-blue-700 text-[11px] block font-bold">Hypercare Support</span>
+              <span className="text-slate-800 font-medium">{matchedResult.package.hypercare} included</span>
+            </div>
+            <div className="bg-slate-50/80 rounded-xl p-3 border border-slate-200/80 flex items-center gap-2.5">
+              <img src="/images/intswitch-logo.png" alt="IntSwitch" className="h-5 w-auto object-contain shrink-0" />
+              <div>
+                <span className="text-blue-700 text-[11px] block font-bold">IntSwitch Integration</span>
+                <span className="text-slate-700 text-[11px] font-medium">Internal Accelerator for migration &amp; test quality</span>
               </div>
             </div>
           </div>

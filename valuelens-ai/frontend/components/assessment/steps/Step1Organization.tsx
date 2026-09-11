@@ -82,6 +82,7 @@ export const Step1Organization: React.FC<Step1Props> = ({
                 onChange={(e) => onIndustryChange(e.target.value)}
                 className="w-full text-xs font-medium border border-slate-300 rounded-xl px-4 py-3 pr-8 appearance-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none bg-white text-slate-900"
               >
+                <option value="">Select Industry</option>
                 <option value="Retail">Retail</option>
                 <option value="Manufacturing & Supply Chain">Manufacturing & Supply Chain</option>
                 <option value="Financial Services & Banking">Financial Services & Banking</option>
@@ -107,10 +108,13 @@ export const Step1Organization: React.FC<Step1Props> = ({
               onChange={(e) => onMigrationTimelineChange(e.target.value)}
               className="w-full text-xs font-medium border border-slate-300 rounded-xl px-4 py-3 pr-8 appearance-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none bg-white text-slate-900"
             >
+              <option value="">Select Target Timeline</option>
+              <option value="2 Months (Incture Starter Package)">2 Months (Incture Starter Package)</option>
+              <option value="4 Months (Incture Silver Scope)">4 Months (Incture Silver Scope)</option>
+              <option value="7 Months (Incture Gold Scope)">7 Months (Incture Gold Scope)</option>
+              <option value="9 Months (Incture Platinum Scope)">9 Months (Incture Platinum Scope)</option>
               <option value="6 Months (Accelerated)">6 Months (Accelerated)</option>
-              <option value="9 Months (Targeted)">9 Months (Targeted)</option>
               <option value="12-18 Months (Standard Enterprise)">12-18 Months (Standard Enterprise)</option>
-              <option value="18-24 Months (Phased Wave)">18-24 Months (Phased Wave)</option>
             </select>
             <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-3.5 pointer-events-none" />
           </div>

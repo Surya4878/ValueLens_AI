@@ -29,7 +29,7 @@ import {
   Truck,
 } from 'lucide-react';
 import { Assessment, RoiCalculationResult } from '@/types';
-import { PlatformId, PlatformConfig, IncturePackageTier } from '@/data/platformAssessmentConfig';
+import { PlatformId, PlatformConfig, IncturePackageTier, COMMON_BTP_PRICING } from '@/data/platformAssessmentConfig';
 import { formatCurrency } from '@/lib/formatters';
 import { api } from '@/lib/api';
 
@@ -70,51 +70,59 @@ export const Step6SelectEdition: React.FC<Step6Props> = ({
     suggestedMessagePacks?: number;
   } | null>(null);
 
-  const currentEd = assessment.targetSystem.configuration.selectedEditionName || 'Standard Edition';
+  const currentEd = assessment.targetSystem.configuration.selectedEditionName || '';
   const units = assessment.targetSystem.configuration.numberOfUnits !== undefined
     ? assessment.targetSystem.configuration.numberOfUnits
-    : (currentEd === 'Standard Edition' ? 3 : 1);
+    : (currentEd ? 1 : 0);
   const packs = assessment.targetSystem.configuration.additionalMessagePacks !== undefined
     ? assessment.targetSystem.configuration.additionalMessagePacks
-    : 400;
+    : 0;
   const dataSpacePackages = assessment.targetSystem.configuration.dataSpacePackages || 0;
   const additionalEicTenants = assessment.targetSystem.configuration.additionalEicTenants || 0;
 
-  // Selected Incture package ID matching current development cost if any
-  const matchedPkg = config.packages.find((p) => p.price === assessment.migrationRelatedDetails.developmentCost) || config.packages[1] || config.packages[0];
-  const [selectedPkgId, setSelectedPkgId] = useState<string>(matchedPkg ? matchedPkg.id : 'silver');
+  // Selected Incture package matching current migration cost
+  const matchedPkg =
+    config.packages.find(
+      (p) =>
+        p.price === assessment.migrationRelatedDetails.totalMigrationCost ||
+        p.price === assessment.migrationRelatedDetails.developmentCost
+    ) || (assessment.sourceSystem.environmentAssessment.totalInterfaces > 0 ? config.packages[0] : null);
+  const [selectedPkgId, setSelectedPkgId] = useState<string>(matchedPkg ? matchedPkg.id : '');
 
   // Official SAP BTP Pricing calculation
   const getEditionBasePrice = (editionName: string) => {
     const lower = editionName.toLowerCase();
     if (lower.includes('starter')) return 20736;
     if (lower.includes('enhanced')) return 92256;
-    return 64068; // Standard Edition
+    return 64068; // Standard Edition default
   };
 
-  const baseUnitPrice = getEditionBasePrice(currentEd);
-  const effMultiplier = currentEd === 'Standard Edition' ? (units <= 3 ? 1 : Math.ceil(units / 3)) : units;
-  const annualizedBaseCost = baseUnitPrice * effMultiplier;
-  const annualizedPacksCost = packs * 84;
-  const annualizedDataSpaceCost = dataSpacePackages * 900;
-  const annualizedEicCost = additionalEicTenants * 41460;
-  const annualizedAddOnsCost = annualizedPacksCost + annualizedDataSpaceCost + annualizedEicCost;
-  const estimatedTargetAnnualCost = annualizedBaseCost + annualizedAddOnsCost;
+  const getEditionMonthlyPrice = (editionName: string) => {
+    const lower = editionName.toLowerCase();
+    if (lower.includes('starter')) return 1728;
+    if (lower.includes('enhanced')) return 7688;
+    return 5339;
+  };
 
   const updateConfig = (
-    newEdition: string = currentEd,
-    newUnits: number = units,
-    newPacks: number = packs,
-    newDataSpace: number = dataSpacePackages,
-    newEic: number = additionalEicTenants
+    editionName: string,
+    newUnits: number,
+    newPacks: number,
+    newDataSpace: number,
+    newEic: number
   ) => {
-    const unitPrice = getEditionBasePrice(newEdition);
-    const effMult = newEdition === 'Standard Edition' ? (newUnits <= 3 ? 1 : Math.ceil(newUnits / 3)) : newUnits;
-    const total = (effMult * unitPrice) + (newPacks * 84) + (newDataSpace * 900) + (newEic * 41460);
-    const parts = [`${newUnits} units ($${(effMult * unitPrice).toLocaleString()}/yr)`];
-    if (newPacks > 0) parts.push(`${newPacks} msg packs x $84.00`);
-    if (newDataSpace > 0) parts.push(`${newDataSpace} Data Space x $900.00`);
-    if (newEic > 0) parts.push(`${newEic} EIC tenants x $41,460.00`);
+    const basePrice = getEditionBasePrice(editionName);
+    const editionCost = basePrice * newUnits;
+    const packCost = newPacks * COMMON_BTP_PRICING.addons.additionalMessagesPer10kBlockAnnualized;
+    const dataSpaceCost = newDataSpace * COMMON_BTP_PRICING.addons.dataSpaceIntegrationAnnualized;
+    const eicCost = newEic * COMMON_BTP_PRICING.addons.additionalEdgeIntegrationCellAnnualized;
+    const totalAnnual = editionCost + packCost + dataSpaceCost + eicCost;
+
+    const formula = `${newUnits} unit(s) x $${basePrice.toLocaleString()}/yr${
+      newPacks > 0 ? ` + ${newPacks} packs x $${COMMON_BTP_PRICING.addons.additionalMessagesPer10kBlockAnnualized}` : ''
+    }${newDataSpace > 0 ? ` + ${newDataSpace} DataSpace x $${COMMON_BTP_PRICING.addons.dataSpaceIntegrationAnnualized}` : ''}${
+      newEic > 0 ? ` + ${newEic} EIC x $${COMMON_BTP_PRICING.addons.additionalEdgeIntegrationCellAnnualized}` : ''
+    }`;
 
     onUpdateAssessment({
       ...assessment,
@@ -122,66 +130,44 @@ export const Step6SelectEdition: React.FC<Step6Props> = ({
         ...assessment.targetSystem,
         configuration: {
           ...assessment.targetSystem.configuration,
-          selectedEditionName: newEdition,
+          selectedEditionName: editionName,
           numberOfUnits: newUnits,
           additionalMessagePacks: newPacks,
           dataSpacePackages: newDataSpace,
           additionalEicTenants: newEic,
-          totalAnnualCost: total,
-          calculationFormula: parts.join(' + '),
+          totalAnnualCost: totalAnnual,
+          calculationFormula: formula,
         },
       },
     });
   };
 
-  const handleSelectEdition = (editionName: string, defaultUnits: number = 3) => {
-    const newUnits = editionName === 'Standard Edition' ? 3 : defaultUnits;
+  const handleSelectEdition = (editionName: string, defaultUnits: number = 1) => {
+    const newUnits = defaultUnits;
     updateConfig(editionName, newUnits, packs, dataSpacePackages, additionalEicTenants);
   };
 
   const handleSelectIncturePackage = (pkg: IncturePackageTier) => {
     setSelectedPkgId(pkg.id);
-    const m = assessment.migrationRelatedDetails;
-    const newDevCost = pkg.price;
-    const newTotal =
-      newDevCost +
-      (m.testingCost || 15000) +
-      (m.architectureCost || 15000) +
-      (m.projectManagementCost || 15000) +
-      (m.trainingCost || 5000) +
-      (m.deploymentCutoverCost || 10000) +
-      (m.documentationCost || 10000) +
-      (m.contingencyCost || 30000);
+    const devCost = Math.round(pkg.price * 0.60);
+    const testCost = Math.round(pkg.price * 0.20);
+    const archCost = Math.round(pkg.price * 0.10);
+    const pmCost = Math.round(pkg.price * 0.10);
 
     onUpdateAssessment({
       ...assessment,
       migrationRelatedDetails: {
-        ...m,
-        developmentCost: newDevCost,
-        baseMigrationCost: newTotal - (m.contingencyCost || 30000),
-        totalMigrationCost: newTotal,
-      },
-    });
-  };
-
-  const handleUpdateMigrationLineItem = (field: keyof typeof assessment.migrationRelatedDetails, val: number) => {
-    const m = { ...assessment.migrationRelatedDetails, [field]: val };
-    const tot =
-      (m.developmentCost || 0) +
-      (m.testingCost || 0) +
-      (m.architectureCost || 0) +
-      (m.projectManagementCost || 0) +
-      (m.trainingCost || 0) +
-      (m.deploymentCutoverCost || 0) +
-      (m.documentationCost || 0) +
-      (m.contingencyCost || 0);
-
-    onUpdateAssessment({
-      ...assessment,
-      migrationRelatedDetails: {
-        ...m,
-        baseMigrationCost: tot - (m.contingencyCost || 0),
-        totalMigrationCost: tot,
+        ...assessment.migrationRelatedDetails,
+        totalMigrationCost: pkg.price,
+        baseMigrationCost: pkg.price,
+        developmentCost: devCost,
+        testingCost: testCost,
+        architectureCost: archCost,
+        projectManagementCost: pmCost,
+        contingencyCost: 0,
+        trainingCost: 0,
+        deploymentCutoverCost: 0,
+        documentationCost: 0,
       },
     });
   };
@@ -201,7 +187,7 @@ export const Step6SelectEdition: React.FC<Step6Props> = ({
         headline: 'Standard Edition is the optimal tier based on your integration scope.',
         reasoning:
           'Standard Edition is the recommended enterprise baseline for SAP BTP Integration Suite. It includes full API Management, B2B/EDI libraries, Integration Advisor, and Edge Integration Cell runtime without the 10 custom iFlow cap.',
-        suggestedUnits: 3,
+        suggestedUnits: 1,
         suggestedMessagePacks: 400,
         keyBenefits: [
           'Enterprise B2B, EDI and full lifecycle API Management runtime',
@@ -661,7 +647,7 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
 
           {/* Standard Edition (Recommended) */}
           <div
-            onClick={() => handleSelectEdition('Standard Edition', 3)}
+            onClick={() => handleSelectEdition('Standard Edition', 1)}
             className={`p-5 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between relative ${
               currentEd === 'Standard Edition'
                 ? 'border-indigo-600 ring-2 ring-indigo-500/20 bg-indigo-50/20 shadow-md'
@@ -862,68 +848,69 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
         </div>
       </div>
 
-      {/* Part 4: One-time Migration Investment Breakdown */}
+      {/* Part 4: One-time Migration Investment Breakdown (Incture Packaged Model) */}
       <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-4">
-        <div className="flex justify-between items-center border-b border-slate-200 pb-3">
+        <div className="flex flex-wrap justify-between items-center border-b border-slate-200 pb-3 gap-2">
           <div>
-            <span className="text-xs font-black text-slate-800 uppercase tracking-wider">
-              3. Migration Investment Breakdown (One-Time)
-            </span>
-            <p className="text-[11px] text-slate-500">
-              Includes delivery package execution, architecture, testing, cutover, and contingency.
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-black text-slate-800 uppercase tracking-wider">
+                3. IntSwitch Accelerated Migration Investment (One-Time)
+              </span>
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                Up to 40% Cost &amp; Effort Reduction via IntSwitch
+              </span>
+            </div>
+            <p className="text-[11px] text-slate-500 mt-0.5">
+              Fixed indicative scope accelerated by Incture IntSwitch. Automated conversion and test validation reduces total delivery cost and effort by up to 40% compared to traditional manual migration.
             </p>
           </div>
-          <span className="text-sm font-mono font-black text-indigo-600">
-            Total: ${(assessment.migrationRelatedDetails.totalMigrationCost || 0).toLocaleString()}
-          </span>
+          <div className="text-right">
+            <span className="text-xs text-slate-500 block">Total Migration Investment</span>
+            <span className="text-base font-mono font-black text-indigo-600">
+              ${(assessment.migrationRelatedDetails.totalMigrationCost || 0).toLocaleString()} USD
+            </span>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
-          <div className="p-3 bg-slate-50 rounded-xl border">
-            <span className="text-slate-600 block text-[11px]">Incture Delivery / Dev</span>
-            <div className="font-mono font-bold text-slate-900 mt-1">
+          <div className="p-3.5 bg-slate-50/80 rounded-xl border border-slate-200">
+            <span className="text-slate-500 block text-[11px] font-semibold">1. Development &amp; iFlow Migration (60%)</span>
+            <div className="font-mono font-bold text-slate-900 text-sm mt-1">
               ${(assessment.migrationRelatedDetails.developmentCost || 0).toLocaleString()}
             </div>
-            <span className="text-[10px] text-indigo-600">From {selectedPkgId} package</span>
+            <span className="text-[10px] text-blue-600 block mt-1">
+              PM + Integration Developer delivery
+            </span>
           </div>
 
-          <div className="p-3 bg-slate-50 rounded-xl border flex flex-col justify-between">
-            <span className="text-slate-600 block text-[11px]">Architecture & Design</span>
-            <div className="flex items-center space-x-1 mt-1">
-              <span className="text-slate-400 font-mono">$</span>
-              <input
-                type="number"
-                value={assessment.migrationRelatedDetails.architectureCost}
-                onChange={(e) => handleUpdateMigrationLineItem('architectureCost', parseFloat(e.target.value) || 0)}
-                className="w-full text-right font-mono p-1 border rounded bg-white text-xs"
-              />
+          <div className="p-3.5 bg-emerald-50/50 rounded-xl border border-emerald-100">
+            <span className="text-emerald-800 block text-[11px] font-semibold">2. IntSwitch Test Automation (20%)</span>
+            <div className="font-mono font-bold text-emerald-950 text-sm mt-1">
+              ${(assessment.migrationRelatedDetails.testingCost || 0).toLocaleString()}
             </div>
+            <span className="text-[10px] text-emerald-700 block mt-1">
+              Automated regression testing &amp; quality monitoring
+            </span>
           </div>
 
-          <div className="p-3 bg-slate-50 rounded-xl border flex flex-col justify-between">
-            <span className="text-slate-600 block text-[11px]">Testing & Validation</span>
-            <div className="flex items-center space-x-1 mt-1">
-              <span className="text-slate-400 font-mono">$</span>
-              <input
-                type="number"
-                value={assessment.migrationRelatedDetails.testingCost}
-                onChange={(e) => handleUpdateMigrationLineItem('testingCost', parseFloat(e.target.value) || 0)}
-                className="w-full text-right font-mono p-1 border rounded bg-white text-xs"
-              />
+          <div className="p-3.5 bg-slate-50/80 rounded-xl border border-slate-200">
+            <span className="text-slate-500 block text-[11px] font-semibold">3. Platform Setup &amp; BASIS (10%)</span>
+            <div className="font-mono font-bold text-slate-900 text-sm mt-1">
+              ${(assessment.migrationRelatedDetails.architectureCost || 0).toLocaleString()}
             </div>
+            <span className="text-[10px] text-indigo-600 block mt-1">
+              CF tenant setup, CTMS &amp; Cloud Connector
+            </span>
           </div>
 
-          <div className="p-3 bg-slate-50 rounded-xl border flex flex-col justify-between">
-            <span className="text-slate-600 block text-[11px]">Deployment & Cutover</span>
-            <div className="flex items-center space-x-1 mt-1">
-              <span className="text-slate-400 font-mono">$</span>
-              <input
-                type="number"
-                value={assessment.migrationRelatedDetails.deploymentCutoverCost}
-                onChange={(e) => handleUpdateMigrationLineItem('deploymentCutoverCost', parseFloat(e.target.value) || 0)}
-                className="w-full text-right font-mono p-1 border rounded bg-white text-xs"
-              />
+          <div className="p-3.5 bg-slate-50/80 rounded-xl border border-slate-200">
+            <span className="text-slate-500 block text-[11px] font-semibold">4. PM &amp; Hypercare Support (10%)</span>
+            <div className="font-mono font-bold text-slate-900 text-sm mt-1">
+              ${(assessment.migrationRelatedDetails.projectManagementCost || 0).toLocaleString()}
             </div>
+            <span className="text-[10px] text-slate-600 block mt-1">
+              End-to-end governance &amp; 2-3 weeks hypercare
+            </span>
           </div>
         </div>
       </div>

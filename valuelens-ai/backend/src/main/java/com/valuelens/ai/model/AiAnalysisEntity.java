@@ -12,10 +12,10 @@ public class AiAnalysisEntity {
     @Column(length = 64)
     private String id;
 
-    @Column(name = "assessment_id", nullable = false, length = 64)
+    @Column(name = "assessment_id", length = 64)
     private String assessmentId;
 
-    @Column(name = "calculation_result_id", nullable = false, length = 64)
+    @Column(name = "calculation_result_id", length = 64)
     private String calculationResultId;
 
     @Column(name = "scenario_id", length = 64)

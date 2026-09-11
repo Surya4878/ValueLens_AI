@@ -31,6 +31,7 @@ import {
   SUPPORTED_PLATFORMS,
   PLATFORM_CONFIGS,
   COMMON_REQUIREMENTS_QUESTIONS,
+  matchIncturePackage,
 } from '@/data/platformAssessmentConfig';
 
 import { Step1Organization } from './steps/Step1Organization';
@@ -56,122 +57,116 @@ export function AssessmentWizard() {
   const activeConfig = PLATFORM_CONFIGS[selectedPlatform] || PLATFORM_CONFIGS['sap-pipo'];
 
   // Step 1 Organization State
-  const [companyName, setCompanyName] = useState<string>('ABC Retail Ltd.');
+  const [companyName, setCompanyName] = useState<string>('');
 
-  // Form State initialized with benchmark values
+  // Form State initialized with clean 0 / empty values (user enters all scope & costs)
   const [assessment, setAssessment] = useState<Assessment>({
-    name: 'Enterprise SAP PI/PO to BTP Migration Assessment',
+    name: '',
     sourcePlatform: 'SAP PI/PO',
     targetPlatform: 'SAP BTP Integration Suite',
     status: 'IN_PROGRESS',
     currency: 'USD',
     sourceSystem: {
       companyInformation: {
-        companySize: '200',
-        industry: 'Retail',
-        migrationTimeline: '6 Months (Accelerated)',
-        integrationComplexity: 'MODERATE',
-        availabilityRequirements: 'HIGH',
-        complianceRequirements: 'STANDARD',
-        customDevelopment: 'MODERATE',
-        monitoringMaturity: 'ENHANCED',
+        companySize: '',
+        industry: '',
+        migrationTimeline: '',
+        integrationComplexity: '',
+        availabilityRequirements: '',
+        complianceRequirements: '',
+        customDevelopment: '',
+        monitoringMaturity: '',
       },
       environmentAssessment: {
-        integrationVolume: 'High',
-        systemComplexity: 'Moderate',
-        availabilityRequirements: 'High',
-        customDevelopment: 'Medium',
-        complianceRequirements: 'Standard',
-        monitoring: 'Enhanced',
-        simpleInterfaces: 950,
-        mediumInterfaces: 240,
-        complexInterfaces: 60,
-        totalInterfaces: 1250,
+        integrationVolume: '',
+        systemComplexity: '',
+        availabilityRequirements: '',
+        customDevelopment: '',
+        complianceRequirements: '',
+        monitoring: '',
+        simpleInterfaces: 0,
+        mediumInterfaces: 0,
+        complexInterfaces: 0,
+        totalInterfaces: 0,
       },
       volumetrics: {
-        currentMessageThroughput: '200000',
-        indicativeMessageThroughput: '300000',
-        apiCount: 45,
-        b2bInterfaces: 85,
+        currentMessageThroughput: '',
+        indicativeMessageThroughput: '',
+        apiCount: 0,
+        b2bInterfaces: 0,
       },
       sapPiPoAnnualCostBreakdown: {
         licensing: {
-          sapPiPoLicenseCosts: 150000,
-          thirdPartyAdapterLicenses: 50000,
-          developmentEnvironmentLicenses: 30000,
-          testingEnvironmentLicenses: 20000,
-          subtotal: 250000,
+          sapPiPoLicenseCosts: 0,
+          thirdPartyAdapterLicenses: 0,
+          developmentEnvironmentLicenses: 0,
+          testingEnvironmentLicenses: 0,
+          subtotal: 0,
         },
         infrastructure: {
-          hardwareServerCosts: 80000,
-          storageBackupCosts: 25000,
-          networkingConnectivity: 15000,
-          dataCenterFacilities: 40000,
-          subtotal: 160000,
+          hardwareServerCosts: 0,
+          storageBackupCosts: 0,
+          networkingConnectivity: 0,
+          dataCenterFacilities: 0,
+          subtotal: 0,
         },
         support: {
-          sapSupportMaintenance: 80000,
-          thirdPartySupportContracts: 25000,
-          systemMaintenanceUpgrades: 15000,
-          dataCenterFacilities: 40000,
-          subtotal: 160000,
+          sapSupportMaintenance: 0,
+          thirdPartySupportContracts: 0,
+          systemMaintenanceUpgrades: 0,
+          dataCenterFacilities: 0,
+          subtotal: 0,
         },
         operations: {
-          administrativeStaffCosts: 80000,
-          supportStaffCosts: 25000,
-          trainingCertificationCosts: 15000,
-          dataCenterFacilities: 40000,
-          subtotal: 160000,
+          administrativeStaffCosts: 0,
+          supportStaffCosts: 0,
+          trainingCertificationCosts: 0,
+          dataCenterFacilities: 0,
+          subtotal: 0,
         },
       },
     },
     targetSystem: {
       targetPlatform: 'SAP BTP Integration Suite',
       configuration: {
-        selectedEditionName: 'Standard Edition',
-        numberOfUnits: 3,
-        additionalMessagePacks: 400,
+        selectedEditionName: '',
+        numberOfUnits: 0,
+        additionalMessagePacks: 0,
         dataSpacePackages: 0,
         additionalEicTenants: 0,
-        totalAnnualCost: 225804,
-        calculationFormula: '3 units x $64,068/yr + 400 packs x $84.00',
+        totalAnnualCost: 0,
+        calculationFormula: '',
       },
       additionalTcoComponents: {
-        totalAdditionalTcoAnnual: 109000,
+        totalAdditionalTcoAnnual: 0,
         categories: {
           optionalComponents: 0,
           infrastructure: 0,
           operations: 0,
           development: 0,
           compliance: 0,
-          people: 109000,
+          people: 0,
         },
       },
     },
     migrationRelatedDetails: {
-      developmentCost: 65000,
-      testingCost: 15000,
-      architectureCost: 15000,
-      projectManagementCost: 15000,
-      trainingCost: 5000,
-      deploymentCutoverCost: 10000,
-      documentationCost: 10000,
-      baseMigrationCost: 135000,
-      contingencyCost: 30000,
-      totalMigrationCost: 165000,
+      developmentCost: 0,
+      testingCost: 0,
+      architectureCost: 0,
+      projectManagementCost: 0,
+      trainingCost: 0,
+      deploymentCutoverCost: 0,
+      documentationCost: 0,
+      baseMigrationCost: 0,
+      contingencyCost: 0,
+      totalMigrationCost: 0,
       currency: 'USD',
       roiAnalysisPeriodYears: 5,
     },
   });
 
-  // Step 3 Requirements selection state
-  const [selectedRequirements, setSelectedRequirements] = useState<string[]>([
-    'a2a_b2b',
-    'b2b_edi',
-    'api_mgmt',
-    'ai_integration',
-    'edge_cell',
-  ]);
+  // Step 3 Requirements selection state (empty initially)
+  const [selectedRequirements, setSelectedRequirements] = useState<string[]>([]);
 
   const requirementsRecord = React.useMemo(() => {
     const rec: Record<string, boolean> = {};
@@ -181,14 +176,14 @@ export function AssessmentWizard() {
     return rec;
   }, [selectedRequirements]);
 
-  // Step 5 Cost breakdown state
+  // Step 5 Cost parameters state (all zero initially)
   const [costsState, setCostsState] = useState<Step5CostsState>({
-    licensing: activeConfig.defaultCostBreakdown.licensing,
-    infrastructure: activeConfig.defaultCostBreakdown.infrastructure,
-    support: activeConfig.defaultCostBreakdown.support,
-    operations: activeConfig.defaultCostBreakdown.operations,
-    development: activeConfig.defaultCostBreakdown.development,
-    other: activeConfig.defaultCostBreakdown.other,
+    licensing: 0,
+    infrastructure: 0,
+    support: 0,
+    operations: 0,
+    development: 0,
+    other: 0,
   });
 
   // Handle switching platform on Step 0
@@ -197,73 +192,75 @@ export function AssessmentWizard() {
     const targetConfig = PLATFORM_CONFIGS[platId];
     if (!targetConfig) return;
 
-    // Pick default package (Silver or second package if available)
-    const defaultPackage = targetConfig.packages[1] || targetConfig.packages[0];
-
     const newCosts: Step5CostsState = {
-      licensing: targetConfig.defaultCostBreakdown.licensing,
-      infrastructure: targetConfig.defaultCostBreakdown.infrastructure,
-      support: targetConfig.defaultCostBreakdown.support,
-      operations: targetConfig.defaultCostBreakdown.operations,
-      development: targetConfig.defaultCostBreakdown.development,
-      other: targetConfig.defaultCostBreakdown.other,
+      licensing: 0,
+      infrastructure: 0,
+      support: 0,
+      operations: 0,
+      development: 0,
+      other: 0,
     };
     setCostsState(newCosts);
 
-    const m = assessment.migrationRelatedDetails;
-    const devCost = defaultPackage ? defaultPackage.price : 65000;
-    const totalMig =
-      devCost +
-      (m.testingCost || 15000) +
-      (m.architectureCost || 15000) +
-      (m.projectManagementCost || 15000) +
-      (m.trainingCost || 5000) +
-      (m.deploymentCutoverCost || 10000) +
-      (m.documentationCost || 10000) +
-      (m.contingencyCost || 30000);
-
     setAssessment((prev) => ({
       ...prev,
-      name: `Enterprise ${targetConfig.name} to BTP Migration Assessment`,
+      name: `${targetConfig.name} to SAP BTP Migration Assessment`,
       sourcePlatform: targetConfig.name,
       sourceSystem: {
         ...prev.sourceSystem,
+        environmentAssessment: {
+          ...prev.sourceSystem.environmentAssessment,
+          totalInterfaces: 0,
+          simpleInterfaces: 0,
+          mediumInterfaces: 0,
+          complexInterfaces: 0,
+          integrationVolume: '',
+          systemComplexity: '',
+          migrationTimeline: '',
+        },
         sapPiPoAnnualCostBreakdown: {
           licensing: {
-            sapPiPoLicenseCosts: Math.round(newCosts.licensing * 0.6),
-            thirdPartyAdapterLicenses: Math.round(newCosts.licensing * 0.2),
-            developmentEnvironmentLicenses: Math.round(newCosts.licensing * 0.12),
-            testingEnvironmentLicenses: Math.round(newCosts.licensing * 0.08),
-            subtotal: newCosts.licensing,
+            sapPiPoLicenseCosts: 0,
+            thirdPartyAdapterLicenses: 0,
+            developmentEnvironmentLicenses: 0,
+            testingEnvironmentLicenses: 0,
+            subtotal: 0,
           },
           infrastructure: {
-            hardwareServerCosts: Math.round(newCosts.infrastructure * 0.5),
-            storageBackupCosts: Math.round(newCosts.infrastructure * 0.2),
-            networkingConnectivity: Math.round(newCosts.infrastructure * 0.1),
-            dataCenterFacilities: Math.round(newCosts.infrastructure * 0.2),
-            subtotal: newCosts.infrastructure,
+            hardwareServerCosts: 0,
+            storageBackupCosts: 0,
+            networkingConnectivity: 0,
+            dataCenterFacilities: 0,
+            subtotal: 0,
           },
           support: {
-            sapSupportMaintenance: Math.round(newCosts.support * 0.5),
-            thirdPartySupportContracts: Math.round(newCosts.support * 0.2),
-            systemMaintenanceUpgrades: Math.round(newCosts.support * 0.1),
-            dataCenterFacilities: Math.round(newCosts.support * 0.2),
-            subtotal: newCosts.support,
+            sapSupportMaintenance: 0,
+            thirdPartySupportContracts: 0,
+            systemMaintenanceUpgrades: 0,
+            dataCenterFacilities: 0,
+            subtotal: 0,
           },
           operations: {
-            administrativeStaffCosts: Math.round(newCosts.operations * 0.5),
-            supportStaffCosts: Math.round(newCosts.operations * 0.2),
-            trainingCertificationCosts: Math.round(newCosts.operations * 0.1),
-            dataCenterFacilities: Math.round(newCosts.operations * 0.2),
-            subtotal: newCosts.operations,
+            administrativeStaffCosts: 0,
+            supportStaffCosts: 0,
+            trainingCertificationCosts: 0,
+            dataCenterFacilities: 0,
+            subtotal: 0,
           },
         },
       },
       migrationRelatedDetails: {
-        ...m,
-        developmentCost: devCost,
-        baseMigrationCost: totalMig - (m.contingencyCost || 30000),
-        totalMigrationCost: totalMig,
+        ...prev.migrationRelatedDetails,
+        totalMigrationCost: 0,
+        baseMigrationCost: 0,
+        developmentCost: 0,
+        testingCost: 0,
+        architectureCost: 0,
+        projectManagementCost: 0,
+        contingencyCost: 0,
+        trainingCost: 0,
+        deploymentCutoverCost: 0,
+        documentationCost: 0,
       },
     }));
   };
@@ -303,18 +300,16 @@ export function AssessmentWizard() {
     (costsState.development || 0) +
     (costsState.other || 0);
 
-  const getEditionBasePrice = (editionName: string, units: number = 3) => {
-    if (!editionName) return 64068 * units;
+  const getEditionBasePrice = (editionName: string, units: number = 0) => {
+    if (!editionName || units <= 0) return 0;
     const lower = editionName.toLowerCase();
-    if (lower.includes('starter')) return 20736;
-    if (lower.includes('enhanced')) return 92256 * (units > 0 ? units : 1);
-    return 64068 * (units > 0 ? units : 3);
+    if (lower.includes('starter')) return 20736 * units;
+    if (lower.includes('enhanced')) return 92256 * units;
+    if (lower.includes('standard')) return 64068 * units;
+    return 0;
   };
 
-  const currentUnits =
-    assessment.targetSystem.configuration.selectedEditionName === 'Standard Edition'
-      ? (assessment.targetSystem.configuration.numberOfUnits || 3)
-      : (assessment.targetSystem.configuration.numberOfUnits || 1);
+  const currentUnits = assessment.targetSystem.configuration.numberOfUnits || 0;
   const editionBase = getEditionBasePrice(assessment.targetSystem.configuration.selectedEditionName, currentUnits);
   const messagePacksCost = (assessment.targetSystem.configuration.additionalMessagePacks || 0) * 84;
   const dataSpaceCost = (assessment.targetSystem.configuration.dataSpacePackages || 0) * 900;
@@ -325,20 +320,22 @@ export function AssessmentWizard() {
       ? assessment.targetSystem.configuration.totalAnnualCost
       : editionBase + totalAddOnsCostPreview;
   const targetAdditionalTco =
-    assessment.targetSystem.additionalTcoComponents.totalAdditionalTcoAnnual !== undefined
-      ? assessment.targetSystem.additionalTcoComponents.totalAdditionalTcoAnnual
-      : 109000;
+    assessment.targetSystem.additionalTcoComponents.totalAdditionalTcoAnnual || 0;
   const targetTcoPreview = targetConfigTotal + targetAdditionalTco;
 
-  const migrationCostPreview = assessment.migrationRelatedDetails.totalMigrationCost || 165000;
-  const annualSavingsPreview = Math.max(0, currentTcoPreview - targetTcoPreview);
+  const migrationCostPreview = assessment.migrationRelatedDetails.totalMigrationCost || 0;
+  const annualSavingsPreview =
+    currentTcoPreview > 0 && targetTcoPreview > 0 && currentTcoPreview > targetTcoPreview
+      ? currentTcoPreview - targetTcoPreview
+      : 0;
   const fiveYearRoiPreview =
-    migrationCostPreview > 0
+    migrationCostPreview > 0 && annualSavingsPreview > 0
       ? (((annualSavingsPreview * 5) - migrationCostPreview) / migrationCostPreview) * 100
-      : 450.0;
-  const netFiveYearBenefitPreview = (annualSavingsPreview * 5) - migrationCostPreview;
+      : 0;
+  const netFiveYearBenefitPreview =
+    annualSavingsPreview > 0 ? (annualSavingsPreview * 5) - migrationCostPreview : 0;
   const paybackMonthsPreview =
-    annualSavingsPreview > 0 ? (migrationCostPreview / annualSavingsPreview) * 12 : 0;
+    annualSavingsPreview > 0 && migrationCostPreview > 0 ? (migrationCostPreview / annualSavingsPreview) * 12 : 0;
 
   // Submit and calculate ROI on Java Spring Boot backend
   const handleExecuteCalculation = async () => {
@@ -358,14 +355,14 @@ export function AssessmentWizard() {
         currentPlatformTCO: currentTcoPreview,
         targetPlatformTCO: targetTcoPreview,
         annualSavings: annualSavingsPreview,
-        savingsPercentage: currentTcoPreview > 0 ? (annualSavingsPreview / currentTcoPreview) * 100 : 57.1,
+        savingsPercentage: currentTcoPreview > 0 ? (annualSavingsPreview / currentTcoPreview) * 100 : 0,
         migrationCost: migrationCostPreview,
         breakEvenMonths: paybackMonthsPreview,
-        breakEvenStatus: 'REACHED' as const,
-        oneYearROI: (annualSavingsPreview - migrationCostPreview) / migrationCostPreview * 100,
-        threeYearROI: ((annualSavingsPreview * 3) - migrationCostPreview) / migrationCostPreview * 100,
+        breakEvenStatus: (annualSavingsPreview > 0 ? 'REACHED' : 'NOT_REACHED') as any,
+        oneYearROI: migrationCostPreview > 0 ? ((annualSavingsPreview - migrationCostPreview) / migrationCostPreview) * 100 : 0,
+        threeYearROI: migrationCostPreview > 0 ? (((annualSavingsPreview * 3) - migrationCostPreview) / migrationCostPreview) * 100 : 0,
         fiveYearROI: fiveYearRoiPreview,
-        tenYearROI: ((annualSavingsPreview * 10) - migrationCostPreview) / migrationCostPreview * 100,
+        tenYearROI: migrationCostPreview > 0 ? (((annualSavingsPreview * 10) - migrationCostPreview) / migrationCostPreview) * 100 : 0,
         oneYearNetBenefit: annualSavingsPreview - migrationCostPreview,
         threeYearNetBenefit: (annualSavingsPreview * 3) - migrationCostPreview,
         fiveYearNetBenefit: netFiveYearBenefitPreview,
@@ -519,25 +516,23 @@ export function AssessmentWizard() {
                 <div
                   key={plat.id}
                   onClick={() => handleSelectPlatform(plat.id)}
-                  className={`relative rounded-2xl p-5 bg-white cursor-pointer transition-all flex flex-col justify-between select-none ${
-                    isSelected
+                  className={`relative rounded-2xl p-5 bg-white cursor-pointer transition-all flex flex-col items-center justify-center min-h-[110px] select-none ${isSelected
                       ? 'border-2 border-blue-600 ring-4 ring-blue-500/10 shadow-md scale-[1.01]'
                       : 'border border-slate-200/90 hover:border-slate-300 hover:shadow-xs shadow-2xs'
-                  }`}
+                    }`}
                 >
                   {/* Radio Circle */}
-                  <div className="absolute top-4 right-4">
+                  <div className="absolute top-3.5 right-3.5">
                     <div
-                      className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${
-                        isSelected ? 'border-blue-600 bg-blue-600' : 'border-slate-300 bg-white'
-                      }`}
+                      className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${isSelected ? 'border-blue-600 bg-blue-600' : 'border-slate-300 bg-white'
+                        }`}
                     >
                       {isSelected && <div className="w-2 h-2 rounded-full bg-white" />}
                     </div>
                   </div>
 
-                  {/* Card Top Diagram: Source -> Target */}
-                  <div className="pt-2 pb-5 flex items-center justify-center space-x-3">
+                  {/* Card Diagram: Source -> Target */}
+                  <div className="py-2 flex items-center justify-center space-x-3">
                     {/* Source Logo */}
                     <div className="flex flex-col items-center justify-center min-w-[75px]">
                       {plat.id === 'sap-pipo' && (
@@ -590,115 +585,9 @@ export function AssessmentWizard() {
                       </span>
                     </div>
                   </div>
-
-                  {/* Card Bottom: Title & Description */}
-                  <div className="text-center pt-2 border-t border-slate-100">
-                    <h3 className="text-sm sm:text-[15px] font-bold text-slate-900">
-                      {plat.cardTitle}
-                    </h3>
-                    <p className="text-xs text-slate-500 mt-1.5 leading-relaxed">
-                      {plat.description}
-                    </p>
-                  </div>
                 </div>
               );
             })}
-          </div>
-        </div>
-
-        {/* Incture IntSwitch Return Value & Pricing Breakdown */}
-        <div className="bg-gradient-to-r from-blue-50/80 via-indigo-50/40 to-sky-50/70 rounded-2xl border border-blue-200/90 p-5 sm:p-6 shadow-xs space-y-4">
-          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-blue-200/70 pb-3">
-            <div className="flex items-center space-x-2.5">
-              <div className="w-8 h-8 rounded-lg bg-[#0066cc] text-white flex items-center justify-center font-black text-xs shadow-xs">
-                IS
-              </div>
-              <div>
-                <div className="flex items-center space-x-2">
-                  <span className="text-xs font-bold text-[#0066cc] uppercase tracking-wider">
-                    Incture IntSwitch™ Business Value &amp; ROI
-                  </span>
-                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold border border-emerald-200">
-                    Verified Economics
-                  </span>
-                </div>
-                <h4 className="text-base sm:text-lg font-black text-slate-900 mt-0.5">
-                  {activePlat.name} to SAP BTP Migration Value Metrics
-                </h4>
-              </div>
-            </div>
-            <Link
-              href="/intswitch"
-              className="inline-flex items-center space-x-1 text-xs font-bold text-[#0066cc] hover:text-blue-800 transition-colors"
-            >
-              <span>Explore IntSwitch™ Platform</span>
-              <span>→</span>
-            </Link>
-          </div>
-
-          {/* 4 Key Value Metric Cards */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-            <div className="bg-white rounded-xl p-4 border border-blue-100 shadow-2xs">
-              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
-                Potential Annual Savings
-              </span>
-              <span className="text-2xl sm:text-3xl font-black text-emerald-600 font-mono block mt-1">
-                {activePlat.annualSavingsPct}%
-              </span>
-              <span className="text-[11px] text-slate-500 mt-0.5 block">
-                Save ${activePlat.annualSavingsUsd.toLocaleString()} / year
-              </span>
-            </div>
-
-            <div className="bg-white rounded-xl p-4 border border-blue-100 shadow-2xs">
-              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
-                Estimated Payback
-              </span>
-              <span className="text-2xl sm:text-3xl font-black text-[#0066cc] font-mono block mt-1">
-                {activePlat.paybackMonths}
-              </span>
-              <span className="text-[11px] text-slate-500 mt-0.5 block">
-                Break-even in {activePlat.paybackExact}
-              </span>
-            </div>
-
-            <div className="bg-white rounded-xl p-4 border border-blue-100 shadow-2xs">
-              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
-                5-Year Cumulative ROI
-              </span>
-              <span className="text-2xl sm:text-3xl font-black text-indigo-700 font-mono block mt-1">
-                {activePlat.fiveYearRoi}
-              </span>
-              <span className="text-[11px] text-slate-500 mt-0.5 block">
-                {activePlat.fiveYearNetBenefit} Net Benefit
-              </span>
-            </div>
-
-            <div className="bg-white rounded-xl p-4 border border-blue-100 shadow-2xs">
-              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
-                IntSwitch™ Capability
-              </span>
-              <span className="text-2xl sm:text-3xl font-black text-purple-700 font-mono block mt-1">
-                Automated
-              </span>
-              <span className="text-[11px] text-slate-500 mt-0.5 block">
-                Mapping &amp; Regression Testing
-              </span>
-            </div>
-          </div>
-
-          {/* Baseline Pricing Breakdown */}
-          <div className="flex flex-wrap items-center justify-between gap-3 text-xs bg-white/90 rounded-xl p-3.5 border border-blue-100/90">
-            <div className="flex items-center space-x-2">
-              <span className="font-semibold text-slate-600">Current Run-Rate:</span>
-              <span className="font-extrabold text-slate-900 font-mono">${activePlat.currentTco.toLocaleString()} / yr</span>
-              <span className="text-slate-400">→</span>
-              <span className="font-semibold text-slate-600">Target SAP BTP TCO:</span>
-              <span className="font-extrabold text-[#0066cc] font-mono">${activePlat.targetTco.toLocaleString()} / yr</span>
-            </div>
-            <div className="text-[11px] text-slate-600 font-medium">
-              <span className="text-[#0066cc] font-bold">IntSwitch™ Scope:</span> {activeConfig.intSwitch.automationScope}
-            </div>
           </div>
         </div>
 
@@ -781,7 +670,7 @@ export function AssessmentWizard() {
             onClick={() => setCurrentStep(1)}
             className="inline-flex items-center space-x-2 px-6 py-3 bg-[#0066cc] hover:bg-blue-700 text-white rounded-xl text-xs sm:text-sm font-bold shadow-md shadow-blue-500/20 active:scale-95 transition-all"
           >
-            <span>Continue to Business Value</span>
+            <span>Explore Business Value</span>
             <span>→</span>
           </button>
         </div>
@@ -915,25 +804,23 @@ export function AssessmentWizard() {
                 }}
               >
                 <div
-                  className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
-                    isCurrent
+                  className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${isCurrent
                       ? 'bg-blue-600 text-white shadow-xs'
                       : isCompleted
-                      ? 'bg-teal-400 text-white shadow-xs'
-                      : 'bg-white text-slate-400 border border-slate-300'
-                  }`}
+                        ? 'bg-teal-400 text-white shadow-xs'
+                        : 'bg-white text-slate-400 border border-slate-300'
+                    }`}
                 >
                   {isCompleted ? <Check className="w-4 h-4 stroke-[2.5]" /> : m.id}
                 </div>
                 <div className="flex flex-col items-center mt-2 text-center">
                   <span
-                    className={`text-xs mt-0.5 leading-tight ${
-                      isCurrent
+                    className={`text-xs mt-0.5 leading-tight ${isCurrent
                         ? 'text-blue-600 font-bold'
                         : isCompleted
-                        ? 'text-slate-700 font-medium'
-                        : 'text-slate-400'
-                    }`}
+                          ? 'text-slate-700 font-medium'
+                          : 'text-slate-400'
+                      }`}
                   >
                     {m.label}
                   </span>
@@ -1027,7 +914,7 @@ export function AssessmentWizard() {
 
           {currentStep === 4 && (
             <Step4Sizing
-              currentThroughput={assessment.sourceSystem.volumetrics.currentMessageThroughput || '200000'}
+              currentThroughput={assessment.sourceSystem.volumetrics.currentMessageThroughput || ''}
               setCurrentThroughput={(v) =>
                 setAssessment((prev) => ({
                   ...prev,
@@ -1040,7 +927,7 @@ export function AssessmentWizard() {
                   },
                 }))
               }
-              expectedThroughput={assessment.sourceSystem.volumetrics.indicativeMessageThroughput || '300000'}
+              expectedThroughput={assessment.sourceSystem.volumetrics.indicativeMessageThroughput || ''}
               setExpectedThroughput={(v) =>
                 setAssessment((prev) => ({
                   ...prev,
@@ -1054,7 +941,7 @@ export function AssessmentWizard() {
                 }))
               }
               recommendedEdition={assessment.targetSystem.configuration.selectedEditionName || 'Standard Edition'}
-              additionalMessagePacks={assessment.targetSystem.configuration.additionalMessagePacks || 400}
+              additionalMessagePacks={assessment.targetSystem.configuration.additionalMessagePacks || 0}
               additionalEicTenants={assessment.targetSystem.configuration.additionalEicTenants || 0}
               needsAem={false}
               onBack={() => setCurrentStep(3)}
@@ -1165,7 +1052,7 @@ export function AssessmentWizard() {
               <div className="bg-white rounded-2xl border border-slate-200/90 p-6 shadow-xs sticky top-20 space-y-4">
                 <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                   <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
-                    LIVE ECONOMICS SUMMARY
+                    Business value insights
                   </h3>
                   <span className="text-[10px] bg-emerald-50 text-emerald-700 font-bold px-2 py-0.5 rounded-full border border-emerald-200">
                     Dynamic
@@ -1204,16 +1091,16 @@ export function AssessmentWizard() {
                   <div className="flex justify-between items-center px-1 pt-1">
                     <span className="text-slate-600 font-medium">Estimated Payback</span>
                     <span className="text-sm font-bold text-emerald-600 font-mono">
-                      {annualSavingsPreview > 0
+                      {annualSavingsPreview > 0 && paybackMonthsPreview > 0
                         ? `${paybackMonthsPreview.toFixed(1)} Months`
-                        : 'N/A'}
+                        : '—'}
                     </span>
                   </div>
                 </div>
 
                 {/* Grounded IntSwitch Advantage Box */}
                 <div className="p-3 bg-blue-50/60 rounded-xl border border-blue-100 text-[11px] text-blue-900 space-y-1">
-                  <span className="font-bold block text-blue-950">IntSwitch™ Opportunity:</span>
+                  <span className="font-bold block text-blue-950">IntSwitch Opportunity:</span>
                   <p className="text-slate-600 leading-snug">{activeConfig.intSwitch.scopeDescription}</p>
                 </div>
               </div>

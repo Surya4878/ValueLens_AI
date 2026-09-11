@@ -83,12 +83,42 @@ public class RoiCalculationService {
         var sup = costs.getSupport();
         var ops = costs.getOperations();
 
-        // 1. Calculate Current Platform TCO
-        var currentTcoResult = currentPlatformTcoCalculator.calculate(
-                lic.getSapPiPoLicenseCosts(), lic.getThirdPartyAdapterLicenses(), lic.getDevelopmentEnvironmentLicenses(), lic.getTestingEnvironmentLicenses(),
-                inf.getHardwareServerCosts(), inf.getStorageBackupCosts(), inf.getNetworkingConnectivity(), inf.getDataCenterFacilities(),
-                sup.getSapSupportMaintenance(), sup.getThirdPartySupportContracts(), sup.getSystemMaintenanceUpgrades(), sup.getDataCenterFacilities(),
-                ops.getAdministrativeStaffCosts(), ops.getSupportStaffCosts(), ops.getTrainingCertificationCosts(), ops.getDataCenterFacilities()
+        // 1. Calculate Current Platform TCO (support both line items and category subtotals from wizard)
+        BigDecimal licSum = (lic.getSapPiPoLicenseCosts() != null ? lic.getSapPiPoLicenseCosts() : BigDecimal.ZERO)
+                .add(lic.getThirdPartyAdapterLicenses() != null ? lic.getThirdPartyAdapterLicenses() : BigDecimal.ZERO)
+                .add(lic.getDevelopmentEnvironmentLicenses() != null ? lic.getDevelopmentEnvironmentLicenses() : BigDecimal.ZERO)
+                .add(lic.getTestingEnvironmentLicenses() != null ? lic.getTestingEnvironmentLicenses() : BigDecimal.ZERO);
+        BigDecimal licEffective = lic.getSubtotal() != null && lic.getSubtotal().compareTo(BigDecimal.ZERO) > 0
+                ? lic.getSubtotal() : licSum;
+
+        BigDecimal infSum = (inf.getHardwareServerCosts() != null ? inf.getHardwareServerCosts() : BigDecimal.ZERO)
+                .add(inf.getStorageBackupCosts() != null ? inf.getStorageBackupCosts() : BigDecimal.ZERO)
+                .add(inf.getNetworkingConnectivity() != null ? inf.getNetworkingConnectivity() : BigDecimal.ZERO)
+                .add(inf.getDataCenterFacilities() != null ? inf.getDataCenterFacilities() : BigDecimal.ZERO);
+        BigDecimal infEffective = inf.getSubtotal() != null && inf.getSubtotal().compareTo(BigDecimal.ZERO) > 0
+                ? inf.getSubtotal() : infSum;
+
+        BigDecimal supSum = (sup.getSapSupportMaintenance() != null ? sup.getSapSupportMaintenance() : BigDecimal.ZERO)
+                .add(sup.getThirdPartySupportContracts() != null ? sup.getThirdPartySupportContracts() : BigDecimal.ZERO)
+                .add(sup.getSystemMaintenanceUpgrades() != null ? sup.getSystemMaintenanceUpgrades() : BigDecimal.ZERO)
+                .add(sup.getDataCenterFacilities() != null ? sup.getDataCenterFacilities() : BigDecimal.ZERO);
+        BigDecimal supEffective = sup.getSubtotal() != null && sup.getSubtotal().compareTo(BigDecimal.ZERO) > 0
+                ? sup.getSubtotal() : supSum;
+
+        BigDecimal opsSum = (ops.getAdministrativeStaffCosts() != null ? ops.getAdministrativeStaffCosts() : BigDecimal.ZERO)
+                .add(ops.getSupportStaffCosts() != null ? ops.getSupportStaffCosts() : BigDecimal.ZERO)
+                .add(ops.getTrainingCertificationCosts() != null ? ops.getTrainingCertificationCosts() : BigDecimal.ZERO)
+                .add(ops.getDataCenterFacilities() != null ? ops.getDataCenterFacilities() : BigDecimal.ZERO);
+        BigDecimal opsEffective = ops.getSubtotal() != null && ops.getSubtotal().compareTo(BigDecimal.ZERO) > 0
+                ? ops.getSubtotal() : opsSum;
+
+        BigDecimal totalCurrent = licEffective.add(infEffective).add(supEffective).add(opsEffective).setScale(2, java.math.RoundingMode.HALF_UP);
+        var currentTcoResult = new CurrentPlatformTcoCalculator.TcoResult(
+                licEffective.setScale(2, java.math.RoundingMode.HALF_UP),
+                infEffective.setScale(2, java.math.RoundingMode.HALF_UP),
+                supEffective.setScale(2, java.math.RoundingMode.HALF_UP),
+                opsEffective.setScale(2, java.math.RoundingMode.HALF_UP),
+                totalCurrent
         );
 
         // 2. Calculate Target Platform TCO
@@ -97,11 +127,14 @@ public class RoiCalculationService {
         var targetAdditional = targetSystem.getAdditionalTcoComponents() != null ? targetSystem.getAdditionalTcoComponents() : new AssessmentDto.AdditionalTcoComponentsDto();
 
         // Dynamically determine edition pricing and units based on selectedEditionName
-        String editionName = targetConfig.getSelectedEditionName() != null ? targetConfig.getSelectedEditionName().toLowerCase() : "";
+        String editionName = targetConfig.getSelectedEditionName() != null ? targetConfig.getSelectedEditionName().toLowerCase().trim() : "";
         BigDecimal unitPrice;
         int units;
 
-        if (editionName.contains("starter")) {
+        if (editionName.isBlank()) {
+            unitPrice = BigDecimal.ZERO;
+            units = 0;
+        } else if (editionName.contains("starter")) {
             unitPrice = BigDecimal.valueOf(20736.00);
             units = targetConfig.getNumberOfUnits() > 0 ? targetConfig.getNumberOfUnits() : 1;
         } else if (editionName.contains("enhanced")) {
@@ -110,10 +143,13 @@ public class RoiCalculationService {
         } else if (editionName.contains("premium")) {
             unitPrice = BigDecimal.valueOf(318204.00);
             units = targetConfig.getNumberOfUnits() > 0 ? targetConfig.getNumberOfUnits() : 1;
-        } else {
+        } else if (editionName.contains("standard")) {
             // Standard edition ($64,068/unit = $5,339/mo)
             unitPrice = BigDecimal.valueOf(64068.00);
-            units = targetConfig.getNumberOfUnits() > 0 ? targetConfig.getNumberOfUnits() : 3;
+            units = targetConfig.getNumberOfUnits() > 0 ? targetConfig.getNumberOfUnits() : 1;
+        } else {
+            unitPrice = BigDecimal.ZERO;
+            units = 0;
         }
 
         BigDecimal packPrice = BigDecimal.valueOf(84.00);
@@ -125,7 +161,7 @@ public class RoiCalculationService {
 
         BigDecimal additionalTco = targetAdditional.getTotalAdditionalTcoAnnual() != null
                 ? targetAdditional.getTotalAdditionalTcoAnnual()
-                : BigDecimal.valueOf(109000.00);
+                : BigDecimal.ZERO;
 
         var targetTcoResult = targetPlatformTcoCalculator.calculate(
                 unitPrice,

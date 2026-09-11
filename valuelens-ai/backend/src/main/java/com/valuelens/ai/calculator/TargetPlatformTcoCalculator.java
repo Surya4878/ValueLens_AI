@@ -73,7 +73,7 @@ public class TargetPlatformTcoCalculator {
             int additionalEicTenants,
             BigDecimal additionalAnnualTco
     ) {
-        BigDecimal units = BigDecimal.valueOf(Math.max(1, numberOfUnits));
+        BigDecimal units = BigDecimal.valueOf(Math.max(0, numberOfUnits));
         BigDecimal safeUnitPrice = zeroIfNull(unitPrice);
         BigDecimal editionCost = safeUnitPrice.multiply(units).setScale(2, RoundingMode.HALF_UP);
 

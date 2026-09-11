@@ -147,10 +147,22 @@ export const Step5CostParameters: React.FC<Step5Props> = ({
             </div>
             <input
               type="number"
-              value={costs.licensing}
-              onChange={(e) => onUpdateCost('licensing', parseFloat(e.target.value) || 0)}
-              className="w-full text-xs font-mono font-bold p-2.5 focus:outline-none bg-white text-slate-900"
-              placeholder="250000"
+              min="0"
+              value={costs.licensing === 0 ? '' : costs.licensing}
+              onKeyDown={(e) => {
+                if (['-', '+', 'e', 'E'].includes(e.key)) e.preventDefault();
+              }}
+              onChange={(e) => {
+                const v = e.target.value;
+                if (v === '') {
+                  onUpdateCost('licensing', 0);
+                } else {
+                  const n = Math.max(0, parseFloat(v) || 0);
+                  onUpdateCost('licensing', n);
+                }
+              }}
+              className="w-full text-xs font-mono font-bold p-2.5 focus:outline-none bg-white text-slate-900 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              placeholder="0"
             />
             <div className="bg-slate-50 border-l border-slate-200 px-3 flex items-center text-xs text-slate-400">
               / yr
@@ -175,10 +187,22 @@ export const Step5CostParameters: React.FC<Step5Props> = ({
             </div>
             <input
               type="number"
-              value={costs.infrastructure}
-              onChange={(e) => onUpdateCost('infrastructure', parseFloat(e.target.value) || 0)}
-              className="w-full text-xs font-mono font-bold p-2.5 focus:outline-none bg-white text-slate-900"
-              placeholder="160000"
+              min="0"
+              value={costs.infrastructure === 0 ? '' : costs.infrastructure}
+              onKeyDown={(e) => {
+                if (['-', '+', 'e', 'E'].includes(e.key)) e.preventDefault();
+              }}
+              onChange={(e) => {
+                const v = e.target.value;
+                if (v === '') {
+                  onUpdateCost('infrastructure', 0);
+                } else {
+                  const n = Math.max(0, parseFloat(v) || 0);
+                  onUpdateCost('infrastructure', n);
+                }
+              }}
+              className="w-full text-xs font-mono font-bold p-2.5 focus:outline-none bg-white text-slate-900 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              placeholder="0"
             />
             <div className="bg-slate-50 border-l border-slate-200 px-3 flex items-center text-xs text-slate-400">
               / yr
@@ -203,10 +227,22 @@ export const Step5CostParameters: React.FC<Step5Props> = ({
             </div>
             <input
               type="number"
-              value={costs.support}
-              onChange={(e) => onUpdateCost('support', parseFloat(e.target.value) || 0)}
-              className="w-full text-xs font-mono font-bold p-2.5 focus:outline-none bg-white text-slate-900"
-              placeholder="160000"
+              min="0"
+              value={costs.support === 0 ? '' : costs.support}
+              onKeyDown={(e) => {
+                if (['-', '+', 'e', 'E'].includes(e.key)) e.preventDefault();
+              }}
+              onChange={(e) => {
+                const v = e.target.value;
+                if (v === '') {
+                  onUpdateCost('support', 0);
+                } else {
+                  const n = Math.max(0, parseFloat(v) || 0);
+                  onUpdateCost('support', n);
+                }
+              }}
+              className="w-full text-xs font-mono font-bold p-2.5 focus:outline-none bg-white text-slate-900 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              placeholder="0"
             />
             <div className="bg-slate-50 border-l border-slate-200 px-3 flex items-center text-xs text-slate-400">
               / yr
@@ -231,10 +267,22 @@ export const Step5CostParameters: React.FC<Step5Props> = ({
             </div>
             <input
               type="number"
-              value={costs.operations}
-              onChange={(e) => onUpdateCost('operations', parseFloat(e.target.value) || 0)}
-              className="w-full text-xs font-mono font-bold p-2.5 focus:outline-none bg-white text-slate-900"
-              placeholder="160000"
+              min="0"
+              value={costs.operations === 0 ? '' : costs.operations}
+              onKeyDown={(e) => {
+                if (['-', '+', 'e', 'E'].includes(e.key)) e.preventDefault();
+              }}
+              onChange={(e) => {
+                const v = e.target.value;
+                if (v === '') {
+                  onUpdateCost('operations', 0);
+                } else {
+                  const n = Math.max(0, parseFloat(v) || 0);
+                  onUpdateCost('operations', n);
+                }
+              }}
+              className="w-full text-xs font-mono font-bold p-2.5 focus:outline-none bg-white text-slate-900 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              placeholder="0"
             />
             <div className="bg-slate-50 border-l border-slate-200 px-3 flex items-center text-xs text-slate-400">
               / yr
@@ -259,9 +307,21 @@ export const Step5CostParameters: React.FC<Step5Props> = ({
             </div>
             <input
               type="number"
-              value={costs.development}
-              onChange={(e) => onUpdateCost('development', parseFloat(e.target.value) || 0)}
-              className="w-full text-xs font-mono font-bold p-2.5 focus:outline-none bg-white text-slate-900"
+              min="0"
+              value={costs.development === 0 ? '' : costs.development}
+              onKeyDown={(e) => {
+                if (['-', '+', 'e', 'E'].includes(e.key)) e.preventDefault();
+              }}
+              onChange={(e) => {
+                const v = e.target.value;
+                if (v === '') {
+                  onUpdateCost('development', 0);
+                } else {
+                  const n = Math.max(0, parseFloat(v) || 0);
+                  onUpdateCost('development', n);
+                }
+              }}
+              className="w-full text-xs font-mono font-bold p-2.5 focus:outline-none bg-white text-slate-900 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               placeholder="0"
             />
             <div className="bg-slate-50 border-l border-slate-200 px-3 flex items-center text-xs text-slate-400">
@@ -287,9 +347,21 @@ export const Step5CostParameters: React.FC<Step5Props> = ({
             </div>
             <input
               type="number"
-              value={costs.other}
-              onChange={(e) => onUpdateCost('other', parseFloat(e.target.value) || 0)}
-              className="w-full text-xs font-mono font-bold p-2.5 focus:outline-none bg-white text-slate-900"
+              min="0"
+              value={costs.other === 0 ? '' : costs.other}
+              onKeyDown={(e) => {
+                if (['-', '+', 'e', 'E'].includes(e.key)) e.preventDefault();
+              }}
+              onChange={(e) => {
+                const v = e.target.value;
+                if (v === '') {
+                  onUpdateCost('other', 0);
+                } else {
+                  const n = Math.max(0, parseFloat(v) || 0);
+                  onUpdateCost('other', n);
+                }
+              }}
+              className="w-full text-xs font-mono font-bold p-2.5 focus:outline-none bg-white text-slate-900 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               placeholder="0"
             />
             <div className="bg-slate-50 border-l border-slate-200 px-3 flex items-center text-xs text-slate-400">

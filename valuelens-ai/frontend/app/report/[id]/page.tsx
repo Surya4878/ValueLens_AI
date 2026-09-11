@@ -94,14 +94,14 @@ export default function ReportPage() {
   const handleDownloadCsv = () => {
     const csvContent = [
       ['Metric', 'Calculated Value', 'Data Origin', 'Formula / Reference'],
-      ['Current Platform TCO', calculations?.currentPlatformTCO || 730000, 'CALCULATED', 'Sum of legacy on-premise licensing, infra, support, operations'],
-      ['Target Platform TCO', calculations?.targetPlatformTCO || 313084, 'CALCULATED', 'BTP Standard Edition + Additional Cloud Run costs'],
-      ['Annual Operational Savings', calculations?.annualSavings || 416916, 'DERIVED', 'Current TCO - Target TCO'],
-      ['Savings Percentage', `${calculations?.savingsPercentage || 57.11}%`, 'DERIVED', '(Annual Savings / Current TCO) * 100'],
-      ['One-Time Migration Cost', calculations?.migrationCost || 300000, 'CALCULATED', 'Sum of 8 migration workstreams + contingency'],
-      ['Break-Even Payback', `${calculations?.breakEvenMonths || 8.64} Months`, 'DERIVED', '(Migration Cost / Annual Savings) * 12'],
-      ['5-Year Net Economic Benefit', calculations?.fiveYearNetBenefit || 1784580, 'DERIVED', '(Annual Savings * 5) - Migration Cost'],
-      ['5-Year ROI', `${calculations?.fiveYearROI || 594.86}%`, 'DERIVED', '(5-Year Net Benefit / Migration Cost) * 100'],
+      ['Current Platform TCO', calculations?.currentPlatformTCO || 0, 'CALCULATED', 'Sum of legacy on-premise licensing, infra, support, operations'],
+      ['Target Platform TCO', calculations?.targetPlatformTCO || 0, 'CALCULATED', 'SAP BTP Integration Suite + Target Cloud Run costs'],
+      ['Annual Operational Savings', calculations?.annualSavings || 0, 'DERIVED', 'Current TCO - Target TCO'],
+      ['Savings Percentage', `${calculations?.savingsPercentage || 0}%`, 'DERIVED', '(Annual Savings / Current TCO) * 100'],
+      ['One-Time Migration Cost', calculations?.migrationCost || 0, 'CALCULATED', 'Incture Matched Migration Package'],
+      ['Break-Even Payback', `${calculations?.breakEvenMonths || 0} Months`, 'DERIVED', '(Migration Cost / Annual Savings) * 12'],
+      ['5-Year Net Economic Benefit', calculations?.fiveYearNetBenefit || 0, 'DERIVED', '(Annual Savings * 5) - Migration Cost'],
+      ['5-Year ROI', `${calculations?.fiveYearROI || 0}%`, 'DERIVED', '(5-Year Net Benefit / Migration Cost) * 100'],
     ]
       .map((row) => row.join(','))
       .join('\n');
@@ -199,33 +199,33 @@ export default function ReportPage() {
               <tbody className="divide-y divide-slate-200">
                 <tr>
                   <td className="p-3 font-semibold">Current On-Premise TCO</td>
-                  <td className="p-3 text-right font-mono font-bold">{formatCurrency(calculations?.currentPlatformTCO || 730000)}</td>
+                  <td className="p-3 text-right font-mono font-bold">{formatCurrency(calculations?.currentPlatformTCO || 0)}</td>
                   <td className="p-3"><ValueOriginChip origin="CALCULATED" /></td>
-                  <td className="p-3 text-slate-500">Licensing ($290k) + Infra ($100k) + Support ($220k) + Ops ($120k)</td>
+                  <td className="p-3 text-slate-500">Licensing + Infrastructure + Support + Operations</td>
                 </tr>
                 <tr>
                   <td className="p-3 font-semibold">Target SAP BTP TCO</td>
-                  <td className="p-3 text-right font-mono font-bold text-indigo-600">{formatCurrency(calculations?.targetPlatformTCO || 313084)}</td>
+                  <td className="p-3 text-right font-mono font-bold text-indigo-600">{formatCurrency(calculations?.targetPlatformTCO || 0)}</td>
                   <td className="p-3"><ValueOriginChip origin="CALCULATED" /></td>
-                  <td className="p-3 text-slate-500">Standard Edition Unit ($19.1k) + Operations ($293.9k)</td>
+                  <td className="p-3 text-slate-500">Selected BTP Edition + Additional Cloud Run costs</td>
                 </tr>
                 <tr className="bg-emerald-50/60 font-semibold">
                   <td className="p-3 text-emerald-900">Annual Operational Savings</td>
-                  <td className="p-3 text-right font-mono font-bold text-emerald-700">{formatCurrency(calculations?.annualSavings || 416916)}</td>
+                  <td className="p-3 text-right font-mono font-bold text-emerald-700">{formatCurrency(calculations?.annualSavings || 0)}</td>
                   <td className="p-3"><ValueOriginChip origin="DERIVED" /></td>
-                  <td className="p-3 text-emerald-800">57.11% perpetual cost reduction year-over-year</td>
+                  <td className="p-3 text-emerald-800">{calculations?.savingsPercentage || 0}% perpetual cost reduction year-over-year</td>
                 </tr>
                 <tr>
                   <td className="p-3 font-semibold">One-Time Migration Capital</td>
-                  <td className="p-3 text-right font-mono font-bold">{formatCurrency(calculations?.migrationCost || 300000)}</td>
+                  <td className="p-3 text-right font-mono font-bold">{formatCurrency(calculations?.migrationCost || 0)}</td>
                   <td className="p-3"><ValueOriginChip origin="CALCULATED" /></td>
-                  <td className="p-3 text-slate-500">Dev ($140k), QA ($45k), Arch ($30k), PM ($25k), Training ($20k), Buffer ($15k)</td>
+                  <td className="p-3 text-slate-500">Incture Matched Migration Package (Development, Testing, Architecture, PM)</td>
                 </tr>
                 <tr className="bg-indigo-50/60 font-semibold">
                   <td className="p-3 text-indigo-900">Capital Payback Horizon</td>
-                  <td className="p-3 text-right font-mono font-bold text-indigo-700">{formatMonths(calculations?.breakEvenMonths ?? 8.64)}</td>
+                  <td className="p-3 text-right font-mono font-bold text-indigo-700">{formatMonths(calculations?.breakEvenMonths ?? 0)}</td>
                   <td className="p-3"><ValueOriginChip origin="DERIVED" /></td>
-                  <td className="p-3 text-indigo-800">Recouped in Month 9 of production operations</td>
+                  <td className="p-3 text-indigo-800">Recouped in Month {Math.ceil(calculations?.breakEvenMonths ?? 0)} of production operations</td>
                 </tr>
                 <tr>
                   <td className="p-3 font-semibold">5-Year Cumulative Net Benefit</td>

@@ -90,11 +90,17 @@ export interface IncturePackageTier {
   id: string;
   name: string;
   price: number;
+  timelineMonths: string;
   durationWeeks: number;
   scopeSummary: string;
   recommendedFor: string;
   interfaceLimit: string;
   applicationLimit: string;
+  maxInterfaces: number;
+  maxApplications: number;
+  complexitySupport: string;
+  team: string;
+  hypercare: string;
 }
 
 export interface IntSwitchOpportunityInfo {
@@ -133,12 +139,12 @@ export const PLATFORM_CONFIGS: Record<PlatformId, PlatformConfig> = {
     step2Description: 'Help us understand your PI/PO landscape, integration footprint, and complexity.',
     step5Title: 'Enter your current annual SAP PI/PO costs',
     step5Description: 'Provide the estimated annual costs for your SAP PI/PO landscape across licensing, infrastructure, support, and operations.',
-    defaultTco: 730000,
+    defaultTco: 0,
     defaultCostBreakdown: {
-      licensing: 250000,
-      infrastructure: 160000,
-      support: 160000,
-      operations: 160000,
+      licensing: 0,
+      infrastructure: 0,
+      support: 0,
+      operations: 0,
       development: 0,
       other: 0,
     },
@@ -147,45 +153,69 @@ export const PLATFORM_CONFIGS: Record<PlatformId, PlatformConfig> = {
         id: 'starter',
         name: 'Starter Package',
         price: 19000,
-        durationWeeks: 6,
+        timelineMonths: '2 Months',
+        durationWeeks: 8,
         scopeSummary: 'Up to 10 Golden Interfaces with mixed complexity',
         recommendedFor: 'Initial pilot migration, POC validation, and low-footprint single-stack environments.',
         interfaceLimit: 'Up to 10 Interfaces',
         applicationLimit: 'Up to 2 Applications',
+        maxInterfaces: 10,
+        maxApplications: 2,
+        complexitySupport: 'Simple / Golden (Mixed complexity)',
+        team: 'PM + Integration Developer + BASIS',
+        hypercare: '2 Weeks',
       },
       {
         id: 'silver',
         name: 'SILVER (Small Scope)',
         price: 65000,
-        durationWeeks: 12,
+        timelineMonths: '4 Months',
+        durationWeeks: 16,
         scopeSummary: '50 Interfaces with mixed complexity',
         recommendedFor: 'Targeted business unit migrations, standard A2A interfaces, and early wave delivery.',
         interfaceLimit: 'Up to 50 Interfaces',
         applicationLimit: 'Up to 5 Applications',
+        maxInterfaces: 50,
+        maxApplications: 5,
+        complexitySupport: 'Mixed complexity (Standard A2A)',
+        team: 'PM + 2 Integration Developers + BASIS',
+        hypercare: '2 Weeks',
       },
       {
         id: 'gold',
         name: 'GOLD (Medium Scope)',
         price: 110000,
-        durationWeeks: 18,
+        timelineMonths: '7 Months',
+        durationWeeks: 28,
         scopeSummary: '100 Interfaces with mixed complexity & B2B/EDI',
         recommendedFor: 'Comprehensive enterprise landscape modernization with multi-system integrations.',
         interfaceLimit: 'Up to 100 Interfaces',
         applicationLimit: 'Up to 10 Applications',
+        maxInterfaces: 100,
+        maxApplications: 10,
+        complexitySupport: 'Mixed complexity + B2B/EDI Modernization',
+        team: 'PM + Lead + 2 Integration Developers + Architect + BASIS',
+        hypercare: '3 Weeks',
       },
       {
         id: 'platinum',
         name: 'PLATINUM (Large Scope)',
         price: 145000,
-        durationWeeks: 24,
+        timelineMonths: '9 Months',
+        durationWeeks: 36,
         scopeSummary: '150 Interfaces with complex mappings & high volume',
         recommendedFor: 'Large-scale core modernization, complex dual-stack ccBPM migration, and multi-ERP environments.',
         interfaceLimit: 'Up to 150 Interfaces',
-        applicationLimit: 'Up to 15 Applications',
+        applicationLimit: 'Up to 20 Applications',
+        maxInterfaces: 150,
+        maxApplications: 20,
+        complexitySupport: 'Mixed + B2B/EDI + Advanced Event Mesh',
+        team: 'PM + Architect + Lead + 3 Integration Developers + BASIS & Security',
+        hypercare: '3 Weeks',
       },
     ],
     intSwitch: {
-      title: 'IntSwitch™ Migration & Validation Opportunity',
+      title: 'IntSwitch Migration & Validation Opportunity',
       subtitle: 'Identify opportunities for migration automation and validation',
       scopeDescription: 'Accelerate applicable migration, testing, and quality-monitoring activities.',
       automationScope: 'Applicable PO golden template conversion, test automation, and runtime quality monitoring.',
@@ -204,12 +234,12 @@ export const PLATFORM_CONFIGS: Record<PlatformId, PlatformConfig> = {
     step2Description: 'Help us understand your MuleSoft API footprint, application network, and integration architecture.',
     step5Title: 'Enter your current annual MuleSoft costs',
     step5Description: 'Provide the estimated annual costs for your MuleSoft landscape across licensing/subscriptions, infrastructure, support, and operations.',
-    defaultTco: 850000,
+    defaultTco: 0,
     defaultCostBreakdown: {
-      licensing: 380000,
-      infrastructure: 180000,
-      support: 140000,
-      operations: 150000,
+      licensing: 0,
+      infrastructure: 0,
+      support: 0,
+      operations: 0,
       development: 0,
       other: 0,
     },
@@ -218,45 +248,69 @@ export const PLATFORM_CONFIGS: Record<PlatformId, PlatformConfig> = {
         id: 'starter',
         name: 'Starter Package',
         price: 29000,
+        timelineMonths: '2 Months',
         durationWeeks: 8,
-        scopeSummary: 'Up to 10 APIs / Mule flows (System/Process/Experience)',
-        recommendedFor: 'Pilot API migration and validating BTP API Management & Cloud Integration.',
-        interfaceLimit: 'Up to 10 APIs',
+        scopeSummary: '10 Golden Interfaces with standard adapters',
+        recommendedFor: 'Pilot conversion of MuleSoft APIs to SAP Integration Suite.',
+        interfaceLimit: 'Up to 10 Interfaces',
         applicationLimit: 'Up to 2 Applications',
+        maxInterfaces: 10,
+        maxApplications: 2,
+        complexitySupport: 'Simple (10 Golden Interfaces)',
+        team: 'PM + Integration Developer + BASIS',
+        hypercare: '2 Weeks',
       },
       {
         id: 'silver',
         name: 'SILVER (Small Scope)',
         price: 68500,
-        durationWeeks: 14,
-        scopeSummary: '40 APIs / Mule flows with mapping conversion',
+        timelineMonths: '4 Months',
+        durationWeeks: 16,
+        scopeSummary: '40 Interfaces with standard adapters & IntSwitch migration support',
         recommendedFor: 'Standard application network modernization and API gateway consolidation.',
-        interfaceLimit: 'Up to 40 APIs',
+        interfaceLimit: 'Up to 40 Interfaces',
         applicationLimit: 'Up to 5 Applications',
+        maxInterfaces: 40,
+        maxApplications: 5,
+        complexitySupport: 'Simple + Medium',
+        team: 'PM + 2 Integration Developers + BASIS',
+        hypercare: '2 Weeks',
       },
       {
         id: 'gold',
         name: 'GOLD (Medium Scope)',
         price: 135000,
-        durationWeeks: 20,
-        scopeSummary: '80 APIs / Mule flows with B2B/EDI & custom connectors',
+        timelineMonths: '7 Months',
+        durationWeeks: 28,
+        scopeSummary: '80 Interfaces with B2B/EDI, Event Mesh & IntSwitch migration tool',
         recommendedFor: 'Enterprise MuleSoft decommissioning with multi-tier API-led architectures.',
-        interfaceLimit: 'Up to 80 APIs',
-        applicationLimit: 'Up to 10 Applications',
+        interfaceLimit: 'Up to 80 Interfaces',
+        applicationLimit: 'Up to 12 Applications',
+        maxInterfaces: 80,
+        maxApplications: 12,
+        complexitySupport: 'Simple + Medium + Complex',
+        team: 'PM + Lead + 2 Integration Developers + Architect + BASIS',
+        hypercare: '3 Weeks',
       },
       {
         id: 'platinum',
         name: 'PLATINUM (Large Scope)',
         price: 185000,
-        durationWeeks: 26,
-        scopeSummary: '120 APIs with complex DataWeave, RTF & high volume',
-        recommendedFor: 'Full-scale enterprise migration from CloudHub/RTF to SAP BTP Integration Suite.',
-        interfaceLimit: 'Up to 120 APIs',
-        applicationLimit: 'Up to 15 Applications',
+        timelineMonths: '10 Months',
+        durationWeeks: 40,
+        scopeSummary: '110 Interfaces with all standard + application adapters, AS2, Event Mesh',
+        recommendedFor: 'Full-scale enterprise migration from MuleSoft to SAP BTP Integration Suite.',
+        interfaceLimit: 'Up to 110 Interfaces',
+        applicationLimit: 'Up to 25 Applications',
+        maxInterfaces: 110,
+        maxApplications: 25,
+        complexitySupport: 'Simple + Medium + Complex',
+        team: 'PM + Architect + Lead + 3 Integration Developers + BASIS & Security',
+        hypercare: '3 Weeks',
       },
     ],
     intSwitch: {
-      title: 'IntSwitch™ Assessment & Migration Opportunity',
+      title: 'IntSwitch Assessment & Migration Opportunity',
       subtitle: 'Identify opportunities for migration automation and validation',
       scopeDescription: 'Assessment & migration support, including applicable mapping conversion and testing.',
       automationScope: 'Applicable RAML/OAS API conversion, DataWeave mapping migration, and API regression testing.',
@@ -275,49 +329,67 @@ export const PLATFORM_CONFIGS: Record<PlatformId, PlatformConfig> = {
     step2Description: 'Help us understand your SAP CPI (Neo) tenant footprint, custom iFlows, and artifact inventory.',
     step5Title: 'Enter your current annual SAP CPI (Neo) costs',
     step5Description: 'Provide the estimated annual costs for your SAP CPI (Neo) landscape across tenant subscriptions, infrastructure, support, and operations.',
-    defaultTco: 420000,
+    defaultTco: 0,
     defaultCostBreakdown: {
-      licensing: 180000,
-      infrastructure: 80000,
-      support: 80000,
-      operations: 80000,
+      licensing: 0,
+      infrastructure: 0,
+      support: 0,
+      operations: 0,
       development: 0,
       other: 0,
     },
     packages: [
       {
         id: 'silver',
-        name: 'SILVER (Small Scope)',
+        name: 'Package 1 – SILVER (Technical Migration)',
         price: 25000,
-        durationWeeks: 8,
-        scopeSummary: 'Up to 30 iFlows across standard Neo subaccounts',
-        recommendedFor: 'Initial wave migration from Neo to Multi-Cloud Cloud Foundry/Kyma.',
-        interfaceLimit: 'Up to 30 iFlows',
-        applicationLimit: 'Up to 3 Subaccounts',
+        timelineMonths: '3 Months',
+        durationWeeks: 12,
+        scopeSummary: '25 Interfaces with standard adapters, CTMS & tenant setup',
+        recommendedFor: 'Initial wave technical migration from SAP Neo CPI to Multi-Cloud Cloud Foundry.',
+        interfaceLimit: 'Up to 25 Interfaces',
+        applicationLimit: 'Up to 5 Applications',
+        maxInterfaces: 25,
+        maxApplications: 5,
+        complexitySupport: 'Standard (S:M:L/XL :: 60%:30%:10%)',
+        team: 'Project Manager, Integration Consultants, BASIS',
+        hypercare: '2 Weeks',
       },
       {
         id: 'gold',
-        name: 'GOLD (Medium Scope)',
+        name: 'Package 2 – GOLD (Technical Migration)',
         price: 55000,
-        durationWeeks: 14,
-        scopeSummary: 'Up to 75 iFlows with custom Groovy scripts & value mappings',
+        timelineMonths: '4.5 Months',
+        durationWeeks: 18,
+        scopeSummary: '60 Interfaces with standard + application adapters support',
         recommendedFor: 'Medium-scale Neo landscape migration with automated secret and adapter re-binding.',
-        interfaceLimit: 'Up to 75 iFlows',
-        applicationLimit: 'Up to 6 Subaccounts',
+        interfaceLimit: 'Up to 60 Interfaces',
+        applicationLimit: 'Up to 10 Applications',
+        maxInterfaces: 60,
+        maxApplications: 10,
+        complexitySupport: 'Standard + Application adapters (S:M:L/XL :: 60%:30%:10%)',
+        team: 'Project Manager, Integration Consultants, BASIS',
+        hypercare: '3 Weeks',
       },
       {
         id: 'platinum',
-        name: 'PLATINUM (Large Scope)',
+        name: 'Package 3 – PLATINUM (Technical Migration + Capped Enhancement)',
         price: 70000,
-        durationWeeks: 18,
-        scopeSummary: 'Up to 120 iFlows with complex security artifacts & partner adapters',
+        timelineMonths: '6 Months',
+        durationWeeks: 24,
+        scopeSummary: '100 Interfaces with 20 hours simple enhancement & application adapters',
         recommendedFor: 'Complete enterprise Neo tenant decommissioning and multi-cloud cutover.',
-        interfaceLimit: 'Up to 120 iFlows',
-        applicationLimit: 'Up to 10 Subaccounts',
+        interfaceLimit: 'Up to 100 Interfaces',
+        applicationLimit: 'Up to 20 Applications',
+        maxInterfaces: 100,
+        maxApplications: 20,
+        complexitySupport: 'Technical Migration + 20 hours Capped Enhancement',
+        team: 'Project Manager, Integration Consultants, BASIS',
+        hypercare: '3 Weeks',
       },
     ],
     intSwitch: {
-      title: 'IntSwitch™ Neo-to-Multi-Cloud Opportunity',
+      title: 'IntSwitch Neo-to-Multi-Cloud Opportunity',
       subtitle: 'Identify opportunities for migration automation and validation',
       scopeDescription: 'Automated artifact extraction, script conversion, and regression testing.',
       automationScope: 'Automated 1-click artifact extraction from Neo, credential re-binding, and script compatibility verification.',
@@ -336,12 +408,12 @@ export const PLATFORM_CONFIGS: Record<PlatformId, PlatformConfig> = {
     step2Description: 'Help us understand your Boomi AtomSphere environment, processes, connectors, and runtime landscape.',
     step5Title: 'Enter your current annual Boomi costs',
     step5Description: 'Provide the estimated annual costs for your Boomi landscape across licensing/subscriptions, infrastructure, support, and operations.',
-    defaultTco: 680000,
+    defaultTco: 0,
     defaultCostBreakdown: {
-      licensing: 300000,
-      infrastructure: 140000,
-      support: 110000,
-      operations: 130000,
+      licensing: 0,
+      infrastructure: 0,
+      support: 0,
+      operations: 0,
       development: 0,
       other: 0,
     },
@@ -350,45 +422,69 @@ export const PLATFORM_CONFIGS: Record<PlatformId, PlatformConfig> = {
         id: 'starter',
         name: 'Starter Package',
         price: 28000,
+        timelineMonths: '2 Months',
         durationWeeks: 8,
-        scopeSummary: 'Up to 15 Boomi Processes & 3 standard connectors',
+        scopeSummary: '10 Golden Interfaces with standard adapters',
         recommendedFor: 'Pilot conversion of Boomi Atom processes to SAP Integration Suite iFlows.',
-        interfaceLimit: 'Up to 15 Processes',
-        applicationLimit: 'Up to 3 Connectors',
+        interfaceLimit: 'Up to 10 Interfaces',
+        applicationLimit: 'Up to 2 Applications',
+        maxInterfaces: 10,
+        maxApplications: 2,
+        complexitySupport: 'Simple (10 Golden Interfaces)',
+        team: 'PM + Integration Developer + BASIS',
+        hypercare: '2 Weeks',
       },
       {
         id: 'silver',
         name: 'SILVER (Small Scope)',
         price: 61000,
-        durationWeeks: 14,
-        scopeSummary: 'Up to 45 Processes & 6 connectors with custom map shapes',
+        timelineMonths: '4 Months',
+        durationWeeks: 16,
+        scopeSummary: '40 Interfaces with standard adapters, IntSwitch migration & testing',
         recommendedFor: 'Targeted integration domain migration with automated shape conversion.',
-        interfaceLimit: 'Up to 45 Processes',
-        applicationLimit: 'Up to 6 Connectors',
+        interfaceLimit: 'Up to 40 Interfaces',
+        applicationLimit: 'Up to 5 Applications',
+        maxInterfaces: 40,
+        maxApplications: 5,
+        complexitySupport: 'Simple + Medium',
+        team: 'PM + 2 Integration Developers + BASIS',
+        hypercare: '2 Weeks',
       },
       {
         id: 'gold',
         name: 'GOLD (Medium Scope)',
         price: 127000,
-        durationWeeks: 20,
-        scopeSummary: 'Up to 90 Processes with B2B/EDI & Molecule runtime migration',
+        timelineMonths: '7 Months',
+        durationWeeks: 28,
+        scopeSummary: '80 Interfaces with B2B/EDI, Event Mesh & IntSwitch quality tool',
         recommendedFor: 'Core enterprise Boomi replacement with hybrid atom & private cloud runtimes.',
-        interfaceLimit: 'Up to 90 Processes',
-        applicationLimit: 'Up to 12 Connectors',
+        interfaceLimit: 'Up to 80 Interfaces',
+        applicationLimit: 'Up to 12 Applications',
+        maxInterfaces: 80,
+        maxApplications: 12,
+        complexitySupport: 'Simple + Medium + Complex',
+        team: 'PM + Lead + 2 Integration Developers + Architect + BASIS',
+        hypercare: '3 Weeks',
       },
       {
         id: 'platinum',
         name: 'PLATINUM (Large Scope)',
         price: 180000,
-        durationWeeks: 26,
-        scopeSummary: 'Up to 140 Processes with complex scripting & multi-environment cutover',
-        recommendedFor: 'Enterprise-wide Boomi migration, custom SDK connector migration, and high-volume messaging.',
-        interfaceLimit: 'Up to 140 Processes',
-        applicationLimit: 'Up to 20 Connectors',
+        timelineMonths: '10 Months',
+        durationWeeks: 40,
+        scopeSummary: '110 Interfaces with all standard + application adapters, AS2, Event Mesh',
+        recommendedFor: 'Enterprise-wide Boomi migration, custom connector migration, and high-volume messaging.',
+        interfaceLimit: 'Up to 110 Interfaces',
+        applicationLimit: 'Up to 25 Applications',
+        maxInterfaces: 110,
+        maxApplications: 25,
+        complexitySupport: 'Simple + Medium + Complex',
+        team: 'PM + Architect + Lead + 3 Integration Developers + BASIS & Security',
+        hypercare: '3 Weeks',
       },
     ],
     intSwitch: {
-      title: 'IntSwitch™ Process Modernization Opportunity',
+      title: 'IntSwitch Process Modernization Opportunity',
       subtitle: 'Identify opportunities for migration automation and validation',
       scopeDescription: 'Assessment & migration support, including connector mapping conversion and automated flow validation.',
       automationScope: 'Applicable Boomi process shape mapping, connector translation, and automated payload validation.',
@@ -573,3 +669,62 @@ export const COMMON_REQUIREMENTS_QUESTIONS = [
     tooltip: 'Generative AI capabilities for iFlow generation and script refactoring in Enhanced Edition.',
   },
 ];
+
+export interface MatchedPackageResult {
+  package: IncturePackageTier;
+  suitabilityStatus: 'OPTIMAL' | 'ACCEPTABLE' | 'SCOPE_EXCEEDED';
+  suitabilityNote: string;
+}
+
+/**
+ * Matches user scope (interfaces, applications, complexity) to the applicable Incture migration package.
+ * Implements the Incture Range / Package-Based Model without per-interface multipliers.
+ */
+export function matchIncturePackage(
+  platformId: PlatformId,
+  interfacesCount: number,
+  applicationsCount: number = 1,
+  complexity: string = 'Simple'
+): MatchedPackageResult {
+  const cfg = PLATFORM_CONFIGS[platformId] || PLATFORM_CONFIGS['sap-pipo'];
+  const packages = cfg.packages;
+  const isComplex = complexity.toLowerCase().includes('complex');
+  const isModerate = complexity.toLowerCase().includes('moderate') || complexity.toLowerCase().includes('medium');
+
+  // Find candidate packages that can hold the interface and application counts
+  let matched = packages.find(
+    (p) => interfacesCount <= p.maxInterfaces && applicationsCount <= p.maxApplications
+  );
+
+  // If complexity is Moderate/Complex and Starter package only supports Simple/Golden interfaces
+  if (matched && matched.id === 'starter' && (isComplex || isModerate)) {
+    // Check if Starter package complexity allows it
+    if (!matched.complexitySupport.toLowerCase().includes('moderate') && !matched.complexitySupport.toLowerCase().includes('mixed')) {
+      const nextPkg = packages.find((p) => p.id !== 'starter');
+      if (nextPkg) {
+        return {
+          package: nextPkg,
+          suitabilityStatus: 'OPTIMAL',
+          suitabilityNote: `Scope upgraded to ${nextPkg.name} to satisfy ${complexity} complexity requirements per Incture offering specification.`,
+        };
+      }
+    }
+  }
+
+  // If scope exceeds all packages, use the largest available package (Platinum)
+  if (!matched) {
+    const largest = packages[packages.length - 1];
+    return {
+      package: largest,
+      suitabilityStatus: 'SCOPE_EXCEEDED',
+      suitabilityNote: `Scope of ${interfacesCount} interfaces / ${applicationsCount} apps exceeds standard package boundaries. Matched to ${largest.name} as indicative tier.`,
+    };
+  }
+
+  return {
+    package: matched,
+    suitabilityStatus: 'OPTIMAL',
+    suitabilityNote: `Scope of ${interfacesCount} interfaces and ${applicationsCount} apps perfectly matches Incture's ${matched.name}.`,
+  };
+}
+

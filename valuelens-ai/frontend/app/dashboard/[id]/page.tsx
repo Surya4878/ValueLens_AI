@@ -94,15 +94,15 @@ export default function DashboardPage() {
         return {
           chartId,
           finding: `One-time migration investment is ${formatCurrency(migrationCost, currency)}, with interface conversion development (${devPct}%) as the primary cost center.`,
-          businessImpact: `Development delivery burn rate directly dictates the ${breakEvenMonths.toFixed(1)}-month capital recovery horizon. A disciplined ${formatCurrency(contingencyCost, currency)} contingency reserve safeguards against scope creep across all ${totalInterfaces} interfaces.`,
-          recommendation: 'Leverage SAP BTP pre-packaged integration content (920+ packages) to compress development hours by an estimated 35%.',
+          businessImpact: `Fixed indicative Incture package delivery directly dictates the ${breakEvenMonths.toFixed(1)}-month capital recovery horizon. IntSwitch test automation (${formatCurrency(testingCost, currency)}) ensures rapid testing without budget creep.`,
+          recommendation: 'Leverage Incture packaged delivery and IntSwitch automated testing to ensure guaranteed fixed-timeline cutover.',
           aiStatus: 'AI GENERATED',
-          detailedAnalysis: `The one-time capital outlay of ${formatCurrency(migrationCost, currency)} covers the migration of ${totalInterfaces} interfaces, including ${complexInterfaces} complex interfaces (${complexPct}%). Development represents ${formatCurrency(devCost, currency)} (${devPct}%), followed by quality assurance (${formatCurrency(testingCost, currency)}), solution architecture (${formatCurrency(archCost, currency)}), governance (${formatCurrency(pmCost, currency)}), and contingency (${formatCurrency(contingencyCost, currency)}). Capital allocation efficiency is maximized by leveraging standard content packs.`,
+          detailedAnalysis: `The one-time capital outlay of ${formatCurrency(migrationCost, currency)} covers the complete packaged migration scope. Development represents ${formatCurrency(devCost, currency)} (${devPct}%), followed by IntSwitch test automation (${formatCurrency(testingCost, currency)}), solution architecture & BASIS setup (${formatCurrency(archCost, currency)}), and project management & hypercare (${formatCurrency(pmCost, currency)}).`,
           keyMetrics: [
             { label: 'Interface Development', value: formatCurrency(devCost, currency), detail: `${devPct}% of total migration investment` },
-            { label: 'QA & Interface Testing', value: formatCurrency(testingCost, currency), detail: 'End-to-end regression validation' },
-            { label: 'Contingency Reserve', value: formatCurrency(contingencyCost, currency), detail: '10% dedicated risk & scope buffer' },
-            { label: 'Architecture & PMO', value: formatCurrency(archCost + pmCost, currency), detail: 'Technical governance & wave planning' },
+            { label: 'IntSwitch Test Automation', value: formatCurrency(testingCost, currency), detail: 'Automated regression & quality validation' },
+            { label: 'Setup & BASIS', value: formatCurrency(archCost, currency), detail: 'Tenant setup, CTMS & CC configuration' },
+            { label: 'PM & Hypercare', value: formatCurrency(pmCost, currency), detail: 'Technical governance & hypercare support' },
           ],
           actionRoadmap: [
             { phase: 'Phase 1 (Sprint 1–2)', title: 'Accelerated Package Modeling', detail: 'Deploy standard BTP integration flows to eliminate greenfield mapping for standard APIs.' },
@@ -167,7 +167,7 @@ export default function DashboardPage() {
           title: 'Legacy Custom Mappings & Logic',
           reason: `Existing ${assessment?.sourcePlatform || 'SAP PI/PO'} system contains custom mappings and scripts that require automated conversion.`,
           potentialImpact: 'Estimated 15-20% additional refactoring effort if not discovered early.',
-          mitigation: 'Use IntSwitch™ assessment and automated conversion tools to catalog assets and replace with standard BTP artifacts.',
+          mitigation: 'Use IntSwitch assessment and automated conversion tools to catalog assets and replace with standard BTP artifacts.',
         },
         {
           severity: 'MEDIUM',
@@ -410,30 +410,29 @@ export default function DashboardPage() {
   const currency = calculations?.currency || assessment?.currency || 'USD';
 
   const licensingCost =
-    assessment?.sourceSystem?.sapPiPoAnnualCostBreakdown?.licensing?.subtotal ?? 250000;
+    assessment?.sourceSystem?.sapPiPoAnnualCostBreakdown?.licensing?.subtotal ?? 0;
   const infraCost =
-    assessment?.sourceSystem?.sapPiPoAnnualCostBreakdown?.infrastructure?.subtotal ?? 160000;
+    assessment?.sourceSystem?.sapPiPoAnnualCostBreakdown?.infrastructure?.subtotal ?? 0;
   const supportCost =
-    assessment?.sourceSystem?.sapPiPoAnnualCostBreakdown?.support?.subtotal ?? 160000;
+    assessment?.sourceSystem?.sapPiPoAnnualCostBreakdown?.support?.subtotal ?? 0;
   const operationsCost =
-    assessment?.sourceSystem?.sapPiPoAnnualCostBreakdown?.operations?.subtotal ?? 160000;
+    assessment?.sourceSystem?.sapPiPoAnnualCostBreakdown?.operations?.subtotal ?? 0;
 
   const currentTco =
     calculations?.currentPlatformTCO ??
-    licensingCost + infraCost + supportCost + operationsCost;
+    (licensingCost + infraCost + supportCost + operationsCost);
 
-  const selectedEdition = assessment?.targetSystem?.configuration?.selectedEditionName || 'Standard Edition';
-  const getEditionBasePrice = (edition: string, unitCount: number = 3) => {
+  const selectedEdition = assessment?.targetSystem?.configuration?.selectedEditionName || '';
+  const getEditionBasePrice = (edition: string, unitCount: number = 0) => {
+    if (!edition || unitCount <= 0) return 0;
     const lower = edition.toLowerCase();
-    if (lower.includes('starter')) return 20736;
-    if (lower.includes('enhanced')) return 92256 * (unitCount > 0 ? unitCount : 1);
-    if (lower.includes('premium')) return 318204;
-    return 64068 * (unitCount > 0 ? unitCount : 3);
+    if (lower.includes('starter')) return 20736 * unitCount;
+    if (lower.includes('enhanced')) return 92256 * unitCount;
+    if (lower.includes('premium')) return 318204 * unitCount;
+    if (lower.includes('standard')) return 57900 * unitCount;
+    return 0;
   };
-  const unitCount =
-    selectedEdition.toLowerCase().includes('standard')
-      ? (assessment?.targetSystem?.configuration?.numberOfUnits || 3)
-      : 1;
+  const unitCount = assessment?.targetSystem?.configuration?.numberOfUnits || 0;
   const editionBasePrice = getEditionBasePrice(selectedEdition, unitCount);
   const additionalPacks = assessment?.targetSystem?.configuration?.additionalMessagePacks ?? 0;
   const packsCost = additionalPacks * 84;
@@ -447,69 +446,75 @@ export default function DashboardPage() {
       ? assessment.targetSystem.configuration.totalAnnualCost
       : editionBasePrice + addOnsCost;
   const targetAdditionalTco =
-    assessment?.targetSystem?.additionalTcoComponents?.totalAdditionalTcoAnnual !== undefined
-      ? assessment.targetSystem.additionalTcoComponents.totalAdditionalTcoAnnual
-      : 109000;
+    assessment?.targetSystem?.additionalTcoComponents?.totalAdditionalTcoAnnual || 0;
   const targetTco =
     calculations?.targetPlatformTCO ??
     (targetConfigCost + targetAdditionalTco);
 
   const annualSavings =
-    calculations?.annualSavings ?? (currentTco - targetTco);
+    calculations?.annualSavings ?? (currentTco > targetTco ? currentTco - targetTco : 0);
   const savingsPct =
-    currentTco > 0 ? (annualSavings / currentTco) * 100 : 57.11;
-
-  const devCost = assessment?.migrationRelatedDetails?.developmentCost ?? 200000;
-  const contingencyCost = assessment?.migrationRelatedDetails?.contingencyCost ?? 30000;
-  const testingCost = assessment?.migrationRelatedDetails?.testingCost ?? 15000;
-  const archCost = assessment?.migrationRelatedDetails?.architectureCost ?? 15000;
-  const pmCost = assessment?.migrationRelatedDetails?.projectManagementCost ?? 15000;
-  const cutoverCost = assessment?.migrationRelatedDetails?.deploymentCutoverCost ?? 10000;
-  const trainingCost = assessment?.migrationRelatedDetails?.trainingCost ?? 5000;
-  const docCost = assessment?.migrationRelatedDetails?.documentationCost ?? 10000;
+    currentTco > 0 ? (annualSavings / currentTco) * 100 : 0;
 
   const migrationCost =
     calculations?.migrationCost ??
-    (devCost + contingencyCost + testingCost + archCost + pmCost + cutoverCost + trainingCost + docCost);
+    assessment?.migrationRelatedDetails?.totalMigrationCost ??
+    0;
+
+  const devCost =
+    assessment?.migrationRelatedDetails?.developmentCost && assessment.migrationRelatedDetails.developmentCost > 0
+      ? assessment.migrationRelatedDetails.developmentCost
+      : Math.round(migrationCost * 0.60);
+
+  const testingCost =
+    assessment?.migrationRelatedDetails?.testingCost && assessment.migrationRelatedDetails.testingCost > 0
+      ? assessment.migrationRelatedDetails.testingCost
+      : Math.round(migrationCost * 0.20);
+
+  const archCost =
+    assessment?.migrationRelatedDetails?.architectureCost && assessment.migrationRelatedDetails.architectureCost > 0
+      ? assessment.migrationRelatedDetails.architectureCost
+      : Math.round(migrationCost * 0.10);
+
+  const pmCost =
+    assessment?.migrationRelatedDetails?.projectManagementCost && assessment.migrationRelatedDetails.projectManagementCost > 0
+      ? assessment.migrationRelatedDetails.projectManagementCost
+      : Math.round(migrationCost * 0.10);
 
   const breakEvenMonths =
     calculations?.breakEvenMonths ??
-    (annualSavings > 0 ? (migrationCost / annualSavings) * 12 : 8.6);
+    (annualSavings > 0 && migrationCost > 0 ? (migrationCost / annualSavings) * 12 : 0);
 
   const fiveYearRoi =
     calculations?.fiveYearROI ??
-    (migrationCost > 0 ? (((annualSavings * 5) - migrationCost) / migrationCost) * 100 : 594.86);
+    (migrationCost > 0 && annualSavings > 0 ? (((annualSavings * 5) - migrationCost) / migrationCost) * 100 : 0);
 
   const fiveYearNetBenefit =
     calculations?.fiveYearNetBenefit ?? (annualSavings * 5 - migrationCost);
 
-  const devPct = migrationCost > 0 ? ((devCost / migrationCost) * 100).toFixed(0) : '67';
+  const devPct = migrationCost > 0 ? ((devCost / migrationCost) * 100).toFixed(0) : '0';
 
   // Cost Drivers Donut Data
   const tcoDriversData = useMemo(() => {
-    const total = currentTco || 730000;
+    const total = currentTco > 0 ? currentTco : 1;
     return [
-      { name: 'Licensing', value: licensingCost, pct: ((licensingCost / total) * 100).toFixed(1), color: '#3b82f6' },
-      { name: 'Infrastructure', value: infraCost, pct: ((infraCost / total) * 100).toFixed(1), color: '#6366f1' },
-      { name: 'Support', value: supportCost, pct: ((supportCost / total) * 100).toFixed(1), color: '#a855f7' },
-      { name: 'Operations', value: operationsCost, pct: ((operationsCost / total) * 100).toFixed(1), color: '#14b8a6' },
+      { name: 'Licensing', value: licensingCost, pct: currentTco > 0 ? ((licensingCost / total) * 100).toFixed(1) : '0', color: '#3b82f6' },
+      { name: 'Infrastructure', value: infraCost, pct: currentTco > 0 ? ((infraCost / total) * 100).toFixed(1) : '0', color: '#6366f1' },
+      { name: 'Support', value: supportCost, pct: currentTco > 0 ? ((supportCost / total) * 100).toFixed(1) : '0', color: '#a855f7' },
+      { name: 'Operations', value: operationsCost, pct: currentTco > 0 ? ((operationsCost / total) * 100).toFixed(1) : '0', color: '#14b8a6' },
     ];
   }, [currentTco, licensingCost, infraCost, supportCost, operationsCost]);
 
-  // Migration Breakdown Donut Data
+  // Migration Breakdown Donut Data (4 Clean Incture Delivery Pillars)
   const migrationBreakdownData = useMemo(() => {
-    const total = migrationCost || 300000;
+    const total = migrationCost > 0 ? migrationCost : 1;
     return [
-      { name: 'Development', value: devCost, pct: ((devCost / total) * 100).toFixed(1), color: '#3b82f6' },
-      { name: 'Contingency', value: contingencyCost, pct: ((contingencyCost / total) * 100).toFixed(1), color: '#f59e0b' },
-      { name: 'Testing', value: testingCost, pct: ((testingCost / total) * 100).toFixed(1), color: '#10b981' },
-      { name: 'Architecture', value: archCost, pct: ((archCost / total) * 100).toFixed(1), color: '#06b6d4' },
-      { name: 'Project Mgmt', value: pmCost, pct: ((pmCost / total) * 100).toFixed(1), color: '#8b5cf6' },
-      { name: 'Cutover', value: cutoverCost, pct: ((cutoverCost / total) * 100).toFixed(1), color: '#ec4899' },
-      { name: 'Training', value: trainingCost, pct: ((trainingCost / total) * 100).toFixed(1), color: '#f97316' },
-      { name: 'Documentation', value: docCost, pct: ((docCost / total) * 100).toFixed(1), color: '#64748b' },
+      { name: 'Development & Migration', value: devCost, pct: migrationCost > 0 ? Math.round((devCost / total) * 100) : 0, color: '#0284c7' },
+      { name: 'IntSwitch Test Automation', value: testingCost, pct: migrationCost > 0 ? Math.round((testingCost / total) * 100) : 0, color: '#10b981' },
+      { name: 'Architecture & BASIS Setup', value: archCost, pct: migrationCost > 0 ? Math.round((archCost / total) * 100) : 0, color: '#06b6d4' },
+      { name: 'Project Mgmt & Hypercare', value: pmCost, pct: migrationCost > 0 ? Math.round((pmCost / total) * 100) : 0, color: '#8b5cf6' },
     ];
-  }, [migrationCost, devCost, contingencyCost, testingCost, archCost, pmCost, cutoverCost, trainingCost, docCost]);
+  }, [migrationCost, devCost, testingCost, archCost, pmCost]);
 
   // 10-Year Timeline Data
   const timelineData = useMemo(() => {
@@ -537,8 +542,8 @@ export default function DashboardPage() {
     // Worst Case: 20% lower savings, 25% higher migration cost
     const worstSavings = baseSavings * 0.8;
     const worstMigration = baseMigration * 1.25;
-    const worstRoi = worstMigration > 0 ? (((worstSavings * 5) - worstMigration) / worstMigration) * 100 : 340.12;
-    const worstBreakEven = worstSavings > 0 ? (worstMigration / worstSavings) * 12 : 12.7;
+    const worstRoi = worstMigration > 0 ? (((worstSavings * 5) - worstMigration) / worstMigration) * 100 : 0;
+    const worstBreakEven = worstSavings > 0 ? (worstMigration / worstSavings) * 12 : 0;
     const worstBenefit = worstSavings * 5 - worstMigration;
 
     // Base Case
@@ -549,8 +554,8 @@ export default function DashboardPage() {
     // Best Case: 15% higher savings, 15% lower migration cost
     const bestSavings = baseSavings * 1.15;
     const bestMigration = baseMigration * 0.85;
-    const bestRoi = bestMigration > 0 ? (((bestSavings * 5) - bestMigration) / bestMigration) * 100 : 780.45;
-    const bestBreakEven = bestSavings > 0 ? (bestMigration / bestSavings) * 12 : 6.8;
+    const bestRoi = bestMigration > 0 ? (((bestSavings * 5) - bestMigration) / bestMigration) * 100 : 0;
+    const bestBreakEven = bestSavings > 0 ? (bestMigration / bestSavings) * 12 : 0;
     const bestBenefit = bestSavings * 5 - bestMigration;
 
     return {
@@ -568,66 +573,72 @@ export default function DashboardPage() {
   }, [currentTco, targetTco, annualSavings, migrationCost, fiveYearRoi, breakEvenMonths, fiveYearNetBenefit]);
 
   // Environment & Complexity Parameters
-  const totalInterfaces = assessment?.sourceSystem?.environmentAssessment?.totalInterfaces ?? 1050;
-  const complexInterfaces = assessment?.sourceSystem?.environmentAssessment?.complexInterfaces ?? 50;
-  const complexPct = totalInterfaces > 0 ? ((complexInterfaces / totalInterfaces) * 100).toFixed(1) : '4.8';
-  const throughput = parseInt(assessment?.sourceSystem?.volumetrics?.currentMessageThroughput || '200000').toLocaleString();
-  const customDev = assessment?.sourceSystem?.environmentAssessment?.customDevelopment ?? 'Moderate';
+  const totalInterfaces = assessment?.sourceSystem?.environmentAssessment?.totalInterfaces ?? 0;
+  const complexInterfaces = assessment?.sourceSystem?.environmentAssessment?.complexInterfaces ?? 0;
+  const complexPct = totalInterfaces > 0 ? ((complexInterfaces / totalInterfaces) * 100).toFixed(1) : '0';
+  const throughput = assessment?.sourceSystem?.volumetrics?.currentMessageThroughput ? parseInt(assessment.sourceSystem.volumetrics.currentMessageThroughput).toLocaleString() : '0';
+  const customDev = assessment?.sourceSystem?.environmentAssessment?.customDevelopment ?? 'None';
 
   // Derived dynamic UI metrics
   const maxTcoVal = Math.max(currentTco, targetTco, 1);
-  const currentBarHeightPx = Math.max(30, Math.min(180, Math.round((currentTco / maxTcoVal) * 170)));
-  const targetBarHeightPx = Math.max(30, Math.min(180, Math.round((targetTco / maxTcoVal) * 170)));
+  const currentBarHeightPx = currentTco > 0 ? Math.max(30, Math.min(180, Math.round((currentTco / maxTcoVal) * 170))) : 30;
+  const targetBarHeightPx = targetTco > 0 ? Math.max(30, Math.min(180, Math.round((targetTco / maxTcoVal) * 170))) : 30;
 
-  const licensingPct = currentTco > 0 ? ((licensingCost / currentTco) * 100).toFixed(1) : '34.2';
-  const nonLicensingPct = currentTco > 0 ? (((infraCost + supportCost + operationsCost) / currentTco) * 100).toFixed(0) : '66';
+  const licensingPct = currentTco > 0 ? ((licensingCost / currentTco) * 100).toFixed(1) : '0';
+  const nonLicensingPct = currentTco > 0 ? (((infraCost + supportCost + operationsCost) / currentTco) * 100).toFixed(0) : '0';
 
-  const year1NetBenefit = timelineData[0]?.netBenefit ?? 116916;
-  const year1Roi = timelineData[0]?.roi ?? 38.97;
+  const year1NetBenefit = timelineData[0]?.netBenefit ?? 0;
+  const year1Roi = timelineData[0]?.roi ?? 0;
   const complexityLabel = assessment?.sourceSystem?.environmentAssessment?.systemComplexity || assessment?.sourceSystem?.companyInformation?.integrationComplexity || 'Medium';
   const complexityWidth =
     complexityLabel.toLowerCase().includes('high') || complexityLabel.toLowerCase().includes('complex')
       ? '85%'
       : complexityLabel.toLowerCase().includes('simple') || complexityLabel.toLowerCase().includes('low')
-      ? '25%'
-      : '55%';
+        ? '25%'
+        : '55%';
 
   return (
     <div className="min-h-screen bg-[#f8fafc] py-6 text-slate-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
 
         {/* ========================================================================= */}
-        {/* ROW 1: ValueLens AI Decision Card                                         */}
+        {/* ROW 1: IntSwitch Decision Intelligence Card                              */}
         {/* ========================================================================= */}
         <div className="bg-[#f0fdf4] border border-emerald-200/80 rounded-2xl p-6 shadow-xs">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
-            {/* Left: Decision Statement (Cols 6) */}
+            {/* Left: Decision Statement (Cols 5) */}
             <div className="lg:col-span-5 flex items-start space-x-4">
               <div className="w-12 h-12 rounded-full bg-emerald-600 text-white flex items-center justify-center font-black text-xl shrink-0 shadow-sm">
                 ✓
               </div>
               <div className="space-y-1">
-                <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">
-                  ValueLens AI Decision
-                </span>
-                <h2 className="text-3xl font-black text-emerald-800 tracking-tight">
-                  FAVORABLE
+                <div className="flex items-center space-x-2">
+                  <img src="/images/intswitch-logo.png" alt="IntSwitch" className="h-4 w-auto object-contain" />
+                  <span className="text-[11px] font-extrabold text-indigo-700 uppercase tracking-wider block">
+                    IntSwitch Migration Decision Intelligence
+                  </span>
+                </div>
+                <h2 className="text-3xl font-black text-emerald-800 tracking-tight flex items-center gap-2">
+                  <span>FAVORABLE</span>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 tracking-normal uppercase">
+                    Incture Package Validated
+                  </span>
                 </h2>
                 <p className="text-xs text-slate-600 leading-relaxed pt-1">
-                  Migration is financially attractive under the current assumptions. Payback is expected in{' '}
+                  Validated with Incture packaged delivery &amp; IntSwitch automation. Payback is expected in{' '}
                   <strong className="text-slate-900 font-bold">{breakEvenMonths.toFixed(1)} months</strong> with a 5-year ROI of{' '}
                   <strong className="text-slate-900 font-bold">{fiveYearRoi.toFixed(2)}%</strong>.
                 </p>
               </div>
             </div>
 
-            {/* Center: Confidence Score (Cols 3) */}
-            <div className="lg:col-span-3 border-l border-r border-emerald-200/60 px-6 space-y-2">
-              <span className="text-xs font-semibold text-slate-500 block">Confidence Score</span>
-              <div className="text-2xl font-black text-slate-900 font-mono">91%</div>
-              <div className="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
-                <div className="bg-emerald-500 h-full rounded-full transition-all duration-500" style={{ width: '91%' }} />
-              </div>
+            {/* Center: IntSwitch Cost & Effort Reduction (Cols 3) */}
+            <div className="lg:col-span-3 border-l border-r border-emerald-200/60 px-6 space-y-1.5 flex flex-col justify-center">
+              <span className="text-xs font-semibold text-slate-500 block">IntSwitch Advantage</span>
+              <div className="text-2xl font-black text-emerald-800 tracking-tight font-mono">Up to 40%</div>
+              <p className="text-[11px] text-slate-600 font-medium leading-snug">
+                Reduction in total migration cost &amp; delivery effort via automation.
+              </p>
             </div>
 
             {/* Right: AI Insight (Cols 4) */}
@@ -635,7 +646,7 @@ export default function DashboardPage() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-1.5 text-xs font-bold text-indigo-600">
                   <span>✦</span>
-                  <span>AI Insight</span>
+                  <span>IntSwitch Delivery Assurance</span>
                 </div>
                 {aiAnalysis && (
                   <span className="text-[9px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
@@ -649,7 +660,7 @@ export default function DashboardPage() {
                     ? aiAnalysis.executiveSummary.slice(0, 210) + '...'
                     : aiAnalysis.executiveSummary
                 ) : (
-                  <>Annual savings of <strong className="text-slate-900 font-semibold">{formatCurrency(annualSavings, currency)}</strong> ({savingsPct.toFixed(1)}% reduction) create a strong business case. The main area to validate is the migration development effort, which represents {devPct}% of the total investment.</>
+                  <>Annual savings of <strong className="text-slate-900 font-semibold">{formatCurrency(annualSavings, currency)}</strong> ({savingsPct.toFixed(1)}% reduction) provide a compelling business case. IntSwitch test automation and template conversion de-risk migration delivery across the {assessment?.sourceSystem?.companyInformation?.migrationTimeline || '2-month Incture package timeline'}.</>
                 )}
               </p>
               <button
@@ -909,19 +920,24 @@ export default function DashboardPage() {
           {/* Card 3: Migration Investment Breakdown */}
           <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs flex flex-col justify-between space-y-4">
             <div>
-              <h3 className="text-sm font-bold text-slate-900 mb-4">Migration Investment Breakdown</h3>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-sm font-bold text-slate-900">IntSwitch Accelerated Migration Investment</h3>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                  Up to 40% Cost &amp; Effort Reduction
+                </span>
+              </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center">
+              <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center">
                 {/* Donut with Center Text (Cols 5) */}
-                <div className="sm:col-span-5 h-48 relative flex items-center justify-center">
+                <div className="sm:col-span-5 h-44 relative flex items-center justify-center">
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                       <Pie
                         data={migrationBreakdownData}
                         cx="50%"
                         cy="50%"
-                        innerRadius={50}
-                        outerRadius={75}
+                        innerRadius={46}
+                        outerRadius={68}
                         paddingAngle={3}
                         dataKey="value"
                       >
@@ -932,22 +948,24 @@ export default function DashboardPage() {
                     </PieChart>
                   </ResponsiveContainer>
                   <div className="absolute flex flex-col items-center justify-center pointer-events-none">
-                    <span className="text-sm font-black text-slate-900 font-mono">${(migrationCost / 1000).toFixed(0)}K</span>
-                    <span className="text-[10px] text-slate-400">one-time</span>
+                    <span className="text-sm font-black text-slate-900 font-mono">
+                      ${migrationCost >= 1000 ? `${(migrationCost / 1000).toFixed(migrationCost % 1000 === 0 ? 0 : 1)}K` : migrationCost}
+                    </span>
+                    <span className="text-[10px] text-slate-400">package</span>
                   </div>
                 </div>
 
                 {/* Breakdown List (Cols 7) */}
-                <div className="sm:col-span-7 space-y-1.5 text-[11px]">
+                <div className="sm:col-span-7 space-y-2 text-[11px] pr-2 overflow-hidden">
                   {migrationBreakdownData.map((item, idx) => (
-                    <div key={idx} className="flex items-center justify-between">
-                      <div className="flex items-center space-x-1.5 truncate">
+                    <div key={idx} className="flex items-center justify-between gap-2">
+                      <div className="flex items-center space-x-1.5 min-w-0 flex-1">
                         <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: item.color }} />
-                        <span className="text-slate-600 truncate">{item.name}</span>
+                        <span className="text-slate-700 truncate font-medium text-[11px]">{item.name}</span>
                       </div>
-                      <div className="text-right font-mono font-bold text-slate-800 shrink-0 ml-1">
-                        <span className="text-slate-400 text-[10px] font-normal mr-1">{item.pct}%</span>
-                        ${(item.value / 1000).toFixed(0)}K
+                      <div className="text-right font-mono font-bold text-slate-900 shrink-0 whitespace-nowrap pl-1">
+                        <span className="text-slate-400 text-[10px] font-normal mr-1.5">{item.pct}%</span>
+                        ${(item.value / 1000).toFixed(item.value % 1000 === 0 ? 0 : 1)}K
                       </div>
                     </div>
                   ))}
@@ -957,7 +975,7 @@ export default function DashboardPage() {
 
             {/* AI Insight Callout */}
             <div
-              onClick={() => openChartInsight('migration-cost', 'Migration Investment Breakdown & Phasing')}
+              onClick={() => openChartInsight('migration-cost', 'IntSwitch Accelerated Migration Package & Delivery Structure')}
               className="p-3 bg-blue-50/60 hover:bg-blue-100/50 border border-blue-100 rounded-xl text-xs space-y-1 cursor-pointer transition-all duration-200"
             >
               <div className="flex items-center justify-between">
@@ -965,20 +983,20 @@ export default function DashboardPage() {
                   <span>✦</span>
                   <span>AI Insight</span>
                 </div>
-                <span className="text-[10px] font-bold text-indigo-600">Explore AI Analysis ↗</span>
+                <span className="text-[10px] font-bold text-indigo-600">Explore Package Analysis ↗</span>
               </div>
               <p className="text-slate-700 leading-relaxed text-[11px]">
-                Development represents {devPct}% of the migration investment, indicating that interface conversion effort is the primary cost driver.
+                By deploying IntSwitch automated discovery, code conversion, and automated regression testing, total migration delivery effort and cost are reduced by up to <strong className="text-indigo-900 font-bold">40%</strong> compared to traditional manual migration, delivering cutover within the {assessment?.sourceSystem?.companyInformation?.migrationTimeline || 'accelerated Incture package timeline'}.
               </p>
               <button
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
-                  openChartInsight('migration-cost', 'Migration Investment Breakdown & Phasing');
+                  openChartInsight('migration-cost', 'Incture Migration Package & Delivery Structure');
                 }}
                 className="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 block pt-1 cursor-pointer text-left"
               >
-                View Investment Details →
+                View Delivery Details →
               </button>
             </div>
           </div>
@@ -1376,11 +1394,10 @@ export default function DashboardPage() {
                 <button
                   type="button"
                   onClick={() => switchModalTab('tco-comparison', 'Platform Cost Breakdown & TCO Reduction')}
-                  className={`px-2 py-2 rounded-xl transition-all duration-150 cursor-pointer font-bold whitespace-nowrap text-xs flex items-center justify-center gap-1.5 select-none ${
-                    aiModalTab === 'tco-comparison'
+                  className={`px-2 py-2 rounded-xl transition-all duration-150 cursor-pointer font-bold whitespace-nowrap text-xs flex items-center justify-center gap-1.5 select-none ${aiModalTab === 'tco-comparison'
                       ? 'bg-indigo-600 text-white shadow-xs'
                       : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/80'
-                  }`}
+                    }`}
                 >
                   <span className="shrink-0">📊</span>
                   <span className="truncate">Cost Comparison</span>
@@ -1388,11 +1405,10 @@ export default function DashboardPage() {
                 <button
                   type="button"
                   onClick={() => switchModalTab('cost-drivers', 'Legacy TCO Cost Drivers & Elimination')}
-                  className={`px-2 py-2 rounded-xl transition-all duration-150 cursor-pointer font-bold whitespace-nowrap text-xs flex items-center justify-center gap-1.5 select-none ${
-                    aiModalTab === 'cost-drivers'
+                  className={`px-2 py-2 rounded-xl transition-all duration-150 cursor-pointer font-bold whitespace-nowrap text-xs flex items-center justify-center gap-1.5 select-none ${aiModalTab === 'cost-drivers'
                       ? 'bg-indigo-600 text-white shadow-xs'
                       : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/80'
-                  }`}
+                    }`}
                 >
                   <span className="shrink-0">🔍</span>
                   <span className="truncate">Cost Drivers</span>
@@ -1400,11 +1416,10 @@ export default function DashboardPage() {
                 <button
                   type="button"
                   onClick={() => switchModalTab('migration-cost', 'Migration Investment Breakdown & Phasing')}
-                  className={`px-2 py-2 rounded-xl transition-all duration-150 cursor-pointer font-bold whitespace-nowrap text-xs flex items-center justify-center gap-1.5 select-none ${
-                    aiModalTab === 'migration-cost'
+                  className={`px-2 py-2 rounded-xl transition-all duration-150 cursor-pointer font-bold whitespace-nowrap text-xs flex items-center justify-center gap-1.5 select-none ${aiModalTab === 'migration-cost'
                       ? 'bg-indigo-600 text-white shadow-xs'
                       : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/80'
-                  }`}
+                    }`}
                 >
                   <span className="shrink-0">💼</span>
                   <span className="truncate">Migration Cost</span>
@@ -1412,11 +1427,10 @@ export default function DashboardPage() {
                 <button
                   type="button"
                   onClick={() => switchModalTab('roi-timeline', '10-Year ROI Trajectory & Capital Recovery')}
-                  className={`px-2 py-2 rounded-xl transition-all duration-150 cursor-pointer font-bold whitespace-nowrap text-xs flex items-center justify-center gap-1.5 select-none ${
-                    aiModalTab === 'roi-timeline'
+                  className={`px-2 py-2 rounded-xl transition-all duration-150 cursor-pointer font-bold whitespace-nowrap text-xs flex items-center justify-center gap-1.5 select-none ${aiModalTab === 'roi-timeline'
                       ? 'bg-indigo-600 text-white shadow-xs'
                       : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/80'
-                  }`}
+                    }`}
                 >
                   <span className="shrink-0">📈</span>
                   <span className="truncate">ROI Timeline</span>
@@ -1424,11 +1438,10 @@ export default function DashboardPage() {
                 <button
                   type="button"
                   onClick={() => switchModalTab('executive', 'Executive Decision Intelligence & Strategy')}
-                  className={`px-2 py-2 rounded-xl transition-all duration-150 cursor-pointer font-bold whitespace-nowrap text-xs flex items-center justify-center gap-1.5 select-none ${
-                    aiModalTab === 'executive'
+                  className={`px-2 py-2 rounded-xl transition-all duration-150 cursor-pointer font-bold whitespace-nowrap text-xs flex items-center justify-center gap-1.5 select-none ${aiModalTab === 'executive'
                       ? 'bg-indigo-600 text-white shadow-xs'
                       : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/80'
-                  }`}
+                    }`}
                 >
                   <span className="shrink-0">⚡</span>
                   <span className="truncate">Full Advisory</span>
@@ -1442,7 +1455,7 @@ export default function DashboardPage() {
                     <span className="animate-spin text-lg">⟳</span>
                     <div className="text-xs">
                       <span className="font-bold block">Synthesizing Live AI Decision Intelligence...</span>
-                      <span className="text-purple-600 text-[11px]">Connecting to NVIDIA NIM (meta/llama-3.2-11b-vision-instruct)</span>
+                      <span className="text-purple-600 text-[11px]">Connecting to ValueLens AI Inference Engine</span>
                     </div>
                   </div>
                 )}
@@ -1633,9 +1646,8 @@ export default function DashboardPage() {
                             <div key={idx} className="p-3 bg-white border border-slate-200 rounded-xl text-xs space-y-1.5 shadow-xs">
                               <div className="flex items-start justify-between gap-2">
                                 <div className="flex items-center space-x-2">
-                                  <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
-                                    rec.priority === 'HIGH' ? 'bg-rose-100 text-rose-800 border border-rose-200' : 'bg-amber-100 text-amber-800 border border-amber-200'
-                                  }`}>
+                                  <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${rec.priority === 'HIGH' ? 'bg-rose-100 text-rose-800 border border-rose-200' : 'bg-amber-100 text-amber-800 border border-amber-200'
+                                    }`}>
                                     {rec.priority} PRIORITY
                                   </span>
                                   <span className="font-bold text-slate-900 text-xs sm:text-sm">{rec.action}</span>
@@ -1672,11 +1684,10 @@ export default function DashboardPage() {
                             <div key={idx} className="p-3 bg-white border border-slate-200 rounded-xl text-xs space-y-1.5 shadow-xs">
                               <div className="flex items-center justify-between">
                                 <div className="flex items-center space-x-2">
-                                  <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
-                                    risk.severity === 'HIGH' ? 'bg-rose-100 text-rose-800 border border-rose-200' :
-                                    risk.severity === 'MEDIUM' ? 'bg-amber-100 text-amber-800 border border-amber-200' :
-                                    'bg-blue-100 text-blue-800 border border-blue-200'
-                                  }`}>
+                                  <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${risk.severity === 'HIGH' ? 'bg-rose-100 text-rose-800 border border-rose-200' :
+                                      risk.severity === 'MEDIUM' ? 'bg-amber-100 text-amber-800 border border-amber-200' :
+                                        'bg-blue-100 text-blue-800 border border-blue-200'
+                                    }`}>
                                     {risk.severity} SEVERITY
                                   </span>
                                   <span className="font-bold text-slate-900 text-xs sm:text-sm">{risk.title}</span>

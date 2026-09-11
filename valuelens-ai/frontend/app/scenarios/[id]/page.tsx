@@ -65,9 +65,9 @@ export default function ScenariosPage() {
     loadActiveData();
   }, [assessmentId]);
 
-  const baselineCurrent = calculations?.currentPlatformTCO ?? 730000;
-  const baselineTarget = calculations?.targetPlatformTCO ?? 313084;
-  const baselineMigration = calculations?.migrationCost ?? 300000;
+  const baselineCurrent = calculations?.currentPlatformTCO ?? 0;
+  const baselineTarget = calculations?.targetPlatformTCO ?? 0;
+  const baselineMigration = calculations?.migrationCost ?? 0;
 
   const fetchLiveAiScenarioAnalysis = async () => {
     if (!scenarios) return;
@@ -507,9 +507,7 @@ export default function ScenariosPage() {
                   <span>Autonomous AI Sensitivity Intelligence</span>
                 </div>
                 <div className="flex items-center space-x-2 text-[10px] text-purple-600">
-                  <span>Powered by NVIDIA NIM Inference Engine</span>
-                  <span>•</span>
-                  <span>meta/llama-3.2-11b-vision-instruct</span>
+                  <span>Powered by ValueLens AI / IntSwitch AI Decision Engine</span>
                 </div>
               </div>
               <div className="flex items-center space-x-2">
@@ -552,7 +550,7 @@ export default function ScenariosPage() {
                 <span className="animate-spin text-3xl">⟳</span>
                 <span className="text-xs font-bold text-purple-900">Consulting AI Decision Engine & synthesizing live sensitivity advisory...</span>
                 <span className="text-[11px] text-slate-500 max-w-md text-center">
-                  Benchmarking custom simulation against base case, best case, and stress-tested floor via NVIDIA NIM. Usually takes 3-6 seconds.
+                  Benchmarking custom simulation against base case, best case, and stress-tested floor via ValueLens AI.
                 </span>
               </div>
             ) : aiAnalysisText ? (
@@ -581,7 +579,7 @@ export default function ScenariosPage() {
                 <div className="space-y-1.5">
                   <p className="text-sm font-bold text-purple-900">AI Sensitivity Intelligence Ready</p>
                   <p className="text-xs text-slate-500 max-w-sm leading-relaxed">
-                    Adjust the sensitivity sliders above, then click <strong className="text-purple-700">Generate Live AI Insights</strong> to receive a real-time AI executive advisory powered by the NVIDIA NIM inference engine.
+                    Adjust the sensitivity sliders above, then click <strong className="text-purple-700">Generate Live AI Insights</strong> to receive a real-time AI executive advisory powered by ValueLens AI.
                   </p>
                 </div>
                 <button

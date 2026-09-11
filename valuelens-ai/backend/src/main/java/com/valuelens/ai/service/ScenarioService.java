@@ -55,9 +55,9 @@ public class ScenarioService {
         }
 
         // Default fallbacks if none provided
-        if (baselineCurrent == null) baselineCurrent = BigDecimal.valueOf(730000.00);
-        if (baselineTarget == null) baselineTarget = BigDecimal.valueOf(313084.00);
-        if (baselineMigration == null) baselineMigration = BigDecimal.valueOf(300000.00);
+        if (baselineCurrent == null) baselineCurrent = BigDecimal.ZERO;
+        if (baselineTarget == null) baselineTarget = BigDecimal.ZERO;
+        if (baselineMigration == null) baselineMigration = BigDecimal.ZERO;
 
         var suite = scenarioCalculator.computeSuite(
                 baselineCurrent,

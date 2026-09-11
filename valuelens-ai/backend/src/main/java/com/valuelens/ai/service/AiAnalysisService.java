@@ -56,8 +56,10 @@ public class AiAnalysisService {
 
     @Transactional
     public AiAnalysisResponseDto analyze(AiAnalysisRequestDto request) {
-        String assessmentId = request.getAssessmentId() != null ? request.getAssessmentId() : "default";
-        String calcResultId = request.getCalculations() != null ? request.getCalculations().getCalculationResultId() : "calc-latest";
+        String assessmentId = request.getAssessmentId() != null && !request.getAssessmentId().isBlank()
+                ? request.getAssessmentId() : "default";
+        String calcResultId = request.getCalculations() != null && request.getCalculations().getCalculationResultId() != null && !request.getCalculations().getCalculationResultId().isBlank()
+                ? request.getCalculations().getCalculationResultId() : "calc-latest";
 
         String cacheHash = aiCacheService.computeCacheHash(
                 assessmentId, calcResultId, "base", nvidiaProperties.getModel(), AiPromptBuilder.PROMPT_VERSION
@@ -109,7 +111,7 @@ public class AiAnalysisService {
             entity.setExecutiveSummary(result.getExecutiveSummary());
             entity.setFinancialAssessment(result.getFinancialAssessment());
             entity.setScenarioInterpretation(result.getScenarioInterpretation());
-            entity.setAiModel(nvidiaProperties.getModel());
+            entity.setAiModel("ValueLens AI / IntSwitch AI Decision Engine");
             entity.setPromptVersion(AiPromptBuilder.PROMPT_VERSION);
             entity.setCacheHash(cacheHash);
             entity.setCreatedAt(LocalDateTime.now());
@@ -167,29 +169,44 @@ public class AiAnalysisService {
     }
 
     private String buildChartPrompt(String chartId, RoiCalculationResponseDto calc, AssessmentDto assessment) {
-        double cur = calc != null && calc.getCurrentPlatformTCO() != null ? calc.getCurrentPlatformTCO().doubleValue() : 730000;
-        double tgt = calc != null && calc.getTargetPlatformTCO() != null ? calc.getTargetPlatformTCO().doubleValue() : 313084;
-        double sav = calc != null && calc.getAnnualSavings() != null ? calc.getAnnualSavings().doubleValue() : 416916;
-        double mig = calc != null && calc.getMigrationCost() != null ? calc.getMigrationCost().doubleValue() : 300000;
-        double be = calc != null && calc.getBreakEvenMonths() != null ? calc.getBreakEvenMonths().doubleValue() : 8.6;
-        double roi = calc != null && calc.getFiveYearROI() != null ? calc.getFiveYearROI().doubleValue() : 594.86;
-        double net5 = calc != null && calc.getFiveYearNetBenefit() != null ? calc.getFiveYearNetBenefit().doubleValue() : 1784580;
+        double cur = calc != null && calc.getCurrentPlatformTCO() != null ? calc.getCurrentPlatformTCO().doubleValue() : 0.0;
+        double tgt = calc != null && calc.getTargetPlatformTCO() != null ? calc.getTargetPlatformTCO().doubleValue() : 0.0;
+        double sav = calc != null && calc.getAnnualSavings() != null ? calc.getAnnualSavings().doubleValue() : 0.0;
+        double mig = calc != null && calc.getMigrationCost() != null ? calc.getMigrationCost().doubleValue() : 0.0;
+        double be = calc != null && calc.getBreakEvenMonths() != null ? calc.getBreakEvenMonths().doubleValue() : 0.0;
+        double roi = calc != null && calc.getFiveYearROI() != null ? calc.getFiveYearROI().doubleValue() : 0.0;
+        double net5 = calc != null && calc.getFiveYearNetBenefit() != null ? calc.getFiveYearNetBenefit().doubleValue() : 0.0;
 
         return String.format(
                 "Chart: %s. Authoritative Metrics: Current TCO=$%,.0f, Target TCO=$%,.0f, Annual Savings=$%,.0f (%.1f%% reduction), Migration Investment=$%,.0f, Payback=%.1f months, 5-Year Net Benefit=$%,.0f, 5-Year ROI=%.2f%%. Provide executive finding, business impact, and recommendation.",
-                chartId, cur, tgt, sav, cur > 0 ? (sav / cur) * 100 : 57.1, mig, be, net5, roi
+                chartId, cur, tgt, sav, cur > 0 ? (sav / cur) * 100 : 0.0, mig, be, net5, roi
         );
     }
 
     private ChartInsightResponseDto synthesizeDynamicChartInsight(String chartId, RoiCalculationResponseDto calc) {
-        double cur = calc != null && calc.getCurrentPlatformTCO() != null ? calc.getCurrentPlatformTCO().doubleValue() : 730000;
-        double tgt = calc != null && calc.getTargetPlatformTCO() != null ? calc.getTargetPlatformTCO().doubleValue() : 313084;
-        double sav = calc != null && calc.getAnnualSavings() != null ? calc.getAnnualSavings().doubleValue() : 416916;
-        double savPct = cur > 0 ? (sav / cur) * 100 : 57.1;
-        double mig = calc != null && calc.getMigrationCost() != null ? calc.getMigrationCost().doubleValue() : 300000;
-        double be = calc != null && calc.getBreakEvenMonths() != null ? calc.getBreakEvenMonths().doubleValue() : 8.64;
-        double roi = calc != null && calc.getFiveYearROI() != null ? calc.getFiveYearROI().doubleValue() : 594.86;
-        double net5 = calc != null && calc.getFiveYearNetBenefit() != null ? calc.getFiveYearNetBenefit().doubleValue() : 1784580;
+        double cur = calc != null && calc.getCurrentPlatformTCO() != null ? calc.getCurrentPlatformTCO().doubleValue() : 0.0;
+        double tgt = calc != null && calc.getTargetPlatformTCO() != null ? calc.getTargetPlatformTCO().doubleValue() : 0.0;
+        double sav = calc != null && calc.getAnnualSavings() != null ? calc.getAnnualSavings().doubleValue() : 0.0;
+        double savPct = cur > 0 ? (sav / cur) * 100 : 0.0;
+        double mig = calc != null && calc.getMigrationCost() != null ? calc.getMigrationCost().doubleValue() : 0.0;
+        double be = calc != null && calc.getBreakEvenMonths() != null ? calc.getBreakEvenMonths().doubleValue() : 0.0;
+        double roi = calc != null && calc.getFiveYearROI() != null ? calc.getFiveYearROI().doubleValue() : 0.0;
+        double net5 = calc != null && calc.getFiveYearNetBenefit() != null ? calc.getFiveYearNetBenefit().doubleValue() : 0.0;
+
+        if (cur <= 0.0) {
+            ChartInsightResponseDto emptyDto = new ChartInsightResponseDto(
+                    chartId,
+                    "Awaiting assessment input to generate economic chart insights.",
+                    "Values will update automatically based on your custom landscape parameters.",
+                    "Complete the assessment wizard to compute financial drivers."
+            );
+            emptyDto.setDetailedAnalysis("Chart analysis will become active once your baseline parameters and scope are calculated.");
+            emptyDto.setKeyMetrics(List.of());
+            emptyDto.setActionRoadmap(List.of());
+            emptyDto.setRiskSafeguards(List.of());
+            emptyDto.setAiStatus("AWAITING_INPUT");
+            return emptyDto;
+        }
 
         ChartInsightResponseDto dto;
         switch (chartId) {
@@ -316,26 +333,32 @@ public class AiAnalysisService {
 
     public String analyzeScenario(ScenarioResponseDto scenarioData) {
         if (scenarioData == null || scenarioData.getCustomCase() == null) {
-            return "Under modeled scenario parameters, the business case maintains an attractive break-even within Year 1.";
+            return "Please configure and calculate your assessment baseline before simulating sensitivity scenarios.";
         }
         var custom = scenarioData.getCustomCase();
         var base = scenarioData.getBaseCase();
         var best = scenarioData.getBestCase();
         var worst = scenarioData.getWorstCase();
 
-        double be = custom.breakEvenMonths() != null ? custom.breakEvenMonths().doubleValue() : 8.64;
-        double sav = custom.annualSavings() != null ? custom.annualSavings().doubleValue() : 416916;
-        double mig = custom.migrationCost() != null ? custom.migrationCost().doubleValue() : 300000;
-        double net5 = custom.fiveYearNetBenefit() != null ? custom.fiveYearNetBenefit().doubleValue() : 1784580;
-        double roi = custom.fiveYearRoi() != null ? custom.fiveYearRoi().doubleValue() : 594.86;
-        double cur = custom.currentPlatformTco() != null ? custom.currentPlatformTco().doubleValue() : 730000;
-        double tgt = custom.targetPlatformTco() != null ? custom.targetPlatformTco().doubleValue() : 313084;
-        double savPct = custom.savingsPercentage() != null ? custom.savingsPercentage().doubleValue() : 57.1;
+        double be = custom.breakEvenMonths() != null ? custom.breakEvenMonths().doubleValue() : 0.0;
+        double sav = custom.annualSavings() != null ? custom.annualSavings().doubleValue() : 0.0;
+        double mig = custom.migrationCost() != null ? custom.migrationCost().doubleValue() : 0.0;
+        double net5 = custom.fiveYearNetBenefit() != null ? custom.fiveYearNetBenefit().doubleValue() : 0.0;
+        double roi = custom.fiveYearRoi() != null ? custom.fiveYearRoi().doubleValue() : 0.0;
+        double cur = custom.currentPlatformTco() != null ? custom.currentPlatformTco().doubleValue() : 0.0;
+        double tgt = custom.targetPlatformTco() != null ? custom.targetPlatformTco().doubleValue() : 0.0;
+        double savPct = custom.savingsPercentage() != null ? custom.savingsPercentage().doubleValue() : 0.0;
 
-        double baseBe = base != null && base.breakEvenMonths() != null ? base.breakEvenMonths().doubleValue() : 8.64;
-        double worstBe = worst != null && worst.breakEvenMonths() != null ? worst.breakEvenMonths().doubleValue() : 14.6;
-        double worstNet5 = worst != null && worst.fiveYearNetBenefit() != null ? worst.fiveYearNetBenefit().doubleValue() : 1119814;
-        double bestNet5 = best != null && best.fiveYearNetBenefit() != null ? best.fiveYearNetBenefit().doubleValue() : 2434346;
+        double baseBe = base != null && base.breakEvenMonths() != null ? base.breakEvenMonths().doubleValue() : 0.0;
+        double baseSav = base != null && base.annualSavings() != null ? base.annualSavings().doubleValue() : sav;
+        double baseMig = base != null && base.migrationCost() != null ? base.migrationCost().doubleValue() : mig;
+        double worstBe = worst != null && worst.breakEvenMonths() != null ? worst.breakEvenMonths().doubleValue() : 0.0;
+        double worstNet5 = worst != null && worst.fiveYearNetBenefit() != null ? worst.fiveYearNetBenefit().doubleValue() : 0.0;
+        double bestNet5 = best != null && best.fiveYearNetBenefit() != null ? best.fiveYearNetBenefit().doubleValue() : 0.0;
+
+        if (cur <= 0.0) {
+            return "EXECUTIVE SENSITIVITY ADVISORY:\n\nPlease complete your assessment inputs to simulate sensitivity scenarios and review AI risk modeling.";
+        }
 
         try {
             String prompt = String.format(
@@ -343,7 +366,7 @@ public class AiAnalysisService {
                     You are ValueLens AI Enterprise Migration Economics Advisor.
                     Analyze this sensitivity simulation for an enterprise cloud migration (SAP PI/PO to SAP BTP Integration Suite):
                     - Active Scenario (Custom Tuning): Payback=%s, Annual Savings=$%,.0f (%.1f%% reduction), Migration Investment=$%,.0f, 5-Year Net Benefit=$%,.0f, 5-Year ROI=%.2f%%.
-                    - Deterministic Benchmark (Base Case): Payback=%.1f months, Annual Savings=$416,916, Migration Cost=$300,000.
+                    - Deterministic Benchmark (Base Case): Payback=%.1f months, Annual Savings=$%,.0f, Migration Cost=$%,.0f.
                     - Stress-Tested Floor (Worst Case: -20%% savings, +25%% cost): Payback=%.1f months, 5-Year Net Benefit=$%,.0f.
                     - Upside Potential (Best Case: +15%% savings, -10%% cost): 5-Year Net Benefit=$%,.0f.
                     - Platform TCO: Current Legacy=$%,.0f/yr vs Target Cloud=$%,.0f/yr.
@@ -357,7 +380,7 @@ public class AiAnalysisService {
                     """,
                     be <= 0 ? "Not Reached" : String.format("%.1f months", be),
                     sav, savPct, mig, net5, roi,
-                    baseBe, worstBe, worstNet5, bestNet5,
+                    baseBe, baseSav, baseMig, worstBe, worstNet5, bestNet5,
                     cur, tgt
             );
             String aiRaw = nvidiaAiClient.callChatCompletion(
@@ -382,13 +405,17 @@ public class AiAnalysisService {
     }
 
     public String generateExecutiveStory(AssessmentDto assessment, RoiCalculationResponseDto calc) {
-        double cur = calc != null && calc.getCurrentPlatformTCO() != null ? calc.getCurrentPlatformTCO().doubleValue() : 730000;
-        double tgt = calc != null && calc.getTargetPlatformTCO() != null ? calc.getTargetPlatformTCO().doubleValue() : 313084;
-        double sav = calc != null && calc.getAnnualSavings() != null ? calc.getAnnualSavings().doubleValue() : 416916;
-        double mig = calc != null && calc.getMigrationCost() != null ? calc.getMigrationCost().doubleValue() : 300000;
-        double be = calc != null && calc.getBreakEvenMonths() != null ? calc.getBreakEvenMonths().doubleValue() : 8.64;
-        double net5 = calc != null && calc.getFiveYearNetBenefit() != null ? calc.getFiveYearNetBenefit().doubleValue() : 1784580;
-        double roi = calc != null && calc.getFiveYearROI() != null ? calc.getFiveYearROI().doubleValue() : 594.86;
+        double cur = calc != null && calc.getCurrentPlatformTCO() != null ? calc.getCurrentPlatformTCO().doubleValue() : 0.0;
+        double tgt = calc != null && calc.getTargetPlatformTCO() != null ? calc.getTargetPlatformTCO().doubleValue() : 0.0;
+        double sav = calc != null && calc.getAnnualSavings() != null ? calc.getAnnualSavings().doubleValue() : 0.0;
+        double mig = calc != null && calc.getMigrationCost() != null ? calc.getMigrationCost().doubleValue() : 0.0;
+        double be = calc != null && calc.getBreakEvenMonths() != null ? calc.getBreakEvenMonths().doubleValue() : 0.0;
+        double net5 = calc != null && calc.getFiveYearNetBenefit() != null ? calc.getFiveYearNetBenefit().doubleValue() : 0.0;
+        double roi = calc != null && calc.getFiveYearROI() != null ? calc.getFiveYearROI().doubleValue() : 0.0;
+
+        if (cur <= 0.0) {
+            return "EXECUTIVE BRIEFING NARRATIVE:\n\nPlease enter your organization's scope and baseline operating costs to generate a board-level briefing narrative.";
+        }
 
         try {
             String prompt = String.format(
@@ -422,9 +449,9 @@ public class AiAnalysisService {
 
         return String.format(
                 "EXECUTIVE BRIEFING NARRATIVE:\n\n"
-                + "1. The Challenge: Operating the legacy SAP PI/PO environment incurs an annual run-rate of $%,.0f, heavily encumbered by licensing (34%%) and on-premise hardware facilities (22%%).\n\n"
+                + "1. The Challenge: Operating the legacy SAP PI/PO environment incurs an annual run-rate of $%,.0f, heavily encumbered by licensing and on-premise hardware facilities.\n\n"
                 + "2. The Strategic Opportunity: Migrating to SAP BTP Integration Suite reduces the annual footprint to $%,.0f, unlocking $%,.0f in annual operating margin.\n\n"
-                + "3. The Investment: One-time migration investment of $%,.0f is required across interface development, automated testing, architecture governance, and a 10%% contingency reserve.\n\n"
+                + "3. The Investment: One-time migration investment of $%,.0f is required across interface development, automated testing, architecture governance, and a contingency reserve.\n\n"
                 + "4. Payback & ROI: Breakeven is reached in %.1f months, generating $%,.0f in cumulative 5-Year Net Benefit (%.2f%% ROI).\n\n"
                 + "5. Recommendation: Proceed with migration project kickoff. Validate target message consumption assumptions prior to formal contract signing.",
                 cur, tgt, sav, mig, be, net5, roi
@@ -487,8 +514,8 @@ public class AiAnalysisService {
         QuestionResponseDto getCostDriverAnswer(String question) {
             return new QuestionResponseDto(
                     question,
-                    "Current platform TCO of $730,000 is driven primarily by Licensing ($250,000 / 34.2%), followed equally by Infrastructure ($160,000 / 21.9%), Support ($160,000 / 21.9%), and Operations ($160,000 / 21.9%). Legacy server hardware and adapter licensing are the largest individual cost centers.",
-                    List.of("Licensing: $250k (34.2%)", "Infrastructure: $160k (21.9%)", "Support: $160k (21.9%)", "Operations: $160k (21.9%)"),
+                    "Platform TCO is governed primarily by licensing, support contracts, datacenter infrastructure, and operational maintenance. Legacy server hardware and proprietary adapter licensing are typically the largest individual cost centers.",
+                    List.of("Licensing rationalization", "Infrastructure decommissioning", "Support tier modernization", "Operational automation"),
                     "Targeting decommissioning of third-party adapters and on-premise hardware realizes the greatest direct savings."
             );
         }
@@ -496,27 +523,71 @@ public class AiAnalysisService {
 
     private AiAnalysisResponseDto buildFallbackAdvisory(AiAnalysisRequestDto request, String message) {
         var calc = request.getCalculations();
-        BigDecimal currentTco = calc != null && calc.getCurrentPlatformTCO() != null ? calc.getCurrentPlatformTCO() : BigDecimal.valueOf(730000);
-        BigDecimal targetTco = calc != null && calc.getTargetPlatformTCO() != null ? calc.getTargetPlatformTCO() : BigDecimal.valueOf(313084);
-        BigDecimal savings = calc != null && calc.getAnnualSavings() != null ? calc.getAnnualSavings() : BigDecimal.valueOf(416916);
-        BigDecimal savingsPct = calc != null && calc.getSavingsPercentage() != null ? calc.getSavingsPercentage() : BigDecimal.valueOf(57.11);
-        BigDecimal migrationCost = calc != null && calc.getMigrationCost() != null ? calc.getMigrationCost() : BigDecimal.valueOf(300000);
-        BigDecimal breakEven = calc != null && calc.getBreakEvenMonths() != null ? calc.getBreakEvenMonths() : BigDecimal.valueOf(8.64);
-        BigDecimal roi = calc != null && calc.getFiveYearROI() != null ? calc.getFiveYearROI() : BigDecimal.valueOf(594.86);
-        BigDecimal netBenefit5Y = calc != null && calc.getFiveYearNetBenefit() != null ? calc.getFiveYearNetBenefit() : BigDecimal.valueOf(1784580);
+        BigDecimal currentTco = calc != null && calc.getCurrentPlatformTCO() != null ? calc.getCurrentPlatformTCO() : BigDecimal.ZERO;
+        BigDecimal targetTco = calc != null && calc.getTargetPlatformTCO() != null ? calc.getTargetPlatformTCO() : BigDecimal.ZERO;
+        BigDecimal savings = calc != null && calc.getAnnualSavings() != null ? calc.getAnnualSavings() : BigDecimal.ZERO;
+        BigDecimal savingsPct = calc != null && calc.getSavingsPercentage() != null ? calc.getSavingsPercentage() : BigDecimal.ZERO;
+        BigDecimal migrationCost = calc != null && calc.getMigrationCost() != null ? calc.getMigrationCost() : BigDecimal.ZERO;
+        BigDecimal breakEven = calc != null && calc.getBreakEvenMonths() != null ? calc.getBreakEvenMonths() : BigDecimal.ZERO;
+        BigDecimal roi = calc != null && calc.getFiveYearROI() != null ? calc.getFiveYearROI() : BigDecimal.ZERO;
+        BigDecimal netBenefit5Y = calc != null && calc.getFiveYearNetBenefit() != null ? calc.getFiveYearNetBenefit() : BigDecimal.ZERO;
 
         AiAnalysisResponseDto dto = new AiAnalysisResponseDto();
-        dto.setDecision("FAVORABLE");
-        dto.setConfidence(BigDecimal.valueOf(0.91));
+
+        if (currentTco.compareTo(BigDecimal.ZERO) <= 0) {
+            dto.setDecision("AWAITING_INPUT");
+            dto.setConfidence(BigDecimal.ZERO);
+            dto.setExecutiveSummary("Enter your organization's landscape scope and current operational costs in the assessment wizard to generate an authoritative AI economic analysis.");
+            dto.setFinancialAssessment("Financial calculations will be generated upon entering current run-rate costs and target landscape parameters.");
+            dto.setScenarioInterpretation("Complete baseline cost entry to unlock dynamic sensitivity analysis and break-even simulations.");
+            dto.setWhatTheNumbersSay(List.of(
+                    "Current baseline TCO is currently $0. Enter your operational cost breakdown to compute savings.",
+                    "Migration investment and payback period will be calculated dynamically from your scope."
+            ));
+            dto.setCostDrivers(List.of());
+            dto.setKeyInsights(List.of(
+                    "Awaiting user-entered scope and costs to synthesize platform insights.",
+                    "Incture migration packages and BTP pricing will match automatically to your inputs."
+            ));
+            dto.setRisks(List.of());
+            dto.setOpportunities(List.of(
+                    "Migrating to SAP BTP Integration Suite reduces on-premise infrastructure upkeep and eliminates obsolete license maintenance.",
+                    "Pre-packaged integration content accelerates time-to-value."
+            ));
+            dto.setRecommendations(List.of(
+                    new AiAnalysisResponseDto.RecommendationDto("HIGH", "Enter Current Platform Costs", "Provide licensing, infrastructure, and operational support costs to establish baseline.", "Unlocks full ROI dashboard", "Finance / Lead Architect", "Immediate"),
+                    new AiAnalysisResponseDto.RecommendationDto("HIGH", "Define Interface Scope", "Specify interface counts and complexity mix to match the appropriate Incture package.", "Establishes fixed migration investment", "Integration Lead", "Step 2")
+            ));
+            dto.setDecisionFactors(List.of(
+                    "Economic viability is determined by entered legacy run-rate costs versus target cloud subscription and Incture package investment."
+            ));
+            dto.setAssumptions(List.of(
+                    "All financial indicators are computed exclusively from user-entered scope and costs."
+            ));
+            dto.setDataQuality(new AiAnalysisResponseDto.DataQualitySummaryDto(100, "HIGH"));
+            dto.setAiStatus("AVAILABLE");
+            dto.setStatusMessage(message);
+            dto.setAiModel("ValueLens AI / IntSwitch AI Decision Engine");
+            dto.setPromptVersion(AiPromptBuilder.PROMPT_VERSION);
+            return dto;
+        }
+
+        int complexCount = request.getAssessment() != null ? request.getAssessment().getComplexInterfaces() : 0;
+        int totalInterfaces = request.getAssessment() != null ? request.getAssessment().getTotalInterfaces() : 0;
+        String timeline = request.getAssessment() != null && request.getAssessment().getMigrationTimeline() != null && !request.getAssessment().getMigrationTimeline().isBlank()
+                ? request.getAssessment().getMigrationTimeline() : "Accelerated";
+
+        dto.setDecision(savings.compareTo(BigDecimal.ZERO) > 0 ? "FAVORABLE" : "NEUTRAL");
+        dto.setConfidence(BigDecimal.valueOf(0.92));
         dto.setExecutiveSummary(String.format(
-                "The migration case is financially attractive under the modeled assumptions. Annual platform costs decrease from approximately $%,.0f to $%,.0f, unlocking modeled annual savings of $%,.0f (%.1f%% reduction). The one-time migration investment of $%,.0f is fully recovered in approximately %.1f months.",
+                "The migration case is financially attractive under the entered scope. Annual platform costs decrease from approximately $%,.0f to $%,.0f, unlocking projected annual savings of $%,.0f (%.1f%% reduction). The indicative migration investment of $%,.0f is projected to be fully recovered in approximately %.1f months.",
                 currentTco.doubleValue(), targetTco.doubleValue(), savings.doubleValue(), savingsPct.doubleValue(), migrationCost.doubleValue(), breakEven.doubleValue()
         ));
         dto.setFinancialAssessment(String.format(
-                "The economic profile demonstrates high viability with a 5-Year ROI of %.2f%% and cumulative 5-Year net benefit of $%,.0f. Operating margin expansion begins immediately in Year 1.",
+                "The economic profile demonstrates high viability with a 5-Year ROI of %.2f%% and cumulative 5-Year net benefit of $%,.0f. Operating margin expansion commences within Year 1.",
                 roi.doubleValue(), netBenefit5Y.doubleValue()
         ));
-        dto.setScenarioInterpretation("Under downside scenario sensitivity (+20% migration cost, -20% savings), the business case remains positive, with payback extending within acceptable bounds.");
+        dto.setScenarioInterpretation("Under downside scenario sensitivity (+20% migration cost, -20% savings), the business case retains positive cash flow with payback extending within acceptable enterprise thresholds.");
 
         dto.setWhatTheNumbersSay(List.of(
                 String.format("Current legacy TCO of $%,.0f is reduced by %.1f%% to $%,.0f annually.", currentTco.doubleValue(), savingsPct.doubleValue(), targetTco.doubleValue()),
@@ -527,19 +598,41 @@ public class AiAnalysisService {
         dto.setCostDrivers(List.of(
                 new AiAnalysisResponseDto.CostDriverInsightDto("Licensing", "High", "Proprietary server and adapter licenses account for the primary share of current TCO."),
                 new AiAnalysisResponseDto.CostDriverInsightDto("Infrastructure", "Medium", "On-premise hardware, backup, and data center facilities generate ongoing run-rate burden."),
-                new AiAnalysisResponseDto.CostDriverInsightDto("Operations", "Medium", "Administrative maintenance and environment support contribute significantly to legacy overhead.")
+                new AiAnalysisResponseDto.CostDriverInsightDto("Operations & Support", "Medium", "Administrative maintenance and environment support contribute to legacy overhead.")
         ));
 
         dto.setKeyInsights(List.of(
                 String.format("Payback is achieved rapidly within %.1f months.", breakEven.doubleValue()),
                 "Licensing and infrastructure retirement generate immediate fiscal relief.",
-                "Target platform configuration aligns efficiently with current message throughput requirements."
+                String.format("Target platform configuration aligns efficiently with %d total interfaces.", totalInterfaces)
         ));
 
-        dto.setRisks(List.of(
-                new AiAnalysisResponseDto.RiskInsightDto("MEDIUM", "Interface Conversion Complexity", "50 complex interfaces represent substantial custom mapping and user-exit logic.", "Delivery delays and increased initial development expenditure.", "Automate assessment with migration tooling and reuse SAP standard integration content."),
-                new AiAnalysisResponseDto.RiskInsightDto("LOW", "Message Volume Overrun", "Surges exceeding 400 message packs could increase cloud consumption fees.", "Incremental cloud operating expenditure.", "Implement traffic throttling and monitor BTP monthly message metrics actively.")
+        List<AiAnalysisResponseDto.RiskInsightDto> risks = new ArrayList<>();
+        if (complexCount > 0) {
+            risks.add(new AiAnalysisResponseDto.RiskInsightDto(
+                    "MEDIUM",
+                    "Interface Conversion Complexity",
+                    String.format("%d complex interfaces represent substantial custom mapping and user-exit logic.", complexCount),
+                    "Delivery delays and increased initial development expenditure.",
+                    "Automate assessment with migration tooling and reuse SAP standard integration content."
+            ));
+        } else {
+            risks.add(new AiAnalysisResponseDto.RiskInsightDto(
+                    "LOW",
+                    "Interface Portfolio Translation",
+                    "Entered interface portfolio follows standard patterns suitable for accelerated migration.",
+                    "Minimal technical delivery risk under matched Incture package.",
+                    "Validate connectivity prerequisites and credentials prior to sprint kickoff."
+            ));
+        }
+        risks.add(new AiAnalysisResponseDto.RiskInsightDto(
+                "LOW",
+                "Cloud Consumption Alignment",
+                "Target BTP message throughput should be monitored against monthly consumption.",
+                "Incremental cloud operating expenditure if throughput surges.",
+                "Configure cloud cockpit monitoring alerts for proactive capacity management."
         ));
+        dto.setRisks(risks);
 
         dto.setOpportunities(List.of(
                 "Decommissioning legacy data center footprint accelerates corporate sustainability goals.",
@@ -547,28 +640,51 @@ public class AiAnalysisService {
                 "API Management capabilities in BTP enable API monetization and accelerated partner onboarding."
         ));
 
-        dto.setRecommendations(List.of(
-                new AiAnalysisResponseDto.RecommendationDto("HIGH", "Validate target message consumption assumptions", "Target platform economics are sensitive to monthly message volume.", "Prevents consumption cost overruns", "Enterprise Architect / Finance", "Prior to budget lock"),
-                new AiAnalysisResponseDto.RecommendationDto("HIGH", "Audit 50 complex interfaces for rationalization", "Reducing obsolete or duplicate interfaces cuts development burn rate.", "Saves 10-15% of development hours", "Integration Lead", "Pre-migration discovery"),
-                new AiAnalysisResponseDto.RecommendationDto("MEDIUM", "Establish BTP tenant governance and CI/CD pipelines", "Standardized delivery pipelines prevent cutover downtime.", "Ensures seamless zero-downtime transition", "DevOps / Architect", "During sprint 1")
+        List<AiAnalysisResponseDto.RecommendationDto> recs = new ArrayList<>();
+        recs.add(new AiAnalysisResponseDto.RecommendationDto(
+                "HIGH",
+                "Validate target message consumption assumptions",
+                "Target platform economics are sensitive to monthly message volume.",
+                "Prevents consumption cost overruns",
+                "Enterprise Architect / Finance",
+                "Prior to budget lock"
         ));
+        if (complexCount > 0) {
+            recs.add(new AiAnalysisResponseDto.RecommendationDto(
+                    "HIGH",
+                    String.format("Audit %d complex interfaces for rationalization", complexCount),
+                    "Reducing obsolete or duplicate interfaces cuts development burn rate.",
+                    "Saves development sprint hours",
+                    "Integration Lead",
+                    "Pre-migration discovery"
+            ));
+        }
+        recs.add(new AiAnalysisResponseDto.RecommendationDto(
+                "MEDIUM",
+                "Establish BTP tenant governance and CI/CD pipelines",
+                "Standardized delivery pipelines prevent cutover downtime.",
+                "Ensures seamless zero-downtime transition",
+                "DevOps / Architect",
+                timeline
+        ));
+        dto.setRecommendations(recs);
 
         dto.setDecisionFactors(List.of(
-                "If migration cost escalates beyond $520,000, payback exceeds 15 months.",
-                "If annual savings drop below $200,000, ROI falls below 200%.",
-                "If interface complexity causes project timeline extension beyond 12 months, double-run costs increase."
+                String.format("If migration cost escalates beyond $%,.0f, payback exceeds target threshold.", migrationCost.doubleValue() * 1.5),
+                String.format("If annual savings drop below $%,.0f, ROI falls below target threshold.", savings.doubleValue() * 0.5),
+                "If interface complexity causes project timeline extension, dual-running operational costs increase."
         ));
 
         dto.setAssumptions(List.of(
                 "Current licensing and infrastructure costs can be decommissioned upon cutover.",
-                "Target platform pricing assumes SAP Integration Suite Standard Edition ($57,900/unit x 3) + 400 message packs ($75.96/pack).",
-                "Migration project timeline is estimated at 6 months with 10% contingency allocation."
+                "Target platform pricing follows official SAP BTP Integration Suite schedule.",
+                String.format("Migration project timeline is estimated under %s execution model.", timeline)
         ));
 
         dto.setDataQuality(new AiAnalysisResponseDto.DataQualitySummaryDto(92, "HIGH"));
         dto.setAiStatus("AVAILABLE");
         dto.setStatusMessage(message);
-        dto.setAiModel(nvidiaProperties.getModel());
+        dto.setAiModel("ValueLens AI / IntSwitch AI Decision Engine");
         dto.setPromptVersion(AiPromptBuilder.PROMPT_VERSION);
 
         return dto;
@@ -649,16 +765,18 @@ public class AiAnalysisService {
                 ? assessment.getSourceSystem().getVolumetrics()
                 : new AssessmentDto.VolumetricsDto();
 
-        int totalIflows = env.getTotalInterfaces() > 0 ? env.getTotalInterfaces() : 1050;
+        int totalIflows = env.getTotalInterfaces();
         int complexIflows = env.getComplexInterfaces();
         int mediumIflows = env.getMediumInterfaces();
         int simpleIflows = env.getSimpleInterfaces();
         int b2bCount = vol.getB2bInterfaces();
         int apiCount = vol.getApiCount();
-        String throughputStr = vol.getIndicativeMessageThroughput() != null ? vol.getIndicativeMessageThroughput() : "300000";
-        long throughput = 300000L;
+        String throughputStr = vol.getIndicativeMessageThroughput() != null ? vol.getIndicativeMessageThroughput() : "";
+        long throughput = 0L;
         try {
-            throughput = Long.parseLong(throughputStr.replaceAll("[^0-9]", ""));
+            if (!throughputStr.isBlank()) {
+                throughput = Long.parseLong(throughputStr.replaceAll("[^0-9]", ""));
+            }
         } catch (Exception ignored) {}
 
         String systemPrompt = "You are ValueLens AI's Chief SAP BTP Integration Enterprise Architect. " +
@@ -730,7 +848,7 @@ public class AiAnalysisService {
                             "confidenceScore", rootNode.has("confidenceScore") ? rootNode.get("confidenceScore").asInt() : 94,
                             "headline", rootNode.has("headline") ? rootNode.get("headline").asText() : "Optimal Architecture Match",
                             "reasoning", rootNode.get("reasoning").asText(),
-                            "suggestedUnits", rootNode.has("suggestedUnits") ? rootNode.get("suggestedUnits").asInt() : (rootNode.get("recommendedEdition").asText().contains("Standard") ? 3 : 1),
+                            "suggestedUnits", rootNode.has("suggestedUnits") ? rootNode.get("suggestedUnits").asInt() : 1,
                             "suggestedMessagePacks", rootNode.has("suggestedMessagePacks") ? rootNode.get("suggestedMessagePacks").asInt() : 0,
                             "keyBenefits", benefits
                     );
@@ -767,7 +885,7 @@ public class AiAnalysisService {
                     "confidenceScore", 93,
                     "headline", "Standard Edition represents the optimal enterprise integration baseline",
                     "reasoning", String.format("With %d total interfaces (%d B2B) and %,d monthly throughput, Standard Edition avoids the 10 custom iFlow cap and delivers full API Management, B2B libraries, and Edge Integration Cell runtimes.", totalIflows, b2bCount, throughput),
-                    "suggestedUnits", 3,
+                    "suggestedUnits", 1,
                     "suggestedMessagePacks", Math.max(0, (int) ((throughput - 30000) / 10000)),
                     "keyBenefits", List.of("Unlimited custom iFlow development", "Full API Lifecycle Management & Developer Portal", "AI-assisted Integration Advisor & B2B/EDI libraries", "Edge Integration Cell (1+ runtime tenant)")
             );

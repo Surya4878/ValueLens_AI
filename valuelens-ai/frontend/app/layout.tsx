@@ -46,11 +46,20 @@ export default function RootLayout({
               />
             </div>
 
-            {/* Middle: Slogan */}
-            <div className="flex items-center space-x-3 text-slate-600 font-medium text-xs">
-              <span className="h-px w-12 sm:w-16 bg-slate-200"></span>
-              <span className="text-[11px] text-slate-700">Turning Technology Decisions into Business Value.</span>
-              <span className="h-px w-12 sm:w-16 bg-slate-200"></span>
+            {/* Middle: Powered by IntSwitch */}
+            <div className="flex items-center space-x-2 text-slate-600 font-medium text-xs">
+              <span className="text-[11px] text-slate-500 font-medium">Powered by</span>
+              <a
+                href="/intswitch"
+                className="inline-flex items-center hover:opacity-85 transition-opacity"
+                title="Powered by Incture IntSwitch"
+              >
+                <img
+                  src="/images/intswitch-logo.png"
+                  alt="IntSwitch"
+                  className="h-5 w-auto object-contain"
+                />
+              </a>
             </div>
 
             {/* Right: Legal & Copyright */}

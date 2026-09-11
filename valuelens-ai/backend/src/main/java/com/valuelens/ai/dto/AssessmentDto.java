@@ -48,6 +48,27 @@ public class AssessmentDto {
     public MigrationDetailsDto getMigrationRelatedDetails() { return migrationRelatedDetails; }
     public void setMigrationRelatedDetails(MigrationDetailsDto migrationRelatedDetails) { this.migrationRelatedDetails = migrationRelatedDetails; }
 
+    public int getTotalInterfaces() {
+        if (sourceSystem != null && sourceSystem.getEnvironmentAssessment() != null) {
+            return sourceSystem.getEnvironmentAssessment().getTotalInterfaces();
+        }
+        return 0;
+    }
+
+    public int getComplexInterfaces() {
+        if (sourceSystem != null && sourceSystem.getEnvironmentAssessment() != null) {
+            return sourceSystem.getEnvironmentAssessment().getComplexInterfaces();
+        }
+        return 0;
+    }
+
+    public String getMigrationTimeline() {
+        if (sourceSystem != null && sourceSystem.getCompanyInformation() != null) {
+            return sourceSystem.getCompanyInformation().getMigrationTimeline();
+        }
+        return "";
+    }
+
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class SourceSystemDto {
         @JsonProperty("sapPiPoAnnualCostBreakdown")
@@ -220,14 +241,14 @@ public class AssessmentDto {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class CompanyInfoDto {
-        private String companySize = "200";
-        private String industry = "Retail";
-        private String migrationTimeline = "6months";
-        private String integrationComplexity = "moderate";
-        private String availabilityRequirements = "high";
-        private String complianceRequirements = "regulated";
-        private String customDevelopment = "moderate";
-        private String monitoringMaturity = "enhanced";
+        private String companySize = "";
+        private String industry = "";
+        private String migrationTimeline = "";
+        private String integrationComplexity = "";
+        private String availabilityRequirements = "";
+        private String complianceRequirements = "";
+        private String customDevelopment = "";
+        private String monitoringMaturity = "";
 
         public String getCompanySize() { return companySize; }
         public void setCompanySize(String companySize) { this.companySize = companySize; }
@@ -249,18 +270,18 @@ public class AssessmentDto {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class EnvironmentAssessmentDto {
-        private String integrationVolume = "medium";
-        private String systemComplexity = "moderate";
-        private String availabilityRequirements = "high";
-        private String customDevelopment = "moderate";
+        private String integrationVolume = "";
+        private String systemComplexity = "";
+        private String availabilityRequirements = "";
+        private String customDevelopment = "";
         @JsonProperty("complainceRequirements")
         @JsonAlias({"complianceRequirements"})
-        private String complianceRequirements = "regulated";
-        private String monitoring = "enhanced";
-        private int simpleInterfaces = 800;
-        private int mediumInterfaces = 200;
-        private int complexInterfaces = 50;
-        private int totalInterfaces = 1050;
+        private String complianceRequirements = "";
+        private String monitoring = "";
+        private int simpleInterfaces = 0;
+        private int mediumInterfaces = 0;
+        private int complexInterfaces = 0;
+        private int totalInterfaces = 0;
 
         public String getIntegrationVolume() { return integrationVolume; }
         public void setIntegrationVolume(String integrationVolume) { this.integrationVolume = integrationVolume; }
@@ -286,10 +307,10 @@ public class AssessmentDto {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class VolumetricsDto {
-        private String currentMessageThroughput = "200000";
-        private String indicativeMessageThroughput = "300000";
-        private int apiCount = 45;
-        private int b2bInterfaces = 20;
+        private String currentMessageThroughput = "";
+        private String indicativeMessageThroughput = "";
+        private int apiCount = 0;
+        private int b2bInterfaces = 0;
 
         public String getCurrentMessageThroughput() { return currentMessageThroughput; }
         public void setCurrentMessageThroughput(String currentMessageThroughput) { this.currentMessageThroughput = currentMessageThroughput; }
@@ -317,13 +338,13 @@ public class AssessmentDto {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class TargetConfigurationDto {
-        private String selectedEditionName = "SAP Integration Suite, Standard Edition";
-        private int numberOfUnits = 3;
-        private int additionalMessagePacks = 400;
+        private String selectedEditionName = "";
+        private int numberOfUnits = 0;
+        private int additionalMessagePacks = 0;
         private int dataSpacePackages = 0;
         private int additionalEicTenants = 0;
-        private BigDecimal totalAnnualCost = BigDecimal.valueOf(204084.00);
-        private String calculationFormula = "3 x $ 57,900.00 + 400 x $ 75.96";
+        private BigDecimal totalAnnualCost = BigDecimal.ZERO;
+        private String calculationFormula = "";
 
         public String getSelectedEditionName() { return selectedEditionName; }
         public void setSelectedEditionName(String selectedEditionName) { this.selectedEditionName = selectedEditionName; }
@@ -343,7 +364,7 @@ public class AssessmentDto {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class AdditionalTcoComponentsDto {
-        private BigDecimal totalAdditionalTcoAnnual = BigDecimal.valueOf(109000.00);
+        private BigDecimal totalAdditionalTcoAnnual = BigDecimal.ZERO;
         private Map<String, Object> categories;
 
         public BigDecimal getTotalAdditionalTcoAnnual() { return totalAdditionalTcoAnnual; }
@@ -354,16 +375,16 @@ public class AssessmentDto {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class MigrationDetailsDto {
-        private BigDecimal developmentCost = BigDecimal.valueOf(200000);
-        private BigDecimal testingCost = BigDecimal.valueOf(15000);
-        private BigDecimal architectureCost = BigDecimal.valueOf(15000);
-        private BigDecimal projectManagementCost = BigDecimal.valueOf(15000);
-        private BigDecimal trainingCost = BigDecimal.valueOf(5000);
-        private BigDecimal deploymentCutoverCost = BigDecimal.valueOf(10000);
-        private BigDecimal documentationCost = BigDecimal.valueOf(10000);
-        private BigDecimal baseMigrationCost = BigDecimal.valueOf(270000);
-        private BigDecimal contingencyCost = BigDecimal.valueOf(30000);
-        private BigDecimal totalMigrationCost = BigDecimal.valueOf(300000);
+        private BigDecimal developmentCost = BigDecimal.ZERO;
+        private BigDecimal testingCost = BigDecimal.ZERO;
+        private BigDecimal architectureCost = BigDecimal.ZERO;
+        private BigDecimal projectManagementCost = BigDecimal.ZERO;
+        private BigDecimal trainingCost = BigDecimal.ZERO;
+        private BigDecimal deploymentCutoverCost = BigDecimal.ZERO;
+        private BigDecimal documentationCost = BigDecimal.ZERO;
+        private BigDecimal baseMigrationCost = BigDecimal.ZERO;
+        private BigDecimal contingencyCost = BigDecimal.ZERO;
+        private BigDecimal totalMigrationCost = BigDecimal.ZERO;
         private String currency = "USD";
         private int roiAnalysisPeriodYears = 5;
 

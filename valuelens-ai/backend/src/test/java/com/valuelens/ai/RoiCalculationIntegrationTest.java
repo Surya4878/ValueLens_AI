@@ -53,28 +53,28 @@ class RoiCalculationIntegrationTest {
         var demoAssessment = assessmentService.buildDemoAssessment();
         var result = roiCalculationService.calculate(demoAssessment);
 
-        // Verify Authoritative Financial Calculations with SAP 2026 pricing
-        assertEquals(new BigDecimal("730000.00"), result.getCurrentPlatformTCO());
-        assertEquals(new BigDecimal("334804.00"), result.getTargetPlatformTCO());
-        assertEquals(new BigDecimal("395196.00"), result.getAnnualSavings());
-        assertEquals(new BigDecimal("54.14"), result.getSavingsPercentage());
-        assertEquals(new BigDecimal("300000.00"), result.getMigrationCost());
+        // Verify Authoritative Financial Calculations with SAP 2026 pricing & Incture Starter Package
+        assertEquals(new BigDecimal("145000.00"), result.getCurrentPlatformTCO());
+        assertEquals(new BigDecimal("45736.00"), result.getTargetPlatformTCO());
+        assertEquals(new BigDecimal("99264.00"), result.getAnnualSavings());
+        assertEquals(new BigDecimal("68.46"), result.getSavingsPercentage());
+        assertEquals(new BigDecimal("19000.00"), result.getMigrationCost());
 
         // Payback
-        assertEquals(new BigDecimal("9.11"), result.getBreakEvenMonths());
+        assertEquals(new BigDecimal("2.30"), result.getBreakEvenMonths());
         assertEquals(BreakEvenCalculator.BreakEvenStatus.REACHED, result.getBreakEvenStatus());
 
         // Multi-period ROI
-        assertEquals(new BigDecimal("31.73"), result.getOneYearROI());
-        assertEquals(new BigDecimal("295.20"), result.getThreeYearROI());
-        assertEquals(new BigDecimal("558.66"), result.getFiveYearROI());
-        assertEquals(new BigDecimal("1217.32"), result.getTenYearROI());
+        assertEquals(new BigDecimal("422.44"), result.getOneYearROI());
+        assertEquals(new BigDecimal("1467.33"), result.getThreeYearROI());
+        assertEquals(new BigDecimal("2512.21"), result.getFiveYearROI());
+        assertEquals(new BigDecimal("5124.42"), result.getTenYearROI());
 
         // Net Benefit
-        assertEquals(new BigDecimal("95196.00"), result.getOneYearNetBenefit());
-        assertEquals(new BigDecimal("885588.00"), result.getThreeYearNetBenefit());
-        assertEquals(new BigDecimal("1675980.00"), result.getFiveYearNetBenefit());
-        assertEquals(new BigDecimal("3651960.00"), result.getTenYearNetBenefit());
+        assertEquals(new BigDecimal("80264.00"), result.getOneYearNetBenefit());
+        assertEquals(new BigDecimal("278792.00"), result.getThreeYearNetBenefit());
+        assertEquals(new BigDecimal("477320.00"), result.getFiveYearNetBenefit());
+        assertEquals(new BigDecimal("973640.00"), result.getTenYearNetBenefit());
     }
 
     @Test
@@ -95,10 +95,10 @@ class RoiCalculationIntegrationTest {
         // Additional TCO: $50,000.00
         // Total Target TCO: $29,136 + $50,000 = $79,136.00
         assertEquals(new BigDecimal("79136.00"), result.getTargetPlatformTCO());
-        assertEquals(new BigDecimal("730000.00"), result.getCurrentPlatformTCO());
-        // Annual Savings: 730,000 - 79,136 = 650,864
-        assertEquals(new BigDecimal("650864.00"), result.getAnnualSavings());
-        // Savings %: (650,864 / 730,000) * 100 = 89.16%
-        assertEquals(new BigDecimal("89.16"), result.getSavingsPercentage());
+        assertEquals(new BigDecimal("145000.00"), result.getCurrentPlatformTCO());
+        // Annual Savings: 145,000 - 79,136 = 65,864
+        assertEquals(new BigDecimal("65864.00"), result.getAnnualSavings());
+        // Savings %: (65,864 / 145,000) * 100 = 45.42%
+        assertEquals(new BigDecimal("45.42"), result.getSavingsPercentage());
     }
 }

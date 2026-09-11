@@ -63,12 +63,12 @@ export const Step7ReviewResults: React.FC<Step7Props> = ({
   const displayPayback = calculationResult?.breakEvenMonths ?? paybackMonths;
   const displayNetBenefit = calculationResult?.fiveYearNetBenefit ?? netFiveYearBenefit;
 
-  const savingsPct = displayCurrentTco > 0 ? (displaySavings / displayCurrentTco) * 100 : 57.1;
+  const savingsPct = displayCurrentTco > 0 ? (displaySavings / displayCurrentTco) * 100 : 0;
 
   // Chart height calculations (normalized to max 170px)
   const maxVal = Math.max(displayCurrentTco, displayTargetTco, 1);
-  const currentBarHeight = Math.max(40, Math.round((displayCurrentTco / maxVal) * 160));
-  const targetBarHeight = Math.max(30, Math.round((displayTargetTco / maxVal) * 160));
+  const currentBarHeight = displayCurrentTco > 0 ? Math.max(20, Math.round((displayCurrentTco / maxVal) * 160)) : 12;
+  const targetBarHeight = displayTargetTco > 0 ? Math.max(20, Math.round((displayTargetTco / maxVal) * 160)) : 12;
 
   const handleGoToDashboard = () => {
     if (typeof window !== 'undefined') {
@@ -266,37 +266,122 @@ export const Step7ReviewResults: React.FC<Step7Props> = ({
         </div>
       </div>
 
-      {/* Grounded IntSwitch Opportunity Section (No invented percentages) */}
-      <div className="p-6 bg-gradient-to-r from-blue-50/90 via-indigo-50/50 to-white rounded-2xl border border-blue-200 space-y-4 shadow-xs">
-        <div className="flex items-start gap-3.5">
-          <div className="w-11 h-11 rounded-2xl bg-blue-600 text-white flex items-center justify-center shrink-0 shadow-xs">
-            <Zap className="w-6 h-6" />
-          </div>
-          <div>
-            <span className="text-[11px] font-black text-blue-700 uppercase tracking-wider">
-              Accelerate with IntSwitch™
-            </span>
-            <h4 className="text-base font-black text-slate-900 mt-0.5">{config.intSwitch.title}</h4>
-            <p className="text-xs text-blue-900 font-semibold mt-0.5">{config.intSwitch.subtitle}</p>
-            <p className="text-xs text-slate-600 mt-1 leading-relaxed">{config.intSwitch.scopeDescription}</p>
-          </div>
-        </div>
-
-        <div className="p-3.5 bg-white/90 rounded-xl border border-blue-100 text-xs text-slate-700 space-y-1">
-          <span className="font-bold text-blue-950 block">Automation Scope:</span>
-          <p>{config.intSwitch.automationScope}</p>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
-          {config.intSwitch.capabilities.map((cap, idx) => (
-            <div
-              key={idx}
-              className="flex items-start gap-2.5 text-xs text-slate-700 bg-white/80 p-2.5 rounded-xl border border-blue-100/80"
-            >
-              <CheckCircle2 className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
-              <span>{cap}</span>
+      {/* IntSwitch Value Metrics & Acceleration Container (Calculated Economics) */}
+      <div className="bg-gradient-to-r from-blue-50/90 via-indigo-50/50 to-sky-50/80 rounded-2xl border border-blue-200 p-6 shadow-xs space-y-5">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-blue-200/70 pb-3.5">
+          <div className="flex items-center space-x-3">
+            <img
+              src="/images/intswitch-logo.png"
+              alt="IntSwitch"
+              className="h-6 w-auto object-contain"
+            />
+            <span className="h-4 w-px bg-blue-300"></span>
+            <div>
+              <div className="flex items-center space-x-2">
+                <span className="text-xs font-bold text-[#0066cc] uppercase tracking-wider">
+                  Incture IntSwitch Business Value &amp; ROI
+                </span>
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold border border-emerald-200">
+                  Calculated Economics
+                </span>
+              </div>
+              <h4 className="text-base sm:text-lg font-black text-slate-900 mt-0.5">
+                {config.name} to SAP BTP Migration Value Metrics
+              </h4>
             </div>
-          ))}
+          </div>
+          <a
+            href="/intswitch"
+            className="inline-flex items-center space-x-1 text-xs font-bold text-[#0066cc] hover:text-blue-800 transition-colors"
+          >
+            <span>Explore IntSwitch Platform</span>
+            <span>→</span>
+          </a>
+        </div>
+
+        {/* 4 Calculated Value Metric Cards */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+          <div className="bg-white rounded-xl p-4 border border-blue-100 shadow-2xs">
+            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+              Potential Annual Savings
+            </span>
+            <span className="text-2xl sm:text-3xl font-black text-emerald-600 font-mono block mt-1">
+              {savingsPct.toFixed(1)}%
+            </span>
+            <span className="text-[11px] text-slate-500 mt-0.5 block">
+              Save ${displaySavings.toLocaleString()} / year
+            </span>
+          </div>
+
+          <div className="bg-white rounded-xl p-4 border border-blue-100 shadow-2xs">
+            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+              Estimated Payback
+            </span>
+            <span className="text-2xl sm:text-3xl font-black text-[#0066cc] font-mono block mt-1">
+              {displaySavings > 0 && displayMigrationCost > 0
+                ? `< ${Math.max(1, Math.ceil(displayPayback))} Months`
+                : '—'}
+            </span>
+            <span className="text-[11px] text-slate-500 mt-0.5 block">
+              {displaySavings > 0 && displayMigrationCost > 0
+                ? `Break-even in ${displayPayback.toFixed(1)} Months`
+                : 'Awaiting inputs'}
+            </span>
+          </div>
+
+          <div className="bg-white rounded-xl p-4 border border-blue-100 shadow-2xs">
+            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+              5-Year Cumulative ROI
+            </span>
+            <span className="text-2xl sm:text-3xl font-black text-indigo-700 font-mono block mt-1">
+              {displaySavings > 0 && displayMigrationCost > 0 ? `${displayRoi.toFixed(1)}%` : '0.0%'}
+            </span>
+            <span className="text-[11px] text-slate-500 mt-0.5 block">
+              ${displayNetBenefit.toLocaleString()} Net Benefit
+            </span>
+          </div>
+
+          <div className="bg-white rounded-xl p-4 border border-blue-100 shadow-2xs">
+            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+              IntSwitch Advantage
+            </span>
+            <span className="text-2xl sm:text-3xl font-black text-emerald-600 font-mono block mt-1">
+              -40%
+            </span>
+            <span className="text-[11px] text-slate-500 mt-0.5 block font-semibold">
+              Cost &amp; Effort Reduction
+            </span>
+          </div>
+        </div>
+
+        {/* Calculated Run-Rate Bar */}
+        <div className="flex flex-wrap items-center justify-between gap-3 text-xs bg-white/90 rounded-xl p-3.5 border border-blue-100/90">
+          <div className="flex items-center space-x-2">
+            <span className="font-semibold text-slate-600">Current Run-Rate:</span>
+            <span className="font-extrabold text-slate-900 font-mono">${displayCurrentTco.toLocaleString()} / yr</span>
+            <span className="text-slate-400">→</span>
+            <span className="font-semibold text-slate-600">Target SAP BTP TCO:</span>
+            <span className="font-extrabold text-[#0066cc] font-mono">${displayTargetTco.toLocaleString()} / yr</span>
+          </div>
+          <div className="text-[11px] text-slate-600 font-medium">
+            <span className="text-[#0066cc] font-bold">IntSwitch Scope:</span> {config.intSwitch.automationScope}
+          </div>
+        </div>
+
+        {/* Grounded IntSwitch Scope Description & 4 Specific Capabilities */}
+        <div className="space-y-2 pt-1">
+          <p className="text-xs text-slate-600 leading-relaxed">{config.intSwitch.scopeDescription}</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+            {config.intSwitch.capabilities.map((cap, idx) => (
+              <div
+                key={idx}
+                className="flex items-start gap-2.5 text-xs text-slate-700 bg-white/80 p-2.5 rounded-xl border border-blue-100/80"
+              >
+                <CheckCircle2 className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
+                <span>{cap}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 

@@ -90,7 +90,7 @@ export default function HomePage() {
 
             {/* Paragraph */}
             <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
-              Business ValueLens AI helps you assess, plan, and quantify the business impact of migrating SAP Neo CPI, SAP PI/PO, MuleSoft, and Boomi to SAP BTP Integration Suite with AI-powered insights and data-driven TCO, ROI, and recommendations.
+              Simplify migration from SAP PI/PO, SAP BTP Neo environment, and third-party platforms to SAP Integration Suite with IntSwitch — an AI-driven integration tool. Streamline assessment, migration, and testing to reduce costs, minimize risks, and ensure seamless integration with SAP systems for enhanced scalability and agility.
             </p>
 
             {/* Powered by IntSwitch Card -> Links to /intswitch */}
@@ -311,61 +311,6 @@ export default function HomePage() {
           className="absolute rounded-lg cursor-pointer transition-all hover:bg-white/10 active:bg-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
           title="Assess Your SAP PI/PO Landscape"
         />
-      </section>
-
-      {/* 5. Benchmark Production Case Study */}
-      <section className="bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-8 shadow-xs max-w-5xl mx-auto space-y-6">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <span className="text-[11px] font-bold text-indigo-600 uppercase tracking-widest block">
-              BENCHMARK PRODUCTION CASE STUDY
-            </span>
-            <h3 className="text-xl sm:text-2xl font-black text-slate-900 mt-1">
-              Global Enterprise Migration from SAP PI/PO 7.5
-            </h3>
-          </div>
-          <Link
-            href="/dashboard/demo-assessment-1"
-            className="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center space-x-1 transition-colors"
-          >
-            <span>View Full Interactive Dashboard</span>
-            <span>→</span>
-          </Link>
-        </div>
-
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-          <div className="p-4 bg-slate-50/50 rounded-xl border border-slate-200/70">
-            <span className="text-[10px] text-slate-500 font-semibold uppercase tracking-wider block">CURRENT TCO</span>
-            <span className="text-2xl sm:text-3xl font-black text-slate-900 font-mono block mt-1">
-              $730,000
-            </span>
-            <span className="text-[11px] text-slate-400 mt-1 block">Annual Run-Rate</span>
-          </div>
-
-          <div className="p-4 bg-slate-50/50 rounded-xl border border-slate-200/70">
-            <span className="text-[10px] text-slate-500 font-semibold uppercase tracking-wider block">BTP TARGET TCO</span>
-            <span className="text-2xl sm:text-3xl font-black text-indigo-600 font-mono block mt-1">
-              $313,084
-            </span>
-            <span className="text-[11px] text-emerald-600 font-bold mt-1 block">-57.11% Cost Reduction</span>
-          </div>
-
-          <div className="p-4 bg-slate-50/50 rounded-xl border border-slate-200/70">
-            <span className="text-[10px] text-slate-500 font-semibold uppercase tracking-wider block">BREAK-EVEN HORIZON</span>
-            <span className="text-2xl sm:text-3xl font-black text-emerald-600 font-mono block mt-1">
-              8.64 Mo
-            </span>
-            <span className="text-[11px] text-slate-400 mt-1 block">$300,000 Migration Cost</span>
-          </div>
-
-          <div className="p-4 bg-slate-50/50 rounded-xl border border-slate-200/70">
-            <span className="text-[10px] text-slate-500 font-semibold uppercase tracking-wider block">5-YEAR NET BENEFIT</span>
-            <span className="text-2xl sm:text-3xl font-black text-indigo-900 font-mono block mt-1">
-              $1,784,580
-            </span>
-            <span className="text-[11px] text-indigo-600 font-bold mt-1 block">594.86% 5-Yr ROI</span>
-          </div>
-        </div>
       </section>
     </div>
   );

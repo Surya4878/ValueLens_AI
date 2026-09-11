@@ -18,10 +18,15 @@ public class AnnualSavingsCalculator {
         BigDecimal current = zeroIfNull(currentPlatformTco);
         BigDecimal target = zeroIfNull(targetPlatformTco);
 
-        BigDecimal savings = current.subtract(target).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal savings;
+        if (current.compareTo(BigDecimal.ZERO) <= 0) {
+            savings = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
+        } else {
+            savings = current.subtract(target).setScale(2, RoundingMode.HALF_UP);
+        }
 
         BigDecimal percentage = BigDecimal.ZERO;
-        if (current.compareTo(BigDecimal.ZERO) > 0) {
+        if (current.compareTo(BigDecimal.ZERO) > 0 && savings.compareTo(BigDecimal.ZERO) > 0) {
             percentage = savings
                     .divide(current, 4, RoundingMode.HALF_UP)
                     .multiply(BigDecimal.valueOf(100))
