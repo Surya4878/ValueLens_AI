@@ -88,7 +88,7 @@ export function DecisionHero({
             </span>
             <div className="flex items-center space-x-1.5 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-semibold backdrop-blur-xs border border-emerald-400/30">
               <span className="w-2 h-2 rounded-full bg-emerald-400" />
-              <span>Up to 40% Cost &amp; Effort Reduction via IntSwitch</span>
+              <span>Up to 40% Effort Reduction via IntSwitch</span>
             </div>
             <ValueOriginChip origin="AI_INTERPRETED" className="bg-purple-950/60 text-purple-200 border-purple-800" />
           </div>

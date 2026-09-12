@@ -123,11 +123,11 @@ export const Step3Requirements: React.FC<Step3Props> = ({
 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-2">
-                    <span className="text-xs font-bold text-slate-900 leading-snug">
+                    <span className="text-sm font-semibold text-slate-900 leading-snug">
                       {q.question}
                     </span>
                     <span
-                      className={`text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full shrink-0 ${
+                      className={`text-[11px] font-bold uppercase px-2.5 py-0.5 rounded-full shrink-0 ${
                         q.mapsToEdition === 'Enhanced'
                           ? 'bg-purple-100 text-purple-800 border border-purple-200'
                           : 'bg-blue-100 text-blue-800 border border-blue-200'
@@ -136,7 +136,7 @@ export const Step3Requirements: React.FC<Step3Props> = ({
                       {q.mapsToEdition}
                     </span>
                   </div>
-                  <p className="text-[11px] text-slate-500 mt-1 leading-normal">
+                  <p className="text-xs text-slate-500 mt-1 leading-normal">
                     {q.tooltip}
                   </p>
                 </div>
@@ -151,9 +151,9 @@ export const Step3Requirements: React.FC<Step3Props> = ({
         <button
           type="button"
           onClick={onBack}
-          className="px-5 py-2.5 text-xs font-bold text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors flex items-center space-x-1.5 shadow-xs group"
+          className="px-5 py-2.5 text-sm font-semibold text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors flex items-center space-x-2 shadow-xs group"
         >
-          <svg className="w-3 h-3 text-slate-500 group-hover:text-slate-700 transition-transform group-hover:-translate-x-0.5" fill="none" viewBox="0 0 16 16" stroke="currentColor">
+          <svg className="w-4 h-4 text-slate-500 group-hover:text-slate-700 transition-transform group-hover:-translate-x-0.5" fill="none" viewBox="0 0 16 16" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M10 12.5l-4.5-4.5 4.5-4.5" />
           </svg>
           <span>Back</span>
@@ -161,10 +161,10 @@ export const Step3Requirements: React.FC<Step3Props> = ({
         <button
           type="button"
           onClick={onContinue}
-          className="px-6 py-2.5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-xs transition-all active:scale-95 flex items-center space-x-1.5 group"
+          className="px-6 py-2.5 text-sm font-semibold text-white bg-[#0070f2] hover:bg-[#0057d2] rounded-xl shadow-xs transition-all active:scale-95 flex items-center space-x-2 group"
         >
           <span>Continue to Sizing</span>
-          <svg className="w-3 h-3 text-white transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 16 16" stroke="currentColor">
+          <svg className="w-4 h-4 text-white transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 16 16" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M6 3.5l4.5 4.5-4.5 4.5" />
           </svg>
         </button>

@@ -60,7 +60,7 @@ export const Step4Sizing: React.FC<Step4Props> = ({
 
           <div className="space-y-5">
             <div>
-              <label className="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-2">
+              <label className="block text-sm font-semibold text-slate-800 mb-1.5">
                 Current Monthly Message Throughput
               </label>
               <div className="relative">
@@ -75,20 +75,20 @@ export const Step4Sizing: React.FC<Step4Props> = ({
                     const v = e.target.value.replace(/[^0-9]/g, '');
                     setCurrentThroughput(v);
                   }}
-                  className="w-full text-sm font-mono border border-slate-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white text-slate-900 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  className="w-full text-sm font-mono border border-slate-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#0070f2] focus:border-[#0070f2] focus:outline-none bg-white text-slate-900 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   placeholder="0"
                 />
-                <span className="absolute right-3 top-3.5 text-xs text-slate-400 font-medium">
+                <span className="absolute right-3 top-3.5 text-xs text-slate-500 font-medium">
                   messages / month
                 </span>
               </div>
-              <span className="text-[11px] text-slate-500 mt-1 block">
+              <span className="text-xs text-slate-500 mt-1 block">
                 Standard message size: up to 250 KB per billable message unit.
               </span>
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-2">
+              <label className="block text-sm font-semibold text-slate-800 mb-1.5">
                 Expected Monthly Message Throughput (Future Scale)
               </label>
               <div className="relative">
@@ -103,14 +103,14 @@ export const Step4Sizing: React.FC<Step4Props> = ({
                     const v = e.target.value.replace(/[^0-9]/g, '');
                     setExpectedThroughput(v);
                   }}
-                  className="w-full text-sm font-mono border border-slate-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white text-slate-900 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  className="w-full text-sm font-mono border border-slate-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#0070f2] focus:border-[#0070f2] focus:outline-none bg-white text-slate-900 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   placeholder="0"
                 />
-                <span className="absolute right-3 top-3.5 text-xs text-slate-400 font-medium">
+                <span className="absolute right-3 top-3.5 text-xs text-slate-500 font-medium">
                   messages / month
                 </span>
               </div>
-              <span className="text-[11px] text-slate-500 mt-1 block">
+              <span className="text-xs text-slate-500 mt-1 block">
                 Projects your message volume across new APIs, B2B partners, and business events.
               </span>
             </div>
@@ -122,7 +122,7 @@ export const Step4Sizing: React.FC<Step4Props> = ({
         {/* Right Visual Comparison Bar Chart (5 Cols) */}
         <div className="lg:col-span-5 bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs space-y-5">
           <div className="flex items-center space-x-2 border-b border-slate-100 pb-3">
-            <BarChart2 className="w-5 h-5 text-blue-600" />
+            <BarChart2 className="w-5 h-5 text-[#0070f2]" />
             <h3 className="text-base font-bold text-slate-900">
               Throughput Scale Profile
             </h3>
@@ -132,11 +132,11 @@ export const Step4Sizing: React.FC<Step4Props> = ({
             <div className="flex items-end space-x-8 h-48 pt-4">
               {/* Current Bar */}
               <div className="flex flex-col items-center space-y-2">
-                <span className="text-xs font-bold font-mono text-indigo-600">
+                <span className="text-xs font-bold font-mono text-[#0070f2]">
                   {currentNum.toLocaleString()}
                 </span>
                 <div
-                  className="w-16 bg-gradient-to-t from-indigo-600 to-indigo-400 rounded-t-xl transition-all duration-300 shadow-xs"
+                  className="w-16 bg-gradient-to-t from-[#0070f2] to-blue-400 rounded-t-xl transition-all duration-300 shadow-xs"
                   style={{
                     height: currentNum > 0
                       ? `${Math.min(160, Math.max(20, (currentNum / Math.max(expectedNum, currentNum, 1)) * 140))}px`
@@ -144,7 +144,7 @@ export const Step4Sizing: React.FC<Step4Props> = ({
                     opacity: currentNum > 0 ? 1 : 0.3
                   }}
                 />
-                <span className="text-xs font-bold text-slate-700">Current</span>
+                <span className="text-xs font-semibold text-slate-700">Current</span>
               </div>
 
               {/* Expected Bar */}
@@ -159,7 +159,7 @@ export const Step4Sizing: React.FC<Step4Props> = ({
                     opacity: expectedNum > 0 ? 1 : 0.3
                   }}
                 />
-                <span className="text-xs font-bold text-slate-700">Expected</span>
+                <span className="text-xs font-semibold text-slate-700">Expected</span>
               </div>
             </div>
 
@@ -179,9 +179,9 @@ export const Step4Sizing: React.FC<Step4Props> = ({
         <button
           type="button"
           onClick={onBack}
-          className="px-5 py-2.5 text-xs font-bold text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors flex items-center space-x-1.5 shadow-xs group"
+          className="px-5 py-2.5 text-sm font-semibold text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors flex items-center space-x-2 shadow-xs group"
         >
-          <svg className="w-3 h-3 text-slate-500 group-hover:text-slate-700 transition-transform group-hover:-translate-x-0.5" fill="none" viewBox="0 0 16 16" stroke="currentColor">
+          <svg className="w-4 h-4 text-slate-500 group-hover:text-slate-700 transition-transform group-hover:-translate-x-0.5" fill="none" viewBox="0 0 16 16" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M10 12.5l-4.5-4.5 4.5-4.5" />
           </svg>
           <span>Back</span>
@@ -189,10 +189,10 @@ export const Step4Sizing: React.FC<Step4Props> = ({
         <button
           type="button"
           onClick={onContinue}
-          className="px-6 py-2.5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-xs transition-all active:scale-95 flex items-center space-x-1.5 group"
+          className="px-6 py-2.5 text-sm font-semibold text-white bg-[#0070f2] hover:bg-[#0057d2] rounded-xl shadow-xs transition-all active:scale-95 flex items-center space-x-2 group"
         >
           <span>Continue to Cost Parameters</span>
-          <svg className="w-3 h-3 text-white transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 16 16" stroke="currentColor">
+          <svg className="w-4 h-4 text-white transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 16 16" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M6 3.5l4.5 4.5-4.5 4.5" />
           </svg>
         </button>

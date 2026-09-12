@@ -72,23 +72,23 @@ export default function OfferingsPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8">
       {/* Breadcrumb Navigation */}
-      <nav className="flex items-center space-x-2 text-xs text-slate-500 font-medium">
+      <nav className="flex items-center space-x-2 text-xs text-[#556b82] font-medium">
         <Link href="/" className="hover:text-[#0070f2] transition-colors">
           Home
         </Link>
         <span>›</span>
-        <span className="text-slate-900 font-semibold">Packages</span>
+        <span className="text-[#1d2d3e] font-semibold">Packages</span>
       </nav>
 
       {/* Hero Header Section */}
-      <section className="relative rounded-3xl bg-gradient-to-r from-[#eef5fc] via-[#f2f7fc] to-[#e8f2fa] border border-blue-100/80 p-6 sm:p-8 lg:p-8 shadow-xs overflow-hidden">
+      <section className="relative rounded-2xl bg-gradient-to-r from-[#eef5fc] via-[#f2f7fc] to-[#e8f2fa] border border-[#d9e2ec] p-6 sm:p-8 lg:p-8 shadow-xs overflow-hidden">
         <div className="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
           {/* Left Title & Subtitle */}
           <div className="space-y-3 max-w-xl">
-            <h1 className="text-3xl sm:text-4xl lg:text-[42px] font-black text-[#0b1b36] tracking-tight leading-tight">
+            <h1 className="text-3xl sm:text-4xl font-extrabold text-[#1d2d3e] tracking-tight leading-tight">
               Migration Packages
             </h1>
-            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
+            <p className="text-xs sm:text-sm text-[#556b82] leading-relaxed font-normal">
               Choose your current integration platform to explore our migration packages and accelerate your journey to SAP Integration Suite.
             </p>
           </div>
@@ -109,14 +109,14 @@ export default function OfferingsPage() {
         {platforms.map((p) => (
           <div
             key={p.id}
-            className="bg-white rounded-2xl border border-slate-200/90 hover:border-blue-300 hover:shadow-md transition-all p-5 sm:p-6 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-6 group"
+            className="bg-white rounded-2xl border border-[#d9e2ec] hover:border-[#0070f2] hover:shadow-md transition-all p-5 sm:p-6 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-6 group"
           >
             {/* Left: Architecture Flow Lockup (Source Logo -> Target Cloud) */}
             <div className="flex items-center justify-center sm:justify-start space-x-3 bg-gradient-to-br from-slate-50/80 to-blue-50/40 p-4 rounded-xl border border-slate-100 shrink-0 min-w-[210px]">
               {/* Source Platform Logo Box */}
-              <div className="w-20 h-20 bg-white rounded-xl border border-slate-200/80 p-2 flex flex-col items-center justify-center shadow-2xs group-hover:scale-105 transition-transform">
+              <div className="w-20 h-20 bg-white rounded-xl border border-[#d9e2ec] p-2 flex flex-col items-center justify-center shadow-2xs group-hover:scale-105 transition-transform">
                 <img src={p.logo} alt={p.name} className="h-8 max-w-[60px] object-contain mb-1" />
-                <span className="text-[10.5px] font-extrabold text-slate-800 text-center leading-tight">
+                <span className="text-xs font-bold text-[#1d2d3e] text-center leading-tight">
                   {p.shortTitle}
                 </span>
               </div>
@@ -131,7 +131,7 @@ export default function OfferingsPage() {
               {/* Target: SAP Integration Suite Cloud Box */}
               <div className="w-20 h-20 bg-white rounded-xl border border-blue-200/80 p-2 flex flex-col items-center justify-center shadow-2xs group-hover:scale-105 transition-transform">
                 <img src={p.cloudLogo} alt="SAP Integration Suite" className="h-8 max-w-[60px] object-contain mb-1" />
-                <span className="text-[9.5px] font-extrabold text-[#0070f2] text-center leading-tight">
+                <span className="text-[10px] font-bold text-[#0070f2] text-center leading-tight">
                   SAP Integration<br />Suite
                 </span>
               </div>
@@ -146,7 +146,7 @@ export default function OfferingsPage() {
                     <div className="w-6 h-6 rounded-lg bg-blue-50/90 border border-blue-100 flex items-center justify-center shrink-0 shadow-2xs">
                       {renderBulletIcon(bullet.iconType)}
                     </div>
-                    <span className="text-xs font-semibold text-slate-700 leading-snug">
+                    <span className="text-xs font-medium text-[#1d2d3e] leading-snug">
                       {bullet.text}
                     </span>
                   </li>
@@ -157,7 +157,7 @@ export default function OfferingsPage() {
               <div className="pt-1">
                 <Link
                   href={`/offerings/${p.slug}`}
-                  className="inline-flex items-center space-x-1.5 px-4 py-2 rounded-lg text-xs font-bold text-[#0070f2] bg-blue-50/60 hover:bg-[#0070f2] hover:text-white border border-[#0070f2]/40 hover:border-[#0070f2] shadow-2xs transition-all w-fit group/btn cursor-pointer"
+                  className="inline-flex items-center space-x-1.5 px-4 py-2 rounded-xl text-xs font-bold text-[#0070f2] bg-blue-50/70 hover:bg-[#0070f2] hover:text-white border border-[#0070f2]/40 hover:border-[#0070f2] shadow-2xs transition-all w-fit group/btn cursor-pointer"
                 >
                   <span>View Offering</span>
                   <svg className="w-3.5 h-3.5 shrink-0 transition-transform group-hover/btn:translate-x-1" viewBox="0 0 16 16" fill="none" stroke="currentColor">
@@ -170,8 +170,8 @@ export default function OfferingsPage() {
         ))}
       </section>
 
-      {/* Bottom CTA Banner (Matching Reference Image 2) */}
-      <section className="rounded-2xl bg-white border border-blue-100/90 p-5 sm:p-6 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-5">
+      {/* Bottom CTA Banner */}
+      <section className="rounded-2xl bg-white border border-[#d9e2ec] p-5 sm:p-6 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-5">
         <div className="flex items-center space-x-4">
           {/* Blue Circle Icon */}
           <div className="w-12 h-12 rounded-2xl bg-blue-50 text-[#0070f2] border border-blue-100 flex items-center justify-center shrink-0 shadow-2xs">
@@ -182,10 +182,10 @@ export default function OfferingsPage() {
 
           {/* Text */}
           <div>
-            <h3 className="text-sm sm:text-base font-extrabold text-[#0b1b36]">
+            <h3 className="text-sm sm:text-base font-bold text-[#1d2d3e]">
               Not sure which offering fits your landscape?
             </h3>
-            <p className="text-xs text-slate-500 font-medium mt-0.5">
+            <p className="text-xs text-[#556b82] mt-0.5">
               Use Business ValueLens AI to assess your current environment and get a personalized migration recommendation.
             </p>
           </div>
@@ -194,7 +194,7 @@ export default function OfferingsPage() {
         {/* Action Button: Discover Business Value -> /assessment */}
         <Link
           href="/assessment"
-          className="group inline-flex items-center justify-center space-x-1.5 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-[#7928ca] hover:bg-[#6820b0] text-white shadow-xs transition-colors shrink-0 whitespace-nowrap cursor-pointer"
+          className="group inline-flex items-center justify-center space-x-1.5 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-[#0070f2] hover:bg-[#0057d2] text-white shadow-xs transition-colors shrink-0 whitespace-nowrap cursor-pointer"
         >
           <span>Discover Business Value</span>
           <svg className="w-3.5 h-3.5 shrink-0 transition-transform group-hover:translate-x-0.5" viewBox="0 0 16 16" fill="none" stroke="currentColor">

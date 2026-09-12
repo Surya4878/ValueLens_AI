@@ -90,7 +90,7 @@ export default function HomePage() {
 
             {/* Paragraph */}
             <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
-              Simplify migration from SAP PI/PO, SAP BTP Neo environment, and third-party platforms to SAP Integration Suite with IntSwitch — an AI-driven integration tool. Streamline assessment, migration, and testing to reduce costs, minimize risks, and ensure seamless integration with SAP systems for enhanced scalability and agility.
+              Simplify migration from SAP PI/PO, SAP BTP Neo environment, and third-party platforms to SAP Integration Suite with IntSwitch — an AI-driven integration tool. Streamline assessment, migration, and testing to reduce migration effort by up to 40%, minimize risks, and ensure seamless integration with SAP systems for enhanced scalability and agility.
             </p>
 
             {/* Powered by IntSwitch Card -> Links to /intswitch */}

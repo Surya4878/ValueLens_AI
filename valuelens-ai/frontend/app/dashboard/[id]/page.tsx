@@ -94,13 +94,13 @@ export default function DashboardPage() {
         return {
           chartId,
           finding: `One-time migration investment is ${formatCurrency(migrationCost, currency)}, with interface conversion development (${devPct}%) as the primary cost center.`,
-          businessImpact: `Fixed indicative Incture package delivery directly dictates the ${breakEvenMonths.toFixed(1)}-month capital recovery horizon. IntSwitch test automation (${formatCurrency(testingCost, currency)}) ensures rapid testing without budget creep.`,
+          businessImpact: `Fixed indicative Incture package delivery directly dictates the ${breakEvenMonths.toFixed(1)}-month capital recovery horizon. IntSwitch automation reduces migration delivery effort by up to 40% to ensure rapid cutover without timeline creep.`,
           recommendation: 'Leverage Incture packaged delivery and IntSwitch automated testing to ensure guaranteed fixed-timeline cutover.',
           aiStatus: 'AI GENERATED',
-          detailedAnalysis: `The one-time capital outlay of ${formatCurrency(migrationCost, currency)} covers the complete packaged migration scope. Development represents ${formatCurrency(devCost, currency)} (${devPct}%), followed by IntSwitch test automation (${formatCurrency(testingCost, currency)}), solution architecture & BASIS setup (${formatCurrency(archCost, currency)}), and project management & hypercare (${formatCurrency(pmCost, currency)}).`,
+          detailedAnalysis: `The one-time capital outlay of ${formatCurrency(migrationCost, currency)} covers the complete packaged migration scope. Interface development represents ${formatCurrency(devCost, currency)} (${devPct}%), followed by automated test validation (${formatCurrency(testingCost, currency)}), solution architecture & BASIS setup (${formatCurrency(archCost, currency)}), and project management & hypercare (${formatCurrency(pmCost, currency)}). IntSwitch reduces migration effort by up to 40% through automated discovery, conversion, and testing.`,
           keyMetrics: [
             { label: 'Interface Development', value: formatCurrency(devCost, currency), detail: `${devPct}% of total migration investment` },
-            { label: 'IntSwitch Test Automation', value: formatCurrency(testingCost, currency), detail: 'Automated regression & quality validation' },
+            { label: 'Automated Test Validation', value: formatCurrency(testingCost, currency), detail: 'Regression & quality validation' },
             { label: 'Setup & BASIS', value: formatCurrency(archCost, currency), detail: 'Tenant setup, CTMS & CC configuration' },
             { label: 'PM & Hypercare', value: formatCurrency(pmCost, currency), detail: 'Technical governance & hypercare support' },
           ],
@@ -632,12 +632,12 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            {/* Center: IntSwitch Cost & Effort Reduction (Cols 3) */}
+            {/* Center: IntSwitch Effort Reduction (Cols 3) */}
             <div className="lg:col-span-3 border-l border-r border-emerald-200/60 px-6 space-y-1.5 flex flex-col justify-center">
               <span className="text-xs font-semibold text-slate-500 block">IntSwitch Advantage</span>
               <div className="text-2xl font-black text-emerald-800 tracking-tight font-mono">Up to 40%</div>
               <p className="text-[11px] text-slate-600 font-medium leading-snug">
-                Reduction in total migration cost &amp; delivery effort via automation.
+                Reduction in migration delivery effort via automated discovery &amp; testing.
               </p>
             </div>
 
@@ -767,9 +767,9 @@ export default function DashboardPage() {
         </div>
 
         {/* ========================================================================= */}
-        {/* ROW 3: 3 Visual Analysis Cards                                            */}
+        {/* ROW 3: 2 Visual Analysis Cards                                            */}
         {/* ========================================================================= */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
           {/* Card 1: Annual Platform Cost Comparison */}
           <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs flex flex-col justify-between space-y-4">
@@ -920,93 +920,6 @@ export default function DashboardPage() {
                 className="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 inline-flex items-center space-x-1 pt-1 cursor-pointer text-left group"
               >
                 <span>View Detailed Analysis</span>
-                <svg className="w-3 h-3 shrink-0 transition-transform group-hover:translate-x-0.5" viewBox="0 0 16 16" fill="none" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M6 3.5l4.5 4.5-4.5 4.5" />
-                </svg>
-              </button>
-            </div>
-          </div>
-
-          {/* Card 3: Migration Investment Breakdown */}
-          <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs flex flex-col justify-between space-y-4">
-            <div>
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm font-bold text-slate-900">IntSwitch Accelerated Migration Investment</h3>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
-                  Up to 40% Cost &amp; Effort Reduction
-                </span>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center">
-                {/* Donut with Center Text (Cols 5) */}
-                <div className="sm:col-span-5 h-44 relative flex items-center justify-center">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={migrationBreakdownData}
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={46}
-                        outerRadius={68}
-                        paddingAngle={3}
-                        dataKey="value"
-                      >
-                        {migrationBreakdownData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.color} />
-                        ))}
-                      </Pie>
-                    </PieChart>
-                  </ResponsiveContainer>
-                  <div className="absolute flex flex-col items-center justify-center pointer-events-none">
-                    <span className="text-sm font-black text-slate-900 font-mono">
-                      ${migrationCost >= 1000 ? `${(migrationCost / 1000).toFixed(migrationCost % 1000 === 0 ? 0 : 1)}K` : migrationCost}
-                    </span>
-                    <span className="text-xs text-slate-400">package</span>
-                  </div>
-                </div>
-
-                {/* Breakdown List (Cols 7) */}
-                <div className="sm:col-span-7 space-y-2 text-[11px] pr-2 overflow-hidden">
-                  {migrationBreakdownData.map((item, idx) => (
-                    <div key={idx} className="flex items-center justify-between gap-2">
-                      <div className="flex items-center space-x-1.5 min-w-0 flex-1">
-                        <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: item.color }} />
-                        <span className="text-slate-700 truncate font-medium text-[11px]">{item.name}</span>
-                      </div>
-                      <div className="text-right font-mono font-bold text-slate-900 shrink-0 whitespace-nowrap pl-1">
-                        <span className="text-slate-400 text-[10px] font-normal mr-1.5">{item.pct}%</span>
-                        ${(item.value / 1000).toFixed(item.value % 1000 === 0 ? 0 : 1)}K
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* AI Insight Callout */}
-            <div
-              onClick={() => openChartInsight('migration-cost', 'IntSwitch Accelerated Migration Package & Delivery Structure')}
-              className="p-3 bg-blue-50/60 hover:bg-blue-100/50 border border-blue-100 rounded-xl text-xs space-y-1 cursor-pointer transition-all duration-200"
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-1.5 font-bold text-indigo-600">
-                  <span>✦</span>
-                  <span>AI Insight</span>
-                </div>
-                <span className="text-[10px] font-bold text-indigo-600">Explore Package Analysis ↗</span>
-              </div>
-              <p className="text-slate-700 leading-relaxed text-[11px]">
-                By deploying IntSwitch automated discovery, code conversion, and automated regression testing, total migration delivery effort and cost are reduced by up to <strong className="text-indigo-900 font-bold">40%</strong> compared to traditional manual migration, delivering cutover within the {assessment?.sourceSystem?.companyInformation?.migrationTimeline || 'accelerated Incture package timeline'}.
-              </p>
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  openChartInsight('migration-cost', 'Incture Migration Package & Delivery Structure');
-                }}
-                className="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 inline-flex items-center space-x-1 pt-1 cursor-pointer text-left group"
-              >
-                <span>View Delivery Details</span>
                 <svg className="w-3 h-3 shrink-0 transition-transform group-hover:translate-x-0.5" viewBox="0 0 16 16" fill="none" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M6 3.5l4.5 4.5-4.5 4.5" />
                 </svg>

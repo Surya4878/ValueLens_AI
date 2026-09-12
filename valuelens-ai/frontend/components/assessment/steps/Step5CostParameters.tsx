@@ -132,17 +132,17 @@ export const Step5CostParameters: React.FC<Step5Props> = ({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         {/* 1. Licensing */}
         <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs space-y-3">
-          <div className="flex items-center space-x-2 border-b border-slate-100 pb-2">
-            <DollarSign className="w-4 h-4 text-blue-600" />
-            <h3 className="text-sm font-bold text-slate-900">
+          <div className="flex items-center space-x-2.5 border-b border-slate-100 pb-2">
+            <DollarSign className="w-5 h-5 text-[#0070f2]" />
+            <h3 className="text-base font-bold text-slate-900">
               1. {details.licensing.label}
             </h3>
           </div>
           <p className="text-xs text-slate-500 leading-normal">
             {details.licensing.desc}
           </p>
-          <div className="flex rounded-xl border border-slate-300 overflow-hidden focus-within:ring-2 focus-within:ring-blue-500">
-            <div className="bg-slate-50 border-r border-slate-200 px-3.5 flex items-center text-xs font-bold text-slate-500">
+          <div className="flex rounded-xl border border-slate-300 overflow-hidden focus-within:ring-2 focus-within:ring-[#0070f2]">
+            <div className="bg-slate-50 border-r border-slate-200 px-3.5 flex items-center text-sm font-bold text-slate-500">
               $
             </div>
             <input
@@ -161,10 +161,10 @@ export const Step5CostParameters: React.FC<Step5Props> = ({
                   onUpdateCost('licensing', n);
                 }
               }}
-              className="w-full text-xs font-mono font-bold p-2.5 focus:outline-none bg-white text-slate-900 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              className="w-full text-sm font-mono font-semibold p-2.5 focus:outline-none bg-white text-slate-900 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               placeholder="0"
             />
-            <div className="bg-slate-50 border-l border-slate-200 px-3 flex items-center text-xs text-slate-400">
+            <div className="bg-slate-50 border-l border-slate-200 px-3.5 flex items-center text-sm text-slate-500">
               / yr
             </div>
           </div>
@@ -172,17 +172,17 @@ export const Step5CostParameters: React.FC<Step5Props> = ({
 
         {/* 2. Infrastructure */}
         <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs space-y-3">
-          <div className="flex items-center space-x-2 border-b border-slate-100 pb-2">
-            <Server className="w-4 h-4 text-blue-600" />
-            <h3 className="text-sm font-bold text-slate-900">
+          <div className="flex items-center space-x-2.5 border-b border-slate-100 pb-2">
+            <Server className="w-5 h-5 text-[#0070f2]" />
+            <h3 className="text-base font-bold text-slate-900">
               2. {details.infrastructure.label}
             </h3>
           </div>
           <p className="text-xs text-slate-500 leading-normal">
             {details.infrastructure.desc}
           </p>
-          <div className="flex rounded-xl border border-slate-300 overflow-hidden focus-within:ring-2 focus-within:ring-blue-500">
-            <div className="bg-slate-50 border-r border-slate-200 px-3.5 flex items-center text-xs font-bold text-slate-500">
+          <div className="flex rounded-xl border border-slate-300 overflow-hidden focus-within:ring-2 focus-within:ring-[#0070f2]">
+            <div className="bg-slate-50 border-r border-slate-200 px-3.5 flex items-center text-sm font-bold text-slate-500">
               $
             </div>
             <input
@@ -201,10 +201,10 @@ export const Step5CostParameters: React.FC<Step5Props> = ({
                   onUpdateCost('infrastructure', n);
                 }
               }}
-              className="w-full text-xs font-mono font-bold p-2.5 focus:outline-none bg-white text-slate-900 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              className="w-full text-sm font-mono font-semibold p-2.5 focus:outline-none bg-white text-slate-900 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               placeholder="0"
             />
-            <div className="bg-slate-50 border-l border-slate-200 px-3 flex items-center text-xs text-slate-400">
+            <div className="bg-slate-50 border-l border-slate-200 px-3.5 flex items-center text-sm text-slate-500">
               / yr
             </div>
           </div>
@@ -212,17 +212,17 @@ export const Step5CostParameters: React.FC<Step5Props> = ({
 
         {/* 3. Support & Maintenance */}
         <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs space-y-3">
-          <div className="flex items-center space-x-2 border-b border-slate-100 pb-2">
-            <Shield className="w-4 h-4 text-blue-600" />
-            <h3 className="text-sm font-bold text-slate-900">
+          <div className="flex items-center space-x-2.5 border-b border-slate-100 pb-2">
+            <Shield className="w-5 h-5 text-[#0070f2]" />
+            <h3 className="text-base font-bold text-slate-900">
               3. {details.support.label}
             </h3>
           </div>
           <p className="text-xs text-slate-500 leading-normal">
             {details.support.desc}
           </p>
-          <div className="flex rounded-xl border border-slate-300 overflow-hidden focus-within:ring-2 focus-within:ring-blue-500">
-            <div className="bg-slate-50 border-r border-slate-200 px-3.5 flex items-center text-xs font-bold text-slate-500">
+          <div className="flex rounded-xl border border-slate-300 overflow-hidden focus-within:ring-2 focus-within:ring-[#0070f2]">
+            <div className="bg-slate-50 border-r border-slate-200 px-3.5 flex items-center text-sm font-bold text-slate-500">
               $
             </div>
             <input
@@ -241,10 +241,10 @@ export const Step5CostParameters: React.FC<Step5Props> = ({
                   onUpdateCost('support', n);
                 }
               }}
-              className="w-full text-xs font-mono font-bold p-2.5 focus:outline-none bg-white text-slate-900 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              className="w-full text-sm font-mono font-semibold p-2.5 focus:outline-none bg-white text-slate-900 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               placeholder="0"
             />
-            <div className="bg-slate-50 border-l border-slate-200 px-3 flex items-center text-xs text-slate-400">
+            <div className="bg-slate-50 border-l border-slate-200 px-3.5 flex items-center text-sm text-slate-500">
               / yr
             </div>
           </div>
@@ -252,17 +252,17 @@ export const Step5CostParameters: React.FC<Step5Props> = ({
 
         {/* 4. Operations & Staffing */}
         <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs space-y-3">
-          <div className="flex items-center space-x-2 border-b border-slate-100 pb-2">
-            <Users className="w-4 h-4 text-blue-600" />
-            <h3 className="text-sm font-bold text-slate-900">
+          <div className="flex items-center space-x-2.5 border-b border-slate-100 pb-2">
+            <Users className="w-5 h-5 text-[#0070f2]" />
+            <h3 className="text-base font-bold text-slate-900">
               4. {details.operations.label}
             </h3>
           </div>
           <p className="text-xs text-slate-500 leading-normal">
             {details.operations.desc}
           </p>
-          <div className="flex rounded-xl border border-slate-300 overflow-hidden focus-within:ring-2 focus-within:ring-blue-500">
-            <div className="bg-slate-50 border-r border-slate-200 px-3.5 flex items-center text-xs font-bold text-slate-500">
+          <div className="flex rounded-xl border border-slate-300 overflow-hidden focus-within:ring-2 focus-within:ring-[#0070f2]">
+            <div className="bg-slate-50 border-r border-slate-200 px-3.5 flex items-center text-sm font-bold text-slate-500">
               $
             </div>
             <input
@@ -281,10 +281,10 @@ export const Step5CostParameters: React.FC<Step5Props> = ({
                   onUpdateCost('operations', n);
                 }
               }}
-              className="w-full text-xs font-mono font-bold p-2.5 focus:outline-none bg-white text-slate-900 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              className="w-full text-sm font-mono font-semibold p-2.5 focus:outline-none bg-white text-slate-900 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               placeholder="0"
             />
-            <div className="bg-slate-50 border-l border-slate-200 px-3 flex items-center text-xs text-slate-400">
+            <div className="bg-slate-50 border-l border-slate-200 px-3.5 flex items-center text-sm text-slate-500">
               / yr
             </div>
           </div>
@@ -292,17 +292,17 @@ export const Step5CostParameters: React.FC<Step5Props> = ({
 
         {/* 5. Development & Maintenance */}
         <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs space-y-3">
-          <div className="flex items-center space-x-2 border-b border-slate-100 pb-2">
-            <Code2 className="w-4 h-4 text-blue-600" />
-            <h3 className="text-sm font-bold text-slate-900">
+          <div className="flex items-center space-x-2.5 border-b border-slate-100 pb-2">
+            <Code2 className="w-5 h-5 text-[#0070f2]" />
+            <h3 className="text-base font-bold text-slate-900">
               5. {details.development.label}
             </h3>
           </div>
           <p className="text-xs text-slate-500 leading-normal">
             {details.development.desc}
           </p>
-          <div className="flex rounded-xl border border-slate-300 overflow-hidden focus-within:ring-2 focus-within:ring-blue-500">
-            <div className="bg-slate-50 border-r border-slate-200 px-3.5 flex items-center text-xs font-bold text-slate-500">
+          <div className="flex rounded-xl border border-slate-300 overflow-hidden focus-within:ring-2 focus-within:ring-[#0070f2]">
+            <div className="bg-slate-50 border-r border-slate-200 px-3.5 flex items-center text-sm font-bold text-slate-500">
               $
             </div>
             <input
@@ -321,10 +321,10 @@ export const Step5CostParameters: React.FC<Step5Props> = ({
                   onUpdateCost('development', n);
                 }
               }}
-              className="w-full text-xs font-mono font-bold p-2.5 focus:outline-none bg-white text-slate-900 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              className="w-full text-sm font-mono font-semibold p-2.5 focus:outline-none bg-white text-slate-900 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               placeholder="0"
             />
-            <div className="bg-slate-50 border-l border-slate-200 px-3 flex items-center text-xs text-slate-400">
+            <div className="bg-slate-50 border-l border-slate-200 px-3.5 flex items-center text-sm text-slate-500">
               / yr
             </div>
           </div>
@@ -332,17 +332,17 @@ export const Step5CostParameters: React.FC<Step5Props> = ({
 
         {/* 6. Other Operational Expenses */}
         <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs space-y-3">
-          <div className="flex items-center space-x-2 border-b border-slate-100 pb-2">
-            <HelpCircle className="w-4 h-4 text-blue-600" />
-            <h3 className="text-sm font-bold text-slate-900">
+          <div className="flex items-center space-x-2.5 border-b border-slate-100 pb-2">
+            <HelpCircle className="w-5 h-5 text-[#0070f2]" />
+            <h3 className="text-base font-bold text-slate-900">
               6. {details.other.label}
             </h3>
           </div>
           <p className="text-xs text-slate-500 leading-normal">
             {details.other.desc}
           </p>
-          <div className="flex rounded-xl border border-slate-300 overflow-hidden focus-within:ring-2 focus-within:ring-blue-500">
-            <div className="bg-slate-50 border-r border-slate-200 px-3.5 flex items-center text-xs font-bold text-slate-500">
+          <div className="flex rounded-xl border border-slate-300 overflow-hidden focus-within:ring-2 focus-within:ring-[#0070f2]">
+            <div className="bg-slate-50 border-r border-slate-200 px-3.5 flex items-center text-sm font-bold text-slate-500">
               $
             </div>
             <input
@@ -361,10 +361,10 @@ export const Step5CostParameters: React.FC<Step5Props> = ({
                   onUpdateCost('other', n);
                 }
               }}
-              className="w-full text-xs font-mono font-bold p-2.5 focus:outline-none bg-white text-slate-900 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              className="w-full text-sm font-mono font-semibold p-2.5 focus:outline-none bg-white text-slate-900 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               placeholder="0"
             />
-            <div className="bg-slate-50 border-l border-slate-200 px-3 flex items-center text-xs text-slate-400">
+            <div className="bg-slate-50 border-l border-slate-200 px-3.5 flex items-center text-sm text-slate-500">
               / yr
             </div>
           </div>
@@ -376,9 +376,9 @@ export const Step5CostParameters: React.FC<Step5Props> = ({
         <button
           type="button"
           onClick={onBack}
-          className="px-5 py-2.5 text-xs font-bold text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors flex items-center space-x-1.5 shadow-xs group"
+          className="px-5 py-2.5 text-sm font-semibold text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors flex items-center space-x-2 shadow-xs group"
         >
-          <svg className="w-3 h-3 text-slate-500 group-hover:text-slate-700 transition-transform group-hover:-translate-x-0.5" fill="none" viewBox="0 0 16 16" stroke="currentColor">
+          <svg className="w-4 h-4 text-slate-500 group-hover:text-slate-700 transition-transform group-hover:-translate-x-0.5" fill="none" viewBox="0 0 16 16" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M10 12.5l-4.5-4.5 4.5-4.5" />
           </svg>
           <span>Back</span>
@@ -386,10 +386,10 @@ export const Step5CostParameters: React.FC<Step5Props> = ({
         <button
           type="button"
           onClick={onContinue}
-          className="px-6 py-2.5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-xs transition-all active:scale-95 flex items-center space-x-1.5 group"
+          className="px-6 py-2.5 text-sm font-semibold text-white bg-[#0070f2] hover:bg-[#0057d2] rounded-xl shadow-xs transition-all active:scale-95 flex items-center space-x-2 group"
         >
           <span>Continue to Select Edition</span>
-          <svg className="w-3 h-3 text-white transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 16 16" stroke="currentColor">
+          <svg className="w-4 h-4 text-white transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 16 16" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M6 3.5l4.5 4.5-4.5 4.5" />
           </svg>
         </button>

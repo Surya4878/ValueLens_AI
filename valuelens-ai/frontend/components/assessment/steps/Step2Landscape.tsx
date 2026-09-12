@@ -262,14 +262,14 @@ export const Step2Landscape: React.FC<Step2Props> = ({
             <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
               {/* Q1: Version */}
               <div>
-                <label className="block text-xs font-semibold text-slate-800 mb-2">
+                <label className="block text-sm font-semibold text-slate-800 mb-2">
                   1. PI/PO Version <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
                   <select
                     value={piPoVersion}
                     onChange={(e) => setPiPoVersion(e.target.value)}
-                    className="w-full text-xs font-medium text-slate-800 border border-slate-300 rounded-xl px-3.5 py-2.5 pr-8 appearance-none bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    className="w-full text-sm font-normal text-slate-800 border border-slate-300 rounded-xl px-3.5 py-2.5 pr-8 appearance-none bg-white focus:ring-2 focus:ring-[#0070f2] focus:outline-none"
                   >
                     <option value="">Select PI/PO Version</option>
                     <option value="PI 7.0">PI 7.0</option>
@@ -286,10 +286,10 @@ export const Step2Landscape: React.FC<Step2Props> = ({
 
               {/* Q2: Interface Count */}
               <div>
-                <label className="block text-xs font-semibold text-slate-800 mb-2">
+                <label className="block text-sm font-semibold text-slate-800 mb-2">
                   2. Number of Interfaces <span className="text-red-500">*</span>
                 </label>
-                <div className="flex rounded-xl border border-slate-300 overflow-hidden focus-within:ring-2 focus-within:ring-blue-500">
+                <div className="flex rounded-xl border border-slate-300 overflow-hidden focus-within:ring-2 focus-within:ring-[#0070f2]">
                   <input
                     type="number"
                     min="0"
@@ -298,10 +298,10 @@ export const Step2Landscape: React.FC<Step2Props> = ({
                       if (['-', '+', 'e', 'E', '.'].includes(e.key)) e.preventDefault();
                     }}
                     onChange={(e) => setPiPoInterfacesCount(Math.max(0, parseInt(e.target.value) || 0))}
-                    className="w-full text-xs font-medium px-3 py-2.5 focus:outline-none bg-white text-slate-900 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    className="w-full text-sm font-medium px-3.5 py-2.5 focus:outline-none bg-white text-slate-900 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                     placeholder="0"
                   />
-                  <div className="bg-slate-50 border-l border-slate-200 px-3 flex items-center text-xs text-slate-500">
+                  <div className="bg-slate-50 border-l border-slate-200 px-3.5 flex items-center text-sm text-slate-600">
                     interfaces
                   </div>
                 </div>
@@ -309,10 +309,10 @@ export const Step2Landscape: React.FC<Step2Props> = ({
 
               {/* Q3: Applications Count */}
               <div>
-                <label className="block text-xs font-semibold text-slate-800 mb-2">
+                <label className="block text-sm font-semibold text-slate-800 mb-2">
                   3. Connected Applications <span className="text-red-500">*</span>
                 </label>
-                <div className="flex rounded-xl border border-slate-300 overflow-hidden focus-within:ring-2 focus-within:ring-blue-500">
+                <div className="flex rounded-xl border border-slate-300 overflow-hidden focus-within:ring-2 focus-within:ring-[#0070f2]">
                   <input
                     type="number"
                     min="0"
@@ -321,10 +321,10 @@ export const Step2Landscape: React.FC<Step2Props> = ({
                       if (['-', '+', 'e', 'E', '.'].includes(e.key)) e.preventDefault();
                     }}
                     onChange={(e) => setPiPoApplicationsCount(Math.max(0, parseInt(e.target.value) || 0))}
-                    className="w-full text-xs font-medium px-3 py-2.5 focus:outline-none bg-white text-slate-900 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    className="w-full text-sm font-medium px-3.5 py-2.5 focus:outline-none bg-white text-slate-900 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                     placeholder="0"
                   />
-                  <div className="bg-slate-50 border-l border-slate-200 px-3 flex items-center text-xs text-slate-500">
+                  <div className="bg-slate-50 border-l border-slate-200 px-3.5 flex items-center text-sm text-slate-600">
                     apps
                   </div>
                 </div>
@@ -332,14 +332,14 @@ export const Step2Landscape: React.FC<Step2Props> = ({
 
               {/* Q4: Backend System */}
               <div>
-                <label className="block text-xs font-semibold text-slate-800 mb-2">
+                <label className="block text-sm font-semibold text-slate-800 mb-2">
                   4. Connected SAP Backend <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
                   <select
                     value={sapBackendSystem}
                     onChange={(e) => setSapBackendSystem(e.target.value)}
-                    className="w-full text-xs font-medium text-slate-800 border border-slate-300 rounded-xl px-3.5 py-2.5 pr-8 appearance-none bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    className="w-full text-sm font-normal text-slate-800 border border-slate-300 rounded-xl px-3.5 py-2.5 pr-8 appearance-none bg-white focus:ring-2 focus:ring-[#0070f2] focus:outline-none"
                   >
                     <option value="">Select Connected Backend</option>
                     <option value="SAP ECC">SAP ECC</option>
@@ -356,7 +356,7 @@ export const Step2Landscape: React.FC<Step2Props> = ({
           {/* Card B: B2B/EDI & Ground-to-ground */}
           <div className="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs space-y-5">
             <div className="flex items-center space-x-2.5 border-b border-slate-100 pb-3">
-              <Share2 className="w-5 h-5 text-blue-600" />
+              <Share2 className="w-5 h-5 text-[#0070f2]" />
               <h3 className="text-base font-bold text-slate-900">
                 B. Integration Characteristics
               </h3>
@@ -366,7 +366,7 @@ export const Step2Landscape: React.FC<Step2Props> = ({
               {/* B2B/EDI */}
               <div className="space-y-4">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-800 mb-2">
+                  <label className="block text-sm font-semibold text-slate-800 mb-2">
                     Do you use B2B / EDI integrations in SAP PI/PO? <span className="text-red-500">*</span>
                   </label>
                   <div className="flex items-center space-x-5">
@@ -378,9 +378,9 @@ export const Step2Landscape: React.FC<Step2Props> = ({
                           value={opt}
                           checked={hasB2bIntegrations === opt}
                           onChange={() => setHasB2bIntegrations(opt)}
-                          className="w-4 h-4 text-blue-600 border-slate-300 focus:ring-blue-500"
+                          className="w-4 h-4 text-[#0070f2] border-slate-300 focus:ring-[#0070f2]"
                         />
-                        <span className="text-xs text-slate-700 font-medium">{opt}</span>
+                        <span className="text-sm text-slate-700 font-medium">{opt}</span>
                       </label>
                     ))}
                   </div>
@@ -388,17 +388,17 @@ export const Step2Landscape: React.FC<Step2Props> = ({
 
                 {hasB2bIntegrations === 'Yes' && (
                   <div className="p-4 bg-slate-50/70 rounded-xl border border-slate-200/80 space-y-3">
-                    <span className="text-xs font-bold text-blue-700 block">
+                    <span className="text-sm font-bold text-blue-700 block">
                       B2B / EDI Standards &amp; Protocols (Select all that apply)
                     </span>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
                       {['EDIFACT', 'ANSI X12', 'EANCOM', 'TRADACOMS', 'Odette', 'VDA', 'AS2', 'SFTP', 'Other'].map((std) => (
-                        <label key={std} className="flex items-center space-x-2 cursor-pointer text-xs text-slate-700">
+                        <label key={std} className="flex items-center space-x-2 cursor-pointer text-sm text-slate-700">
                           <input
                             type="checkbox"
                             checked={b2bStandards.includes(std)}
                             onChange={() => toggleArrayItem(b2bStandards, setB2bStandards, std)}
-                            className="w-3.5 h-3.5 rounded text-blue-600 border-slate-300"
+                            className="w-4 h-4 rounded text-[#0070f2] border-slate-300"
                           />
                           <span>{std}</span>
                         </label>
@@ -406,7 +406,7 @@ export const Step2Landscape: React.FC<Step2Props> = ({
                     </div>
 
                     <div className="pt-2">
-                      <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      <label className="block text-sm font-semibold text-slate-800 mb-1.5">
                         Approximate B2B Interfaces Count
                       </label>
                       <input
@@ -417,7 +417,7 @@ export const Step2Landscape: React.FC<Step2Props> = ({
                           if (['-', '+', 'e', 'E', '.'].includes(e.key)) e.preventDefault();
                         }}
                         onChange={(e) => setB2bInterfacesCount(Math.max(0, parseInt(e.target.value) || 0))}
-                        className="w-full text-xs border border-slate-300 rounded-lg p-2 bg-white [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        className="w-full text-sm font-normal border border-slate-300 rounded-xl px-3.5 py-2.5 bg-white focus:ring-2 focus:ring-[#0070f2] focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                         placeholder="0"
                       />
                     </div>
@@ -428,7 +428,7 @@ export const Step2Landscape: React.FC<Step2Props> = ({
               {/* Ground-to-ground */}
               <div className="space-y-4">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-800 mb-2">
+                  <label className="block text-sm font-semibold text-slate-800 mb-2">
                     Do you have ground-to-ground (on-prem-to-on-prem) integrations? <span className="text-red-500">*</span>
                   </label>
                   <div className="flex items-center space-x-5">
@@ -440,9 +440,9 @@ export const Step2Landscape: React.FC<Step2Props> = ({
                           value={opt}
                           checked={hasGroundToGround === opt}
                           onChange={() => setHasGroundToGround(opt)}
-                          className="w-4 h-4 text-blue-600 border-slate-300 focus:ring-blue-500"
+                          className="w-4 h-4 text-[#0070f2] border-slate-300 focus:ring-[#0070f2]"
                         />
-                        <span className="text-xs text-slate-700 font-medium">{opt}</span>
+                        <span className="text-sm text-slate-700 font-medium">{opt}</span>
                       </label>
                     ))}
                   </div>
@@ -450,7 +450,7 @@ export const Step2Landscape: React.FC<Step2Props> = ({
 
                 {hasGroundToGround === 'Yes' && (
                   <div className="p-4 bg-slate-50/70 rounded-xl border border-slate-200/80 space-y-2">
-                    <label className="block text-xs font-semibold text-slate-700">
+                    <label className="block text-sm font-semibold text-slate-800 mb-1.5">
                       Approximate Ground-to-Ground Interfaces Count
                     </label>
                     <input
@@ -461,10 +461,10 @@ export const Step2Landscape: React.FC<Step2Props> = ({
                         if (['-', '+', 'e', 'E', '.'].includes(e.key)) e.preventDefault();
                       }}
                       onChange={(e) => setGroundToGroundInterfaces(Math.max(0, parseInt(e.target.value) || 0))}
-                      className="w-full text-xs border border-slate-300 rounded-lg p-2 bg-white [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                      className="w-full text-sm font-normal border border-slate-300 rounded-xl px-3.5 py-2.5 bg-white focus:ring-2 focus:ring-[#0070f2] focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                       placeholder="0"
                     />
-                    <span className="text-[11px] text-slate-500 block">
+                    <span className="text-xs text-slate-500 block">
                       Will help determine Edge Integration Cell requirements on SAP BTP.
                     </span>
                   </div>
@@ -476,7 +476,7 @@ export const Step2Landscape: React.FC<Step2Props> = ({
           {/* Card C: Technical Complexity Drivers */}
           <div className="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs space-y-5">
             <div className="flex items-center space-x-2.5 border-b border-slate-100 pb-3">
-              <Settings className="w-5 h-5 text-blue-600" />
+              <Settings className="w-5 h-5 text-[#0070f2]" />
               <h3 className="text-base font-bold text-slate-900">
                 C. Technical Complexity Drivers
               </h3>
@@ -484,19 +484,19 @@ export const Step2Landscape: React.FC<Step2Props> = ({
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-xs font-semibold text-slate-800 mb-2">
+                <label className="block text-sm font-semibold text-slate-800 mb-2">
                   Overall Integration Mapping Complexity <span className="text-red-500">*</span>
                 </label>
-                <div className="flex space-x-4">
+                <div className="flex space-x-5">
                   {(['Simple', 'Moderate', 'Complex'] as const).map((lvl) => (
-                    <label key={lvl} className="flex items-center space-x-2 cursor-pointer text-xs font-medium text-slate-700">
+                    <label key={lvl} className="flex items-center space-x-2 cursor-pointer text-sm font-medium text-slate-700">
                       <input
                         type="radio"
                         name="pipoComp"
                         value={lvl}
                         checked={piPoComplexity === lvl}
                         onChange={() => setPiPoComplexity(lvl)}
-                        className="w-4 h-4 text-blue-600"
+                        className="w-4 h-4 text-[#0070f2]"
                       />
                       <span>{lvl}</span>
                     </label>
@@ -505,28 +505,28 @@ export const Step2Landscape: React.FC<Step2Props> = ({
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-800 mb-2">
+                <label className="block text-sm font-semibold text-slate-800 mb-2">
                   Custom Development &amp; Artifacts Present (Select all that apply)
                 </label>
-                <div className="grid grid-cols-2 gap-2 text-xs text-slate-700">
+                <div className="grid grid-cols-2 gap-2.5 text-sm text-slate-700">
                   <label className="flex items-center space-x-2 cursor-pointer">
-                    <input type="checkbox" checked={hasJavaMappings} onChange={(e) => setHasJavaMappings(e.target.checked)} className="rounded text-blue-600" />
+                    <input type="checkbox" checked={hasJavaMappings} onChange={(e) => setHasJavaMappings(e.target.checked)} className="w-4 h-4 rounded text-[#0070f2]" />
                     <span>Java Mappings</span>
                   </label>
                   <label className="flex items-center space-x-2 cursor-pointer">
-                    <input type="checkbox" checked={hasXsltMappings} onChange={(e) => setHasXsltMappings(e.target.checked)} className="rounded text-blue-600" />
+                    <input type="checkbox" checked={hasXsltMappings} onChange={(e) => setHasXsltMappings(e.target.checked)} className="w-4 h-4 rounded text-[#0070f2]" />
                     <span>XSLT Mappings</span>
                   </label>
                   <label className="flex items-center space-x-2 cursor-pointer">
-                    <input type="checkbox" checked={hasUdf} onChange={(e) => setHasUdf(e.target.checked)} className="rounded text-blue-600" />
+                    <input type="checkbox" checked={hasUdf} onChange={(e) => setHasUdf(e.target.checked)} className="w-4 h-4 rounded text-[#0070f2]" />
                     <span>User-Defined Functions (UDF)</span>
                   </label>
                   <label className="flex items-center space-x-2 cursor-pointer">
-                    <input type="checkbox" checked={hasCcBpm} onChange={(e) => setHasCcBpm(e.target.checked)} className="rounded text-blue-600" />
+                    <input type="checkbox" checked={hasCcBpm} onChange={(e) => setHasCcBpm(e.target.checked)} className="w-4 h-4 rounded text-[#0070f2]" />
                     <span>BPM / ccBPM Workflows</span>
                   </label>
                   <label className="flex items-center space-x-2 cursor-pointer col-span-2">
-                    <input type="checkbox" checked={hasCustomAdapterModules} onChange={(e) => setHasCustomAdapterModules(e.target.checked)} className="rounded text-blue-600" />
+                    <input type="checkbox" checked={hasCustomAdapterModules} onChange={(e) => setHasCustomAdapterModules(e.target.checked)} className="w-4 h-4 rounded text-[#0070f2]" />
                     <span>Custom Adapter Modules (EJB)</span>
                   </label>
                 </div>
@@ -552,14 +552,14 @@ export const Step2Landscape: React.FC<Step2Props> = ({
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
               <div>
-                <label className="block text-xs font-semibold text-slate-800 mb-2">
+                <label className="block text-sm font-semibold text-slate-800 mb-2">
                   Deployment Model <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
                   <select
                     value={muleDeploymentModel}
                     onChange={(e) => setMuleDeploymentModel(e.target.value)}
-                    className="w-full text-xs font-medium text-slate-800 border border-slate-300 rounded-xl px-3.5 py-2.5 pr-8 appearance-none bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    className="w-full text-sm font-normal text-slate-800 border border-slate-300 rounded-xl px-3.5 py-2.5 pr-8 appearance-none bg-white focus:ring-2 focus:ring-[#0070f2] focus:outline-none"
                   >
                     <option value="">Select Deployment Model</option>
                     <option value="CloudHub 1.0">CloudHub 1.0</option>
@@ -573,54 +573,54 @@ export const Step2Landscape: React.FC<Step2Props> = ({
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-800 mb-2">
+                <label className="block text-sm font-semibold text-slate-800 mb-2">
                   Total Number of APIs <span className="text-red-500">*</span>
                 </label>
-                <div className="flex rounded-xl border border-slate-300 overflow-hidden focus-within:ring-2 focus-within:ring-blue-500">
+                <div className="flex rounded-xl border border-slate-300 overflow-hidden focus-within:ring-2 focus-within:ring-[#0070f2]">
                   <input
                     type="number"
                     value={muleTotalApis === 0 ? '' : muleTotalApis}
                     onChange={(e) => setMuleTotalApis(parseInt(e.target.value) || 0)}
-                    className="w-full text-xs font-medium px-3 py-2.5 focus:outline-none bg-white text-slate-900"
+                    className="w-full text-sm font-medium px-3.5 py-2.5 focus:outline-none bg-white text-slate-900"
                     placeholder="e.g. 95"
                   />
-                  <div className="bg-slate-50 border-l border-slate-200 px-3 flex items-center text-xs text-slate-500">
+                  <div className="bg-slate-50 border-l border-slate-200 px-3.5 flex items-center text-sm text-slate-600">
                     APIs
                   </div>
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-800 mb-2">
+                <label className="block text-sm font-semibold text-slate-800 mb-2">
                   Number of Applications <span className="text-red-500">*</span>
                 </label>
-                <div className="flex rounded-xl border border-slate-300 overflow-hidden focus-within:ring-2 focus-within:ring-blue-500">
+                <div className="flex rounded-xl border border-slate-300 overflow-hidden focus-within:ring-2 focus-within:ring-[#0070f2]">
                   <input
                     type="number"
                     value={muleApplicationsCount === 0 ? '' : muleApplicationsCount}
                     onChange={(e) => setMuleApplicationsCount(parseInt(e.target.value) || 0)}
-                    className="w-full text-xs font-medium px-3 py-2.5 focus:outline-none bg-white text-slate-900"
+                    className="w-full text-sm font-medium px-3.5 py-2.5 focus:outline-none bg-white text-slate-900"
                     placeholder="e.g. 14"
                   />
-                  <div className="bg-slate-50 border-l border-slate-200 px-3 flex items-center text-xs text-slate-500">
+                  <div className="bg-slate-50 border-l border-slate-200 px-3.5 flex items-center text-sm text-slate-600">
                     apps
                   </div>
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-800 mb-2">
+                <label className="block text-sm font-semibold text-slate-800 mb-2">
                   Total Mule Flows <span className="text-red-500">*</span>
                 </label>
-                <div className="flex rounded-xl border border-slate-300 overflow-hidden focus-within:ring-2 focus-within:ring-blue-500">
+                <div className="flex rounded-xl border border-slate-300 overflow-hidden focus-within:ring-2 focus-within:ring-[#0070f2]">
                   <input
                     type="number"
                     value={muleFlowsCount === 0 ? '' : muleFlowsCount}
                     onChange={(e) => setMuleFlowsCount(parseInt(e.target.value) || 0)}
-                    className="w-full text-xs font-medium px-3 py-2.5 focus:outline-none bg-white text-slate-900"
+                    className="w-full text-sm font-medium px-3.5 py-2.5 focus:outline-none bg-white text-slate-900"
                     placeholder="e.g. 280"
                   />
-                  <div className="bg-slate-50 border-l border-slate-200 px-3 flex items-center text-xs text-slate-500">
+                  <div className="bg-slate-50 border-l border-slate-200 px-3.5 flex items-center text-sm text-slate-600">
                     flows
                   </div>
                 </div>
@@ -629,37 +629,37 @@ export const Step2Landscape: React.FC<Step2Props> = ({
 
             {/* API-led Breakdown */}
             <div className="p-4 bg-slate-50/70 rounded-xl border border-slate-200/80 space-y-3">
-              <span className="text-xs font-bold text-blue-700 block">
+              <span className="text-sm font-bold text-blue-700 block">
                 API-led Connectivity Classification (System, Process, Experience APIs)
               </span>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-[11px] font-semibold text-slate-600 mb-1">System APIs (Core data)</label>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1.5">System APIs (Core data)</label>
                   <input
                     type="number"
                     value={muleSystemApis === 0 ? '' : muleSystemApis}
                     onChange={(e) => setMuleSystemApis(parseInt(e.target.value) || 0)}
-                    className="w-full text-xs border border-slate-300 rounded-lg p-2 bg-white"
+                    className="w-full text-sm font-normal border border-slate-300 rounded-xl px-3.5 py-2.5 bg-white focus:ring-2 focus:ring-[#0070f2] focus:outline-none"
                     placeholder="0"
                   />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-semibold text-slate-600 mb-1">Process APIs (Business logic)</label>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1.5">Process APIs (Business logic)</label>
                   <input
                     type="number"
                     value={muleProcessApis === 0 ? '' : muleProcessApis}
                     onChange={(e) => setMuleProcessApis(parseInt(e.target.value) || 0)}
-                    className="w-full text-xs border border-slate-300 rounded-lg p-2 bg-white"
+                    className="w-full text-sm font-normal border border-slate-300 rounded-xl px-3.5 py-2.5 bg-white focus:ring-2 focus:ring-[#0070f2] focus:outline-none"
                     placeholder="0"
                   />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-semibold text-slate-600 mb-1">Experience APIs (Consumers)</label>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1.5">Experience APIs (Consumers)</label>
                   <input
                     type="number"
                     value={muleExperienceApis === 0 ? '' : muleExperienceApis}
                     onChange={(e) => setMuleExperienceApis(parseInt(e.target.value) || 0)}
-                    className="w-full text-xs border border-slate-300 rounded-lg p-2 bg-white"
+                    className="w-full text-sm font-normal border border-slate-300 rounded-xl px-3.5 py-2.5 bg-white focus:ring-2 focus:ring-[#0070f2] focus:outline-none"
                     placeholder="0"
                   />
                 </div>
@@ -670,7 +670,7 @@ export const Step2Landscape: React.FC<Step2Props> = ({
           {/* Card B: Connectivity & Ecosystem */}
           <div className="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs space-y-5">
             <div className="flex items-center space-x-2.5 border-b border-slate-100 pb-3">
-              <Network className="w-5 h-5 text-blue-600" />
+              <Network className="w-5 h-5 text-[#0070f2]" />
               <h3 className="text-base font-bold text-slate-900">
                 B. Architecture, B2B &amp; On-Premise Dependencies
               </h3>
@@ -678,19 +678,19 @@ export const Step2Landscape: React.FC<Step2Props> = ({
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div>
-                <label className="block text-xs font-semibold text-slate-800 mb-2">
+                <label className="block text-sm font-semibold text-slate-800 mb-2">
                   API-Led Architecture Adoption
                 </label>
                 <div className="flex space-x-4">
                   {(['Yes', 'Partial', 'No'] as const).map((opt) => (
-                    <label key={opt} className="flex items-center space-x-2 cursor-pointer text-xs text-slate-700">
+                    <label key={opt} className="flex items-center space-x-2 cursor-pointer text-sm text-slate-700">
                       <input
                         type="radio"
                         name="muleApiLed"
                         value={opt}
                         checked={muleApiLedUsage === opt}
                         onChange={() => setMuleApiLedUsage(opt)}
-                        className="w-4 h-4 text-blue-600"
+                        className="w-4 h-4 text-[#0070f2]"
                       />
                       <span>{opt}</span>
                     </label>
@@ -699,19 +699,19 @@ export const Step2Landscape: React.FC<Step2Props> = ({
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-800 mb-2">
+                <label className="block text-sm font-semibold text-slate-800 mb-2">
                   B2B / EDI Partner Manager Usage
                 </label>
                 <div className="flex space-x-4">
                   {(['Yes', 'No', 'Not sure'] as const).map((opt) => (
-                    <label key={opt} className="flex items-center space-x-2 cursor-pointer text-xs text-slate-700">
+                    <label key={opt} className="flex items-center space-x-2 cursor-pointer text-sm text-slate-700">
                       <input
                         type="radio"
                         name="muleB2b"
                         value={opt}
                         checked={muleHasB2b === opt}
                         onChange={() => setMuleHasB2b(opt)}
-                        className="w-4 h-4 text-blue-600"
+                        className="w-4 h-4 text-[#0070f2]"
                       />
                       <span>{opt}</span>
                     </label>
@@ -720,15 +720,15 @@ export const Step2Landscape: React.FC<Step2Props> = ({
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-800 mb-2">
+                <label className="block text-sm font-semibold text-slate-800 mb-2">
                   On-Premise Runtime / DLB Dependencies
                 </label>
-                <label className="flex items-center space-x-2 cursor-pointer text-xs text-slate-700 mt-2">
+                <label className="flex items-center space-x-2 cursor-pointer text-sm text-slate-700 mt-2">
                   <input
                     type="checkbox"
                     checked={muleHasOnPremDeps}
                     onChange={(e) => setMuleHasOnPremDeps(e.target.checked)}
-                    className="rounded text-blue-600"
+                    className="w-4 h-4 rounded text-[#0070f2]"
                   />
                   <span>Has dedicated VPCs / DLBs / on-premise targets</span>
                 </label>
@@ -739,7 +739,7 @@ export const Step2Landscape: React.FC<Step2Props> = ({
           {/* Card C: Custom Artifacts & Complexity */}
           <div className="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs space-y-5">
             <div className="flex items-center space-x-2.5 border-b border-slate-100 pb-3">
-              <Settings className="w-5 h-5 text-blue-600" />
+              <Settings className="w-5 h-5 text-[#0070f2]" />
               <h3 className="text-base font-bold text-slate-900">
                 C. MuleSoft Custom Logic &amp; Complexity
               </h3>
@@ -747,16 +747,16 @@ export const Step2Landscape: React.FC<Step2Props> = ({
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-xs font-semibold text-slate-800 mb-2">
+                <label className="block text-sm font-semibold text-slate-800 mb-2">
                   Custom Connectors &amp; Policies Present
                 </label>
-                <div className="space-y-2 text-xs text-slate-700">
+                <div className="space-y-2.5 text-sm text-slate-700">
                   <label className="flex items-center space-x-2 cursor-pointer">
                     <input
                       type="checkbox"
                       checked={muleHasCustomConnectors}
                       onChange={(e) => setMuleHasCustomConnectors(e.target.checked)}
-                      className="rounded text-blue-600"
+                      className="w-4 h-4 rounded text-[#0070f2]"
                     />
                     <span>Custom Java / XML Connectors (Mule SDK)</span>
                   </label>
@@ -765,7 +765,7 @@ export const Step2Landscape: React.FC<Step2Props> = ({
                       type="checkbox"
                       checked={muleHasCustomPolicies}
                       onChange={(e) => setMuleHasCustomPolicies(e.target.checked)}
-                      className="rounded text-blue-600"
+                      className="w-4 h-4 rounded text-[#0070f2]"
                     />
                     <span>Custom API Manager Gateway Policies</span>
                   </label>
@@ -773,19 +773,19 @@ export const Step2Landscape: React.FC<Step2Props> = ({
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-800 mb-2">
+                <label className="block text-sm font-semibold text-slate-800 mb-2">
                   Overall Integration Complexity
                 </label>
-                <div className="flex space-x-4">
+                <div className="flex space-x-5">
                   {(['Simple', 'Moderate', 'Complex'] as const).map((lvl) => (
-                    <label key={lvl} className="flex items-center space-x-2 cursor-pointer text-xs font-medium text-slate-700">
+                    <label key={lvl} className="flex items-center space-x-2 cursor-pointer text-sm text-slate-700">
                       <input
                         type="radio"
                         name="muleComp"
                         value={lvl}
                         checked={muleComplexity === lvl}
                         onChange={() => setMuleComplexity(lvl)}
-                        className="w-4 h-4 text-blue-600"
+                        className="w-4 h-4 text-[#0070f2]"
                       />
                       <span>{lvl}</span>
                     </label>
@@ -805,7 +805,7 @@ export const Step2Landscape: React.FC<Step2Props> = ({
           {/* Card A: Landscape */}
           <div className="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs space-y-5">
             <div className="flex items-center space-x-2.5 border-b border-slate-100 pb-3">
-              <Layers className="w-5 h-5 text-blue-600" />
+              <Layers className="w-5 h-5 text-[#0070f2]" />
               <h3 className="text-base font-bold text-slate-900">
                 A. Current SAP CPI (Neo) Footprint
               </h3>
@@ -813,14 +813,14 @@ export const Step2Landscape: React.FC<Step2Props> = ({
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
               <div>
-                <label className="block text-xs font-semibold text-slate-800 mb-2">
+                <label className="block text-sm font-semibold text-slate-800 mb-2">
                   Neo Environment Scope <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
                   <select
                     value={neoScope}
                     onChange={(e) => setNeoScope(e.target.value)}
-                    className="w-full text-xs font-medium text-slate-800 border border-slate-300 rounded-xl px-3.5 py-2.5 pr-8 appearance-none bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    className="w-full text-sm font-normal text-slate-800 border border-slate-300 rounded-xl px-3.5 py-2.5 pr-8 appearance-none bg-white focus:ring-2 focus:ring-[#0070f2] focus:outline-none"
                   >
                     <option value="">Select Neo Scope</option>
                     <option value="Single Tenant">Single Tenant</option>
@@ -832,54 +832,54 @@ export const Step2Landscape: React.FC<Step2Props> = ({
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-800 mb-2">
+                <label className="block text-sm font-semibold text-slate-800 mb-2">
                   Custom Integration Flows (iFlows) <span className="text-red-500">*</span>
                 </label>
-                <div className="flex rounded-xl border border-slate-300 overflow-hidden focus-within:ring-2 focus-within:ring-blue-500">
+                <div className="flex rounded-xl border border-slate-300 overflow-hidden focus-within:ring-2 focus-within:ring-[#0070f2]">
                   <input
                     type="number"
                     value={neoFlowsCount === 0 ? '' : neoFlowsCount}
                     onChange={(e) => setNeoFlowsCount(parseInt(e.target.value) || 0)}
-                    className="w-full text-xs font-medium px-3 py-2.5 focus:outline-none bg-white text-slate-900"
+                    className="w-full text-sm font-medium px-3.5 py-2.5 focus:outline-none bg-white text-slate-900"
                     placeholder="e.g. 140"
                   />
-                  <div className="bg-slate-50 border-l border-slate-200 px-3 flex items-center text-xs text-slate-500">
+                  <div className="bg-slate-50 border-l border-slate-200 px-3.5 flex items-center text-sm text-slate-600">
                     iFlows
                   </div>
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-800 mb-2">
+                <label className="block text-sm font-semibold text-slate-800 mb-2">
                   Connected Subaccounts / Apps <span className="text-red-500">*</span>
                 </label>
-                <div className="flex rounded-xl border border-slate-300 overflow-hidden focus-within:ring-2 focus-within:ring-blue-500">
+                <div className="flex rounded-xl border border-slate-300 overflow-hidden focus-within:ring-2 focus-within:ring-[#0070f2]">
                   <input
                     type="number"
                     value={neoApplicationsCount === 0 ? '' : neoApplicationsCount}
                     onChange={(e) => setNeoApplicationsCount(parseInt(e.target.value) || 0)}
-                    className="w-full text-xs font-medium px-3 py-2.5 focus:outline-none bg-white text-slate-900"
+                    className="w-full text-sm font-medium px-3.5 py-2.5 focus:outline-none bg-white text-slate-900"
                     placeholder="e.g. 8"
                   />
-                  <div className="bg-slate-50 border-l border-slate-200 px-3 flex items-center text-xs text-slate-500">
+                  <div className="bg-slate-50 border-l border-slate-200 px-3.5 flex items-center text-sm text-slate-600">
                     apps
                   </div>
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-800 mb-2">
+                <label className="block text-sm font-semibold text-slate-800 mb-2">
                   Monthly Message Volume <span className="text-red-500">*</span>
                 </label>
-                <div className="flex rounded-xl border border-slate-300 overflow-hidden focus-within:ring-2 focus-within:ring-blue-500">
+                <div className="flex rounded-xl border border-slate-300 overflow-hidden focus-within:ring-2 focus-within:ring-[#0070f2]">
                   <input
                     type="number"
                     value={neoMonthlyMessageVol}
                     onChange={(e) => setNeoMonthlyMessageVol(e.target.value)}
-                    className="w-full text-xs font-medium px-3 py-2.5 focus:outline-none bg-white text-slate-900"
+                    className="w-full text-sm font-medium px-3.5 py-2.5 focus:outline-none bg-white text-slate-900"
                     placeholder="e.g. 450000"
                   />
-                  <div className="bg-slate-50 border-l border-slate-200 px-3 flex items-center text-xs text-slate-500">
+                  <div className="bg-slate-50 border-l border-slate-200 px-3.5 flex items-center text-sm text-slate-600">
                     msg/mo
                   </div>
                 </div>
@@ -890,7 +890,7 @@ export const Step2Landscape: React.FC<Step2Props> = ({
           {/* Card B: Custom Scripts & Security Artifacts */}
           <div className="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs space-y-5">
             <div className="flex items-center space-x-2.5 border-b border-slate-100 pb-3">
-              <KeyRound className="w-5 h-5 text-blue-600" />
+              <KeyRound className="w-5 h-5 text-[#0070f2]" />
               <h3 className="text-base font-bold text-slate-900">
                 B. Scripts, Value Mappings &amp; Security Artifacts
               </h3>
@@ -898,19 +898,19 @@ export const Step2Landscape: React.FC<Step2Props> = ({
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-xs font-semibold text-slate-800 mb-2">
+                <label className="block text-sm font-semibold text-slate-800 mb-2">
                   Custom Development Level
                 </label>
-                <div className="flex space-x-4">
+                <div className="flex space-x-5">
                   {(['Low', 'Medium', 'High'] as const).map((lvl) => (
-                    <label key={lvl} className="flex items-center space-x-2 cursor-pointer text-xs text-slate-700">
+                    <label key={lvl} className="flex items-center space-x-2 cursor-pointer text-sm text-slate-700">
                       <input
                         type="radio"
                         name="neoDev"
                         value={lvl}
                         checked={neoCustomDevLevel === lvl}
                         onChange={() => setNeoCustomDevLevel(lvl)}
-                        className="w-4 h-4 text-blue-600"
+                        className="w-4 h-4 text-[#0070f2]"
                       />
                       <span>{lvl}</span>
                     </label>
@@ -919,16 +919,16 @@ export const Step2Landscape: React.FC<Step2Props> = ({
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-800 mb-2">
+                <label className="block text-sm font-semibold text-slate-800 mb-2">
                   Artifacts Present for Migration
                 </label>
-                <div className="space-y-2 text-xs text-slate-700">
+                <div className="space-y-2.5 text-sm text-slate-700">
                   <label className="flex items-center space-x-2 cursor-pointer">
                     <input
                       type="checkbox"
                       checked={neoHasCustomScripts}
                       onChange={(e) => setNeoHasCustomScripts(e.target.checked)}
-                      className="rounded text-blue-600"
+                      className="w-4 h-4 rounded text-[#0070f2]"
                     />
                     <span>Custom Groovy &amp; Java script collections</span>
                   </label>
@@ -937,7 +937,7 @@ export const Step2Landscape: React.FC<Step2Props> = ({
                       type="checkbox"
                       checked={neoHasMappings}
                       onChange={(e) => setNeoHasMappings(e.target.checked)}
-                      className="rounded text-blue-600"
+                      className="w-4 h-4 rounded text-[#0070f2]"
                     />
                     <span>Value Mappings &amp; Keystore Credentials</span>
                   </label>
@@ -946,7 +946,7 @@ export const Step2Landscape: React.FC<Step2Props> = ({
                       type="checkbox"
                       checked={neoHasCustomAdapters}
                       onChange={(e) => setNeoHasCustomAdapters(e.target.checked)}
-                      className="rounded text-blue-600"
+                      className="w-4 h-4 rounded text-[#0070f2]"
                     />
                     <span>Partner / Custom Adapters</span>
                   </label>
@@ -965,7 +965,7 @@ export const Step2Landscape: React.FC<Step2Props> = ({
           {/* Card A: Landscape */}
           <div className="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs space-y-5">
             <div className="flex items-center space-x-2.5 border-b border-slate-100 pb-3">
-              <Workflow className="w-5 h-5 text-blue-600" />
+              <Workflow className="w-5 h-5 text-[#0070f2]" />
               <h3 className="text-base font-bold text-slate-900">
                 A. Boomi AtomSphere Environment &amp; Processes
               </h3>
@@ -973,14 +973,14 @@ export const Step2Landscape: React.FC<Step2Props> = ({
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
               <div>
-                <label className="block text-xs font-semibold text-slate-800 mb-2">
+                <label className="block text-sm font-semibold text-slate-800 mb-2">
                   Runtime Architecture <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
                   <select
                     value={boomiOnPremDeps}
                     onChange={(e) => setBoomiOnPremDeps(e.target.value)}
-                    className="w-full text-xs font-medium text-slate-800 border border-slate-300 rounded-xl px-3.5 py-2.5 pr-8 appearance-none bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    className="w-full text-sm font-normal text-slate-800 border border-slate-300 rounded-xl px-3.5 py-2.5 pr-8 appearance-none bg-white focus:ring-2 focus:ring-[#0070f2] focus:outline-none"
                   >
                     <option value="">Select Runtime Architecture</option>
                     <option value="Cloud Atom only">Cloud Atom only</option>
@@ -993,54 +993,54 @@ export const Step2Landscape: React.FC<Step2Props> = ({
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-800 mb-2">
+                <label className="block text-sm font-semibold text-slate-800 mb-2">
                   Total Boomi Processes <span className="text-red-500">*</span>
                 </label>
-                <div className="flex rounded-xl border border-slate-300 overflow-hidden focus-within:ring-2 focus-within:ring-blue-500">
+                <div className="flex rounded-xl border border-slate-300 overflow-hidden focus-within:ring-2 focus-within:ring-[#0070f2]">
                   <input
                     type="number"
                     value={boomiProcessCount === 0 ? '' : boomiProcessCount}
                     onChange={(e) => setBoomiProcessCount(parseInt(e.target.value) || 0)}
-                    className="w-full text-xs font-medium px-3 py-2.5 focus:outline-none bg-white text-slate-900"
+                    className="w-full text-sm font-medium px-3.5 py-2.5 focus:outline-none bg-white text-slate-900"
                     placeholder="e.g. 110"
                   />
-                  <div className="bg-slate-50 border-l border-slate-200 px-3 flex items-center text-xs text-slate-500">
+                  <div className="bg-slate-50 border-l border-slate-200 px-3.5 flex items-center text-sm text-slate-600">
                     processes
                   </div>
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-800 mb-2">
+                <label className="block text-sm font-semibold text-slate-800 mb-2">
                   Connected Applications <span className="text-red-500">*</span>
                 </label>
-                <div className="flex rounded-xl border border-slate-300 overflow-hidden focus-within:ring-2 focus-within:ring-blue-500">
+                <div className="flex rounded-xl border border-slate-300 overflow-hidden focus-within:ring-2 focus-within:ring-[#0070f2]">
                   <input
                     type="number"
                     value={boomiApplicationsCount === 0 ? '' : boomiApplicationsCount}
                     onChange={(e) => setBoomiApplicationsCount(parseInt(e.target.value) || 0)}
-                    className="w-full text-xs font-medium px-3 py-2.5 focus:outline-none bg-white text-slate-900"
+                    className="w-full text-sm font-medium px-3.5 py-2.5 focus:outline-none bg-white text-slate-900"
                     placeholder="e.g. 10"
                   />
-                  <div className="bg-slate-50 border-l border-slate-200 px-3 flex items-center text-xs text-slate-500">
+                  <div className="bg-slate-50 border-l border-slate-200 px-3.5 flex items-center text-sm text-slate-600">
                     apps
                   </div>
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-800 mb-2">
+                <label className="block text-sm font-semibold text-slate-800 mb-2">
                   Active Connectors <span className="text-red-500">*</span>
                 </label>
-                <div className="flex rounded-xl border border-slate-300 overflow-hidden focus-within:ring-2 focus-within:ring-blue-500">
+                <div className="flex rounded-xl border border-slate-300 overflow-hidden focus-within:ring-2 focus-within:ring-[#0070f2]">
                   <input
                     type="number"
                     value={boomiConnectorsCount === 0 ? '' : boomiConnectorsCount}
                     onChange={(e) => setBoomiConnectorsCount(parseInt(e.target.value) || 0)}
-                    className="w-full text-xs font-medium px-3 py-2.5 focus:outline-none bg-white text-slate-900"
+                    className="w-full text-sm font-medium px-3.5 py-2.5 focus:outline-none bg-white text-slate-900"
                     placeholder="e.g. 18"
                   />
-                  <div className="bg-slate-50 border-l border-slate-200 px-3 flex items-center text-xs text-slate-500">
+                  <div className="bg-slate-50 border-l border-slate-200 px-3.5 flex items-center text-sm text-slate-600">
                     connectors
                   </div>
                 </div>
@@ -1051,7 +1051,7 @@ export const Step2Landscape: React.FC<Step2Props> = ({
           {/* Card B: Connectors & Custom Scripting */}
           <div className="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs space-y-5">
             <div className="flex items-center space-x-2.5 border-b border-slate-100 pb-3">
-              <Puzzle className="w-5 h-5 text-blue-600" />
+              <Puzzle className="w-5 h-5 text-[#0070f2]" />
               <h3 className="text-base font-bold text-slate-900">
                 B. Connectors, B2B &amp; Map Scripting
               </h3>
@@ -1059,19 +1059,19 @@ export const Step2Landscape: React.FC<Step2Props> = ({
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div>
-                <label className="block text-xs font-semibold text-slate-800 mb-2">
+                <label className="block text-sm font-semibold text-slate-800 mb-2">
                   B2B / EDI Trading Partner Management
                 </label>
-                <div className="flex space-x-4">
+                <div className="flex space-x-5">
                   {(['Yes', 'No', 'Not sure'] as const).map((opt) => (
-                    <label key={opt} className="flex items-center space-x-2 cursor-pointer text-xs text-slate-700">
+                    <label key={opt} className="flex items-center space-x-2 cursor-pointer text-sm text-slate-700">
                       <input
                         type="radio"
                         name="boomiB2b"
                         value={opt}
                         checked={boomiHasB2b === opt}
                         onChange={() => setBoomiHasB2b(opt)}
-                        className="w-4 h-4 text-blue-600"
+                        className="w-4 h-4 text-[#0070f2]"
                       />
                       <span>{opt}</span>
                     </label>
@@ -1080,30 +1080,30 @@ export const Step2Landscape: React.FC<Step2Props> = ({
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-800 mb-2">
+                <label className="block text-sm font-semibold text-slate-800 mb-2">
                   Custom Scripting (JavaScript / Groovy)
                 </label>
-                <label className="flex items-center space-x-2 cursor-pointer text-xs text-slate-700 mt-2">
+                <label className="flex items-center space-x-2 cursor-pointer text-sm text-slate-700 mt-2">
                   <input
                     type="checkbox"
                     checked={boomiHasCustomScripting}
                     onChange={(e) => setBoomiHasCustomScripting(e.target.checked)}
-                    className="rounded text-blue-600"
+                    className="w-4 h-4 rounded text-[#0070f2]"
                   />
                   <span>Has custom scripts in Map Shapes or Data Process</span>
                 </label>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-800 mb-2">
+                <label className="block text-sm font-semibold text-slate-800 mb-2">
                   Boomi Custom SDK Connectors
                 </label>
-                <label className="flex items-center space-x-2 cursor-pointer text-xs text-slate-700 mt-2">
+                <label className="flex items-center space-x-2 cursor-pointer text-sm text-slate-700 mt-2">
                   <input
                     type="checkbox"
                     checked={boomiCustomConnectorsCount > 0}
                     onChange={(e) => setBoomiCustomConnectorsCount(e.target.checked ? 3 : 0)}
-                    className="rounded text-blue-600"
+                    className="w-4 h-4 rounded text-[#0070f2]"
                   />
                   <span>Has proprietary custom connectors ({boomiCustomConnectorsCount})</span>
                 </label>
@@ -1196,9 +1196,9 @@ export const Step2Landscape: React.FC<Step2Props> = ({
         <button
           type="button"
           onClick={onBack}
-          className="px-5 py-2.5 text-xs font-bold text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors flex items-center space-x-1.5 shadow-xs group"
+          className="px-5 py-2.5 text-sm font-semibold text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors flex items-center space-x-2 shadow-xs group"
         >
-          <svg className="w-3 h-3 text-slate-500 group-hover:text-slate-700 transition-transform group-hover:-translate-x-0.5" fill="none" viewBox="0 0 16 16" stroke="currentColor">
+          <svg className="w-4 h-4 text-slate-500 group-hover:text-slate-700 transition-transform group-hover:-translate-x-0.5" fill="none" viewBox="0 0 16 16" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M10 12.5l-4.5-4.5 4.5-4.5" />
           </svg>
           <span>Back</span>
@@ -1206,10 +1206,10 @@ export const Step2Landscape: React.FC<Step2Props> = ({
         <button
           type="button"
           onClick={onContinue}
-          className="px-6 py-2.5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-xs transition-all active:scale-95 flex items-center space-x-1.5 group"
+          className="px-6 py-2.5 text-sm font-semibold text-white bg-[#0070f2] hover:bg-[#0057d2] rounded-xl shadow-xs transition-all active:scale-95 flex items-center space-x-2 group"
         >
           <span>Continue</span>
-          <svg className="w-3 h-3 text-white transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 16 16" stroke="currentColor">
+          <svg className="w-4 h-4 text-white transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 16 16" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M6 3.5l4.5 4.5-4.5 4.5" />
           </svg>
         </button>

@@ -408,7 +408,7 @@ export function AssessmentWizard() {
     { id: 3, label: '3. Requirements' },
     { id: 4, label: '4. Sizing' },
     { id: 5, label: '5. Cost Parameters' },
-    { id: 6, label: '6. Select Edition' },
+    { id: 6, label: '6. Edition & Sizing' },
     { id: 7, label: '7. Review & Results' },
   ];
 
@@ -564,8 +564,8 @@ export function AssessmentWizard() {
                       )}
                     </div>
 
-                    <div className="flex items-center justify-center w-7 h-7 rounded-full bg-slate-100/90 text-slate-400 shrink-0">
-                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 20 20" stroke="currentColor">
+                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-slate-100/90 text-slate-400 shrink-0">
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 20 20" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M3 10h13m-4-4l4 4-4 4" />
                       </svg>
                     </div>
@@ -584,7 +584,7 @@ export function AssessmentWizard() {
                           fill={`url(#cloudGrad-${plat.id})`}
                         />
                       </svg>
-                      <span className="text-[10px] font-bold text-[#0b1b36] leading-tight text-center mt-1">
+                      <span className="text-xs font-bold text-[#0b1b36] leading-tight text-center mt-1">
                         SAP BTP<br />Integration Suite
                       </span>
                     </div>
@@ -596,63 +596,63 @@ export function AssessmentWizard() {
         </div>
 
         {/* 5-Item "What you'll get" Box */}
-        <div className="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 shadow-xs">
+        <div className="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-xs">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 divide-y sm:divide-y-0 sm:divide-x divide-slate-100">
             <div className="flex items-start space-x-3 pt-2 sm:pt-0 sm:px-2">
-              <div className="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 mt-0.5">
-                <Gift className="w-4 h-4" />
+              <div className="w-9 h-9 rounded-xl bg-blue-50 text-[#0070f2] flex items-center justify-center shrink-0 mt-0.5">
+                <Gift className="w-5 h-5" />
               </div>
               <div>
-                <h4 className="text-xs font-bold text-slate-900">What you&apos;ll get</h4>
-                <p className="text-[11px] text-slate-500 leading-snug mt-0.5">
+                <h4 className="text-sm font-bold text-slate-900">What you&apos;ll get</h4>
+                <p className="text-xs text-slate-500 leading-normal mt-0.5">
                   A comprehensive analysis with clear insights and business value.
                 </p>
               </div>
             </div>
 
             <div className="flex items-start space-x-3 pt-2 sm:pt-0 sm:px-2">
-              <div className="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 mt-0.5">
-                <FileText className="w-4 h-4" />
+              <div className="w-9 h-9 rounded-xl bg-blue-50 text-[#0070f2] flex items-center justify-center shrink-0 mt-0.5">
+                <FileText className="w-5 h-5" />
               </div>
               <div>
-                <h4 className="text-xs font-bold text-slate-900">Tailored Analysis</h4>
-                <p className="text-[11px] text-slate-500 leading-snug mt-0.5">
+                <h4 className="text-sm font-bold text-slate-900">Tailored Analysis</h4>
+                <p className="text-xs text-slate-500 leading-normal mt-0.5">
                   Based on your integration landscape and requirements.
                 </p>
               </div>
             </div>
 
             <div className="flex items-start space-x-3 pt-2 sm:pt-0 sm:px-2">
-              <div className="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 mt-0.5">
-                <TrendingUp className="w-4 h-4" />
+              <div className="w-9 h-9 rounded-xl bg-blue-50 text-[#0070f2] flex items-center justify-center shrink-0 mt-0.5">
+                <TrendingUp className="w-5 h-5" />
               </div>
               <div>
-                <h4 className="text-xs font-bold text-slate-900">Migration Sizing</h4>
-                <p className="text-[11px] text-slate-500 leading-snug mt-0.5">
+                <h4 className="text-sm font-bold text-slate-900">Migration Sizing</h4>
+                <p className="text-xs text-slate-500 leading-normal mt-0.5">
                   Estimate effort, complexity and timelines.
                 </p>
               </div>
             </div>
 
             <div className="flex items-start space-x-3 pt-2 sm:pt-0 sm:px-2">
-              <div className="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 mt-0.5">
-                <Database className="w-4 h-4" />
+              <div className="w-9 h-9 rounded-xl bg-blue-50 text-[#0070f2] flex items-center justify-center shrink-0 mt-0.5">
+                <Database className="w-5 h-5" />
               </div>
               <div>
-                <h4 className="text-xs font-bold text-slate-900">TCO &amp; ROI</h4>
-                <p className="text-[11px] text-slate-500 leading-snug mt-0.5">
+                <h4 className="text-sm font-bold text-slate-900">TCO &amp; ROI</h4>
+                <p className="text-xs text-slate-500 leading-normal mt-0.5">
                   Understand potential savings and business value.
                 </p>
               </div>
             </div>
 
             <div className="flex items-start space-x-3 pt-2 sm:pt-0 sm:px-2">
-              <div className="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 mt-0.5">
-                <Lightbulb className="w-4 h-4" />
+              <div className="w-9 h-9 rounded-xl bg-blue-50 text-[#0070f2] flex items-center justify-center shrink-0 mt-0.5">
+                <Lightbulb className="w-5 h-5" />
               </div>
               <div>
-                <h4 className="text-xs font-bold text-slate-900">Actionable Recommendations</h4>
-                <p className="text-[11px] text-slate-500 leading-snug mt-0.5">
+                <h4 className="text-sm font-bold text-slate-900">Actionable Recommendations</h4>
+                <p className="text-xs text-slate-500 leading-normal mt-0.5">
                   Get next steps to accelerate your migration journey.
                 </p>
               </div>
@@ -664,9 +664,9 @@ export function AssessmentWizard() {
         <div className="flex items-center justify-between pt-2">
           <Link
             href="/"
-            className="inline-flex items-center space-x-1.5 text-xs sm:text-sm font-semibold text-slate-600 hover:text-[#0070f2] transition-colors group"
+            className="inline-flex items-center space-x-2 text-sm font-semibold text-slate-600 hover:text-[#0070f2] transition-colors group"
           >
-            <svg className="w-3.5 h-3.5 text-slate-500 group-hover:text-[#0070f2] transition-transform group-hover:-translate-x-0.5" fill="none" viewBox="0 0 16 16" stroke="currentColor">
+            <svg className="w-4 h-4 text-slate-500 group-hover:text-[#0070f2] transition-transform group-hover:-translate-x-0.5" fill="none" viewBox="0 0 16 16" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M10 12.5l-4.5-4.5 4.5-4.5" />
             </svg>
             <span>Back to Home</span>
@@ -674,10 +674,10 @@ export function AssessmentWizard() {
           <button
             type="button"
             onClick={() => setCurrentStep(1)}
-            className="inline-flex items-center space-x-2 px-6 py-3 bg-[#0070f2] hover:bg-[#0057d2] text-white rounded-xl text-xs sm:text-sm font-bold shadow-md shadow-blue-500/20 active:scale-95 transition-all group"
+            className="inline-flex items-center space-x-2 px-6 py-3 bg-[#0070f2] hover:bg-[#0057d2] text-white rounded-xl text-sm font-semibold shadow-md shadow-blue-500/20 active:scale-95 transition-all group"
           >
             <span>Explore Business Value</span>
-            <svg className="w-3.5 h-3.5 text-white transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 16 16" stroke="currentColor">
+            <svg className="w-4 h-4 text-white transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 16 16" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M6 3.5l4.5 4.5-4.5 4.5" />
             </svg>
           </button>
@@ -694,20 +694,20 @@ export function AssessmentWizard() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
       {/* Breadcrumb & Platform Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 text-xs">
+      <div className="flex flex-wrap items-center justify-between gap-3 text-sm">
         <div className="flex items-center space-x-2 text-slate-500 font-medium">
-          <Link href="/" className="hover:text-blue-600 transition-colors">Home</Link>
+          <Link href="/" className="hover:text-[#0070f2] transition-colors">Home</Link>
           <span>&gt;</span>
-          <button onClick={() => setCurrentStep(0)} className="hover:text-blue-600 transition-colors">Business Value</button>
+          <button onClick={() => setCurrentStep(0)} className="hover:text-[#0070f2] transition-colors">Business Value</button>
           <span>&gt;</span>
           <span className="text-slate-900 font-semibold">{activePlat.name}</span>
         </div>
         <button
           type="button"
           onClick={() => setCurrentStep(0)}
-          className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 font-bold text-xs border border-blue-200 transition-colors group"
+          className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-blue-50 text-[#0070f2] hover:bg-blue-100 font-semibold text-sm border border-blue-200 transition-colors group"
         >
-          <svg className="w-3 h-3 text-blue-600 transition-transform group-hover:-translate-x-0.5" fill="none" viewBox="0 0 16 16" stroke="currentColor">
+          <svg className="w-4 h-4 text-[#0070f2] transition-transform group-hover:-translate-x-0.5" fill="none" viewBox="0 0 16 16" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M10 12.5l-4.5-4.5 4.5-4.5" />
           </svg>
           <span>Change Platform ({activePlat.name})</span>
@@ -731,42 +731,42 @@ export function AssessmentWizard() {
             {/* 4 Feature Pills */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3">
               <div className="flex items-center space-x-2.5 p-1.5">
-                <div className="w-8 h-8 rounded-full bg-blue-100/80 flex items-center justify-center shrink-0">
-                  <BarChart2 className="w-4 h-4 text-blue-600" />
+                <div className="w-9 h-9 rounded-xl bg-blue-100/80 flex items-center justify-center shrink-0">
+                  <BarChart2 className="w-5 h-5 text-[#0070f2]" />
                 </div>
                 <div>
-                  <div className="text-[11px] font-bold text-slate-800 leading-tight">Data-Driven</div>
-                  <div className="text-[10px] text-slate-500 leading-tight">Insights</div>
+                  <div className="text-xs sm:text-sm font-bold text-slate-800 leading-tight">Data-Driven</div>
+                  <div className="text-xs text-slate-500 leading-tight">Insights</div>
                 </div>
               </div>
 
               <div className="flex items-center space-x-2.5 p-1.5">
-                <div className="w-8 h-8 rounded-full bg-blue-100/80 flex items-center justify-center shrink-0">
-                  <Settings className="w-4 h-4 text-blue-600" />
+                <div className="w-9 h-9 rounded-xl bg-blue-100/80 flex items-center justify-center shrink-0">
+                  <Settings className="w-5 h-5 text-[#0070f2]" />
                 </div>
                 <div>
-                  <div className="text-[11px] font-bold text-slate-800 leading-tight">Tailored</div>
-                  <div className="text-[10px] text-slate-500 leading-tight">Recommendations</div>
+                  <div className="text-xs sm:text-sm font-bold text-slate-800 leading-tight">Tailored</div>
+                  <div className="text-xs text-slate-500 leading-tight">Recommendations</div>
                 </div>
               </div>
 
               <div className="flex items-center space-x-2.5 p-1.5">
-                <div className="w-8 h-8 rounded-full bg-blue-100/80 flex items-center justify-center shrink-0">
-                  <Database className="w-4 h-4 text-blue-600" />
+                <div className="w-9 h-9 rounded-xl bg-blue-100/80 flex items-center justify-center shrink-0">
+                  <Database className="w-5 h-5 text-[#0070f2]" />
                 </div>
                 <div>
-                  <div className="text-[11px] font-bold text-slate-800 leading-tight">Clear Business</div>
-                  <div className="text-[10px] text-slate-500 leading-tight">Value</div>
+                  <div className="text-xs sm:text-sm font-bold text-slate-800 leading-tight">Clear Business</div>
+                  <div className="text-xs text-slate-500 leading-tight">Value</div>
                 </div>
               </div>
 
               <div className="flex items-center space-x-2.5 p-1.5">
-                <div className="w-8 h-8 rounded-full bg-blue-100/80 flex items-center justify-center shrink-0">
-                  <Rocket className="w-4 h-4 text-blue-600" />
+                <div className="w-9 h-9 rounded-xl bg-blue-100/80 flex items-center justify-center shrink-0">
+                  <Rocket className="w-5 h-5 text-[#0070f2]" />
                 </div>
                 <div>
-                  <div className="text-[11px] font-bold text-slate-800 leading-tight">Faster Path</div>
-                  <div className="text-[10px] text-slate-500 leading-tight">to Innovation</div>
+                  <div className="text-xs sm:text-sm font-bold text-slate-800 leading-tight">Faster Path</div>
+                  <div className="text-xs text-slate-500 leading-tight">to Innovation</div>
                 </div>
               </div>
             </div>
@@ -794,7 +794,7 @@ export function AssessmentWizard() {
         <div className="flex items-start justify-between max-w-5xl mx-auto relative px-4 sm:px-6">
           <div className="absolute top-4 left-10 right-10 h-0.5 bg-slate-200 -z-0" />
           <div
-            className="absolute top-4 left-10 h-0.5 bg-blue-600 transition-all duration-300 -z-0"
+            className="absolute top-4 left-10 h-0.5 bg-[#0070f2] transition-all duration-300 -z-0"
             style={{
               width: `${((Math.max(1, currentStep) - 1) / (milestones.length - 1)) * 92}%`,
             }}
@@ -815,23 +815,25 @@ export function AssessmentWizard() {
                 }}
               >
                 <div
-                  className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${isCurrent
-                      ? 'bg-blue-600 text-white shadow-xs'
+                  className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold transition-all ${
+                    isCurrent
+                      ? 'bg-[#0070f2] text-white shadow-sm ring-4 ring-blue-500/20'
                       : isCompleted
-                        ? 'bg-teal-400 text-white shadow-xs'
-                        : 'bg-white text-slate-400 border border-slate-300'
-                    }`}
+                        ? 'bg-teal-500 text-white shadow-xs'
+                        : 'bg-white text-slate-500 border border-slate-300'
+                  }`}
                 >
-                  {isCompleted ? <Check className="w-4 h-4 stroke-[2.5]" /> : m.id}
+                  {isCompleted ? <Check className="w-4.5 h-4.5 stroke-[2.5]" /> : m.id}
                 </div>
                 <div className="flex flex-col items-center mt-2 text-center">
                   <span
-                    className={`text-xs mt-0.5 leading-tight ${isCurrent
-                        ? 'text-blue-600 font-bold'
+                    className={`text-xs sm:text-sm mt-0.5 leading-tight ${
+                      isCurrent
+                        ? 'text-[#0070f2] font-bold'
                         : isCompleted
                           ? 'text-slate-700 font-medium'
                           : 'text-slate-400'
-                      }`}
+                    }`}
                   >
                     {m.label}
                   </span>

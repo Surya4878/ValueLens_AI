@@ -45,7 +45,7 @@ export const Step1Organization: React.FC<Step1Props> = ({
       <div className="space-y-5">
         {/* 1. Business / Company Name */}
         <div>
-          <label className="block text-xs font-semibold text-slate-800 mb-2">
+          <label className="block text-sm font-semibold text-slate-800 mb-2">
             Business / Company Name <span className="text-red-500">*</span>
           </label>
           <input
@@ -53,14 +53,14 @@ export const Step1Organization: React.FC<Step1Props> = ({
             value={companyName}
             onChange={(e) => onCompanyNameChange(e.target.value)}
             placeholder="ABC Retail Ltd."
-            className="w-full text-xs font-medium border border-slate-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none bg-white text-slate-900"
+            className="w-full text-sm font-normal border border-slate-300 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-[#0070f2] focus:border-[#0070f2] focus:outline-none bg-white text-slate-900"
           />
         </div>
 
         {/* 2-Column: Employees & Industry */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
           <div>
-            <label className="block text-xs font-semibold text-slate-800 mb-2">
+            <label className="block text-sm font-semibold text-slate-800 mb-2">
               Number of Employees <span className="text-red-500">*</span>
             </label>
             <input
@@ -68,19 +68,19 @@ export const Step1Organization: React.FC<Step1Props> = ({
               value={companySize}
               onChange={(e) => onCompanySizeChange(e.target.value)}
               placeholder="200"
-              className="w-full text-xs font-medium border border-slate-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none bg-white text-slate-900"
+              className="w-full text-sm font-normal border border-slate-300 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-[#0070f2] focus:border-[#0070f2] focus:outline-none bg-white text-slate-900"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-800 mb-2">
+            <label className="block text-sm font-semibold text-slate-800 mb-2">
               Industry <span className="text-red-500">*</span>
             </label>
             <div className="relative">
               <select
                 value={industry}
                 onChange={(e) => onIndustryChange(e.target.value)}
-                className="w-full text-xs font-medium border border-slate-300 rounded-xl px-4 py-3 pr-8 appearance-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none bg-white text-slate-900"
+                className="w-full text-sm font-normal border border-slate-300 rounded-xl px-4 py-2.5 pr-9 appearance-none focus:ring-2 focus:ring-[#0070f2] focus:border-[#0070f2] focus:outline-none bg-white text-slate-900"
               >
                 <option value="">Select Industry</option>
                 <option value="Retail">Retail</option>
@@ -92,21 +92,21 @@ export const Step1Organization: React.FC<Step1Props> = ({
                 <option value="Technology & Software">Technology & Software</option>
                 <option value="Consumer Products">Consumer Products</option>
               </select>
-              <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-3.5 pointer-events-none" />
+              <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-3 pointer-events-none" />
             </div>
           </div>
         </div>
 
         {/* Row 3: Migration Timeline */}
         <div>
-          <label className="block text-xs font-semibold text-slate-800 mb-2">
+          <label className="block text-sm font-semibold text-slate-800 mb-2">
             Migration Timeline <span className="text-red-500">*</span>
           </label>
           <div className="relative">
             <select
               value={migrationTimeline}
               onChange={(e) => onMigrationTimelineChange(e.target.value)}
-              className="w-full text-xs font-medium border border-slate-300 rounded-xl px-4 py-3 pr-8 appearance-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none bg-white text-slate-900"
+              className="w-full text-sm font-normal border border-slate-300 rounded-xl px-4 py-2.5 pr-9 appearance-none focus:ring-2 focus:ring-[#0070f2] focus:border-[#0070f2] focus:outline-none bg-white text-slate-900"
             >
               <option value="">Select Target Timeline</option>
               <option value="2 Months (Incture Starter Package)">2 Months (Incture Starter Package)</option>
@@ -116,7 +116,7 @@ export const Step1Organization: React.FC<Step1Props> = ({
               <option value="6 Months (Accelerated)">6 Months (Accelerated)</option>
               <option value="12-18 Months (Standard Enterprise)">12-18 Months (Standard Enterprise)</option>
             </select>
-            <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-3.5 pointer-events-none" />
+            <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-3 pointer-events-none" />
           </div>
         </div>
       </div>
@@ -126,18 +126,18 @@ export const Step1Organization: React.FC<Step1Props> = ({
         <button
           type="button"
           onClick={onBack}
-          className="px-5 py-2.5 text-xs font-bold text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors flex items-center space-x-1.5 shadow-xs"
+          className="px-5 py-2.5 text-sm font-semibold text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors flex items-center space-x-1.5 shadow-xs"
         >
-          <ArrowLeft className="w-3.5 h-3.5" />
+          <ArrowLeft className="w-4 h-4" />
           <span>Back to Platform Selection</span>
         </button>
         <button
           type="button"
           onClick={onContinue}
-          className="px-6 py-2.5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-xs transition-all active:scale-95 flex items-center space-x-1.5"
+          className="px-6 py-2.5 text-sm font-semibold text-white bg-[#0070f2] hover:bg-[#0057d2] rounded-xl shadow-xs transition-all active:scale-95 flex items-center space-x-1.5"
         >
           <span>Continue</span>
-          <ArrowRight className="w-3.5 h-3.5" />
+          <ArrowRight className="w-4 h-4" />
         </button>
       </div>
     </div>
