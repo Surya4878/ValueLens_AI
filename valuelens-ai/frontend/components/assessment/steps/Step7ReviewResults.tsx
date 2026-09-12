@@ -85,30 +85,30 @@ export const Step7ReviewResults: React.FC<Step7Props> = ({
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-xs space-y-8 animate-fadeIn">
+    <div className="bg-white rounded-3xl border border-[#d9e2ec] p-8 md:p-10 shadow-xs space-y-8 animate-fadeIn">
       {/* Header */}
-      <div className="border-b border-slate-100 pb-4 flex flex-wrap items-center justify-between gap-4">
+      <div className="border-b border-[#e5e9f0] pb-6 flex flex-wrap items-center justify-between gap-4">
         <div>
           <span className="text-xs font-bold text-emerald-600 uppercase tracking-wider">
             Results Analysis • Step 7 of 7
           </span>
-          <h2 className="text-2xl font-black text-slate-900 mt-1 flex items-center gap-2">
+          <h2 className="text-2xl sm:text-3xl font-bold text-[#1d2d3e] mt-1 font-['72',sans-serif] flex items-center gap-2">
             <span>Your {config.name}</span>
             <svg className="w-5 h-5 text-slate-400 shrink-0" fill="none" viewBox="0 0 20 20" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M3 10h13m-4-4l4 4-4 4" />
             </svg>
             <span>SAP BTP Migration Analysis</span>
           </h2>
-          <p className="text-sm text-slate-500 mt-0.5">
+          <p className="text-base text-[#556b82] mt-1">
             Based on your inputs, here are the calculated economic results.
           </p>
         </div>
 
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-3">
           <button
             type="button"
             onClick={handleGoToDashboard}
-            className="px-4 py-2 text-sm font-semibold text-white bg-[#0070f2] hover:bg-[#0057d2] rounded-xl shadow-xs transition-colors flex items-center gap-1.5"
+            className="px-5 py-2.5 text-sm font-semibold text-white bg-[#0070f2] hover:bg-[#0057d2] rounded-xl shadow-xs transition-colors flex items-center gap-2"
           >
             <BarChart2 className="w-4 h-4" />
             <span>View Dashboard</span>
@@ -116,7 +116,7 @@ export const Step7ReviewResults: React.FC<Step7Props> = ({
           <button
             type="button"
             onClick={() => router.push(assessment.id ? `/report/${assessment.id}` : '/report/demo-assessment-1')}
-            className="px-4 py-2 text-sm font-semibold text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 shadow-xs transition-colors flex items-center gap-1.5"
+            className="px-5 py-2.5 text-sm font-semibold text-[#1d2d3e] bg-white border border-[#d9e2ec] rounded-xl hover:bg-slate-50 shadow-xs transition-colors flex items-center gap-2"
           >
             <Download className="w-4 h-4" />
             <span>Download Report</span>
@@ -124,7 +124,7 @@ export const Step7ReviewResults: React.FC<Step7Props> = ({
           <button
             type="button"
             onClick={onRestart}
-            className="px-4 py-2 text-sm font-semibold text-[#0070f2] bg-blue-50 border border-blue-200 rounded-xl hover:bg-blue-100 transition-colors"
+            className="px-4 py-2.5 text-sm font-semibold text-[#0070f2] bg-blue-50 border border-blue-200 rounded-xl hover:bg-blue-100 transition-colors"
           >
             Start New Assessment
           </button>
@@ -132,39 +132,39 @@ export const Step7ReviewResults: React.FC<Step7Props> = ({
       </div>
 
       {/* 4 Top KPI Cards matching Slide 8 */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="p-5 bg-slate-50 rounded-2xl border border-slate-200">
-          <span className="text-xs font-bold text-slate-500 uppercase block">Current Platform TCO</span>
-          <span className="text-2xl font-black text-slate-900 font-mono block mt-1">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div className="p-6 bg-slate-50/70 rounded-2xl border border-[#d9e2ec]">
+          <span className="text-xs font-bold text-[#556b82] uppercase block tracking-wider">Current Platform TCO</span>
+          <span className="text-2xl sm:text-3xl font-bold text-[#1d2d3e] font-mono block mt-2">
             ${displayCurrentTco.toLocaleString()}
           </span>
-          <span className="text-[11px] text-slate-400 mt-1 block">per year ({config.name})</span>
+          <span className="text-xs text-[#556b82] mt-1 block font-medium">per year ({config.name})</span>
         </div>
 
-        <div className="p-5 bg-slate-50 rounded-2xl border border-slate-200">
-          <span className="text-xs font-bold text-slate-500 uppercase block">Target Platform TCO</span>
-          <span className="text-2xl font-black text-indigo-600 font-mono block mt-1">
+        <div className="p-6 bg-slate-50/70 rounded-2xl border border-[#d9e2ec]">
+          <span className="text-xs font-bold text-[#556b82] uppercase block tracking-wider">Target Platform TCO</span>
+          <span className="text-2xl sm:text-3xl font-bold text-[#0070f2] font-mono block mt-2">
             ${displayTargetTco.toLocaleString()}
           </span>
-          <span className="text-[11px] text-slate-400 mt-1 block">per year (SAP BTP)</span>
+          <span className="text-xs text-[#556b82] mt-1 block font-medium">per year (SAP BTP)</span>
         </div>
 
-        <div className="p-5 bg-emerald-50/70 rounded-2xl border border-emerald-200">
-          <span className="text-xs font-bold text-emerald-800 uppercase block">Annual Savings</span>
-          <span className="text-2xl font-black text-emerald-600 font-mono block mt-1">
+        <div className="p-6 bg-emerald-50/70 rounded-2xl border border-emerald-200">
+          <span className="text-xs font-bold text-emerald-800 uppercase block tracking-wider">Annual Savings</span>
+          <span className="text-2xl sm:text-3xl font-bold text-emerald-600 font-mono block mt-2">
             ${displaySavings.toLocaleString()}
           </span>
-          <span className="text-[11px] text-emerald-700 font-bold mt-1 block">
+          <span className="text-xs text-emerald-700 font-bold mt-1 block">
             {savingsPct.toFixed(2)}% Reduction
           </span>
         </div>
 
-        <div className="p-5 bg-indigo-50/70 rounded-2xl border border-indigo-200">
-          <span className="text-xs font-bold text-indigo-800 uppercase block">5-Year ROI</span>
-          <span className="text-2xl font-black text-indigo-900 font-mono block mt-1">
+        <div className="p-6 bg-indigo-50/70 rounded-2xl border border-indigo-200">
+          <span className="text-xs font-bold text-indigo-800 uppercase block tracking-wider">5-Year ROI</span>
+          <span className="text-2xl sm:text-3xl font-bold text-indigo-900 font-mono block mt-2">
             {displayRoi.toFixed(2)}%
           </span>
-          <span className="text-[11px] text-indigo-600 font-bold mt-1 block">
+          <span className="text-xs text-indigo-600 font-bold mt-1 block">
             Break-even: {displayPayback.toFixed(1)} Months
           </span>
         </div>
@@ -173,94 +173,94 @@ export const Step7ReviewResults: React.FC<Step7Props> = ({
       {/* Main Analysis Grid: Visual Bar Chart & 5-Year Projection Table */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Left: Platform Cost Comparison Bar Chart */}
-        <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6 space-y-4">
-          <h3 className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+        <div className="bg-slate-50/70 border border-[#d9e2ec] rounded-3xl p-8 space-y-6">
+          <h3 className="text-sm font-bold text-[#1d2d3e] font-['72',sans-serif] uppercase tracking-wider">
             Annual Platform Cost Comparison
           </h3>
 
-          <div className="flex items-end justify-around h-52 pt-6 border-b border-slate-200 pb-4">
+          <div className="flex items-end justify-around h-52 pt-6 border-b border-[#d9e2ec] pb-4">
             {/* Current Platform Bar */}
             <div className="flex flex-col items-center space-y-2">
-              <span className="text-xs font-bold font-mono text-slate-900">
+              <span className="text-sm font-bold font-mono text-[#1d2d3e]">
                 ${(displayCurrentTco / 1000).toFixed(0)}K
               </span>
               <div
                 className="w-20 bg-indigo-500 rounded-t-xl transition-all duration-300 shadow-sm"
                 style={{ height: `${currentBarHeight}px` }}
               />
-              <span className="text-xs font-bold text-slate-700 text-center">
+              <span className="text-xs font-bold text-[#556b82] text-center">
                 Current ({config.name})
               </span>
             </div>
 
             {/* Target Platform Bar */}
             <div className="flex flex-col items-center space-y-2">
-              <span className="text-xs font-bold font-mono text-emerald-600">
+              <span className="text-sm font-bold font-mono text-emerald-600">
                 ${(displayTargetTco / 1000).toFixed(0)}K
               </span>
               <div
                 className="w-20 bg-emerald-500 rounded-t-xl transition-all duration-300 shadow-sm"
                 style={{ height: `${targetBarHeight}px` }}
               />
-              <span className="text-xs font-bold text-slate-700 text-center">
+              <span className="text-xs font-bold text-[#556b82] text-center">
                 Target (SAP BTP)
               </span>
             </div>
           </div>
 
           <div className="text-center">
-            <span className="text-xs font-bold text-emerald-700 bg-emerald-100/60 px-3 py-1 rounded-full border border-emerald-300 inline-block">
+            <span className="text-xs font-bold text-emerald-700 bg-emerald-100/60 px-4 py-1.5 rounded-full border border-emerald-300 inline-block">
               ✓ ${displaySavings.toLocaleString()} Annual Run-Rate Efficiency
             </span>
           </div>
         </div>
 
         {/* Right: 5-Year Value Projection Table */}
-        <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6 space-y-3">
-          <h3 className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+        <div className="bg-slate-50/70 border border-[#d9e2ec] rounded-3xl p-8 space-y-4">
+          <h3 className="text-sm font-bold text-[#1d2d3e] font-['72',sans-serif] uppercase tracking-wider">
             5-Year Value Projection
           </h3>
 
           <div className="overflow-x-auto">
             <table className="w-full text-xs text-left">
               <thead>
-                <tr className="border-b border-slate-200 text-slate-500">
-                  <th className="py-2">Year</th>
-                  <th className="py-2">Annual Savings</th>
-                  <th className="py-2 text-right">Cumulative Savings</th>
+                <tr className="border-b border-[#d9e2ec] text-[#556b82]">
+                  <th className="py-2.5 font-bold">Year</th>
+                  <th className="py-2.5 font-bold">Annual Savings</th>
+                  <th className="py-2.5 text-right font-bold">Cumulative Savings</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 font-mono">
+              <tbody className="divide-y divide-[#e5e9f0] font-mono">
                 <tr>
-                  <td className="py-2 font-bold text-slate-700">Year 1</td>
-                  <td className="py-2 text-slate-600">${displaySavings.toLocaleString()}</td>
-                  <td className="py-2 text-right font-bold text-slate-900">${(displaySavings * 1).toLocaleString()}</td>
+                  <td className="py-2.5 font-bold text-[#1d2d3e]">Year 1</td>
+                  <td className="py-2.5 text-[#556b82]">${displaySavings.toLocaleString()}</td>
+                  <td className="py-2.5 text-right font-bold text-[#1d2d3e]">${(displaySavings * 1).toLocaleString()}</td>
                 </tr>
                 <tr>
-                  <td className="py-2 font-bold text-slate-700">Year 2</td>
-                  <td className="py-2 text-slate-600">${displaySavings.toLocaleString()}</td>
-                  <td className="py-2 text-right font-bold text-slate-900">${(displaySavings * 2).toLocaleString()}</td>
+                  <td className="py-2.5 font-bold text-[#1d2d3e]">Year 2</td>
+                  <td className="py-2.5 text-[#556b82]">${displaySavings.toLocaleString()}</td>
+                  <td className="py-2.5 text-right font-bold text-[#1d2d3e]">${(displaySavings * 2).toLocaleString()}</td>
                 </tr>
                 <tr>
-                  <td className="py-2 font-bold text-slate-700">Year 3</td>
-                  <td className="py-2 text-slate-600">${displaySavings.toLocaleString()}</td>
-                  <td className="py-2 text-right font-bold text-slate-900">${(displaySavings * 3).toLocaleString()}</td>
+                  <td className="py-2.5 font-bold text-[#1d2d3e]">Year 3</td>
+                  <td className="py-2.5 text-[#556b82]">${displaySavings.toLocaleString()}</td>
+                  <td className="py-2.5 text-right font-bold text-[#1d2d3e]">${(displaySavings * 3).toLocaleString()}</td>
                 </tr>
                 <tr>
-                  <td className="py-2 font-bold text-slate-700">Year 4</td>
-                  <td className="py-2 text-slate-600">${displaySavings.toLocaleString()}</td>
-                  <td className="py-2 text-right font-bold text-slate-900">${(displaySavings * 4).toLocaleString()}</td>
+                  <td className="py-2.5 font-bold text-[#1d2d3e]">Year 4</td>
+                  <td className="py-2.5 text-[#556b82]">${displaySavings.toLocaleString()}</td>
+                  <td className="py-2.5 text-right font-bold text-[#1d2d3e]">${(displaySavings * 4).toLocaleString()}</td>
                 </tr>
                 <tr>
-                  <td className="py-2 font-bold text-slate-700">Year 5</td>
-                  <td className="py-2 text-slate-600">${displaySavings.toLocaleString()}</td>
-                  <td className="py-2 text-right font-bold text-slate-900">${(displaySavings * 5).toLocaleString()}</td>
+                  <td className="py-2.5 font-bold text-[#1d2d3e]">Year 5</td>
+                  <td className="py-2.5 text-[#556b82]">${displaySavings.toLocaleString()}</td>
+                  <td className="py-2.5 text-right font-bold text-[#1d2d3e]">${(displaySavings * 5).toLocaleString()}</td>
                 </tr>
                 <tr className="bg-emerald-100/50">
-                  <td className="py-2.5 font-extrabold text-emerald-900" colSpan={2}>
+                  <td className="py-3 font-extrabold text-emerald-900 rounded-l-xl" colSpan={2}>
                     Net 5-Year Benefit (After ${displayMigrationCost.toLocaleString()} Migration)
                   </td>
-                  <td className="py-2.5 text-right font-black text-emerald-700 text-sm">
+                  <td className="py-3 text-right font-bold text-emerald-700 text-sm rounded-r-xl">
                     ${displayNetBenefit.toLocaleString()}
                   </td>
                 </tr>
@@ -271,32 +271,32 @@ export const Step7ReviewResults: React.FC<Step7Props> = ({
       </div>
 
       {/* IntSwitch Value Metrics & Acceleration Container (Calculated Economics) */}
-      <div className="bg-gradient-to-r from-blue-50/90 via-indigo-50/50 to-sky-50/80 rounded-2xl border border-blue-200 p-6 shadow-xs space-y-5">
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-blue-200/70 pb-3.5">
+      <div className="bg-gradient-to-r from-blue-50/90 via-indigo-50/50 to-sky-50/80 rounded-3xl border border-blue-200 p-8 shadow-xs space-y-6">
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-blue-200/70 pb-4">
           <div className="flex items-center space-x-3">
             <img
               src="/images/intswitch-logo.png"
               alt="IntSwitch"
-              className="h-6 w-auto object-contain"
+              className="h-7 w-auto object-contain"
             />
-            <span className="h-4 w-px bg-blue-300"></span>
+            <span className="h-5 w-px bg-blue-300"></span>
             <div>
               <div className="flex items-center space-x-2">
                 <span className="text-xs font-bold text-[#0070f2] uppercase tracking-wider">
                   Incture IntSwitch Business Value &amp; ROI
                 </span>
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold border border-emerald-200">
-                  Calculated Economics
+                <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold border border-emerald-200">
+                  Value Add (Free) • $0 Cost
                 </span>
               </div>
-              <h4 className="text-base sm:text-lg font-black text-slate-900 mt-0.5">
+              <h4 className="text-lg font-bold text-[#1d2d3e] font-['72',sans-serif] mt-0.5">
                 {config.name} to SAP BTP Migration Value Metrics
               </h4>
             </div>
           </div>
           <a
             href="/intswitch"
-            className="inline-flex items-center space-x-1.5 text-sm font-semibold text-[#0070f2] hover:text-blue-800 transition-colors group"
+            className="inline-flex items-center space-x-2 text-sm font-semibold text-[#0070f2] hover:text-blue-800 transition-colors group"
           >
             <span>Explore IntSwitch Platform</span>
             <svg className="w-4 h-4 text-[#0070f2] transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 16 16" stroke="currentColor">
@@ -306,86 +306,86 @@ export const Step7ReviewResults: React.FC<Step7Props> = ({
         </div>
 
         {/* 4 Calculated Value Metric Cards */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-          <div className="bg-white rounded-xl p-4 border border-blue-100 shadow-2xs">
-            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="bg-white rounded-2xl p-5 border border-blue-100 shadow-2xs">
+            <span className="text-xs font-bold text-[#556b82] uppercase tracking-wider block">
               Potential Annual Savings
             </span>
-            <span className="text-2xl sm:text-3xl font-black text-emerald-600 font-mono block mt-1">
+            <span className="text-2xl sm:text-3xl font-bold text-emerald-600 font-mono block mt-1">
               {savingsPct.toFixed(1)}%
             </span>
-            <span className="text-[11px] text-slate-500 mt-0.5 block">
+            <span className="text-xs text-[#556b82] mt-1 block">
               Save ${displaySavings.toLocaleString()} / year
             </span>
           </div>
 
-          <div className="bg-white rounded-xl p-4 border border-blue-100 shadow-2xs">
-            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+          <div className="bg-white rounded-2xl p-5 border border-blue-100 shadow-2xs">
+            <span className="text-xs font-bold text-[#556b82] uppercase tracking-wider block">
               Estimated Payback
             </span>
-            <span className="text-2xl sm:text-3xl font-black text-[#0070f2] font-mono block mt-1">
+            <span className="text-2xl sm:text-3xl font-bold text-[#0070f2] font-mono block mt-1">
               {displaySavings > 0 && displayMigrationCost > 0
                 ? `< ${Math.max(1, Math.ceil(displayPayback))} Months`
                 : '—'}
             </span>
-            <span className="text-[11px] text-slate-500 mt-0.5 block">
+            <span className="text-xs text-[#556b82] mt-1 block">
               {displaySavings > 0 && displayMigrationCost > 0
                 ? `Break-even in ${displayPayback.toFixed(1)} Months`
                 : 'Awaiting inputs'}
             </span>
           </div>
 
-          <div className="bg-white rounded-xl p-4 border border-blue-100 shadow-2xs">
-            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+          <div className="bg-white rounded-2xl p-5 border border-blue-100 shadow-2xs">
+            <span className="text-xs font-bold text-[#556b82] uppercase tracking-wider block">
               5-Year Cumulative ROI
             </span>
-            <span className="text-2xl sm:text-3xl font-black text-indigo-700 font-mono block mt-1">
+            <span className="text-2xl sm:text-3xl font-bold text-indigo-700 font-mono block mt-1">
               {displaySavings > 0 && displayMigrationCost > 0 ? `${displayRoi.toFixed(1)}%` : '0.0%'}
             </span>
-            <span className="text-[11px] text-slate-500 mt-0.5 block">
+            <span className="text-xs text-[#556b82] mt-1 block">
               ${displayNetBenefit.toLocaleString()} Net Benefit
             </span>
           </div>
 
-          <div className="bg-white rounded-xl p-4 border border-blue-100 shadow-2xs">
-            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+          <div className="bg-white rounded-2xl p-5 border border-blue-100 shadow-2xs">
+            <span className="text-xs font-bold text-[#556b82] uppercase tracking-wider block">
               IntSwitch Advantage
             </span>
-            <span className="text-2xl sm:text-3xl font-black text-emerald-600 font-mono block mt-1">
+            <span className="text-2xl sm:text-3xl font-bold text-emerald-600 font-mono block mt-1">
               -40%
             </span>
-            <span className="text-[11px] text-slate-500 mt-0.5 block font-semibold">
-              Effort Reduction
+            <span className="text-xs text-emerald-700 mt-1 block font-semibold">
+              Effort Reduction • Free ($0)
             </span>
           </div>
         </div>
 
         {/* Calculated Run-Rate Bar */}
-        <div className="flex flex-wrap items-center justify-between gap-3 text-xs bg-white/90 rounded-xl p-3.5 border border-blue-100/90">
-          <div className="flex items-center space-x-2">
-            <span className="font-semibold text-slate-600">Current Run-Rate:</span>
-            <span className="font-extrabold text-slate-900 font-mono">${displayCurrentTco.toLocaleString()} / yr</span>
+        <div className="flex flex-wrap items-center justify-between gap-4 text-xs bg-white/95 rounded-2xl p-4 border border-blue-100">
+          <div className="flex items-center space-x-3">
+            <span className="font-semibold text-[#556b82]">Current Run-Rate:</span>
+            <span className="font-bold text-[#1d2d3e] font-mono text-sm">${displayCurrentTco.toLocaleString()} / yr</span>
             <svg className="w-4 h-4 text-slate-400 shrink-0" fill="none" viewBox="0 0 16 16" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8h10m-3-3l3 3-3 3" />
             </svg>
-            <span className="font-semibold text-slate-600">Target SAP BTP TCO:</span>
-            <span className="font-extrabold text-[#0070f2] font-mono">${displayTargetTco.toLocaleString()} / yr</span>
+            <span className="font-semibold text-[#556b82]">Target SAP BTP TCO:</span>
+            <span className="font-bold text-[#0070f2] font-mono text-sm">${displayTargetTco.toLocaleString()} / yr</span>
           </div>
-          <div className="text-[11px] text-slate-600 font-medium">
-            <span className="text-[#0070f2] font-bold">IntSwitch Scope:</span> {config.intSwitch.automationScope}
+          <div className="text-xs text-[#556b82] font-medium">
+            <span className="text-[#0070f2] font-bold">IntSwitch Scope:</span> {config.intSwitch.automationScope} (Included at zero additional cost)
           </div>
         </div>
 
         {/* Grounded IntSwitch Scope Description & 4 Specific Capabilities */}
-        <div className="space-y-2 pt-1">
-          <p className="text-xs text-slate-600 leading-relaxed">{config.intSwitch.scopeDescription}</p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+        <div className="space-y-3 pt-1">
+          <p className="text-sm text-[#556b82] leading-relaxed">{config.intSwitch.scopeDescription}</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
             {config.intSwitch.capabilities.map((cap, idx) => (
               <div
                 key={idx}
-                className="flex items-start gap-2.5 text-xs text-slate-700 bg-white/80 p-2.5 rounded-xl border border-blue-100/80"
+                className="flex items-start gap-3 text-xs text-[#1d2d3e] bg-white/90 p-3.5 rounded-xl border border-blue-100"
               >
-                <CheckCircle2 className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
+                <CheckCircle2 className="w-4 h-4 text-[#0070f2] shrink-0 mt-0.5" />
                 <span>{cap}</span>
               </div>
             ))}
@@ -394,41 +394,41 @@ export const Step7ReviewResults: React.FC<Step7Props> = ({
       </div>
 
       {/* AI Strategic Insights */}
-      <div className="p-5 bg-gradient-to-r from-indigo-50 via-purple-50 to-white rounded-2xl border border-indigo-100 space-y-2">
-        <div className="flex items-center space-x-2">
-          <span className="w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center text-xs font-bold">
+      <div className="p-8 bg-gradient-to-r from-indigo-50/90 via-purple-50/50 to-white rounded-3xl border border-indigo-100 space-y-3">
+        <div className="flex items-center space-x-3">
+          <span className="w-8 h-8 rounded-xl bg-indigo-600 text-white flex items-center justify-center text-xs font-bold shadow-xs">
             <Sparkles className="w-4 h-4" />
           </span>
-          <h4 className="text-sm font-bold text-indigo-900 uppercase tracking-wider">
+          <h4 className="text-sm font-bold text-indigo-950 uppercase tracking-wider">
             AI Strategic Synthesis
           </h4>
         </div>
-        <p className="text-xs text-indigo-950 leading-relaxed">
+        <p className="text-sm text-[#1d2d3e] leading-relaxed">
           Your migration presents a compelling business case. Moving from {config.name} to SAP BTP Integration Suite reduces estimated annual platform TCO by approximately {savingsPct.toFixed(1)}%, unlocking ${displaySavings.toLocaleString()} in annual operating savings with an estimated 5-year ROI of {displayRoi.toFixed(1)}% and break-even in {displayPayback.toFixed(1)} months.
         </p>
       </div>
 
       {/* Key Opportunities */}
-      <div className="p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-3">
-        <h4 className="text-sm font-bold text-slate-700 uppercase tracking-wider">Key Modernization Opportunities</h4>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-700">
-          <div className="flex items-center space-x-2">
+      <div className="p-8 bg-slate-50/70 rounded-3xl border border-[#d9e2ec] space-y-4">
+        <h4 className="text-sm font-bold text-[#1d2d3e] font-['72',sans-serif] uppercase tracking-wider">Key Modernization Opportunities</h4>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-[#556b82]">
+          <div className="flex items-center space-x-2.5">
             <span className="text-emerald-600 font-bold">✓</span>
-            <span>Reduce infrastructure & host server dependency</span>
+            <span>Reduce infrastructure &amp; host server dependency</span>
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2.5">
             <span className="text-emerald-600 font-bold">✓</span>
             <span>Modernize to cloud-native integration runtime</span>
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2.5">
             <span className="text-emerald-600 font-bold">✓</span>
-            <span>Unified API lifecycle management & developer portal</span>
+            <span>Unified API lifecycle management &amp; developer portal</span>
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2.5">
             <span className="text-emerald-600 font-bold">✓</span>
-            <span>Decommission legacy middleware licensing & technical debt</span>
+            <span>Decommission legacy middleware licensing &amp; technical debt</span>
           </div>
-          <div className="flex items-center space-x-2 sm:col-span-2">
+          <div className="flex items-center space-x-2.5 sm:col-span-2">
             <span className="text-emerald-600 font-bold">✓</span>
             <span>Establish foundation for AI-assisted mapping and automated testing</span>
           </div>
@@ -436,13 +436,13 @@ export const Step7ReviewResults: React.FC<Step7Props> = ({
       </div>
 
       {/* Bottom Action Row */}
-      <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-slate-100">
+      <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-[#e5e9f0]">
         <button
           type="button"
           onClick={onBack}
-          className="inline-flex items-center gap-1.5 px-5 py-2.5 text-sm font-semibold text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors group"
+          className="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold text-[#1d2d3e] bg-white border border-[#d9e2ec] rounded-xl hover:bg-slate-50 transition-colors group shadow-xs"
         >
-          <svg className="w-4 h-4 text-slate-500 group-hover:text-slate-700 transition-transform group-hover:-translate-x-0.5" fill="none" viewBox="0 0 16 16" stroke="currentColor">
+          <svg className="w-4 h-4 text-slate-500 group-hover:text-[#1d2d3e] transition-transform group-hover:-translate-x-0.5" fill="none" viewBox="0 0 16 16" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M10 12.5l-4.5-4.5 4.5-4.5" />
           </svg>
           <span>Back to Inputs</span>
@@ -451,7 +451,7 @@ export const Step7ReviewResults: React.FC<Step7Props> = ({
         <button
           type="button"
           onClick={handleGoToDashboard}
-          className="px-6 py-2.5 text-sm font-semibold text-white bg-[#0070f2] hover:bg-[#0057d2] rounded-xl shadow-md shadow-blue-500/20 transition-all active:scale-95 flex items-center gap-1.5"
+          className="px-8 py-3.5 text-sm font-bold text-white bg-[#0070f2] hover:bg-[#0057d2] rounded-xl shadow-md shadow-blue-500/20 transition-all active:scale-95 flex items-center gap-2"
         >
           <span>Explore Full Analytics Dashboard</span>
           <ArrowRight className="w-4 h-4" />

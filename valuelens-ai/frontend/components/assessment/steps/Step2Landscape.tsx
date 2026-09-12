@@ -126,10 +126,11 @@ export const Step2Landscape: React.FC<Step2Props> = ({
           ? neoComplexity
           : boomiMappingComplexity) || 'Simple';
 
-  // Real-time Incture Package Matching (Range / Package-Based Model)
+  // Real-time Incture Package Matching (Range / Package-Based Model with Dual-Stack +15% per PDF standard)
+  const isDualStack = platformId === 'sap-pipo' && (piPoVersion.toLowerCase().includes('dual') || hasCcBpm);
   const matchedResult = React.useMemo(() => {
-    return matchIncturePackage(platformId, currentScopeCount, currentAppsCount, currentComplexity);
-  }, [platformId, currentScopeCount, currentAppsCount, currentComplexity]);
+    return matchIncturePackage(platformId, currentScopeCount, currentAppsCount, currentComplexity, isDualStack);
+  }, [platformId, currentScopeCount, currentAppsCount, currentComplexity, isDualStack]);
 
   // Synchronize matched package pricing to assessment state
   React.useEffect(() => {

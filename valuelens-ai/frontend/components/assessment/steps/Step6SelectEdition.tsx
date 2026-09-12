@@ -469,15 +469,15 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
 
   // Subview 1: Main Cards & Package Selection View
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <span className="text-xs font-bold text-[#0070f2] uppercase tracking-wider">STEP 6 OF 7</span>
-          <h2 className="text-2xl font-black text-slate-900 mt-1">
+          <h2 className="text-2xl sm:text-3xl font-bold text-[#1d2d3e] mt-1 font-['72',sans-serif]">
             SAP BTP Edition &amp; Capacity Sizing
           </h2>
-          <p className="text-sm text-slate-500 mt-0.5">
+          <p className="text-base text-[#556b82] mt-1">
             Configure your SAP Integration Suite subscription edition and capacity add-ons.
           </p>
         </div>
@@ -485,17 +485,17 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
         {/* AI Recommendation Trigger */}
         <div
           onClick={fetchLiveAiRecommendation}
-          className="cursor-pointer bg-white border border-indigo-100 hover:border-indigo-300 rounded-2xl p-3.5 px-4 shadow-xs hover:shadow-sm transition-all flex items-center gap-3 group max-w-xs shrink-0 active:scale-95"
+          className="cursor-pointer bg-white border border-[#d9e2ec] hover:border-[#0070f2] rounded-2xl p-4 px-5 shadow-xs hover:shadow-sm transition-all flex items-center gap-3.5 group max-w-xs shrink-0 active:scale-95"
           title="Click to run live AI recommendations"
         >
-          <div className="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-            {aiLoading ? <Loader2 className="w-4 h-4 text-indigo-600 animate-spin" /> : <Sparkles className="w-4 h-4 text-indigo-600" />}
+          <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#0070f2] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+            {aiLoading ? <Loader2 className="w-5 h-5 text-[#0070f2] animate-spin" /> : <Sparkles className="w-5 h-5 text-[#0070f2]" />}
           </div>
           <div>
-            <div className="text-xs font-black text-slate-900 flex items-center gap-1.5">
+            <div className="text-sm font-bold text-[#1d2d3e] flex items-center gap-1.5">
               Generate AI Insights
             </div>
-            <p className="text-[11px] text-slate-500 leading-tight mt-0.5">
+            <p className="text-xs text-[#556b82] leading-tight mt-0.5">
               Get AI-powered recommendations based on your inputs.
             </p>
           </div>
@@ -504,58 +504,58 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
 
       {/* AI Recommendation Modal / Card */}
       {showAiRecommendation && (
-        <div className="p-5 bg-gradient-to-br from-indigo-50/90 via-purple-50/40 to-white rounded-2xl border border-indigo-200 space-y-3.5 shadow-xs animate-fadeIn">
+        <div className="p-6 sm:p-8 bg-gradient-to-br from-indigo-50/90 via-purple-50/40 to-white rounded-3xl border border-indigo-200 space-y-4 shadow-xs animate-fadeIn">
           {aiLoading ? (
-            <div className="p-6 flex flex-col items-center justify-center gap-3 text-center">
-              <Loader2 className="w-7 h-7 text-indigo-600 animate-spin" />
-              <div className="text-sm font-bold text-indigo-950">ValueLens AI is Evaluating Your Landscape</div>
-              <div className="text-xs text-indigo-600">Analyzing footprint and matching with official SAP pricing rules...</div>
+            <div className="p-8 flex flex-col items-center justify-center gap-3 text-center">
+              <Loader2 className="w-8 h-8 text-[#0070f2] animate-spin" />
+              <div className="text-base font-bold text-[#1d2d3e]">ValueLens AI is Evaluating Your Landscape</div>
+              <div className="text-xs text-[#556b82]">Analyzing footprint and matching with official SAP pricing rules...</div>
             </div>
           ) : aiRecommendationData ? (
             <>
               <div className="flex items-start justify-between gap-3">
-                <div className="flex items-start gap-2.5">
-                  <div className="w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-xs shrink-0 mt-0.5">
-                    <Sparkles className="w-4 h-4" />
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-[#0070f2] text-white flex items-center justify-center shadow-xs shrink-0 mt-0.5">
+                    <Sparkles className="w-5 h-5" />
                   </div>
                   <div>
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="text-xs font-black text-indigo-950 uppercase tracking-wider">
+                      <span className="text-xs font-bold text-[#1d2d3e] uppercase tracking-wider">
                         AI Recommended Edition:
                       </span>
-                      <span className="text-sm font-black text-indigo-700 bg-indigo-100/90 px-2.5 py-0.5 rounded-lg border border-indigo-200">
+                      <span className="text-sm font-bold text-[#0070f2] bg-blue-100/90 px-3 py-0.5 rounded-lg border border-blue-200">
                         {aiRecommendationData.recommendedEdition}
                       </span>
                       {aiRecommendationData.confidenceScore && (
-                        <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100/90 px-2 py-0.5 rounded-full border border-emerald-200">
+                        <span className="text-xs font-bold text-emerald-700 bg-emerald-100/90 px-2.5 py-0.5 rounded-full border border-emerald-200">
                           {aiRecommendationData.confidenceScore}% Confidence Fit
                         </span>
                       )}
                     </div>
                     {aiRecommendationData.headline && (
-                      <p className="text-xs font-semibold text-slate-700 mt-1">{aiRecommendationData.headline}</p>
+                      <p className="text-sm font-semibold text-[#1d2d3e] mt-1">{aiRecommendationData.headline}</p>
                     )}
                   </div>
                 </div>
                 <button
                   type="button"
                   onClick={() => setShowAiRecommendation(false)}
-                  className="text-xs text-slate-400 hover:text-slate-600 font-bold p-1 rounded-lg"
+                  className="text-xs text-slate-400 hover:text-slate-600 font-bold p-1.5 rounded-lg"
                 >
                   ✕
                 </button>
               </div>
-              <div className="text-xs text-slate-700 leading-relaxed bg-white/90 p-3.5 rounded-xl border border-indigo-100">
+              <div className="text-sm text-[#556b82] leading-relaxed bg-white/90 p-5 rounded-2xl border border-indigo-100">
                 {aiRecommendationData.reasoning}
               </div>
-              <div className="pt-2 flex justify-end gap-2">
+              <div className="pt-2 flex justify-end gap-3">
                 <button
                   type="button"
                   onClick={() => {
                     handleSelectEdition(aiRecommendationData.recommendedEdition);
                     setShowAiRecommendation(false);
                   }}
-                  className="px-4 py-2 bg-[#0070f2] hover:bg-[#0057d2] text-white rounded-xl text-sm font-semibold shadow-xs transition-all flex items-center gap-1.5"
+                  className="px-5 py-2.5 bg-[#0070f2] hover:bg-[#0057d2] text-white rounded-xl text-sm font-semibold shadow-xs transition-all flex items-center gap-2"
                 >
                   <CheckCircle2 className="w-4 h-4" /> Apply {aiRecommendationData.recommendedEdition}
                 </button>
@@ -566,20 +566,20 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
       )}
 
       {/* Part 1: SAP BTP Edition Cards */}
-      <div className="space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+      <div className="bg-white rounded-3xl border border-[#d9e2ec] p-8 md:p-10 shadow-xs space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#e5e9f0] pb-4">
           <div>
-            <h3 className="text-lg font-bold text-slate-900">
+            <h3 className="text-xl font-bold text-[#1d2d3e] font-['72',sans-serif]">
               Subscription Editions
             </h3>
-            <p className="text-xs text-slate-500 mt-0.5">
+            <p className="text-sm text-[#556b82] mt-0.5">
               Select the tier that fits your enterprise integration footprint.
             </p>
           </div>
           <button
             type="button"
             onClick={() => setSubView('comparison')}
-            className="text-sm font-semibold text-[#0070f2] hover:text-[#0057d2] inline-flex items-center gap-1.5 group self-start sm:self-auto bg-blue-50 hover:bg-blue-100 px-3.5 py-2 rounded-xl border border-blue-200 transition-colors"
+            className="text-sm font-semibold text-[#0070f2] hover:text-[#0057d2] inline-flex items-center gap-2 group self-start sm:self-auto bg-blue-50 hover:bg-blue-100 px-4 py-2.5 rounded-xl border border-blue-200 transition-colors"
           >
             <Scale className="w-4 h-4" />
             <span>View Full Comparison Matrix</span>
@@ -590,11 +590,11 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
         </div>
 
         {/* 3 SAP Integration Suite Editions Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Starter Edition */}
           <div
             onClick={() => handleSelectEdition('Starter Edition', 1)}
-            className={`p-6 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between relative ${
+            className={`p-6 sm:p-7 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between relative ${
               currentEd === 'Starter Edition'
                 ? 'border-[#0070f2] ring-2 ring-[#0070f2]/20 bg-blue-50/15 shadow-md'
                 : 'border-slate-200 hover:border-slate-300 bg-white shadow-2xs'
@@ -902,28 +902,31 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
       </div>
 
       {/* Part 2: Official SAP BTP Integration Suite Add-Ons */}
-      <div className="space-y-4 pt-4 border-t border-slate-200">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+      <div className="bg-white rounded-3xl border border-[#d9e2ec] p-8 md:p-10 shadow-xs space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#e5e9f0] pb-4">
           <div>
-            <span className="text-sm font-bold text-[#0070f2] uppercase tracking-wider block">
+            <span className="text-xs font-bold text-[#0070f2] uppercase tracking-wider block">
               OFFICIAL SAP BTP INTEGRATION SUITE ADD-ONS
             </span>
-            <p className="text-xs text-slate-500 mt-0.5">
-              Configure optional capacity and hybrid runtime extensions matching official SAP pricing schedule.
+            <h3 className="text-xl font-bold text-[#1d2d3e] font-['72',sans-serif] mt-0.5">
+              Capacity &amp; Hybrid Extensions
+            </h3>
+            <p className="text-sm text-[#556b82] mt-0.5">
+              Configure optional capacity and hybrid runtime extensions matching the official SAP pricing schedule.
             </p>
           </div>
           {(packs > 0 || dataSpacePackages > 0 || additionalEicTenants > 0) && (
             <button
               type="button"
               onClick={handleClearAllAddOns}
-              className="text-xs font-semibold text-rose-600 hover:text-rose-800 transition-colors self-start sm:self-auto px-3 py-1 bg-rose-50 rounded-lg border border-rose-200"
+              className="text-xs font-semibold text-rose-600 hover:text-rose-800 transition-colors self-start sm:self-auto px-3.5 py-1.5 bg-rose-50 rounded-xl border border-rose-200 shadow-2xs"
             >
               Clear all add-ons
             </button>
           )}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Add-on 1: Additional Message Packs */}
           <div
             className={`p-5 rounded-2xl border transition-all flex flex-col justify-between ${
@@ -1247,23 +1250,23 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
           const totalMonthly = monthlyBase * effectiveUnits + packs * 7 + additionalEicTenants * 3455 + dataSpacePackages * 75;
 
           return (
-            <div className="bg-gradient-to-r from-blue-50/90 via-sky-50/50 to-indigo-50/80 rounded-2xl border border-blue-200/90 p-5 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4 mt-2">
-              <div className="space-y-1.5">
+            <div className="bg-gradient-to-r from-blue-50/90 via-sky-50/50 to-indigo-50/80 rounded-3xl border border-blue-200/90 p-6 sm:p-8 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6 mt-4">
+              <div className="space-y-2">
                 <div className="flex items-center gap-2">
                   <span className="text-xs font-bold text-[#0070f2] uppercase tracking-wider">
                     CONFIGURED SAP BTP CLOUD SUBSCRIPTION
                   </span>
-                  <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                  <span className="text-[11px] font-bold text-emerald-800 bg-emerald-100 px-3 py-0.5 rounded-full border border-emerald-200">
                     Official SAP Pricing Baseline
                   </span>
                 </div>
-                <h4 className="text-base font-bold text-slate-900">
+                <h4 className="text-xl font-bold text-[#1d2d3e] font-['72',sans-serif]">
                   {effectiveEd} ({effectiveUnits} tenant) &bull; ${basePrice.toLocaleString()}/yr
                   {packs > 0 && ` + ${packs} msg packs ($${packCost.toLocaleString()})`}
                   {additionalEicTenants > 0 && ` + ${additionalEicTenants} EIC ($${eicCost.toLocaleString()})`}
                   {dataSpacePackages > 0 && ` + ${dataSpacePackages} Data Space ($${dataSpaceCost.toLocaleString()})`}
                 </h4>
-                <p className="text-xs text-slate-500 font-mono">
+                <p className="text-xs text-[#556b82] font-mono">
                   Quoting formula: {effectiveUnits} unit(s) &times; ${basePrice.toLocaleString()}/yr
                   {packs > 0 ? ` + ${packs} packs &times; $84` : ''}
                   {dataSpacePackages > 0 ? ` + ${dataSpacePackages} DataSpace &times; $900` : ''}
@@ -1271,12 +1274,12 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
                 </p>
               </div>
 
-              <div className="text-right shrink-0 bg-white/90 p-4 rounded-xl border border-blue-100">
-                <span className="text-xs text-slate-500 block">Total Configured Annual Subscription</span>
-                <div className="text-2xl font-bold font-mono text-[#0070f2]">
-                  USD {totalAnnual.toLocaleString()}<span className="text-xs text-slate-500 font-normal"> / yr</span>
+              <div className="text-right shrink-0 bg-white/95 p-5 rounded-2xl border border-blue-100 shadow-xs">
+                <span className="text-xs text-[#556b82] block">Total Configured Annual Subscription</span>
+                <div className="text-2xl sm:text-3xl font-bold font-mono text-[#0070f2]">
+                  USD {totalAnnual.toLocaleString()}<span className="text-sm text-[#556b82] font-normal"> / yr</span>
                 </div>
-                <div className="text-xs text-slate-500 font-mono mt-0.5">
+                <div className="text-xs text-[#556b82] font-mono mt-1">
                   &asymp; USD {totalMonthly.toLocaleString()} / month
                 </div>
               </div>
@@ -1286,13 +1289,13 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
       </div>
 
       {/* Navigation Controls */}
-      <div className="flex items-center justify-between pt-6 border-t border-slate-200">
+      <div className="flex items-center justify-between pt-6 border-t border-[#e5e9f0]">
         <button
           type="button"
           onClick={onBack}
-          className="px-5 py-2.5 text-sm font-semibold text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors flex items-center space-x-1.5 shadow-xs"
+          className="px-6 py-3 text-sm font-semibold text-[#1d2d3e] bg-white border border-[#d9e2ec] rounded-xl hover:bg-slate-50 transition-colors flex items-center space-x-2 shadow-xs group"
         >
-          <ArrowLeft className="w-4 h-4" />
+          <ArrowLeft className="w-4 h-4 text-slate-500 group-hover:text-[#1d2d3e] transition-transform group-hover:-translate-x-0.5" />
           <span>Back to Cost Parameters</span>
         </button>
 

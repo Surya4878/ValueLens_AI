@@ -116,16 +116,16 @@ export default function ReportPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-100 py-8 print:bg-white print:py-0">
-      <div className="max-w-4xl mx-auto space-y-6">
-        {/* Screen Controls (Hidden when printing) */}
-        <div className="no-print bg-white p-4 rounded-2xl border border-slate-200 shadow-xs flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center space-x-2">
+    <div className="min-h-screen bg-[#f5f6f8] py-8 md:py-10 text-[#1d2d3e]">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 space-y-6">
+        {/* Action Bar */}
+        <div className="flex flex-wrap items-center justify-between gap-4 print:hidden">
+          <div className="flex items-center space-x-3">
             <Link
               href={`/dashboard/${assessmentId}`}
-              className="text-xs font-bold text-slate-600 hover:text-[#0070f2] inline-flex items-center gap-1.5 transition-colors group"
+              className="text-xs sm:text-sm font-semibold text-[#556b82] hover:text-[#0070f2] transition-colors flex items-center space-x-1.5"
             >
-              <svg className="w-3 h-3 text-slate-500 group-hover:text-[#0070f2] transition-transform group-hover:-translate-x-0.5" fill="none" viewBox="0 0 16 16" stroke="currentColor">
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 16 16" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M10 12.5l-4.5-4.5 4.5-4.5" />
               </svg>
               <span>Back to Dashboard</span>
@@ -135,9 +135,9 @@ export default function ReportPage() {
           <div className="flex items-center space-x-2">
             <button
               onClick={handlePrint}
-              className="px-4 py-1.5 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-xs transition-colors flex items-center space-x-1.5"
+              className="px-5 py-2.5 text-xs sm:text-sm font-semibold text-white bg-[#0070f2] hover:bg-[#0057d2] rounded-xl shadow-xs transition-colors flex items-center space-x-2 cursor-pointer"
             >
-              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
               </svg>
               <span>Print to PDF (Board Deck)</span>
@@ -146,21 +146,21 @@ export default function ReportPage() {
         </div>
 
         {/* Board Dossier Document (A4 format style) */}
-        <div className="bg-white p-8 sm:p-12 rounded-3xl border border-slate-200 shadow-xl print:shadow-none print:border-none print:p-0 space-y-8">
+        <div className="bg-white p-8 sm:p-12 md:p-14 rounded-3xl border border-[#d9e2ec] shadow-xl print:shadow-none print:border-none print:p-0 space-y-8">
           {/* Header */}
-          <div className="border-b-2 border-slate-900 pb-6 flex justify-between items-start">
+          <div className="border-b-2 border-[#1d2d3e] pb-6 flex justify-between items-start">
             <div>
               <div className="flex items-center space-x-2">
-                <span className="text-xs font-black tracking-widest text-indigo-600 uppercase">
+                <span className="text-xs font-black tracking-widest text-[#0070f2] uppercase">
                   ValueLens AI • Enterprise Investment Dossier
                 </span>
                 <ValueOriginChip origin="CALCULATED" />
               </div>
-              <h1 className="text-2xl sm:text-3xl font-black text-slate-900 mt-1">
+              <h1 className="text-2xl sm:text-3xl font-black text-[#1d2d3e] mt-1.5">
                 Strategic Business Case: SAP PI/PO to SAP BTP Migration
               </h1>
-              <p className="text-xs text-slate-500 mt-1">
-                Authoritative Economic Assessment & Risk Appraisal for Executive Committee Review
+              <p className="text-xs sm:text-sm text-[#556b82] mt-1">
+                Authoritative Economic Assessment &amp; Risk Appraisal for Executive Committee Review
               </p>
             </div>
             <div className="text-right text-xs font-mono text-slate-500 shrink-0">
@@ -186,91 +186,91 @@ export default function ReportPage() {
           </div>
 
           {/* Table of Deterministic Facts */}
-          <div className="space-y-3">
-            <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wide border-b border-slate-200 pb-2">
+          <div className="space-y-4">
+            <h3 className="text-sm font-bold text-[#1d2d3e] uppercase tracking-wide border-b border-[#d9e2ec] pb-2">
               Authoritative Financial Ledger (Deterministic Java Engine)
             </h3>
-            <table className="w-full text-xs text-left border border-slate-200 rounded-xl overflow-hidden">
-              <thead className="bg-slate-100 text-slate-700 font-bold">
+            <table className="w-full text-xs sm:text-sm text-left border border-[#d9e2ec] rounded-2xl overflow-hidden">
+              <thead className="bg-slate-50 text-[#1d2d3e] font-bold border-b border-[#d9e2ec]">
                 <tr>
-                  <th className="p-3">Financial Metric</th>
-                  <th className="p-3 text-right">Value (USD)</th>
-                  <th className="p-3">Origin</th>
-                  <th className="p-3">Methodology & Baseline</th>
+                  <th className="p-4">Financial Metric</th>
+                  <th className="p-4 text-right">Value (USD)</th>
+                  <th className="p-4">Origin</th>
+                  <th className="p-4">Methodology &amp; Baseline</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-200">
+              <tbody className="divide-y divide-[#d9e2ec]">
                 <tr>
-                  <td className="p-3 font-semibold">Current On-Premise TCO</td>
-                  <td className="p-3 text-right font-mono font-bold">{formatCurrency(calculations?.currentPlatformTCO || 0)}</td>
-                  <td className="p-3"><ValueOriginChip origin="CALCULATED" /></td>
-                  <td className="p-3 text-slate-500">Licensing + Infrastructure + Support + Operations</td>
-                </tr>
-                <tr>
-                  <td className="p-3 font-semibold">Target SAP BTP TCO</td>
-                  <td className="p-3 text-right font-mono font-bold text-indigo-600">{formatCurrency(calculations?.targetPlatformTCO || 0)}</td>
-                  <td className="p-3"><ValueOriginChip origin="CALCULATED" /></td>
-                  <td className="p-3 text-slate-500">Selected BTP Edition + Additional Cloud Run costs</td>
-                </tr>
-                <tr className="bg-emerald-50/60 font-semibold">
-                  <td className="p-3 text-emerald-900">Annual Operational Savings</td>
-                  <td className="p-3 text-right font-mono font-bold text-emerald-700">{formatCurrency(calculations?.annualSavings || 0)}</td>
-                  <td className="p-3"><ValueOriginChip origin="DERIVED" /></td>
-                  <td className="p-3 text-emerald-800">{calculations?.savingsPercentage || 0}% perpetual cost reduction year-over-year</td>
+                  <td className="p-4 font-semibold text-[#1d2d3e]">Current On-Premise TCO</td>
+                  <td className="p-4 text-right font-mono font-bold text-[#1d2d3e]">{formatCurrency(calculations?.currentPlatformTCO || 0)}</td>
+                  <td className="p-4"><ValueOriginChip origin="CALCULATED" /></td>
+                  <td className="p-4 text-[#556b82]">Licensing + Infrastructure + Support + Operations</td>
                 </tr>
                 <tr>
-                  <td className="p-3 font-semibold">One-Time Migration Capital</td>
-                  <td className="p-3 text-right font-mono font-bold">{formatCurrency(calculations?.migrationCost || 0)}</td>
-                  <td className="p-3"><ValueOriginChip origin="CALCULATED" /></td>
-                  <td className="p-3 text-slate-500">Incture Matched Migration Package (Development, Testing, Architecture, PM)</td>
+                  <td className="p-4 font-semibold text-[#1d2d3e]">Target SAP BTP TCO</td>
+                  <td className="p-4 text-right font-mono font-bold text-[#0070f2]">{formatCurrency(calculations?.targetPlatformTCO || 0)}</td>
+                  <td className="p-4"><ValueOriginChip origin="CALCULATED" /></td>
+                  <td className="p-4 text-[#556b82]">Selected BTP Edition + Additional Cloud Run costs</td>
                 </tr>
-                <tr className="bg-indigo-50/60 font-semibold">
-                  <td className="p-3 text-indigo-900">Capital Payback Horizon</td>
-                  <td className="p-3 text-right font-mono font-bold text-indigo-700">{formatMonths(calculations?.breakEvenMonths ?? 0)}</td>
-                  <td className="p-3"><ValueOriginChip origin="DERIVED" /></td>
-                  <td className="p-3 text-indigo-800">Recouped in Month {Math.ceil(calculations?.breakEvenMonths ?? 0)} of production operations</td>
-                </tr>
-                <tr>
-                  <td className="p-3 font-semibold">5-Year Cumulative Net Benefit</td>
-                  <td className="p-3 text-right font-mono font-bold text-slate-900">{formatCurrency(calculations?.fiveYearNetBenefit || 1784580)}</td>
-                  <td className="p-3"><ValueOriginChip origin="DERIVED" /></td>
-                  <td className="p-3 text-slate-500">5x Annual Savings ($2,084,580) - Migration Capital ($300,000)</td>
+                <tr className="bg-emerald-50/70 font-semibold">
+                  <td className="p-4 text-emerald-950">Annual Operational Savings</td>
+                  <td className="p-4 text-right font-mono font-bold text-[#107e3e]">{formatCurrency(calculations?.annualSavings || 0)}</td>
+                  <td className="p-4"><ValueOriginChip origin="DERIVED" /></td>
+                  <td className="p-4 text-emerald-900">{calculations?.savingsPercentage || 0}% perpetual cost reduction year-over-year</td>
                 </tr>
                 <tr>
-                  <td className="p-3 font-semibold">5-Year Return on Investment</td>
-                  <td className="p-3 text-right font-mono font-bold text-emerald-600">{formatPercent(calculations?.fiveYearROI || 594.86)}</td>
-                  <td className="p-3"><ValueOriginChip origin="DERIVED" /></td>
-                  <td className="p-3 text-slate-500">5.95x cash return on invested project capital</td>
+                  <td className="p-4 font-semibold text-[#1d2d3e]">One-Time Migration Capital</td>
+                  <td className="p-4 text-right font-mono font-bold text-[#1d2d3e]">{formatCurrency(calculations?.migrationCost || 0)}</td>
+                  <td className="p-4"><ValueOriginChip origin="CALCULATED" /></td>
+                  <td className="p-4 text-[#556b82]">Incture Matched Migration Package (Development, Testing, Architecture, PM)</td>
+                </tr>
+                <tr className="bg-blue-50/70 font-semibold">
+                  <td className="p-4 text-blue-950">Capital Payback Horizon</td>
+                  <td className="p-4 text-right font-mono font-bold text-[#0070f2]">{formatMonths(calculations?.breakEvenMonths ?? 0)}</td>
+                  <td className="p-4"><ValueOriginChip origin="DERIVED" /></td>
+                  <td className="p-4 text-blue-900">Recouped in Month {Math.ceil(calculations?.breakEvenMonths ?? 0)} of production operations</td>
+                </tr>
+                <tr>
+                  <td className="p-4 font-semibold text-[#1d2d3e]">5-Year Cumulative Net Benefit</td>
+                  <td className="p-4 text-right font-mono font-bold text-[#1d2d3e]">{formatCurrency(calculations?.fiveYearNetBenefit || 1784580)}</td>
+                  <td className="p-4"><ValueOriginChip origin="DERIVED" /></td>
+                  <td className="p-4 text-[#556b82]">5x Annual Savings - Migration Capital</td>
+                </tr>
+                <tr>
+                  <td className="p-4 font-semibold text-[#1d2d3e]">5-Year Return on Investment</td>
+                  <td className="p-4 text-right font-mono font-bold text-[#107e3e]">{formatPercent(calculations?.fiveYearROI || 594.86)}</td>
+                  <td className="p-4"><ValueOriginChip origin="DERIVED" /></td>
+                  <td className="p-4 text-[#556b82]">Cumulative economic multiplier on invested capital</td>
                 </tr>
               </tbody>
             </table>
           </div>
 
           {/* Multi-Period Horizon Summary */}
-          <div className="space-y-3">
-            <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wide border-b border-slate-200 pb-2">
+          <div className="space-y-4">
+            <h3 className="text-sm font-bold text-[#1d2d3e] uppercase tracking-wide border-b border-[#d9e2ec] pb-2">
               Multi-Period Cumulative Horizon
             </h3>
-            <div className="grid grid-cols-4 gap-3 text-center">
-              <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
-                <span className="text-[10px] uppercase font-bold text-slate-500 block">Year 1</span>
-                <span className="text-xs font-bold text-slate-900 font-mono block mt-1">{formatCurrency(calculations?.oneYearNetBenefit || 116916)}</span>
-                <span className="text-[10px] text-emerald-600 font-bold block">{formatPercent(calculations?.oneYearROI || 38.97)} ROI</span>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+              <div className="p-5 bg-slate-50 rounded-2xl border border-[#d9e2ec]">
+                <span className="text-xs uppercase font-bold text-[#556b82] block">Year 1</span>
+                <span className="text-sm font-bold text-[#1d2d3e] font-mono block mt-1">{formatCurrency(calculations?.oneYearNetBenefit || 116916)}</span>
+                <span className="text-xs text-[#107e3e] font-bold block mt-0.5">{formatPercent(calculations?.oneYearROI || 38.97)} ROI</span>
               </div>
-              <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
-                <span className="text-[10px] uppercase font-bold text-slate-500 block">Year 3</span>
-                <span className="text-xs font-bold text-slate-900 font-mono block mt-1">{formatCurrency(calculations?.threeYearNetBenefit || 950748)}</span>
-                <span className="text-[10px] text-emerald-600 font-bold block">{formatPercent(calculations?.threeYearROI || 316.92)} ROI</span>
+              <div className="p-5 bg-slate-50 rounded-2xl border border-[#d9e2ec]">
+                <span className="text-xs uppercase font-bold text-[#556b82] block">Year 3</span>
+                <span className="text-sm font-bold text-[#1d2d3e] font-mono block mt-1">{formatCurrency(calculations?.threeYearNetBenefit || 950748)}</span>
+                <span className="text-xs text-[#107e3e] font-bold block mt-0.5">{formatPercent(calculations?.threeYearROI || 316.92)} ROI</span>
               </div>
-              <div className="p-3 bg-indigo-50 rounded-xl border border-indigo-200">
-                <span className="text-[10px] uppercase font-bold text-indigo-800 block">Year 5</span>
-                <span className="text-xs font-bold text-indigo-950 font-mono block mt-1">{formatCurrency(calculations?.fiveYearNetBenefit || 1784580)}</span>
-                <span className="text-[10px] text-emerald-600 font-bold block">{formatPercent(calculations?.fiveYearROI || 594.86)} ROI</span>
+              <div className="p-5 bg-blue-50/70 rounded-2xl border border-blue-200">
+                <span className="text-xs uppercase font-bold text-[#0070f2] block">Year 5</span>
+                <span className="text-sm font-bold text-blue-950 font-mono block mt-1">{formatCurrency(calculations?.fiveYearNetBenefit || 1784580)}</span>
+                <span className="text-xs text-[#107e3e] font-bold block mt-0.5">{formatPercent(calculations?.fiveYearROI || 594.86)} ROI</span>
               </div>
-              <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
-                <span className="text-[10px] uppercase font-bold text-slate-500 block">Year 10</span>
-                <span className="text-xs font-bold text-slate-900 font-mono block mt-1">{formatCurrency(calculations?.tenYearNetBenefit || 3869160)}</span>
-                <span className="text-[10px] text-emerald-600 font-bold block">{formatPercent(calculations?.tenYearROI || 1289.72)} ROI</span>
+              <div className="p-5 bg-slate-50 rounded-2xl border border-[#d9e2ec]">
+                <span className="text-xs uppercase font-bold text-[#556b82] block">Year 10</span>
+                <span className="text-sm font-bold text-[#1d2d3e] font-mono block mt-1">{formatCurrency(calculations?.tenYearNetBenefit || 3869160)}</span>
+                <span className="text-xs text-[#107e3e] font-bold block mt-0.5">{formatPercent(calculations?.tenYearROI || 1289.72)} ROI</span>
               </div>
             </div>
           </div>

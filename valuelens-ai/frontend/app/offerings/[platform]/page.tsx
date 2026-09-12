@@ -47,7 +47,7 @@ export default function OfferingDetailPage() {
   const { packages, pleaseNotes, whatsIncluded, migrationApproach, enablementAndSupport, faqs } = offering;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10 space-y-8">
       {/* 1. Breadcrumb Navigation */}
       <nav className="flex items-center space-x-2 text-xs text-[#556b82] font-medium">
         <Link href="/" className="hover:text-[#0070f2] transition-colors">
@@ -62,11 +62,11 @@ export default function OfferingDetailPage() {
       </nav>
 
       {/* 2. Hero Banner Section */}
-      <section className="relative rounded-2xl bg-gradient-to-r from-[#eef5fc] via-[#f2f7fc] to-[#e8f2fa] border border-[#d9e2ec] p-6 sm:p-7 shadow-xs overflow-hidden">
-        <div className="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+      <section className="relative rounded-3xl bg-gradient-to-r from-[#eef5fc] via-[#f2f7fc] to-[#e8f2fa] border border-[#d9e2ec] p-8 sm:p-10 shadow-xs overflow-hidden">
+        <div className="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8">
           {/* Left: Architecture Transformation Graphic Lockup */}
           <div className="shrink-0 flex items-center">
-            <div className="bg-white/95 backdrop-blur-md rounded-2xl border border-blue-200/80 p-4 sm:p-5 shadow-xs flex items-center space-x-4 w-full sm:w-[320px]">
+            <div className="bg-white/95 backdrop-blur-md rounded-2xl border border-blue-200/80 p-5 sm:p-6 shadow-xs flex items-center space-x-5 w-full sm:w-[340px]">
               {/* Source Middleware Platform */}
               <div className="flex-1 flex flex-col items-center justify-center text-center">
                 <img src={offering.logo} alt={offering.name} className="h-10 max-w-[80px] object-contain mb-1.5" />
@@ -93,11 +93,11 @@ export default function OfferingDetailPage() {
           </div>
 
           {/* Middle: Title & Subtitle */}
-          <div className="flex-1 space-y-2 max-w-xl">
-            <h1 className="text-2xl sm:text-3xl lg:text-[34px] font-extrabold text-[#1d2d3e] tracking-tight leading-tight">
+          <div className="flex-1 space-y-3 max-w-xl">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#1d2d3e] tracking-tight leading-tight font-['72',sans-serif]">
               {offering.heroTitle}
             </h1>
-            <p className="text-xs sm:text-sm text-[#556b82] leading-relaxed font-normal">
+            <p className="text-base text-[#556b82] leading-relaxed font-normal">
               {offering.heroSubtitle}
             </p>
           </div>
@@ -107,7 +107,7 @@ export default function OfferingDetailPage() {
             <img
               src="/images/offerings-detail-banner-right.png"
               alt="Modernize. Simplify. Create Value."
-              className="h-28 lg:h-32 w-auto object-contain rounded-xl"
+              className="h-32 lg:h-36 w-auto object-contain rounded-2xl"
             />
           </div>
         </div>
@@ -116,11 +116,11 @@ export default function OfferingDetailPage() {
       {/* 3. Interactive Tabs Navigation Bar with Action Buttons */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 pt-1">
         {/* Left: 5 Nav Tabs */}
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2.5">
           <button
             type="button"
             onClick={() => setActiveTab('packages')}
-            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer ${activeTab === 'packages'
+            className={`px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer ${activeTab === 'packages'
               ? 'bg-[#0070f2] text-white shadow-xs'
               : 'bg-white text-[#556b82] hover:text-[#1d2d3e] hover:bg-slate-50 border border-[#d9e2ec]'
               }`}
@@ -206,12 +206,12 @@ export default function OfferingDetailPage() {
       {/* TAB 1: PACKAGES (COMPARISON TABLE) */}
       {activeTab === 'packages' && (
         <section className="space-y-6">
-          <div className="bg-white rounded-2xl border border-[#d9e2ec] overflow-hidden shadow-xs">
-            <div className="p-5 border-b border-[#d9e2ec] bg-white">
-              <h2 className="text-xl sm:text-2xl font-extrabold text-[#1d2d3e] tracking-tight">
+          <div className="bg-white rounded-3xl border border-[#d9e2ec] overflow-hidden shadow-xs">
+            <div className="p-6 sm:p-8 border-b border-[#d9e2ec] bg-white">
+              <h2 className="text-xl sm:text-2xl font-bold text-[#1d2d3e] tracking-tight font-['72',sans-serif]">
                 Package Comparison
               </h2>
-              <p className="text-xs text-[#556b82] mt-0.5">
+              <p className="text-sm text-[#556b82] mt-1">
                 Detailed scope, deliverables, and commercial pricing model for {offering.name} migration.
               </p>
             </div>

@@ -11,12 +11,36 @@ import {
   Cell,
   ComposedChart,
   Line,
+  AreaChart,
+  Area,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  ReferenceLine,
 } from 'recharts';
+import {
+  ArrowLeft,
+  Download,
+  Save,
+  FileCode,
+  TrendingUp,
+  Calendar,
+  DollarSign,
+  BarChart2,
+  AlertTriangle,
+  CheckCircle2,
+  ShieldAlert,
+  Sparkles,
+  Layers,
+  Sliders,
+  Server,
+  Cpu,
+  Check,
+  Briefcase,
+  FileText,
+} from 'lucide-react';
 import { Assessment, RoiCalculationResult, ChartInsightResponse, AiAnalysisResult, QuestionResponse } from '@/types';
 import { api } from '@/lib/api';
 import { formatCurrency, formatCompactCurrency } from '@/lib/formatters';
@@ -29,6 +53,19 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [assessment, setAssessment] = useState<Assessment | null>(null);
   const [calculations, setCalculations] = useState<RoiCalculationResult | null>(null);
+
+  // Tab State: 7 spacious enterprise analytical tabs
+  const [dashboardTab, setDashboardTab] = useState<
+    'overview' | 'charts' | 'simulation' | 'current-state' | 'target-state' | 'migration' | 'methodology'
+  >('overview');
+
+  // Save Toast Notification State
+  const [saveToast, setSaveToast] = useState(false);
+
+  // In-Dashboard Sensitivity Simulation State
+  const [simSavingsFactor, setSimSavingsFactor] = useState<number>(1.0);
+  const [simMigrationFactor, setSimMigrationFactor] = useState<number>(1.0);
+  const [simTargetFactor, setSimTargetFactor] = useState<number>(1.0);
 
   // AI Insights Modal State
   const [aiModalOpen, setAiModalOpen] = useState(false);
@@ -299,7 +336,7 @@ export default function DashboardPage() {
         });
       }
     } catch (err) {
-      console.warn('Using validated dynamic AI chart insight', err);
+      console.warn('Using dynamic client insight', err);
     } finally {
       setChartInsightLoading(false);
     }
@@ -307,31 +344,28 @@ export default function DashboardPage() {
 
   const openExecutiveAnalysis = async () => {
     setAiModalTab('executive');
-    setAiModalTitle('Executive Decision Intelligence & Strategy');
+    setAiModalTitle('IntSwitch ValueLens AI • Strategic Executive Decision Dossier');
     setAiModalOpen(true);
-    if (!aiAnalysis) {
-      setAiAnalysisLoading(true);
-      try {
-        const res = await api.analyzeWithAI({
-          assessmentId,
-          assessment: assessment || undefined,
-          calculations: calculations || undefined,
-        });
-        if (res && res.decision) {
-          setAiAnalysis(res);
-        } else {
-          setAiAnalysis(getClientExecutiveAdvisory());
-        }
-      } catch (err) {
-        console.warn('Using fallback executive advisory', err);
-        setAiAnalysis(getClientExecutiveAdvisory());
-      } finally {
-        setAiAnalysisLoading(false);
+    const fallbackAdvisory = getClientExecutiveAdvisory();
+    setAiAnalysis(fallbackAdvisory);
+    setAiAnalysisLoading(true);
+    try {
+      const res = await api.analyzeWithAI({
+        assessmentId,
+        assessment: assessment || undefined,
+        calculations: calculations || undefined,
+      });
+      if (res && res.decision) {
+        setAiAnalysis(res);
       }
+    } catch (err) {
+      console.warn('Using fallback executive advisory', err);
+    } finally {
+      setAiAnalysisLoading(false);
     }
   };
 
-  // Load calculation data dynamically
+  // Main initial data loader
   useEffect(() => {
     async function loadData() {
       setLoading(true);
@@ -339,14 +373,13 @@ export default function DashboardPage() {
         let loadedAssessment: Assessment | null = null;
         let loadedCalculation: RoiCalculationResult | null = null;
 
-        // 1. Check if user recently saved or calculated an assessment in localStorage
         if (typeof window !== 'undefined') {
           try {
             const savedAsmt = localStorage.getItem('valuelens_active_assessment');
-            const savedCalc = localStorage.getItem('valuelens_active_calculation');
             if (savedAsmt) {
               loadedAssessment = JSON.parse(savedAsmt);
             }
+            const savedCalc = localStorage.getItem('valuelens_active_calculation');
             if (savedCalc) {
               loadedCalculation = JSON.parse(savedCalc);
             }
@@ -355,7 +388,6 @@ export default function DashboardPage() {
           }
         }
 
-        // 2. If not found in localStorage or loading specific ID, fetch from backend
         if (!loadedAssessment || (assessmentId !== 'demo-assessment-1' && loadedAssessment.id !== assessmentId)) {
           try {
             if (assessmentId === 'demo-assessment-1' || !assessmentId) {
@@ -373,7 +405,6 @@ export default function DashboardPage() {
           setCalculations(loadedCalculation);
         }
 
-        // 3. Ensure calculations are computed from the loaded assessment
         if (loadedAssessment) {
           try {
             const calc = await api.calculateROI(loadedAssessment);
@@ -391,7 +422,6 @@ export default function DashboardPage() {
 
     loadData();
 
-    // Dynamically re-read when user switches back from Assessment tab
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === 'valuelens_active_assessment' || e.key === 'valuelens_active_calculation') {
         loadData();
@@ -406,7 +436,7 @@ export default function DashboardPage() {
     };
   }, [assessmentId]);
 
-  // Derived dynamic numbers from active assessment & calculations
+  // Derived dynamic numbers
   const currency = calculations?.currency || assessment?.currency || 'USD';
 
   const licensingCost =
@@ -494,25 +524,112 @@ export default function DashboardPage() {
 
   const devPct = migrationCost > 0 ? ((devCost / migrationCost) * 100).toFixed(0) : '0';
 
+  // 5-Year Enterprise ROI & Cost Comparison Horizon Data
+  const costComparisonData = useMemo(() => {
+    return [
+      {
+        name: 'Year 1',
+        period: 'Year 1',
+        currentTco: currentTco,
+        btpRunRate: targetTco,
+        migrationCost: migrationCost,
+        btpTotal: targetTco + migrationCost,
+        netSavings: currentTco - (targetTco + migrationCost),
+        subtitle: 'Migration & cutover investment',
+      },
+      {
+        name: 'Year 2',
+        period: 'Year 2',
+        currentTco: currentTco,
+        btpRunRate: targetTco,
+        migrationCost: 0,
+        btpTotal: targetTco,
+        netSavings: annualSavings,
+        subtitle: 'Steady-state full savings realized',
+      },
+      {
+        name: 'Year 3',
+        period: 'Year 3',
+        currentTco: currentTco,
+        btpRunRate: targetTco,
+        migrationCost: 0,
+        btpTotal: targetTco,
+        netSavings: annualSavings,
+        subtitle: 'Compounding margin expansion',
+      },
+      {
+        name: 'Year 4',
+        period: 'Year 4',
+        currentTco: currentTco,
+        btpRunRate: targetTco,
+        migrationCost: 0,
+        btpTotal: targetTco,
+        netSavings: annualSavings,
+        subtitle: 'Sustained cloud cost efficiency',
+      },
+      {
+        name: 'Year 5',
+        period: 'Year 5',
+        currentTco: currentTco,
+        btpRunRate: targetTco,
+        migrationCost: 0,
+        btpTotal: targetTco,
+        netSavings: annualSavings,
+        subtitle: 'Mature cloud operating model',
+      },
+      {
+        name: '5-Yr Total',
+        period: '5-Year Cumulative',
+        currentTco: currentTco * 5,
+        btpRunRate: targetTco * 5,
+        migrationCost: migrationCost,
+        btpTotal: targetTco * 5 + migrationCost,
+        netSavings: fiveYearNetBenefit,
+        subtitle: 'Cumulative 5-Year TCO comparison',
+      },
+    ];
+  }, [currentTco, targetTco, migrationCost, annualSavings, fiveYearNetBenefit]);
+
+  // Migration Cost Impact Analysis 10-Year Net Position Curve Data
+  const netPositionData = useMemo(() => {
+    const arr = [];
+    arr.push({
+      year: 'Start',
+      yearNum: 0,
+      netPosition: -migrationCost,
+      breakEvenLine: 0,
+    });
+    for (let y = 1; y <= 10; y++) {
+      const netPos = (annualSavings * y) - migrationCost;
+      arr.push({
+        year: `Year ${y}`,
+        yearNum: y,
+        netPosition: netPos,
+        breakEvenLine: 0,
+      });
+    }
+    return arr;
+  }, [annualSavings, migrationCost]);
+
   // Cost Drivers Donut Data
   const tcoDriversData = useMemo(() => {
     const total = currentTco > 0 ? currentTco : 1;
     return [
-      { name: 'Licensing', value: licensingCost, pct: currentTco > 0 ? ((licensingCost / total) * 100).toFixed(1) : '0', color: '#3b82f6' },
-      { name: 'Infrastructure', value: infraCost, pct: currentTco > 0 ? ((infraCost / total) * 100).toFixed(1) : '0', color: '#6366f1' },
-      { name: 'Support', value: supportCost, pct: currentTco > 0 ? ((supportCost / total) * 100).toFixed(1) : '0', color: '#a855f7' },
-      { name: 'Operations', value: operationsCost, pct: currentTco > 0 ? ((operationsCost / total) * 100).toFixed(1) : '0', color: '#14b8a6' },
+      { name: 'Licensing', value: licensingCost, pct: currentTco > 0 ? ((licensingCost / total) * 100).toFixed(1) : '0', color: '#0070f2' },
+      { name: 'Infrastructure', value: infraCost, pct: currentTco > 0 ? ((infraCost / total) * 100).toFixed(1) : '0', color: '#5b6b82' },
+      { name: 'Support', value: supportCost, pct: currentTco > 0 ? ((supportCost / total) * 100).toFixed(1) : '0', color: '#8a3ffc' },
+      { name: 'Operations', value: operationsCost, pct: currentTco > 0 ? ((operationsCost / total) * 100).toFixed(1) : '0', color: '#107e3e' },
     ];
   }, [currentTco, licensingCost, infraCost, supportCost, operationsCost]);
 
-  // Migration Breakdown Donut Data (4 Clean Incture Delivery Pillars)
+  // Migration Breakdown Donut Data
   const migrationBreakdownData = useMemo(() => {
     const total = migrationCost > 0 ? migrationCost : 1;
     return [
-      { name: 'Development & Migration', value: devCost, pct: migrationCost > 0 ? Math.round((devCost / total) * 100) : 0, color: '#0284c7' },
-      { name: 'IntSwitch Test Automation', value: testingCost, pct: migrationCost > 0 ? Math.round((testingCost / total) * 100) : 0, color: '#10b981' },
+      { name: 'Development & Migration', value: devCost, pct: migrationCost > 0 ? Math.round((devCost / total) * 100) : 0, color: '#0070f2' },
+      { name: 'Quality Assurance & Automated Testing', value: testingCost, pct: migrationCost > 0 ? Math.round((testingCost / total) * 100) : 0, color: '#107e3e' },
       { name: 'Architecture & BASIS Setup', value: archCost, pct: migrationCost > 0 ? Math.round((archCost / total) * 100) : 0, color: '#06b6d4' },
-      { name: 'Project Mgmt & Hypercare', value: pmCost, pct: migrationCost > 0 ? Math.round((pmCost / total) * 100) : 0, color: '#8b5cf6' },
+      { name: 'Project Mgmt & Hypercare', value: pmCost, pct: migrationCost > 0 ? Math.round((pmCost / total) * 100) : 0, color: '#8a3ffc' },
     ];
   }, [migrationCost, devCost, testingCost, archCost, pmCost]);
 
@@ -534,43 +651,14 @@ export default function DashboardPage() {
     return arr;
   }, [annualSavings, migrationCost]);
 
-  // Scenario Analysis Data
-  const scenarioData = useMemo(() => {
-    const baseSavings = annualSavings;
-    const baseMigration = migrationCost;
-
-    // Worst Case: 20% lower savings, 25% higher migration cost
-    const worstSavings = baseSavings * 0.8;
-    const worstMigration = baseMigration * 1.25;
-    const worstRoi = worstMigration > 0 ? (((worstSavings * 5) - worstMigration) / worstMigration) * 100 : 0;
-    const worstBreakEven = worstSavings > 0 ? (worstMigration / worstSavings) * 12 : 0;
-    const worstBenefit = worstSavings * 5 - worstMigration;
-
-    // Base Case
-    const baseRoi = fiveYearRoi;
-    const baseBreakEven = breakEvenMonths;
-    const baseBenefit = fiveYearNetBenefit;
-
-    // Best Case: 15% higher savings, 15% lower migration cost
-    const bestSavings = baseSavings * 1.15;
-    const bestMigration = baseMigration * 0.85;
-    const bestRoi = bestMigration > 0 ? (((bestSavings * 5) - bestMigration) / bestMigration) * 100 : 0;
-    const bestBreakEven = bestSavings > 0 ? (bestMigration / bestSavings) * 12 : 0;
-    const bestBenefit = bestSavings * 5 - bestMigration;
-
-    return {
-      chart: [
-        { name: 'Worst Case', currentTco: currentTco, targetTco: targetTco * 1.15, netBenefit: worstBenefit },
-        { name: 'Base Case', currentTco: currentTco, targetTco: targetTco, netBenefit: baseBenefit },
-        { name: 'Best Case', currentTco: currentTco, targetTco: targetTco * 0.9, netBenefit: bestBenefit },
-      ],
-      table: [
-        { name: 'Worst Case', roi: `${worstRoi.toFixed(2)}%`, breakEven: `${worstBreakEven.toFixed(1)} mo`, benefit: `$${(worstBenefit / 1000000).toFixed(2)}M` },
-        { name: 'Base Case', roi: `${baseRoi.toFixed(2)}%`, breakEven: `${baseBreakEven.toFixed(1)} mo`, benefit: `$${(baseBenefit / 1000000).toFixed(2)}M` },
-        { name: 'Best Case', roi: `${bestRoi.toFixed(2)}%`, breakEven: `${bestBreakEven.toFixed(1)} mo`, benefit: `$${(bestBenefit / 1000000).toFixed(2)}M` },
-      ],
-    };
-  }, [currentTco, targetTco, annualSavings, migrationCost, fiveYearRoi, breakEvenMonths, fiveYearNetBenefit]);
+  // Dynamic In-Dashboard Sensitivity Simulation
+  const simulatedSavings = annualSavings * simSavingsFactor;
+  const simulatedMigration = migrationCost * simMigrationFactor;
+  const simulatedTargetTco = targetTco * simTargetFactor;
+  const simulatedNetAnnual = Math.max(0, currentTco - simulatedTargetTco);
+  const simulatedBreakEven = simulatedNetAnnual > 0 ? (simulatedMigration / simulatedNetAnnual) * 12 : 0;
+  const simulated5YBenefit = simulatedNetAnnual * 5 - simulatedMigration;
+  const simulated5YRoi = simulatedMigration > 0 ? (simulated5YBenefit / simulatedMigration) * 100 : 0;
 
   // Environment & Complexity Parameters
   const totalInterfaces = assessment?.sourceSystem?.environmentAssessment?.totalInterfaces ?? 0;
@@ -579,16 +667,11 @@ export default function DashboardPage() {
   const throughput = assessment?.sourceSystem?.volumetrics?.currentMessageThroughput ? parseInt(assessment.sourceSystem.volumetrics.currentMessageThroughput).toLocaleString() : '0';
   const customDev = assessment?.sourceSystem?.environmentAssessment?.customDevelopment ?? 'None';
 
-  // Derived dynamic UI metrics
-  const maxTcoVal = Math.max(currentTco, targetTco, 1);
-  const currentBarHeightPx = currentTco > 0 ? Math.max(30, Math.min(180, Math.round((currentTco / maxTcoVal) * 170))) : 30;
-  const targetBarHeightPx = targetTco > 0 ? Math.max(30, Math.min(180, Math.round((targetTco / maxTcoVal) * 170))) : 30;
-
   const licensingPct = currentTco > 0 ? ((licensingCost / currentTco) * 100).toFixed(1) : '0';
   const nonLicensingPct = currentTco > 0 ? (((infraCost + supportCost + operationsCost) / currentTco) * 100).toFixed(0) : '0';
-
   const year1NetBenefit = timelineData[0]?.netBenefit ?? 0;
   const year1Roi = timelineData[0]?.roi ?? 0;
+
   const complexityLabel = assessment?.sourceSystem?.environmentAssessment?.systemComplexity || assessment?.sourceSystem?.companyInformation?.integrationComplexity || 'Medium';
   const complexityWidth =
     complexityLabel.toLowerCase().includes('high') || complexityLabel.toLowerCase().includes('complex')
@@ -597,730 +680,1260 @@ export default function DashboardPage() {
         ? '25%'
         : '55%';
 
+  // Action Button Handlers
+  const handleDownloadPdf = () => {
+    window.print();
+  };
+
+  const handleSaveToDatabase = () => {
+    if (typeof window !== 'undefined') {
+      if (assessment) localStorage.setItem('valuelens_active_assessment', JSON.stringify(assessment));
+      if (calculations) localStorage.setItem('valuelens_active_calculation', JSON.stringify(calculations));
+    }
+    setSaveToast(true);
+    setTimeout(() => setSaveToast(false), 3000);
+  };
+
+  const handleExportJson = () => {
+    const exportData = {
+      assessmentId,
+      sourcePlatform: assessment?.sourcePlatform || 'SAP PI/PO',
+      targetPlatform: 'SAP BTP Integration Suite',
+      generatedDate: new Date().toISOString(),
+      keyMetrics: {
+        currentPlatformTCO: currentTco,
+        targetPlatformTCO: targetTco,
+        annualSavings: annualSavings,
+        savingsPercentage: savingsPct,
+        totalMigrationCost: migrationCost,
+        breakEvenMonths: breakEvenMonths,
+        fiveYearROI: fiveYearRoi,
+        fiveYearNetBenefit: fiveYearNetBenefit,
+      },
+      assessment,
+      calculations,
+      aiAnalysis,
+    };
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `valuelens-roi-analysis-${assessmentId}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
-    <div className="min-h-screen bg-[#f5f6f7] py-6 text-slate-800">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+    <div className="min-h-screen bg-[#f5f6f8] py-8 md:py-10 text-[#1d2d3e]">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+
+        {/* Save Toast Notification */}
+        {saveToast && (
+          <div className="fixed top-6 right-6 z-50 bg-[#107e3e] text-white px-5 py-3 rounded-2xl shadow-xl flex items-center space-x-2 text-sm font-bold animate-fadeIn border border-emerald-400">
+            <Check className="w-5 h-5" />
+            <span>ROI Analysis &amp; Calculations Saved Successfully</span>
+          </div>
+        )}
 
         {/* ========================================================================= */}
-        {/* ROW 1: IntSwitch Decision Intelligence Card                              */}
+        {/* TOP BAR: Back Button, Title, Subtitle, Date & Action Buttons             */}
         {/* ========================================================================= */}
-        <div className="bg-[#f0fdf4] border border-emerald-200/80 rounded-2xl p-6 shadow-xs">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
-            {/* Left: Decision Statement (Cols 5) */}
-            <div className="lg:col-span-5 flex items-start space-x-4">
-              <div className="w-12 h-12 rounded-full bg-emerald-600 text-white flex items-center justify-center font-black text-xl shrink-0 shadow-sm">
-                ✓
-              </div>
-              <div className="space-y-1">
-                <div className="flex items-center space-x-2">
-                  <img src="/images/intswitch-logo.png" alt="IntSwitch" className="h-4 w-auto object-contain" />
-                  <span className="text-[11px] font-extrabold text-indigo-700 uppercase tracking-wider block">
-                    IntSwitch Migration Decision Intelligence
-                  </span>
-                </div>
-                <h2 className="text-3xl font-black text-emerald-800 tracking-tight flex items-center gap-2">
-                  <span>FAVORABLE</span>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 tracking-normal uppercase">
-                    Incture Package Validated
-                  </span>
-                </h2>
-                <p className="text-xs text-slate-600 leading-relaxed pt-1">
-                  Validated with Incture packaged delivery &amp; IntSwitch automation. Payback is expected in{' '}
-                  <strong className="text-slate-900 font-bold">{breakEvenMonths.toFixed(1)} months</strong> with a 5-year ROI of{' '}
-                  <strong className="text-slate-900 font-bold">{fiveYearRoi.toFixed(2)}%</strong>.
-                </p>
-              </div>
-            </div>
-
-            {/* Center: IntSwitch Effort Reduction (Cols 3) */}
-            <div className="lg:col-span-3 border-l border-r border-emerald-200/60 px-6 space-y-1.5 flex flex-col justify-center">
-              <span className="text-xs font-semibold text-slate-500 block">IntSwitch Advantage</span>
-              <div className="text-2xl font-black text-emerald-800 tracking-tight font-mono">Up to 40%</div>
-              <p className="text-[11px] text-slate-600 font-medium leading-snug">
-                Reduction in migration delivery effort via automated discovery &amp; testing.
-              </p>
-            </div>
-
-            {/* Right: AI Insight (Cols 4) */}
-            <div className="lg:col-span-4 space-y-2">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-1.5 text-xs font-bold text-indigo-600">
-                  <span>✦</span>
-                  <span>IntSwitch Delivery Assurance</span>
-                </div>
-                {aiAnalysis && (
-                  <span className="text-[9px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                    ✦ LIVE AI
-                  </span>
-                )}
-              </div>
-              <p className="text-xs text-slate-700 leading-relaxed">
-                {aiAnalysis?.executiveSummary ? (
-                  aiAnalysis.executiveSummary.length > 210
-                    ? aiAnalysis.executiveSummary.slice(0, 210) + '...'
-                    : aiAnalysis.executiveSummary
-                ) : (
-                  <>Annual savings of <strong className="text-slate-900 font-semibold">{formatCurrency(annualSavings, currency)}</strong> ({savingsPct.toFixed(1)}% reduction) provide a compelling business case. IntSwitch test automation and template conversion de-risk migration delivery across the {assessment?.sourceSystem?.companyInformation?.migrationTimeline || '2-month Incture package timeline'}.</>
-                )}
-              </p>
-              <button
-                type="button"
-                onClick={openExecutiveAnalysis}
-                className="text-xs font-bold text-indigo-600 hover:text-indigo-800 inline-flex items-center space-x-1 pt-1 cursor-pointer group"
-              >
-                <span>View Full AI Analysis</span>
-                <svg className="w-3 h-3 shrink-0 transition-transform group-hover:translate-x-0.5" viewBox="0 0 16 16" fill="none" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M6 3.5l4.5 4.5-4.5 4.5" />
-                </svg>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* ========================================================================= */}
-        {/* ROW 2: 6 KPI Metric Cards                                                 */}
-        {/* ========================================================================= */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-          {/* 1. Current Platform TCO */}
-          <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-xs space-y-2">
-            <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-sm font-bold">
-              📅
-            </div>
-            <span className="text-xs font-semibold text-slate-600 block">Current Platform TCO</span>
-            <div className="text-xl font-black text-slate-900 font-mono">
-              {formatCurrency(currentTco, currency)}
-            </div>
-            <span className="text-xs text-slate-400 block">per year</span>
-            <span className="text-xs font-bold text-rose-600 flex items-center space-x-1">
-              <span>↗</span>
-              <span>Baseline cost</span>
-            </span>
-          </div>
-
-          {/* 2. Target Platform TCO */}
-          <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-xs space-y-2">
-            <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-sm font-bold">
-              ☁️
-            </div>
-            <span className="text-xs font-semibold text-slate-600 block">Target Platform TCO</span>
-            <div className="text-xl font-black text-indigo-600 font-mono">
-              {formatCurrency(targetTco, currency)}
-            </div>
-            <span className="text-xs text-slate-400 block">per year</span>
-            <span className="text-xs font-bold text-emerald-600 flex items-center space-x-1">
-              <span>↓</span>
-              <span>{savingsPct.toFixed(1)}% lower</span>
-            </span>
-          </div>
-
-          {/* 3. Annual Savings */}
-          <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-xs space-y-2">
-            <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-sm font-bold">
-              💰
-            </div>
-            <span className="text-xs font-semibold text-slate-600 block">Annual Savings</span>
-            <div className="text-xl font-black text-emerald-600 font-mono">
-              {formatCurrency(annualSavings, currency)}
-            </div>
-            <span className="text-xs text-slate-400 block">per year</span>
-            <span className="text-xs font-bold text-emerald-600 flex items-center space-x-1">
-              <span>↓</span>
-              <span>{savingsPct.toFixed(1)}% reduction</span>
-            </span>
-          </div>
-
-          {/* 4. Migration Investment */}
-          <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-xs space-y-2">
-            <div className="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center text-sm font-bold">
-              🔒
-            </div>
-            <span className="text-xs font-semibold text-slate-600 block">Migration Investment</span>
-            <div className="text-xl font-black text-slate-900 font-mono">
-              {formatCurrency(migrationCost, currency)}
-            </div>
-            <span className="text-xs text-slate-400 block">one-time cost</span>
-          </div>
-
-          {/* 5. Break-even */}
-          <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-xs space-y-2">
-            <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-sm font-bold">
-              ⏱️
-            </div>
-            <span className="text-xs font-semibold text-slate-600 block">Break-even</span>
-            <div className="text-xl font-black text-slate-900 font-mono">
-              {breakEvenMonths.toFixed(1)} months
-            </div>
-            <span className="text-xs text-slate-400 block">Payback period</span>
-          </div>
-
-          {/* 6. 5-Year ROI */}
-          <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-xs space-y-2">
-            <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-sm font-bold">
-              📊
-            </div>
-            <span className="text-xs font-semibold text-slate-600 block">5-Year ROI</span>
-            <div className="text-xl font-black text-indigo-900 font-mono">
-              {fiveYearRoi.toFixed(2)}%
-            </div>
-            <span className="text-xs font-bold text-emerald-600 block">Very strong return</span>
-          </div>
-        </div>
-
-        {/* ========================================================================= */}
-        {/* ROW 3: 2 Visual Analysis Cards                                            */}
-        {/* ========================================================================= */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
-          {/* Card 1: Annual Platform Cost Comparison */}
-          <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs flex flex-col justify-between space-y-4">
-            <div>
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm font-bold text-slate-900">Annual Platform Cost Comparison</h3>
-                <span className="text-[11px] text-slate-500 bg-slate-50 px-2 py-1 rounded border">View by: Total ▾</span>
-              </div>
-
-              {/* Bar comparison */}
-              <div className="h-56 relative flex items-end justify-around pb-4 border-b border-slate-100">
-                {/* Current (SAP PI/PO) */}
-                <div className="flex flex-col items-center space-y-2">
-                  <span className="text-xs font-bold font-mono text-indigo-600">
-                    ${(currentTco / 1000).toFixed(0)}K
-                  </span>
-                  <div
-                    className="w-20 bg-indigo-600 rounded-t-xl transition-all duration-300 shadow-sm"
-                    style={{ height: `${currentBarHeightPx}px` }}
-                  />
-                  <span className="text-[11px] font-bold text-slate-700">Current ({assessment?.sourcePlatform || 'SAP PI/PO'})</span>
-                </div>
-
-                {/* Floating savings indicator */}
-                <div className="flex flex-col items-center justify-center bg-emerald-50 border border-emerald-200 rounded-xl p-2 text-center text-emerald-700 shadow-xs mb-10">
-                  <span className="text-[10px] font-black uppercase">↓ {savingsPct.toFixed(1)}%</span>
-                  <span className="text-[11px] font-bold font-mono">+{formatCurrency(annualSavings, currency)}</span>
-                  <span className="text-[9px] text-emerald-600">Annual Savings</span>
-                </div>
-
-                {/* Target (BTP) */}
-                <div className="flex flex-col items-center space-y-2">
-                  <span className="text-xs font-bold font-mono text-emerald-600">
-                    ${(targetTco / 1000).toFixed(0)}K
-                  </span>
-                  <div
-                    className="w-20 bg-emerald-500 rounded-t-xl transition-all duration-300 shadow-sm"
-                    style={{ height: `${targetBarHeightPx}px` }}
-                  />
-                  <span className="text-[11px] font-bold text-slate-700">Target (BTP)</span>
-                </div>
-              </div>
-            </div>
-
-            {/* AI Insight Callout */}
-            <div
-              onClick={() => openChartInsight('tco-comparison', 'Platform Cost Breakdown & TCO Reduction')}
-              className="p-3 bg-blue-50/60 hover:bg-blue-100/50 border border-blue-100 rounded-xl text-xs space-y-1 cursor-pointer transition-all duration-200"
+        <div className="space-y-4">
+          <div>
+            <Link
+              href="/assessment"
+              className="inline-flex items-center space-x-2 text-sm font-semibold text-[#556b82] hover:text-[#0070f2] transition-colors group mb-3"
             >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-1.5 font-bold text-indigo-600">
-                  <span>✦</span>
-                  <span>AI Insight</span>
-                </div>
-                <span className="text-[10px] font-bold text-indigo-600">Explore AI Analysis ↗</span>
-              </div>
-              <p className="text-slate-700 leading-relaxed text-[11px]">
-                Your target-state annual cost is {savingsPct.toFixed(1)}% lower than the current platform, primarily driven by reduced infrastructure and operational costs.
+              <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+              <span>Back to Assessment</span>
+            </Link>
+          </div>
+
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-[#d9e2ec] pb-6">
+            <div>
+              <h1 className="text-3xl md:text-4xl font-extrabold text-[#1d2d3e] tracking-tight">
+                Comprehensive ROI Analysis
+              </h1>
+              <p className="text-sm md:text-base text-[#556b82] mt-1 font-normal">
+                Migration from <strong className="text-[#1d2d3e] font-semibold">{assessment?.sourcePlatform || 'SAP PI/PO'}</strong> to <strong className="text-[#0070f2] font-semibold">SAP BTP Integration Suite</strong>
               </p>
+            </div>
+
+            {/* Top Action Buttons with Spacious Padding */}
+            <div className="flex flex-wrap items-center gap-3 shrink-0">
               <button
                 type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  openChartInsight('tco-comparison', 'Platform Cost Breakdown & TCO Reduction');
-                }}
-                className="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 inline-flex items-center space-x-1 pt-1 cursor-pointer text-left group"
+                onClick={handleDownloadPdf}
+                className="inline-flex items-center space-x-2 px-4 py-2.5 bg-white hover:bg-slate-50 text-[#1d2d3e] border border-[#d9e2ec] rounded-xl text-xs sm:text-sm font-semibold shadow-xs hover:border-[#0070f2] transition-colors cursor-pointer"
               >
-                <span>View Cost Breakdown</span>
-                <svg className="w-3 h-3 shrink-0 transition-transform group-hover:translate-x-0.5" viewBox="0 0 16 16" fill="none" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M6 3.5l4.5 4.5-4.5 4.5" />
-                </svg>
+                <Download className="w-4 h-4 text-[#0070f2]" />
+                <span>Download PDF</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={handleSaveToDatabase}
+                className="inline-flex items-center space-x-2 px-4 py-2.5 bg-white hover:bg-slate-50 text-[#1d2d3e] border border-[#d9e2ec] rounded-xl text-xs sm:text-sm font-semibold shadow-xs hover:border-[#0070f2] transition-colors cursor-pointer"
+              >
+                <Save className="w-4 h-4 text-[#0070f2]" />
+                <span>Save to Database</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={handleExportJson}
+                className="inline-flex items-center space-x-2 px-4 py-2.5 bg-white hover:bg-slate-50 text-[#1d2d3e] border border-[#d9e2ec] rounded-xl text-xs sm:text-sm font-semibold shadow-xs hover:border-[#0070f2] transition-colors cursor-pointer"
+              >
+                <FileCode className="w-4 h-4 text-[#0070f2]" />
+                <span>Export JSON</span>
               </button>
             </div>
           </div>
+        </div>
 
-          {/* Card 2: Current TCO Cost Drivers */}
-          <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs flex flex-col justify-between space-y-4">
-            <div>
-              <h3 className="text-sm font-bold text-slate-900 mb-4">Legacy TCO Cost Drivers</h3>
+        {/* ========================================================================= */}
+        {/* HERO KPI CARDS: 4 Large Spacious Metric Cards                            */}
+        {/* ========================================================================= */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {/* 1. Annual Savings */}
+          <div className="bg-white rounded-3xl border border-[#d9e2ec] p-6 md:p-8 shadow-xs hover:shadow-md transition-shadow space-y-4">
+            <div className="flex items-center justify-between">
+              <span className="text-xs sm:text-sm font-bold text-[#556b82] uppercase tracking-wider">
+                Annual Savings
+              </span>
+              <div className="w-10 h-10 rounded-2xl bg-emerald-50 text-[#107e3e] flex items-center justify-center font-bold text-lg shrink-0">
+                <DollarSign className="w-5 h-5" />
+              </div>
+            </div>
+            <div className="space-y-1">
+              <div className="text-3xl lg:text-4xl font-extrabold text-[#107e3e] font-mono tracking-tight">
+                +{formatCurrency(annualSavings, currency)}
+              </div>
+              <p className="text-xs text-[#556b82] flex items-center space-x-1 font-medium">
+                <span className="font-bold text-[#107e3e]">↓ {savingsPct.toFixed(1)}%</span>
+                <span>run-rate reduction vs baseline</span>
+              </p>
+            </div>
+          </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center">
-                {/* Donut with Center Text (Cols 6) */}
-                <div className="sm:col-span-6 h-44 relative flex items-center justify-center">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={tcoDriversData}
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={46}
-                        outerRadius={68}
-                        paddingAngle={3}
-                        dataKey="value"
-                      >
-                        {tcoDriversData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.color} />
-                        ))}
-                      </Pie>
-                    </PieChart>
-                  </ResponsiveContainer>
-                  <div className="absolute flex flex-col items-center justify-center pointer-events-none">
-                    <span className="text-sm font-black text-slate-900 font-mono">
-                      ${(currentTco / 1000).toFixed(0)}K
-                    </span>
-                    <span className="text-xs text-slate-400">per year</span>
+          {/* 2. Break-even Period */}
+          <div className="bg-white rounded-3xl border border-[#d9e2ec] p-6 md:p-8 shadow-xs hover:shadow-md transition-shadow space-y-4">
+            <div className="flex items-center justify-between">
+              <span className="text-xs sm:text-sm font-bold text-[#556b82] uppercase tracking-wider">
+                Break-even Period
+              </span>
+              <div className="w-10 h-10 rounded-2xl bg-blue-50 text-[#0070f2] flex items-center justify-center font-bold text-lg shrink-0">
+                <Calendar className="w-5 h-5" />
+              </div>
+            </div>
+            <div className="space-y-1">
+              <div className="text-3xl lg:text-4xl font-extrabold text-[#0070f2] font-mono tracking-tight">
+                {breakEvenMonths.toFixed(1)} months
+              </div>
+              <p className="text-xs text-[#556b82] font-medium">
+                100% investment recovery inside Year 1
+              </p>
+            </div>
+          </div>
+
+          {/* 3. 5-Year ROI */}
+          <div className="bg-white rounded-3xl border border-[#d9e2ec] p-6 md:p-8 shadow-xs hover:shadow-md transition-shadow space-y-4">
+            <div className="flex items-center justify-between">
+              <span className="text-xs sm:text-sm font-bold text-[#556b82] uppercase tracking-wider">
+                5-Year ROI
+              </span>
+              <div className="w-10 h-10 rounded-2xl bg-purple-50 text-[#8a3ffc] flex items-center justify-center font-bold text-lg shrink-0">
+                <TrendingUp className="w-5 h-5" />
+              </div>
+            </div>
+            <div className="space-y-1">
+              <div className="text-3xl lg:text-4xl font-extrabold text-[#8a3ffc] font-mono tracking-tight">
+                {fiveYearRoi.toFixed(1)}%
+              </div>
+              <p className="text-xs text-[#556b82] font-medium">
+                Cumulative net benefit: {formatCurrency(fiveYearNetBenefit, currency)}
+              </p>
+            </div>
+          </div>
+
+          {/* 4. Total Migration Cost */}
+          <div className="bg-white rounded-3xl border border-[#d9e2ec] p-6 md:p-8 shadow-xs hover:shadow-md transition-shadow space-y-4">
+            <div className="flex items-center justify-between">
+              <span className="text-xs sm:text-sm font-bold text-[#556b82] uppercase tracking-wider">
+                Total Migration Cost
+              </span>
+              <div className="w-10 h-10 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold text-lg shrink-0">
+                <BarChart2 className="w-5 h-5" />
+              </div>
+            </div>
+            <div className="space-y-1">
+              <div className="text-3xl lg:text-4xl font-extrabold text-[#1d2d3e] font-mono tracking-tight">
+                {formatCurrency(migrationCost, currency)}
+              </div>
+              <p className="text-xs text-[#556b82] font-medium">
+                Incture packaged delivery
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* ========================================================================= */}
+        {/* ROOMY 7-TAB NAVIGATION BAR                                                */}
+        {/* ========================================================================= */}
+        <div className="bg-white rounded-2xl border border-[#d9e2ec] p-2 shadow-xs overflow-x-auto">
+          <div className="flex items-center space-x-2 min-w-max">
+            {[
+              { id: 'overview', label: 'Overview', icon: Layers },
+              { id: 'charts', label: 'Charts & Analysis', icon: BarChart2 },
+              { id: 'simulation', label: 'Financial Simulation', icon: Sliders },
+              { id: 'current-state', label: 'Current State', icon: Server },
+              { id: 'target-state', label: 'Target State', icon: Cpu },
+              { id: 'migration', label: 'Migration Scope', icon: Briefcase },
+              { id: 'methodology', label: 'Methodology & Risk', icon: ShieldAlert },
+            ].map((tab) => {
+              const Icon = tab.icon;
+              const isActive = dashboardTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => setDashboardTab(tab.id as any)}
+                  className={`flex items-center space-x-2 px-5 py-3 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
+                    isActive
+                      ? 'bg-[#0070f2] text-white shadow-sm font-bold'
+                      : 'text-[#556b82] hover:text-[#1d2d3e] hover:bg-slate-100'
+                  }`}
+                >
+                  <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-[#556b82]'}`} />
+                  <span>{tab.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* ========================================================================= */}
+        {/* TAB 1: OVERVIEW                                                           */}
+        {/* ========================================================================= */}
+        {dashboardTab === 'overview' && (
+          <div className="space-y-8 animate-fadeIn">
+
+            {/* Cost Comparison Summary Card (Image 3 Feature) */}
+            <div className="bg-white rounded-3xl border border-[#d9e2ec] p-8 md:p-10 shadow-xs space-y-8">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-[#d9e2ec] pb-5">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 rounded-2xl bg-blue-50 text-[#0070f2] flex items-center justify-center font-bold">
+                    <FileText className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h2 className="text-xl md:text-2xl font-extrabold text-[#1d2d3e]">
+                      Cost Comparison Summary
+                    </h2>
+                    <p className="text-xs sm:text-sm text-[#556b82]">
+                      Annual operating run-rate transition from legacy infrastructure to SAP BTP Integration Suite
+                    </p>
+                  </div>
+                </div>
+                <div className="text-xs text-[#556b82] font-semibold bg-slate-50 px-3 py-1.5 rounded-xl border border-[#d9e2ec]">
+                  Currency: <strong className="text-[#1d2d3e]">{currency}</strong>
+                </div>
+              </div>
+
+              {/* 3 Prominent Columns with Ample Breathing Room */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 divide-y md:divide-y-0 md:divide-x divide-[#d9e2ec]">
+                {/* Column 1: Current Platform */}
+                <div className="space-y-3 pt-4 md:pt-0 md:pr-6">
+                  <span className="text-xs font-bold text-[#556b82] uppercase tracking-wider block">
+                    Current Platform
+                  </span>
+                  <div className="text-3xl lg:text-4xl font-extrabold text-[#1d2d3e] font-mono">
+                    {formatCurrency(currentTco, currency)}
+                  </div>
+                  <div className="text-xs font-bold text-rose-600 bg-rose-50 border border-rose-200 px-3 py-1 rounded-lg inline-block">
+                    Annual Baseline Cost
+                  </div>
+                  <p className="text-xs text-[#556b82] leading-relaxed pt-1">
+                    Sum of perpetual licenses ({formatCurrency(licensingCost, currency)}), datacenter hardware leases ({formatCurrency(infraCost, currency)}), and specialized vendor support.
+                  </p>
+                </div>
+
+                {/* Column 2: SAP BTP */}
+                <div className="space-y-3 pt-4 md:pt-0 md:px-6">
+                  <span className="text-xs font-bold text-[#556b82] uppercase tracking-wider block">
+                    SAP BTP Integration Suite
+                  </span>
+                  <div className="text-3xl lg:text-4xl font-extrabold text-[#0070f2] font-mono">
+                    {formatCurrency(targetTco, currency)}
+                  </div>
+                  <div className="text-xs font-bold text-blue-700 bg-blue-50 border border-blue-200 px-3 py-1 rounded-lg inline-block">
+                    Target Annual Run-Rate
+                  </div>
+                  <p className="text-xs text-[#556b82] leading-relaxed pt-1">
+                    Predictable cloud subscription ({selectedEdition || 'Standard/Enhanced'}) including managed multi-tenant hyper-scaler runtimes, capacity packs, and automated updates.
+                  </p>
+                </div>
+
+                {/* Column 3: Net Impact */}
+                <div className="space-y-3 pt-4 md:pt-0 md:pl-6">
+                  <span className="text-xs font-bold text-[#556b82] uppercase tracking-wider block">
+                    Net Impact
+                  </span>
+                  <div className="text-3xl lg:text-4xl font-extrabold text-[#107e3e] font-mono">
+                    +{formatCurrency(annualSavings, currency)}
+                  </div>
+                  <div className="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-lg inline-block">
+                    +{savingsPct.toFixed(1)}% Annual Savings
+                  </div>
+                  <p className="text-xs text-[#556b82] leading-relaxed pt-1">
+                    Permanent operating margin expansion. Initial migration investment recovered in <strong className="text-[#1d2d3e] font-bold">{breakEvenMonths.toFixed(1)} months</strong>.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Savings Meter Section */}
+            <div className="bg-white rounded-3xl border border-[#d9e2ec] p-8 shadow-xs space-y-5">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                <div>
+                  <h3 className="text-lg font-bold text-[#1d2d3e]">
+                    Enterprise Savings Meter
+                  </h3>
+                  <p className="text-xs text-[#556b82]">
+                    Operational expenditure reduction captured by transitioning to SAP BTP Integration Suite
+                  </p>
+                </div>
+                <span className="text-2xl font-black text-[#107e3e] font-mono">
+                  {savingsPct.toFixed(1)}%
+                </span>
+              </div>
+
+              {/* Meter Track */}
+              <div className="w-full bg-slate-100 h-5 rounded-full overflow-hidden p-1 border border-[#d9e2ec]">
+                <div
+                  className="bg-gradient-to-r from-[#0070f2] via-teal-500 to-[#107e3e] h-full rounded-full transition-all duration-700 shadow-xs"
+                  style={{ width: `${Math.min(100, Math.max(15, savingsPct)).toFixed(1)}%` }}
+                />
+              </div>
+
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-xs text-[#556b82] pt-1">
+                <span>0% (No Savings)</span>
+                <span className="font-semibold text-[#1d2d3e]">
+                  +{formatCurrency(annualSavings, currency)} / year liberated capital
+                </span>
+                <span>100% (Zero Run Cost)</span>
+              </div>
+            </div>
+
+            {/* IntSwitch Migration Decision Intelligence Card */}
+            <div className="bg-[#f0fdf4] border border-emerald-200/90 rounded-3xl p-8 shadow-xs space-y-6">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                {/* Left: Decision Statement (Cols 5) */}
+                <div className="lg:col-span-5 flex items-start space-x-4">
+                  <div className="w-12 h-12 rounded-2xl bg-[#107e3e] text-white flex items-center justify-center font-black text-xl shrink-0 shadow-sm">
+                    ✓
+                  </div>
+                  <div className="space-y-1.5">
+                    <div className="flex items-center space-x-2">
+                      <img src="/images/intswitch-logo.png" alt="IntSwitch" className="h-4 w-auto object-contain" />
+                      <span className="text-xs font-extrabold text-[#0070f2] uppercase tracking-wider block">
+                        IntSwitch Migration Decision Intelligence
+                      </span>
+                    </div>
+                    <h3 className="text-2xl sm:text-3xl font-black text-emerald-900 tracking-tight flex items-center gap-2">
+                      <span>FAVORABLE</span>
+                      <span className="text-[11px] font-bold px-3 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 uppercase">
+                        Incture Validated
+                      </span>
+                    </h3>
+                    <p className="text-xs sm:text-sm text-slate-600 leading-relaxed pt-1">
+                      Validated with Incture packaged delivery &amp; IntSwitch automation. Capital payback expected in{' '}
+                      <strong className="text-slate-900 font-bold">{breakEvenMonths.toFixed(1)} months</strong> with a 5-year ROI of{' '}
+                      <strong className="text-slate-900 font-bold">{fiveYearRoi.toFixed(2)}%</strong>.
+                    </p>
                   </div>
                 </div>
 
-                {/* Legend (Cols 6) */}
-                <div className="sm:col-span-6 space-y-2 text-xs">
-                  {tcoDriversData.map((item, idx) => (
-                    <div key={idx} className="flex items-center justify-between">
-                      <div className="flex items-center space-x-1.5 truncate">
-                        <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: item.color }} />
-                        <span className="text-slate-600 truncate">{item.name}</span>
-                      </div>
-                      <div className="text-right font-mono font-bold text-slate-900 shrink-0 ml-2">
-                        <span className="text-slate-400 text-[10px] font-normal mr-1">{item.pct}%</span>
-                        ${(item.value / 1000).toFixed(0)}K
-                      </div>
+                {/* Center: IntSwitch Effort Reduction (Cols 3) */}
+                <div className="lg:col-span-3 border-t lg:border-t-0 lg:border-l lg:border-r border-emerald-200/80 pt-4 lg:pt-0 lg:px-8 space-y-2 flex flex-col justify-center">
+                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block">IntSwitch Advantage</span>
+                  <div className="text-3xl font-black text-[#107e3e] tracking-tight font-mono">Up to 40%</div>
+                  <p className="text-xs text-slate-600 font-medium leading-relaxed">
+                    Reduction in migration delivery effort via automated discovery &amp; testing.
+                  </p>
+                </div>
+
+                {/* Right: AI Delivery Assurance (Cols 4) */}
+                <div className="lg:col-span-4 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-1.5 text-xs font-bold text-[#0070f2]">
+                      <Sparkles className="w-4 h-4" />
+                      <span>Delivery Assurance</span>
                     </div>
-                  ))}
+                    {aiAnalysis && (
+                      <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                        ✦ LIVE AI
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-xs text-slate-700 leading-relaxed">
+                    {aiAnalysis?.executiveSummary ? (
+                      aiAnalysis.executiveSummary.length > 210
+                        ? aiAnalysis.executiveSummary.slice(0, 210) + '...'
+                        : aiAnalysis.executiveSummary
+                    ) : (
+                      <>Annual recurring savings of <strong className="text-slate-900 font-semibold">{formatCurrency(annualSavings, currency)}</strong> ({savingsPct.toFixed(1)}% reduction) establish a rock-solid business case. IntSwitch automation significantly shortens regression testing cycles.</>
+                    )}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={openExecutiveAnalysis}
+                    className="text-xs font-bold text-[#0070f2] hover:text-[#0057d2] inline-flex items-center space-x-1 pt-1 cursor-pointer group"
+                  >
+                    <span>View Full AI Analysis &amp; Advisory</span>
+                    <ArrowLeft className="w-3.5 h-3.5 rotate-180 transition-transform group-hover:translate-x-1" />
+                  </button>
                 </div>
               </div>
             </div>
 
-            {/* AI Insight Callout */}
-            <div
-              onClick={() => openChartInsight('cost-drivers', 'Legacy TCO Cost Drivers & Elimination Opportunities')}
-              className="p-3 bg-blue-50/60 hover:bg-blue-100/50 border border-blue-100 rounded-xl text-xs space-y-1 cursor-pointer transition-all duration-200"
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-1.5 font-bold text-indigo-600">
-                  <span>✦</span>
-                  <span>AI Insight</span>
-                </div>
-                <span className="text-[10px] font-bold text-indigo-600">Explore AI Analysis ↗</span>
-              </div>
-              <p className="text-slate-700 leading-relaxed text-[11px]">
-                Licensing is the largest cost category ({licensingPct}%), but infrastructure, support, and operations together represent {nonLicensingPct}% of your current TCO.
-              </p>
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  openChartInsight('cost-drivers', 'Legacy TCO Cost Drivers & Elimination Opportunities');
-                }}
-                className="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 inline-flex items-center space-x-1 pt-1 cursor-pointer text-left group"
-              >
-                <span>View Detailed Analysis</span>
-                <svg className="w-3 h-3 shrink-0 transition-transform group-hover:translate-x-0.5" viewBox="0 0 16 16" fill="none" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M6 3.5l4.5 4.5-4.5 4.5" />
-                </svg>
-              </button>
-            </div>
           </div>
-
-        </div>
+        )}
 
         {/* ========================================================================= */}
-        {/* ROW 4: 3 Deep-Dive Cards                                                  */}
+        {/* TAB 2: CHARTS & ANALYSIS (Images 1 & 2 Features)                          */}
         {/* ========================================================================= */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {dashboardTab === 'charts' && (
+          <div className="space-y-8 animate-fadeIn">
 
-          {/* Col 1: 10-Year ROI & Net Benefit Timeline */}
-          <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs flex flex-col justify-between space-y-4">
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="text-sm font-bold text-slate-900">10-Year ROI & Net Benefit Timeline</h3>
-                <span className="text-[11px] text-slate-500 bg-slate-50 px-2 py-0.5 rounded border">View: Net Benefit ▾</span>
+            {/* CHART 1: 5-Year Enterprise Cost Comparison & ROI Analysis */}
+            <div className="bg-white rounded-3xl border border-[#d9e2ec] p-8 md:p-10 shadow-xs space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-[#d9e2ec] pb-5">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 rounded-2xl bg-blue-50 text-[#0070f2] flex items-center justify-center font-bold">
+                    <BarChart2 className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h2 className="text-xl md:text-2xl font-extrabold text-[#1d2d3e]">
+                      5-Year Cost Comparison &amp; Enterprise ROI
+                    </h2>
+                    <p className="text-xs sm:text-sm text-[#556b82]">
+                      Annual operational spend comparison from Year 1 through Year 5 and 5-Year Cumulative TCO
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <span className="text-xs text-[#556b82] font-semibold bg-slate-50 px-3 py-1.5 rounded-xl border border-[#d9e2ec]">
+                    5-Year Enterprise Horizon
+                  </span>
+                  <span className="text-xs text-emerald-700 font-bold bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-200">
+                    5-Year ROI: {fiveYearRoi.toFixed(1)}%
+                  </span>
+                </div>
               </div>
 
-              {/* Legend */}
-              <div className="flex items-center space-x-4 text-xs text-slate-500 mb-2">
-                <div className="flex items-center space-x-1">
-                  <span className="w-3 h-3 bg-emerald-500 rounded-xs" />
-                  <span>Cumulative Benefit</span>
-                </div>
-                <div className="flex items-center space-x-1">
-                  <span className="w-3 h-0.5 bg-blue-600" />
-                  <span className="w-1.5 h-1.5 rounded-full bg-blue-600 -ml-2" />
-                  <span>Net Benefit</span>
-                </div>
-              </div>
-
-              {/* Chart */}
-              <div className="h-56 w-full relative">
+              {/* Bar Chart */}
+              <div className="h-84 w-full pt-4">
                 <ResponsiveContainer width="100%" height="100%">
-                  <ComposedChart data={timelineData} margin={{ top: 15, right: 10, left: -20, bottom: 5 }}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                    <XAxis dataKey="shortYear" tick={{ fontSize: 10 }} />
+                  <BarChart data={costComparisonData} margin={{ top: 20, right: 30, left: 20, bottom: 25 }}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                    <XAxis
+                      dataKey="name"
+                      tick={{ fill: '#1d2d3e', fontWeight: 600, fontSize: 13 }}
+                      axisLine={{ stroke: '#cbd5e1' }}
+                    />
                     <YAxis
-                      tickFormatter={(v) => `$${(v / 1000000).toFixed(1)}M`}
-                      tick={{ fontSize: 10 }}
+                      tickFormatter={(v) => `$${(v / 1000).toFixed(0)}K`}
+                      tick={{ fill: '#556b82', fontSize: 12 }}
+                      axisLine={{ stroke: '#cbd5e1' }}
                     />
                     <Tooltip
-                      formatter={(val: number) => [`$${val.toLocaleString()}`, '']}
-                      contentStyle={{ backgroundColor: '#0f172a', borderRadius: '8px', color: '#fff', fontSize: '11px' }}
+                      formatter={(val: number, name: string) => [
+                        formatCurrency(val, currency),
+                        name === 'currentTco'
+                          ? 'Current Platform TCO'
+                          : name === 'btpRunRate'
+                            ? 'SAP BTP Subscription / Run-Rate'
+                            : 'One-Time Migration Cost',
+                      ]}
+                      contentStyle={{ backgroundColor: '#1d2d3e', borderRadius: '12px', color: '#fff', fontSize: '12px', border: 'none' }}
                     />
-                    <Bar dataKey="cumulativeBenefit" fill="#10b981" radius={[4, 4, 0, 0]} />
-                    <Line type="monotone" dataKey="netBenefit" stroke="#2563eb" strokeWidth={2.5} dot={{ r: 3 }} />
-                  </ComposedChart>
-                </ResponsiveContainer>
-
-                {/* Tooltip Card Overlay for Year 1 */}
-                <div className="absolute top-2 left-16 bg-white/95 backdrop-blur-xs border border-slate-300 rounded-lg p-2 shadow-md text-[10px] space-y-0.5 pointer-events-none">
-                  <div className="font-bold text-slate-800">Year 1</div>
-                  <div className="text-slate-600">Net Benefit: <strong className="font-mono text-indigo-600">{formatCurrency(year1NetBenefit, currency)}</strong></div>
-                  <div className="text-slate-600">ROI: <strong className="font-mono text-emerald-600">{year1Roi.toFixed(2)}%</strong></div>
-                </div>
-
-                {/* Break-even annotation */}
-                <div className="absolute bottom-6 left-10 text-[9px] font-bold text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded border border-rose-200">
-                  Break-even: {breakEvenMonths.toFixed(1)} mo
-                </div>
-              </div>
-            </div>
-
-            {/* AI Insight Callout */}
-            <div
-              onClick={() => openChartInsight('roi-timeline', '10-Year ROI Trajectory & Capital Recovery Payback')}
-              className="p-3 bg-blue-50/60 hover:bg-blue-100/50 border border-blue-100 rounded-xl text-xs space-y-1 cursor-pointer transition-all duration-200 group"
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-1.5 font-bold text-indigo-600">
-                  <span>✦</span>
-                  <span>AI Insight</span>
-                </div>
-                <span className="text-[10px] font-bold text-indigo-600">Explore Live Insights ↗</span>
-              </div>
-              <p className="text-slate-700 leading-relaxed text-[11px]">
-                The investment is recovered in approximately {breakEvenMonths.toFixed(1)} months, with cumulative net benefits reaching ${(fiveYearNetBenefit / 1000000).toFixed(2)}M over 5 years and continuing to grow thereafter.
-              </p>
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  openChartInsight('roi-timeline', '10-Year ROI Trajectory & Capital Recovery Payback');
-                }}
-                className="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 inline-flex items-center gap-1.5 pt-1 cursor-pointer text-left group"
-              >
-                <span>Explore ROI Timeline AI Insights</span>
-                <svg className="w-3 h-3 text-indigo-600 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 16 16" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M6 3.5l4.5 4.5-4.5 4.5" />
-                </svg>
-              </button>
-            </div>
-          </div>
-
-          {/* Col 2: Scenario Analysis */}
-          <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs flex flex-col justify-between space-y-4">
-            <div>
-              <h3 className="text-sm font-bold text-slate-900 mb-2">Scenario Analysis</h3>
-
-              {/* Legend */}
-              <div className="flex items-center space-x-3 text-xs text-slate-500 mb-3">
-                <div className="flex items-center space-x-1">
-                  <span className="w-2.5 h-2.5 bg-blue-600 rounded-xs" />
-                  <span>Current TCO</span>
-                </div>
-                <div className="flex items-center space-x-1">
-                  <span className="w-2.5 h-2.5 bg-emerald-500 rounded-xs" />
-                  <span>Target TCO</span>
-                </div>
-                <div className="flex items-center space-x-1">
-                  <span className="w-2.5 h-2.5 bg-purple-600 rounded-xs" />
-                  <span>Net Benefit (5Y)</span>
-                </div>
-              </div>
-
-              {/* 3-Cluster Bar Chart */}
-              <div className="h-36 w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={scenarioData.chart} margin={{ top: 5, right: 5, left: -20, bottom: 5 }}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                    <XAxis dataKey="name" tick={{ fontSize: 10 }} />
-                    <YAxis tickFormatter={(v) => `$${(v / 1000000).toFixed(1)}M`} tick={{ fontSize: 10 }} />
-                    <Tooltip
-                      formatter={(val: number) => [`$${val.toLocaleString()}`, '']}
-                      contentStyle={{ backgroundColor: '#0f172a', borderRadius: '8px', color: '#fff', fontSize: '11px' }}
-                    />
-                    <Bar dataKey="currentTco" fill="#2563eb" radius={[3, 3, 0, 0]} />
-                    <Bar dataKey="targetTco" fill="#10b981" radius={[3, 3, 0, 0]} />
-                    <Bar dataKey="netBenefit" fill="#9333ea" radius={[3, 3, 0, 0]} />
+                    <Bar dataKey="currentTco" fill="#556b82" maxBarSize={40} name="currentTco" radius={[6, 6, 0, 0]} />
+                    <Bar dataKey="btpRunRate" stackId="btp" fill="#0070f2" maxBarSize={40} name="btpRunRate" />
+                    <Bar dataKey="migrationCost" stackId="btp" fill="#ea580c" maxBarSize={40} radius={[6, 6, 0, 0]} name="migrationCost" />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
 
-              {/* Scenario Table */}
-              <div className="mt-3 border-t border-slate-100 pt-3">
-                <table className="w-full text-xs text-left">
-                  <thead>
-                    <tr className="text-slate-400 font-semibold border-b border-slate-100">
-                      <th className="pb-1.5">Scenario</th>
-                      <th className="pb-1.5">ROI</th>
-                      <th className="pb-1.5">Break-even</th>
-                      <th className="pb-1.5 text-right">5Y Benefit</th>
+              {/* 3 Clean Legend Cards under Chart */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 pt-4">
+                {/* Card 1: Current Platform 5-Year Baseline */}
+                <div className="p-5 bg-rose-50/70 border border-rose-200 rounded-2xl space-y-1.5">
+                  <div className="flex items-center space-x-2">
+                    <span className="w-3 h-3 rounded-full bg-[#556b82] shrink-0" />
+                    <h4 className="text-sm font-bold text-rose-900">Current Platform (5-Year TCO)</h4>
+                  </div>
+                  <p className="text-xs text-rose-700 font-medium">Cumulative 5-Year on-premise baseline</p>
+                  <div className="text-xl font-extrabold text-[#1d2d3e] font-mono pt-1">
+                    {formatCurrency(currentTco * 5, currency)}
+                  </div>
+                  <p className="text-[11px] text-rose-600">
+                    {formatCurrency(currentTco, currency)}/yr baseline in licenses, hardware, hypervisors &amp; maintenance renewals.
+                  </p>
+                </div>
+
+                {/* Card 2: SAP BTP 5-Year Cloud TCO */}
+                <div className="p-5 bg-blue-50/70 border border-blue-200 rounded-2xl space-y-1.5">
+                  <div className="flex items-center space-x-2">
+                    <span className="w-3 h-3 rounded-full bg-[#0070f2] shrink-0" />
+                    <h4 className="text-sm font-bold text-blue-900">SAP BTP 5-Year Cloud TCO</h4>
+                  </div>
+                  <p className="text-xs text-blue-700 font-medium">5-Year Cloud subscription + Migration</p>
+                  <div className="text-xl font-extrabold text-[#0070f2] font-mono pt-1">
+                    {formatCurrency(targetTco * 5 + migrationCost, currency)}
+                  </div>
+                  <p className="text-[11px] text-blue-700">
+                    {formatCurrency(targetTco * 5, currency)} in managed subscriptions + {formatCurrency(migrationCost, currency)} one-time packaged migration.
+                  </p>
+                </div>
+
+                {/* Card 3: 5-Year Net Economic Value & ROI */}
+                <div className="p-5 bg-emerald-50/70 border border-emerald-200 rounded-2xl space-y-1.5">
+                  <div className="flex items-center space-x-2">
+                    <span className="w-3 h-3 rounded-full bg-[#107e3e] shrink-0" />
+                    <h4 className="text-sm font-bold text-emerald-900">5-Year Net Economic Savings</h4>
+                  </div>
+                  <p className="text-xs text-emerald-700 font-medium">{fiveYearRoi.toFixed(1)}% 5-Year ROI • Payback in {breakEvenMonths.toFixed(1)} mos</p>
+                  <div className="text-xl font-extrabold text-[#107e3e] font-mono pt-1">
+                    +{formatCurrency(fiveYearNetBenefit, currency)}
+                  </div>
+                  <p className="text-[11px] text-emerald-700">
+                    Net cash savings liberated across the 5-year operational lifecycle after 100% migration payback.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* CHART 2: Migration Cost Impact Analysis (Image 1 Feature) */}
+            <div className="bg-white rounded-3xl border border-[#d9e2ec] p-8 md:p-10 shadow-xs space-y-6">
+              <div className="flex items-center space-x-3 border-b border-[#d9e2ec] pb-5">
+                <div className="w-10 h-10 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold">
+                  <AlertTriangle className="w-5 h-5" />
+                </div>
+                <div>
+                  <h2 className="text-xl md:text-2xl font-extrabold text-[#1d2d3e]">
+                    Migration Cost Impact Analysis
+                  </h2>
+                  <p className="text-xs sm:text-sm text-[#556b82]">
+                    Capital deployment trajectory and 10-year investment recovery curve
+                  </p>
+                </div>
+              </div>
+
+              {/* Understanding Migration Investment Callout (Image 1 exact option) */}
+              <div className="p-6 bg-amber-50/80 border border-amber-200 rounded-2xl space-y-2">
+                <div className="flex items-center space-x-2 text-amber-900 font-bold text-sm">
+                  <AlertTriangle className="w-4 h-4 text-amber-600" />
+                  <span>Understanding Migration Investment</span>
+                </div>
+                <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                  The upfront migration cost of <strong className="text-slate-900 font-bold">{formatCurrency(migrationCost, currency)}</strong> creates an initial negative position. Your ongoing savings will gradually recover this investment.
+                </p>
+                <div className="flex items-center space-x-2 pt-1">
+                  <span className="inline-flex items-center space-x-1.5 px-3 py-1 bg-emerald-100 text-[#107e3e] border border-emerald-300 rounded-full text-xs font-bold">
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    <span>Break-even point: {breakEvenMonths.toFixed(1)} months</span>
+                  </span>
+                </div>
+              </div>
+
+              {/* Area Chart: Net Position ($) over 10 Years */}
+              <div className="h-80 w-full pt-4">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={netPositionData} margin={{ top: 20, right: 30, left: 20, bottom: 25 }}>
+                    <defs>
+                      <linearGradient id="netPosGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#0070f2" stopOpacity={0.4} />
+                        <stop offset="95%" stopColor="#0070f2" stopOpacity={0.05} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                    <XAxis dataKey="year" tick={{ fill: '#1d2d3e', fontWeight: 600, fontSize: 12 }} />
+                    <YAxis
+                      tickFormatter={(v) => `$${(v / 1000000).toFixed(1)}M`}
+                      tick={{ fill: '#556b82', fontSize: 12 }}
+                    />
+                    <Tooltip
+                      formatter={(val: number) => [`${val >= 0 ? '+' : ''}${formatCurrency(val, currency)}`, 'Net Position']}
+                      contentStyle={{ backgroundColor: '#1d2d3e', borderRadius: '12px', color: '#fff', fontSize: '12px', border: 'none' }}
+                    />
+                    <ReferenceLine
+                      y={0}
+                      stroke="#dc2626"
+                      strokeDasharray="4 4"
+                      label={{ value: 'Break-even Line ($0)', fill: '#dc2626', position: 'insideTopLeft', fontSize: 12, fontWeight: 700 }}
+                    />
+                    <Area
+                      type="monotone"
+                      dataKey="netPosition"
+                      stroke="#0070f2"
+                      strokeWidth={3}
+                      fillOpacity={1}
+                      fill="url(#netPosGrad)"
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+
+              {/* 2 Breakdown Cards: Investment Risk & Long-term Benefits (Image 1 exact option) */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
+                {/* Card 1: Investment Risk */}
+                <div className="p-6 bg-rose-50/70 border border-rose-200 rounded-2xl space-y-3">
+                  <h4 className="text-sm font-bold text-rose-900 uppercase tracking-wider flex items-center space-x-2">
+                    <ShieldAlert className="w-4 h-4 text-rose-600" />
+                    <span>Investment Risk</span>
+                  </h4>
+                  <ul className="space-y-2 text-xs sm:text-sm text-slate-700">
+                    <li className="flex items-start space-x-2">
+                      <span className="text-rose-600 font-bold">•</span>
+                      <span>Upfront migration cost: <strong className="text-slate-900 font-semibold">{formatCurrency(migrationCost, currency)}</strong></span>
+                    </li>
+                    <li className="flex items-start space-x-2">
+                      <span className="text-rose-600 font-bold">•</span>
+                      <span>Temporary negative cash position during active cutover</span>
+                    </li>
+                    <li className="flex items-start space-x-2">
+                      <span className="text-rose-600 font-bold">•</span>
+                      <span>Potential project delays mitigated by IntSwitch automated testing</span>
+                    </li>
+                  </ul>
+                </div>
+
+                {/* Card 2: Long-term Benefits */}
+                <div className="p-6 bg-emerald-50/70 border border-emerald-200 rounded-2xl space-y-3">
+                  <h4 className="text-sm font-bold text-[#107e3e] uppercase tracking-wider flex items-center space-x-2">
+                    <TrendingUp className="w-4 h-4 text-[#107e3e]" />
+                    <span>Long-term Benefits</span>
+                  </h4>
+                  <ul className="space-y-2 text-xs sm:text-sm text-slate-700">
+                    <li className="flex items-start space-x-2">
+                      <span className="text-[#107e3e] font-bold">•</span>
+                      <span>Ongoing annual operational savings: <strong className="text-slate-900 font-semibold">+{formatCurrency(annualSavings, currency)}/yr</strong></span>
+                    </li>
+                    <li className="flex items-start space-x-2">
+                      <span className="text-[#107e3e] font-bold">•</span>
+                      <span>Improved platform agility with 920+ pre-built integration packages</span>
+                    </li>
+                    <li className="flex items-start space-x-2">
+                      <span className="text-[#107e3e] font-bold">•</span>
+                      <span>Reduced operational complexity &amp; zero on-prem server maintenance</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            {/* Additional Visual Analysis: Legacy Drivers & 10-Year ROI */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {/* Card 1: Legacy TCO Cost Drivers */}
+              <div className="bg-white rounded-3xl border border-[#d9e2ec] p-8 shadow-xs space-y-6">
+                <div className="flex items-center justify-between border-b border-[#d9e2ec] pb-4">
+                  <h3 className="text-base font-bold text-[#1d2d3e]">Legacy TCO Cost Drivers</h3>
+                  <span className="text-xs text-[#556b82]">Baseline Breakdown</span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-12 gap-6 items-center">
+                  <div className="sm:col-span-6 h-52 relative flex items-center justify-center">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={tcoDriversData}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={50}
+                          outerRadius={75}
+                          paddingAngle={3}
+                          dataKey="value"
+                        >
+                          {tcoDriversData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.color} />
+                          ))}
+                        </Pie>
+                      </PieChart>
+                    </ResponsiveContainer>
+                    <div className="absolute flex flex-col items-center justify-center pointer-events-none text-center">
+                      <span className="text-base font-black text-[#1d2d3e] font-mono">
+                        ${(currentTco / 1000).toFixed(0)}K
+                      </span>
+                      <span className="text-[11px] text-[#556b82]">per year</span>
+                    </div>
+                  </div>
+
+                  <div className="sm:col-span-6 space-y-3 text-xs sm:text-sm">
+                    {tcoDriversData.map((item, idx) => (
+                      <div key={idx} className="flex items-center justify-between">
+                        <div className="flex items-center space-x-2 truncate">
+                          <span className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: item.color }} />
+                          <span className="text-slate-700 truncate">{item.name}</span>
+                        </div>
+                        <div className="text-right font-mono font-bold text-[#1d2d3e] shrink-0 ml-2">
+                          <span className="text-slate-400 text-xs font-normal mr-1">{item.pct}%</span>
+                          ${(item.value / 1000).toFixed(0)}K
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <p className="text-xs text-[#556b82] leading-relaxed pt-2 border-t border-[#d9e2ec]">
+                  Software licensing ({licensingPct}%) and infrastructure lease charges represent the vast majority of legacy costs, both of which are dissolved by BTP.
+                </p>
+              </div>
+
+              {/* Card 2: 10-Year Cumulative Benefit Timeline */}
+              <div className="bg-white rounded-3xl border border-[#d9e2ec] p-8 shadow-xs space-y-6">
+                <div className="flex items-center justify-between border-b border-[#d9e2ec] pb-4">
+                  <h3 className="text-base font-bold text-[#1d2d3e]">10-Year ROI Trajectory</h3>
+                  <span className="text-xs text-[#556b82]">Cumulative Returns</span>
+                </div>
+
+                <div className="h-52 w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <ComposedChart data={timelineData} margin={{ top: 15, right: 10, left: -20, bottom: 5 }}>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                      <XAxis dataKey="shortYear" tick={{ fontSize: 11 }} />
+                      <YAxis
+                        tickFormatter={(v) => `$${(v / 1000000).toFixed(1)}M`}
+                        tick={{ fontSize: 11 }}
+                      />
+                      <Tooltip
+                        formatter={(val: number) => [formatCurrency(val, currency), 'Cumulative Value']}
+                        contentStyle={{ backgroundColor: '#1d2d3e', borderRadius: '8px', color: '#fff', fontSize: '11px' }}
+                      />
+                      <Bar dataKey="cumulativeBenefit" fill="#107e3e" radius={[4, 4, 0, 0]} name="Cumulative Savings" />
+                      <Line type="monotone" dataKey="netBenefit" stroke="#0070f2" strokeWidth={2.5} dot={{ r: 3 }} name="Net Benefit" />
+                    </ComposedChart>
+                  </ResponsiveContainer>
+                </div>
+
+                <p className="text-xs text-[#556b82] leading-relaxed pt-2 border-t border-[#d9e2ec]">
+                  After payback at month {breakEvenMonths.toFixed(1)}, cumulative net benefits accelerate to {formatCurrency(fiveYearNetBenefit, currency)} over 5 years.
+                </p>
+              </div>
+            </div>
+
+          </div>
+        )}
+
+        {/* ========================================================================= */}
+        {/* TAB 3: FINANCIAL SIMULATION                                               */}
+        {/* ========================================================================= */}
+        {dashboardTab === 'simulation' && (
+          <div className="space-y-8 animate-fadeIn">
+            <div className="bg-white rounded-3xl border border-[#d9e2ec] p-8 md:p-10 shadow-xs space-y-8">
+              <div className="border-b border-[#d9e2ec] pb-5">
+                <h2 className="text-xl md:text-2xl font-extrabold text-[#1d2d3e]">
+                  Interactive Financial Sensitivity Simulation
+                </h2>
+                <p className="text-xs sm:text-sm text-[#556b82] mt-1">
+                  Adjust parameters in real time to stress-test your business case under varying operational adoption and delivery conditions
+                </p>
+              </div>
+
+              {/* 3 Sensitivity Sliders with Generous Padding */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {/* Slider 1: Savings Realization */}
+                <div className="space-y-3 bg-slate-50 p-6 rounded-2xl border border-[#d9e2ec]">
+                  <div className="flex justify-between items-center text-xs sm:text-sm">
+                    <label className="font-bold text-[#1d2d3e]">Annual Savings Factor</label>
+                    <span className="font-mono font-bold text-[#0070f2] bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-200">
+                      {simSavingsFactor.toFixed(2)}x ({((simSavingsFactor - 1) * 100).toFixed(0)}%)
+                    </span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0.5"
+                    max="1.5"
+                    step="0.05"
+                    value={simSavingsFactor}
+                    onChange={(e) => setSimSavingsFactor(parseFloat(e.target.value))}
+                    className="w-full h-3 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#0070f2]"
+                  />
+                  <p className="text-xs text-[#556b82]">
+                    Simulate slower interface adoption or higher operational realization.
+                  </p>
+                </div>
+
+                {/* Slider 2: Migration Cost Factor */}
+                <div className="space-y-3 bg-slate-50 p-6 rounded-2xl border border-[#d9e2ec]">
+                  <div className="flex justify-between items-center text-xs sm:text-sm">
+                    <label className="font-bold text-[#1d2d3e]">Migration Cost Factor</label>
+                    <span className="font-mono font-bold text-[#0070f2] bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-200">
+                      {simMigrationFactor.toFixed(2)}x ({((simMigrationFactor - 1) * 100).toFixed(0)}%)
+                    </span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0.7"
+                    max="1.8"
+                    step="0.05"
+                    value={simMigrationFactor}
+                    onChange={(e) => setSimMigrationFactor(parseFloat(e.target.value))}
+                    className="w-full h-3 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#0070f2]"
+                  />
+                  <p className="text-xs text-[#556b82]">
+                    Simulate complex refactoring overruns or accelerated content efficiencies.
+                  </p>
+                </div>
+
+                {/* Slider 3: Target BTP Cost Factor */}
+                <div className="space-y-3 bg-slate-50 p-6 rounded-2xl border border-[#d9e2ec]">
+                  <div className="flex justify-between items-center text-xs sm:text-sm">
+                    <label className="font-bold text-[#1d2d3e]">Target BTP Cost Factor</label>
+                    <span className="font-mono font-bold text-[#0070f2] bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-200">
+                      {simTargetFactor.toFixed(2)}x ({((simTargetFactor - 1) * 100).toFixed(0)}%)
+                    </span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0.8"
+                    max="1.5"
+                    step="0.05"
+                    value={simTargetFactor}
+                    onChange={(e) => setSimTargetFactor(parseFloat(e.target.value))}
+                    className="w-full h-3 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#0070f2]"
+                  />
+                  <p className="text-xs text-[#556b82]">
+                    Simulate message throughput expansion or additional tenant packs.
+                  </p>
+                </div>
+              </div>
+
+              {/* Dynamic Recalculated Case Banner */}
+              <div className="p-6 bg-blue-50/80 border border-blue-200 rounded-2xl grid grid-cols-2 md:grid-cols-4 gap-6">
+                <div>
+                  <span className="text-xs text-[#556b82] uppercase tracking-wider block font-bold">Simulated Annual Savings</span>
+                  <span className="text-xl sm:text-2xl font-black text-[#107e3e] font-mono block mt-1">
+                    +{formatCurrency(simulatedNetAnnual, currency)}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-xs text-[#556b82] uppercase tracking-wider block font-bold">Simulated Migration</span>
+                  <span className="text-xl sm:text-2xl font-black text-[#1d2d3e] font-mono block mt-1">
+                    {formatCurrency(simulatedMigration, currency)}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-xs text-[#556b82] uppercase tracking-wider block font-bold">Simulated Payback</span>
+                  <span className="text-xl sm:text-2xl font-black text-[#0070f2] font-mono block mt-1">
+                    {simulatedBreakEven.toFixed(1)} months
+                  </span>
+                </div>
+                <div>
+                  <span className="text-xs text-[#556b82] uppercase tracking-wider block font-bold">Simulated 5-Year ROI</span>
+                  <span className="text-xl sm:text-2xl font-black text-[#8a3ffc] font-mono block mt-1">
+                    {simulated5YRoi.toFixed(1)}%
+                  </span>
+                </div>
+              </div>
+
+              {/* Deep Scenarios Page Link */}
+              <div className="flex items-center justify-between pt-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSimSavingsFactor(1.0);
+                    setSimMigrationFactor(1.0);
+                    setSimTargetFactor(1.0);
+                  }}
+                  className="px-4 py-2 bg-white border border-[#d9e2ec] hover:bg-slate-50 text-xs font-bold rounded-xl"
+                >
+                  Reset to 1.0x Base Case
+                </button>
+                <Link
+                  href={`/scenarios/${assessmentId}`}
+                  className="inline-flex items-center space-x-2 text-sm font-bold text-[#0070f2] hover:text-[#0057d2] group"
+                >
+                  <span>Open Full Scenarios &amp; Monte Carlo Suite</span>
+                  <ArrowLeft className="w-4 h-4 rotate-180 transition-transform group-hover:translate-x-1" />
+                </Link>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ========================================================================= */}
+        {/* TAB 4: CURRENT STATE DETAILS                                              */}
+        {/* ========================================================================= */}
+        {dashboardTab === 'current-state' && (
+          <div className="space-y-8 animate-fadeIn">
+            <div className="bg-white rounded-3xl border border-[#d9e2ec] p-8 md:p-10 shadow-xs space-y-8">
+              <div className="border-b border-[#d9e2ec] pb-5">
+                <h2 className="text-xl md:text-2xl font-extrabold text-[#1d2d3e]">
+                  Current State Architecture &amp; Baseline TCO
+                </h2>
+                <p className="text-xs sm:text-sm text-[#556b82] mt-1">
+                  Granular cost composition and interface landscape of the existing on-premise {assessment?.sourcePlatform || 'SAP PI/PO'} deployment
+                </p>
+              </div>
+
+              {/* Cost Categories Table */}
+              <div className="overflow-x-auto">
+                <table className="w-full text-xs sm:text-sm text-left border border-[#d9e2ec] rounded-2xl overflow-hidden">
+                  <thead className="bg-slate-50 text-[#1d2d3e] font-bold border-b border-[#d9e2ec]">
+                    <tr>
+                      <th className="p-4">TCO Component</th>
+                      <th className="p-4 text-right">Annual Cost ({currency})</th>
+                      <th className="p-4 text-right">% of Baseline</th>
+                      <th className="p-4">Status in Target State</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100 font-mono">
-                    {scenarioData.table.map((row, idx) => (
-                      <tr key={idx}>
-                        <td className="py-1.5 font-sans font-bold text-slate-700">{row.name}</td>
-                        <td className="py-1.5 font-bold text-emerald-600">{row.roi}</td>
-                        <td className="py-1.5 text-slate-600">{row.breakEven}</td>
-                        <td className="py-1.5 text-right font-bold text-slate-900">{row.benefit}</td>
-                      </tr>
-                    ))}
+                  <tbody className="divide-y divide-[#d9e2ec]">
+                    <tr>
+                      <td className="p-4 font-semibold text-[#1d2d3e]">Perpetual Software Licenses</td>
+                      <td className="p-4 text-right font-mono font-bold">{formatCurrency(licensingCost, currency)}</td>
+                      <td className="p-4 text-right font-mono text-[#556b82]">{licensingPct}%</td>
+                      <td className="p-4 text-emerald-700 font-semibold">100% Decommissioned (Replaced by BTP)</td>
+                    </tr>
+                    <tr>
+                      <td className="p-4 font-semibold text-[#1d2d3e]">Datacenter Hardware &amp; Hypervisors</td>
+                      <td className="p-4 text-right font-mono font-bold">{formatCurrency(infraCost, currency)}</td>
+                      <td className="p-4 text-right font-mono text-[#556b82]">{(((infraCost) / (currentTco || 1)) * 100).toFixed(1)}%</td>
+                      <td className="p-4 text-emerald-700 font-semibold">100% Sunset (Zero on-prem servers)</td>
+                    </tr>
+                    <tr>
+                      <td className="p-4 font-semibold text-[#1d2d3e]">Third-Party Vendor Support Contracts</td>
+                      <td className="p-4 text-right font-mono font-bold">{formatCurrency(supportCost, currency)}</td>
+                      <td className="p-4 text-right font-mono text-[#556b82]">{(((supportCost) / (currentTco || 1)) * 100).toFixed(1)}%</td>
+                      <td className="p-4 text-emerald-700 font-semibold">Terminated on cutover</td>
+                    </tr>
+                    <tr>
+                      <td className="p-4 font-semibold text-[#1d2d3e]">Manual Maintenance &amp; DBA Administration</td>
+                      <td className="p-4 text-right font-mono font-bold">{formatCurrency(operationsCost, currency)}</td>
+                      <td className="p-4 text-right font-mono text-[#556b82]">{(((operationsCost) / (currentTco || 1)) * 100).toFixed(1)}%</td>
+                      <td className="p-4 text-blue-700 font-semibold">Shifted to cloud governance</td>
+                    </tr>
+                    <tr className="bg-slate-50 font-bold">
+                      <td className="p-4 text-[#1d2d3e]">Total Baseline TCO</td>
+                      <td className="p-4 text-right font-mono text-rose-600 text-base">{formatCurrency(currentTco, currency)}</td>
+                      <td className="p-4 text-right font-mono">100%</td>
+                      <td className="p-4 text-rose-600 font-bold">Total annual liability</td>
+                    </tr>
                   </tbody>
                 </table>
               </div>
-            </div>
 
-            <Link href={`/report/${assessmentId}`} className="text-xs font-bold text-[#0070f2] hover:text-[#0057d2] inline-flex items-center gap-1.5 pt-1 group">
-              <span>View Executive Report</span>
-              <svg className="w-3 h-3 text-[#0070f2] transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 16 16" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M6 3.5l4.5 4.5-4.5 4.5" />
-              </svg>
-            </Link>
-          </div>
-
-          {/* Col 3: Migration Risk Assessment & Top Recommendations */}
-          <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs flex flex-col justify-between space-y-4">
-            {/* Top: 3x3 Risk Matrix */}
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="text-sm font-bold text-slate-900">Migration Risk Assessment</h3>
-                <Link href={`/report/${assessmentId}`} className="text-[11px] font-bold text-[#0070f2] hover:text-[#0057d2] inline-flex items-center gap-1 group">
-                  <span>View All Risks</span>
-                  <svg className="w-2.5 h-2.5 text-[#0070f2] transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 16 16" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M6 3.5l4.5 4.5-4.5 4.5" />
-                  </svg>
-                </Link>
-              </div>
-
-              <div className="grid grid-cols-12 gap-3 items-center">
-                {/* 3x3 Matrix Grid (Cols 5) */}
-                <div className="col-span-5 relative border border-slate-200 rounded-lg p-1 bg-slate-50">
-                  <div className="grid grid-cols-3 gap-1 h-24">
-                    {/* Row 1: High Likelihood */}
-                    <div className="bg-amber-100/70 rounded flex items-center justify-center text-[10px]" />
-                    <div className="bg-orange-100/70 rounded flex items-center justify-center text-[10px]">
-                      <span className="w-4 h-4 rounded-full bg-rose-500 text-white font-bold flex items-center justify-center text-[9px]">2</span>
-                    </div>
-                    <div className="bg-rose-100/70 rounded flex items-center justify-center text-[10px]">
-                      <span className="w-4 h-4 rounded-full bg-rose-600 text-white font-bold flex items-center justify-center text-[9px]">1</span>
-                    </div>
-
-                    {/* Row 2: Med Likelihood */}
-                    <div className="bg-emerald-100/70 rounded flex items-center justify-center text-[10px]">
-                      <span className="w-4 h-4 rounded-full bg-amber-500 text-white font-bold flex items-center justify-center text-[9px]">3</span>
-                    </div>
-                    <div className="bg-amber-100/70 rounded flex items-center justify-center text-[10px]" />
-                    <div className="bg-orange-100/70 rounded flex items-center justify-center text-[10px]" />
-
-                    {/* Row 3: Low Likelihood */}
-                    <div className="bg-slate-100 rounded flex items-center justify-center text-[10px]">
-                      <span className="w-4 h-4 rounded-full bg-emerald-500 text-white font-bold flex items-center justify-center text-[9px]">4</span>
-                    </div>
-                    <div className="bg-emerald-100/70 rounded flex items-center justify-center text-[10px]">
-                      <span className="w-4 h-4 rounded-full bg-blue-500 text-white font-bold flex items-center justify-center text-[9px]">5</span>
-                    </div>
-                    <div className="bg-amber-100/70 rounded flex items-center justify-center text-[10px]" />
-                  </div>
-                  <div className="flex justify-between text-[8px] text-slate-400 mt-1 px-1">
-                    <span>Low</span>
-                    <span>Impact</span>
-                    <span>High</span>
-                  </div>
+              {/* Landscape Metadata Cards */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 pt-2">
+                <div className="p-5 bg-slate-50 border border-[#d9e2ec] rounded-2xl space-y-1">
+                  <span className="text-xs text-[#556b82] font-semibold block">Total Interfaces</span>
+                  <span className="text-2xl font-bold font-mono text-[#1d2d3e]">{totalInterfaces}</span>
                 </div>
-
-                {/* Risk Items (Cols 7) */}
-                <div className="col-span-7 space-y-1.5 text-xs">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-1.5 truncate">
-                      <span className="w-3.5 h-3.5 rounded-full bg-rose-600 text-white font-bold flex items-center justify-center text-[9px]">1</span>
-                      <span className="text-slate-700 truncate">Migration Dev Effort</span>
-                    </div>
-                    <span className="px-1.5 py-0.2 rounded bg-rose-50 text-rose-600 font-bold border border-rose-200 text-[10px]">High</span>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-1.5 truncate">
-                      <span className="w-3.5 h-3.5 rounded-full bg-rose-500 text-white font-bold flex items-center justify-center text-[9px]">2</span>
-                      <span className="text-slate-700 truncate">Message Consumption</span>
-                    </div>
-                    <span className="px-1.5 py-0.2 rounded bg-rose-50 text-rose-600 font-bold border border-rose-200 text-[10px]">High</span>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-1.5 truncate">
-                      <span className="w-3.5 h-3.5 rounded-full bg-amber-500 text-white font-bold flex items-center justify-center text-[9px]">3</span>
-                      <span className="text-slate-700 truncate">Complex Interfaces</span>
-                    </div>
-                    <span className="px-1.5 py-0.2 rounded bg-amber-50 text-amber-600 font-bold border border-amber-200 text-[10px]">Medium</span>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-1.5 truncate">
-                      <span className="w-3.5 h-3.5 rounded-full bg-emerald-500 text-white font-bold flex items-center justify-center text-[9px]">4</span>
-                      <span className="text-slate-700 truncate">Cutover & Downtime</span>
-                    </div>
-                    <span className="px-1.5 py-0.2 rounded bg-emerald-50 text-emerald-600 font-bold border border-emerald-200 text-[10px]">Low</span>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-1.5 truncate">
-                      <span className="w-3.5 h-3.5 rounded-full bg-blue-500 text-white font-bold flex items-center justify-center text-[9px]">5</span>
-                      <span className="text-slate-700 truncate">Compliance & Regulatory</span>
-                    </div>
-                    <span className="px-1.5 py-0.2 rounded bg-blue-50 text-blue-600 font-bold border border-blue-200 text-[10px]">Low</span>
-                  </div>
+                <div className="p-5 bg-slate-50 border border-[#d9e2ec] rounded-2xl space-y-1">
+                  <span className="text-xs text-[#556b82] font-semibold block">Complex Interfaces</span>
+                  <span className="text-2xl font-bold font-mono text-amber-600">{complexInterfaces} ({complexPct}%)</span>
                 </div>
-              </div>
-            </div>
-
-            {/* Bottom: Top Recommendations */}
-            <div className="border-t border-slate-100 pt-3 space-y-2">
-              <div className="flex items-center justify-between">
-                <h4 className="text-xs font-bold text-slate-900">Top Recommendations</h4>
-                <Link href={`/report/${assessmentId}`} className="text-xs font-bold text-[#0070f2] hover:text-[#0057d2] inline-flex items-center gap-1 group">
-                  <span>View All</span>
-                  <svg className="w-2.5 h-2.5 text-[#0070f2] transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 16 16" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M6 3.5l4.5 4.5-4.5 4.5" />
-                  </svg>
-                </Link>
-              </div>
-
-              <div className="space-y-1.5 text-xs">
-                <div className="flex items-center justify-between">
-                  <span className="text-slate-700 truncate">1. Validate migration development estimate</span>
-                  <span className="px-1.5 py-0.2 rounded bg-rose-50 text-rose-600 font-bold border border-rose-200 shrink-0 ml-2">High</span>
+                <div className="p-5 bg-slate-50 border border-[#d9e2ec] rounded-2xl space-y-1">
+                  <span className="text-xs text-[#556b82] font-semibold block">Monthly Volume</span>
+                  <span className="text-2xl font-bold font-mono text-[#0070f2]">{throughput}</span>
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-slate-700 truncate">2. Validate target message consumption assumptions</span>
-                  <span className="px-1.5 py-0.2 rounded bg-rose-50 text-rose-600 font-bold border border-rose-200 shrink-0 ml-2">High</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-slate-700 truncate">3. Prioritize complex interfaces for early assessment</span>
-                  <span className="px-1.5 py-0.2 rounded bg-amber-50 text-amber-600 font-bold border border-amber-200 shrink-0 ml-2">Medium</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-slate-700 truncate">4. Develop detailed cutover plan</span>
-                  <span className="px-1.5 py-0.2 rounded bg-amber-50 text-amber-600 font-bold border border-amber-200 shrink-0 ml-2">Medium</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-slate-700 truncate">5. Review compliance requirements with SAP BTP</span>
-                  <span className="px-1.5 py-0.2 rounded bg-emerald-50 text-emerald-600 font-bold border border-emerald-200 shrink-0 ml-2">Low</span>
+                <div className="p-5 bg-slate-50 border border-[#d9e2ec] rounded-2xl space-y-1">
+                  <span className="text-xs text-[#556b82] font-semibold block">Custom Development</span>
+                  <span className="text-2xl font-bold text-[#1d2d3e]">{customDev}</span>
                 </div>
               </div>
             </div>
           </div>
-
-        </div>
+        )}
 
         {/* ========================================================================= */}
-        {/* ROW 5: Supporting Cards (Bottom Grid)                                      */}
+        {/* TAB 5: TARGET STATE DETAILS                                               */}
         {/* ========================================================================= */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-          {/* Card 1: Migration Complexity */}
-          <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-1.5">
-                <span className="text-xs">📊</span>
-                <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider">Migration Complexity</h4>
+        {dashboardTab === 'target-state' && (
+          <div className="space-y-8 animate-fadeIn">
+            <div className="bg-white rounded-3xl border border-[#d9e2ec] p-8 md:p-10 shadow-xs space-y-8">
+              <div className="border-b border-[#d9e2ec] pb-5">
+                <h2 className="text-xl md:text-2xl font-extrabold text-[#1d2d3e]">
+                  Target SAP BTP Integration Suite Architecture
+                </h2>
+                <p className="text-xs sm:text-sm text-[#556b82] mt-1">
+                  Official subscription sizing, capacity add-ons, and hyper-scaler operational runtime specifications
+                </p>
               </div>
-            </div>
 
-            <div className="flex items-center justify-between">
-              <div className="space-y-1">
-                <span className="text-xl font-black text-amber-600">{complexityLabel}</span>
-                <div className="w-32 bg-slate-200 h-2 rounded-full overflow-hidden">
-                  <div className="bg-amber-500 h-full rounded-full" style={{ width: complexityWidth }} />
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="p-6 bg-blue-50/70 border border-blue-200 rounded-2xl space-y-2">
+                  <span className="text-xs font-bold text-[#0070f2] uppercase tracking-wider block">Selected Edition</span>
+                  <div className="text-2xl font-bold text-[#1d2d3e]">
+                    {selectedEdition || 'SAP BTP Integration Suite'}
+                  </div>
+                  <p className="text-xs text-[#556b82]">
+                    Base annual subscription: <strong className="font-mono text-[#1d2d3e]">{formatCurrency(editionBasePrice, currency)}</strong>
+                  </p>
+                </div>
+
+                <div className="p-6 bg-slate-50 border border-[#d9e2ec] rounded-2xl space-y-2">
+                  <span className="text-xs font-bold text-[#556b82] uppercase tracking-wider block">Capacity Add-Ons</span>
+                  <div className="text-2xl font-bold font-mono text-[#1d2d3e]">
+                    {formatCurrency(addOnsCost, currency)} / yr
+                  </div>
+                  <p className="text-xs text-[#556b82]">
+                    {additionalPacks} message packs • {dataSpacePackages} data space packs
+                  </p>
+                </div>
+
+                <div className="p-6 bg-emerald-50/70 border border-emerald-200 rounded-2xl space-y-2">
+                  <span className="text-xs font-bold text-[#107e3e] uppercase tracking-wider block">Total Cloud Run Cost</span>
+                  <div className="text-2xl font-bold font-mono text-[#107e3e]">
+                    {formatCurrency(targetTco, currency)} / yr
+                  </div>
+                  <p className="text-xs text-[#556b82]">
+                    Delivering <strong className="text-[#107e3e]">+{formatCurrency(annualSavings, currency)}</strong> perpetual annual savings
+                  </p>
                 </div>
               </div>
 
-              <div className="space-y-1 text-[11px] text-right font-mono">
-                <div><span className="text-slate-400 font-sans">Interfaces: </span><strong className="text-slate-800">{totalInterfaces}</strong></div>
-                <div><span className="text-slate-400 font-sans">Complex: </span><strong className="text-slate-800">{complexInterfaces} ({complexPct}%)</strong></div>
-                <div><span className="text-slate-400 font-sans">Message Volume: </span><strong className="text-slate-800">{throughput}/mo</strong></div>
-                <div><span className="text-slate-400 font-sans">Custom Dev: </span><strong className="text-slate-800 font-sans">{customDev}</strong></div>
+              {/* Cloud Capabilities Highlights */}
+              <div className="p-6 bg-slate-50 border border-[#d9e2ec] rounded-2xl space-y-3">
+                <h4 className="text-sm font-bold text-[#1d2d3e]">SAP BTP Enterprise Modernization Dividends</h4>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+                  <div className="p-3 bg-white rounded-xl border border-[#d9e2ec] space-y-1">
+                    <span className="font-bold text-[#0070f2] block">920+ Pre-built Packages</span>
+                    <p className="text-[#556b82]">Accelerate third-party and SAP integration with turnkey standard content.</p>
+                  </div>
+                  <div className="p-3 bg-white rounded-xl border border-[#d9e2ec] space-y-1">
+                    <span className="font-bold text-[#0070f2] block">Multi-Tenant Elasticity</span>
+                    <p className="text-[#556b82]">Automatic scale-out without provisioning extra physical servers or hypervisors.</p>
+                  </div>
+                  <div className="p-3 bg-white rounded-xl border border-[#d9e2ec] space-y-1">
+                    <span className="font-bold text-[#0070f2] block">99.95% Managed SLA</span>
+                    <p className="text-[#556b82]">SAP-managed infrastructure, high availability, patching, and disaster recovery.</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
+        )}
 
-          {/* Card 3: What Could Change the Decision? */}
-          <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs flex flex-col justify-between space-y-3">
-            <div className="space-y-2">
-              <div className="flex items-center space-x-2 text-amber-600">
-                <span className="text-sm">⚠️</span>
-                <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider">What Could Change the Decision?</h4>
+        {/* ========================================================================= */}
+        {/* TAB 6: MIGRATION SCOPE & INCTURE DELIVERY                                 */}
+        {/* ========================================================================= */}
+        {dashboardTab === 'migration' && (
+          <div className="space-y-8 animate-fadeIn">
+            <div className="bg-white rounded-3xl border border-[#d9e2ec] p-8 md:p-10 shadow-xs space-y-8">
+              <div className="border-b border-[#d9e2ec] pb-5">
+                <h2 className="text-xl md:text-2xl font-extrabold text-[#1d2d3e]">
+                  Migration Scope &amp; Incture Packaged Delivery
+                </h2>
+                <p className="text-xs sm:text-sm text-[#556b82] mt-1">
+                  Execution methodology de-risked by IntSwitch automation and fixed Indicative Incture migration packages
+                </p>
               </div>
 
-              <div className="space-y-1.5 text-[11px]">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <span className="w-3.5 h-3.5 rounded-full bg-slate-100 text-slate-600 font-bold flex items-center justify-center text-[9px]">1</span>
-                    <span className="text-slate-700">Migration cost increase</span>
+              {/* 4 Pillars Breakdown */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="p-6 bg-slate-50 border border-[#d9e2ec] rounded-2xl space-y-2">
+                  <span className="text-xs font-bold text-[#0070f2] uppercase tracking-wider block">Development</span>
+                  <div className="text-2xl font-extrabold font-mono text-[#1d2d3e]">
+                    {formatCurrency(devCost, currency)}
                   </div>
-                  <span className="px-1.5 py-0.2 rounded bg-rose-50 text-rose-600 font-bold border border-rose-200 text-[10px]">High</span>
+                  <p className="text-xs text-[#556b82]">
+                    Interface mapping, Groovy script conversion, and standard API connectivity.
+                  </p>
                 </div>
 
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <span className="w-3.5 h-3.5 rounded-full bg-slate-100 text-slate-600 font-bold flex items-center justify-center text-[9px]">2</span>
-                    <span className="text-slate-700">Lower annual savings</span>
+                <div className="p-6 bg-slate-50 border border-[#d9e2ec] rounded-2xl space-y-2">
+                  <span className="text-xs font-bold text-[#107e3e] uppercase tracking-wider block">Quality Assurance &amp; Testing</span>
+                  <div className="text-2xl font-extrabold font-mono text-[#1d2d3e]">
+                    {formatCurrency(testingCost, currency)}
                   </div>
-                  <span className="px-1.5 py-0.2 rounded bg-amber-50 text-amber-600 font-bold border border-amber-200 text-[10px]">Medium</span>
+                  <p className="text-xs text-[#556b82]">
+                    Comprehensive functional validation, payload comparison, and cutover testing.
+                  </p>
                 </div>
 
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <span className="w-3.5 h-3.5 rounded-full bg-slate-100 text-slate-600 font-bold flex items-center justify-center text-[9px]">3</span>
-                    <span className="text-slate-700">Higher target platform cost</span>
+                <div className="p-6 bg-slate-50 border border-[#d9e2ec] rounded-2xl space-y-2">
+                  <span className="text-xs font-bold text-cyan-600 uppercase tracking-wider block">Architecture &amp; BASIS</span>
+                  <div className="text-2xl font-extrabold font-mono text-[#1d2d3e]">
+                    {formatCurrency(archCost, currency)}
                   </div>
-                  <span className="px-1.5 py-0.2 rounded bg-amber-50 text-amber-600 font-bold border border-amber-200 text-[10px]">Medium</span>
+                  <p className="text-xs text-[#556b82]">
+                    Tenant setup, Cloud Connector configuration, security, and CTMS.
+                  </p>
+                </div>
+
+                <div className="p-6 bg-slate-50 border border-[#d9e2ec] rounded-2xl space-y-2">
+                  <span className="text-xs font-bold text-purple-600 uppercase tracking-wider block">PM &amp; Hypercare</span>
+                  <div className="text-2xl font-extrabold font-mono text-[#1d2d3e]">
+                    {formatCurrency(pmCost, currency)}
+                  </div>
+                  <p className="text-xs text-[#556b82]">
+                    Project governance, cutover management, and post-go-live stabilization.
+                  </p>
+                </div>
+              </div>
+
+              {/* IntSwitch Value Add (Free) Accelerator Callout (Official Incture Standard) */}
+              <div className="p-6 sm:p-8 bg-gradient-to-r from-blue-50/80 via-emerald-50/50 to-purple-50/80 border border-blue-200 rounded-3xl space-y-6">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-blue-200/60 pb-4">
+                  <div className="flex items-center space-x-3">
+                    <img src="/images/intswitch-logo.png" alt="IntSwitch" className="h-6 w-auto object-contain" />
+                    <div>
+                      <h4 className="text-base sm:text-lg font-extrabold text-[#1d2d3e] tracking-tight">
+                        IntSwitch — Accelerating Migration Assurance with Zero Risk
+                      </h4>
+                      <p className="text-xs text-[#556b82]">
+                        Incture&apos;s AI-driven automated testing and migration accelerator
+                      </p>
+                    </div>
+                  </div>
+                  <span className="inline-flex items-center space-x-1.5 text-xs font-extrabold text-emerald-800 bg-emerald-100/90 border border-emerald-300 px-3 py-1.5 rounded-xl self-start sm:self-auto">
+                    <span>Value Add (Free)</span>
+                    <span className="font-mono font-bold">• $0 Additional Cost</span>
+                  </span>
+                </div>
+
+                {/* 3 Metric Badges from Incture IntSwitch Specification */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+                  <div className="p-5 bg-white rounded-2xl border border-blue-100 shadow-2xs space-y-1.5">
+                    <div className="text-2xl sm:text-3xl font-black text-[#0070f2] font-mono">40%</div>
+                    <span className="text-xs font-bold text-[#1d2d3e] uppercase tracking-wider block">Effort Reduction</span>
+                    <p className="text-xs text-[#556b82] leading-relaxed">
+                      In migration and testing effort via automated execution and comparisons.
+                    </p>
+                  </div>
+
+                  <div className="p-5 bg-white rounded-2xl border border-emerald-100 shadow-2xs space-y-1.5">
+                    <div className="text-2xl sm:text-3xl font-black text-[#107e3e] font-mono">60 - 80%</div>
+                    <span className="text-xs font-bold text-[#1d2d3e] uppercase tracking-wider block">Out-of-the-Box Coverage</span>
+                    <p className="text-xs text-[#556b82] leading-relaxed">
+                      Of typical integration flows validated out-of-the-box before cutover.
+                    </p>
+                  </div>
+
+                  <div className="p-5 bg-white rounded-2xl border border-purple-100 shadow-2xs space-y-1.5">
+                    <div className="text-2xl sm:text-3xl font-black text-[#8a3ffc] font-mono">Zero</div>
+                    <span className="text-xs font-bold text-[#1d2d3e] uppercase tracking-wider block">Business Impact</span>
+                    <p className="text-xs text-[#556b82] leading-relaxed">
+                      Non-intrusive testing ensures day-to-day operations and live systems are unaffected.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Fast & No-Code + Value Add Details */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 pt-1 text-xs">
+                  <div className="p-4 bg-white/90 rounded-xl border border-[#d9e2ec] space-y-1">
+                    <span className="font-bold text-[#1d2d3e] block">⚡ Fast &amp; No-Code</span>
+                    <p className="text-[#556b82] leading-relaxed">
+                      Designed for rapid adoption. No complex scripting required; intuitive UI enables easy training and immediate usage by functional teams.
+                    </p>
+                  </div>
+                  <div className="p-4 bg-white/90 rounded-xl border border-[#d9e2ec] space-y-1">
+                    <span className="font-bold text-[#1d2d3e] block">🎁 Value Add (Free Included)</span>
+                    <p className="text-[#556b82] leading-relaxed">
+                      Included directly as part of the Incture migration package model. No separate licensing fees or subscription costs required.
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
-
-            <Link href={`/report/${assessmentId}`} className="text-xs font-bold text-[#0070f2] hover:text-[#0057d2] inline-flex items-center gap-1.5 pt-1 group">
-              <span>View Full Risk Analysis</span>
-              <svg className="w-3 h-3 text-[#0070f2] transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 16 16" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M6 3.5l4.5 4.5-4.5 4.5" />
-              </svg>
-            </Link>
           </div>
-
-        </div>
+        )}
 
         {/* ========================================================================= */}
-        {/* ValueLens AI Live Insights Modal                                          */}
+        {/* TAB 7: METHODOLOGY & RISK MATRIX                                          */}
+        {/* ========================================================================= */}
+        {dashboardTab === 'methodology' && (
+          <div className="space-y-8 animate-fadeIn">
+            <div className="bg-white rounded-3xl border border-[#d9e2ec] p-8 md:p-10 shadow-xs space-y-8">
+              <div className="border-b border-[#d9e2ec] pb-5">
+                <h2 className="text-xl md:text-2xl font-extrabold text-[#1d2d3e]">
+                  Methodology, Audit Standards &amp; Risk Matrix
+                </h2>
+                <p className="text-xs sm:text-sm text-[#556b82] mt-1">
+                  Authoritative mathematical rules, financial modeling criteria, and enterprise governance safeguards
+                </p>
+              </div>
+
+              {/* Economic Calculation Rules */}
+              <div className="space-y-3">
+                <h4 className="text-sm font-bold text-[#1d2d3e]">Deterministic Calculation Rules</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                  <div className="p-4 bg-slate-50 rounded-2xl border border-[#d9e2ec] space-y-1">
+                    <span className="font-bold text-[#0070f2] block">Annual Operational Savings</span>
+                    <p className="text-slate-600">Calculated as: <code>Current TCO - Target TCO</code>. Captures the structural elimination of perpetual licensing and datacenter infrastructure.</p>
+                  </div>
+                  <div className="p-4 bg-slate-50 rounded-2xl border border-[#d9e2ec] space-y-1">
+                    <span className="font-bold text-[#0070f2] block">Capital Payback Horizon</span>
+                    <p className="text-slate-600">Calculated as: <code>(Migration Capital / Annual Savings) * 12</code>. Represents the exact calendar month where cumulative savings equal migration outlay.</p>
+                  </div>
+                  <div className="p-4 bg-slate-50 rounded-2xl border border-[#d9e2ec] space-y-1">
+                    <span className="font-bold text-[#0070f2] block">5-Year Net Benefit</span>
+                    <p className="text-slate-600">Calculated as: <code>(5 × Annual Savings) - Migration Cost</code>. Reflects cumulative cash flow liberated over standard enterprise IT lifecycle.</p>
+                  </div>
+                  <div className="p-4 bg-slate-50 rounded-2xl border border-[#d9e2ec] space-y-1">
+                    <span className="font-bold text-[#0070f2] block">5-Year Return on Investment (ROI)</span>
+                    <p className="text-slate-600">Calculated as: <code>(5-Year Net Benefit / Migration Cost) × 100</code>. Benchmarked against enterprise capital hurdle rates.</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Risk Mitigation Register */}
+              <div className="space-y-3 pt-2">
+                <h4 className="text-sm font-bold text-[#1d2d3e]">Enterprise Risk Register &amp; Safeguards</h4>
+                <div className="space-y-3 text-xs sm:text-sm">
+                  <div className="p-4 bg-white border border-[#d9e2ec] rounded-2xl space-y-1">
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold text-rose-700">Dual-Running Overlap Window</span>
+                      <span className="px-2 py-0.5 bg-rose-50 text-rose-700 font-bold rounded-lg border border-rose-200 text-xs">High</span>
+                    </div>
+                    <p className="text-slate-600 text-xs">
+                      Running both systems during wave transitions creates temporary operational overhead. Mitigate by structuring waves by business domain with 90-day cutover limits.
+                    </p>
+                  </div>
+                  <div className="p-4 bg-white border border-[#d9e2ec] rounded-2xl space-y-1">
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold text-amber-700">Custom ABAP/Java UDF Complexity</span>
+                      <span className="px-2 py-0.5 bg-amber-50 text-amber-700 font-bold rounded-lg border border-amber-200 text-xs">Medium</span>
+                    </div>
+                    <p className="text-slate-600 text-xs">
+                      Legacy custom mapping scripts require automated conversion to Groovy. Mitigate by using IntSwitch automated discovery in Sprint 1.
+                    </p>
+                  </div>
+                  <div className="p-4 bg-white border border-[#d9e2ec] rounded-2xl space-y-1">
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold text-[#0070f2]">Network Latency &amp; Cloud Connector Security</span>
+                      <span className="px-2 py-0.5 bg-blue-50 text-[#0070f2] font-bold rounded-lg border border-blue-200 text-xs">Low</span>
+                    </div>
+                    <p className="text-slate-600 text-xs">
+                      On-prem backend connectivity to cloud BTP. Mitigate by deploying dedicated SAP Cloud Connector with hardware VPN tunnels.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ========================================================================= */}
+        {/* AI LIVE INSIGHTS MODAL                                                    */}
         {/* ========================================================================= */}
         {aiModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-fadeIn">
-            <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col">
+            <div className="bg-white rounded-3xl border border-[#d9e2ec] shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col">
               {/* Header */}
-              <div className="p-5 border-b border-slate-800 flex items-center justify-between bg-slate-900 text-white shrink-0">
+              <div className="p-6 border-b border-slate-800 flex items-center justify-between bg-slate-900 text-white shrink-0">
                 <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 rounded-xl bg-indigo-500/30 border border-indigo-400/40 text-indigo-300 flex items-center justify-center text-sm font-bold shadow-xs">
+                  <div className="w-10 h-10 rounded-2xl bg-blue-500/20 border border-blue-400/40 text-blue-300 flex items-center justify-center text-base font-bold">
                     ✦
                   </div>
                   <div>
                     <div className="flex items-center space-x-2">
-                      <h3 className="text-sm font-bold">{aiModalTitle}</h3>
-                      <span className="px-2 py-0.5 rounded-full text-[9px] font-bold tracking-wider uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                      <h3 className="text-base font-bold">{aiModalTitle}</h3>
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
                         {aiModalTab === 'executive' ? (aiAnalysis?.aiStatus || 'AI GENERATED') : (chartInsight?.aiStatus || 'AI GENERATED')}
                       </span>
                     </div>
-                    <span className="text-[10px] text-slate-400">
+                    <span className="text-xs text-slate-400">
                       ValueLens AI • Autonomous Decision Intelligence
                     </span>
                   </div>
@@ -1335,350 +1948,129 @@ export default function DashboardPage() {
               </div>
 
               {/* Navigation Tabs Bar */}
-              <div className="relative z-10 shrink-0 bg-slate-100 border-b border-slate-200 p-2 grid grid-cols-5 gap-1.5 min-h-[48px]">
+              <div className="shrink-0 bg-slate-100 border-b border-[#d9e2ec] p-2.5 grid grid-cols-5 gap-2">
                 <button
                   type="button"
                   onClick={() => switchModalTab('tco-comparison', 'Platform Cost Breakdown & TCO Reduction')}
-                  className={`px-2 py-2 rounded-xl transition-all duration-150 cursor-pointer font-bold whitespace-nowrap text-xs flex items-center justify-center gap-1.5 select-none ${aiModalTab === 'tco-comparison'
-                      ? 'bg-indigo-600 text-white shadow-xs'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/80'
-                    }`}
+                  className={`px-2 py-2 rounded-xl transition-all cursor-pointer font-bold text-xs flex items-center justify-center gap-1.5 ${
+                    aiModalTab === 'tco-comparison'
+                      ? 'bg-[#0070f2] text-white shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200'
+                  }`}
                 >
-                  <span className="shrink-0">📊</span>
                   <span className="truncate">Cost Comparison</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => switchModalTab('cost-drivers', 'Legacy TCO Cost Drivers & Elimination')}
-                  className={`px-2 py-2 rounded-xl transition-all duration-150 cursor-pointer font-bold whitespace-nowrap text-xs flex items-center justify-center gap-1.5 select-none ${aiModalTab === 'cost-drivers'
-                      ? 'bg-indigo-600 text-white shadow-xs'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/80'
-                    }`}
+                  className={`px-2 py-2 rounded-xl transition-all cursor-pointer font-bold text-xs flex items-center justify-center gap-1.5 ${
+                    aiModalTab === 'cost-drivers'
+                      ? 'bg-[#0070f2] text-white shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200'
+                  }`}
                 >
-                  <span className="shrink-0">🔍</span>
                   <span className="truncate">Cost Drivers</span>
                 </button>
                 <button
                   type="button"
-                  onClick={() => switchModalTab('migration-cost', 'Migration Investment Breakdown & Phasing')}
-                  className={`px-2 py-2 rounded-xl transition-all duration-150 cursor-pointer font-bold whitespace-nowrap text-xs flex items-center justify-center gap-1.5 select-none ${aiModalTab === 'migration-cost'
-                      ? 'bg-indigo-600 text-white shadow-xs'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/80'
-                    }`}
+                  onClick={() => switchModalTab('migration-cost', 'Incture Migration Package & Delivery')}
+                  className={`px-2 py-2 rounded-xl transition-all cursor-pointer font-bold text-xs flex items-center justify-center gap-1.5 ${
+                    aiModalTab === 'migration-cost'
+                      ? 'bg-[#0070f2] text-white shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200'
+                  }`}
                 >
-                  <span className="shrink-0">💼</span>
-                  <span className="truncate">Migration Cost</span>
+                  <span className="truncate">Migration Package</span>
                 </button>
                 <button
                   type="button"
-                  onClick={() => switchModalTab('roi-timeline', '10-Year ROI Trajectory & Capital Recovery')}
-                  className={`px-2 py-2 rounded-xl transition-all duration-150 cursor-pointer font-bold whitespace-nowrap text-xs flex items-center justify-center gap-1.5 select-none ${aiModalTab === 'roi-timeline'
-                      ? 'bg-indigo-600 text-white shadow-xs'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/80'
-                    }`}
+                  onClick={() => switchModalTab('roi-timeline', '10-Year ROI Trajectory & Recovery')}
+                  className={`px-2 py-2 rounded-xl transition-all cursor-pointer font-bold text-xs flex items-center justify-center gap-1.5 ${
+                    aiModalTab === 'roi-timeline'
+                      ? 'bg-[#0070f2] text-white shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200'
+                  }`}
                 >
-                  <span className="shrink-0">📈</span>
-                  <span className="truncate">ROI Timeline</span>
+                  <span className="truncate">ROI Trajectory</span>
                 </button>
                 <button
                   type="button"
-                  onClick={() => switchModalTab('executive', 'Executive Decision Intelligence & Strategy')}
-                  className={`px-2 py-2 rounded-xl transition-all duration-150 cursor-pointer font-bold whitespace-nowrap text-xs flex items-center justify-center gap-1.5 select-none ${aiModalTab === 'executive'
-                      ? 'bg-indigo-600 text-white shadow-xs'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/80'
-                    }`}
+                  onClick={() => switchModalTab('executive', 'Autonomous Strategic Advisory Dossier')}
+                  className={`px-2 py-2 rounded-xl transition-all cursor-pointer font-bold text-xs flex items-center justify-center gap-1.5 ${
+                    aiModalTab === 'executive'
+                      ? 'bg-emerald-600 text-white shadow-xs'
+                      : 'text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200'
+                  }`}
                 >
-                  <span className="shrink-0">⚡</span>
-                  <span className="truncate">Full Advisory</span>
+                  <span className="truncate">Executive Dossier</span>
                 </button>
               </div>
 
-              {/* Modal Body: Pure Actual AI Insights */}
-              <div className="p-6 space-y-5 overflow-y-auto flex-1 min-h-0">
-                {(aiModalTab === 'executive' ? aiAnalysisLoading : chartInsightLoading) && (
-                  <div className="p-4 bg-purple-50 border border-purple-200 rounded-2xl flex items-center space-x-3 text-purple-900 animate-pulse">
-                    <span className="animate-spin text-lg">⟳</span>
-                    <div className="text-xs">
-                      <span className="font-bold block">Synthesizing Live AI Decision Intelligence...</span>
-                      <span className="text-purple-600 text-[11px]">Connecting to ValueLens AI Inference Engine</span>
-                    </div>
-                  </div>
-                )}
-
-                {/* TAB 1-4: Chart Insight Views */}
+              {/* Modal Body */}
+              <div className="p-6 overflow-y-auto space-y-6 flex-1 text-slate-800 text-xs sm:text-sm">
                 {aiModalTab !== 'executive' && chartInsight && (
-                  <div className="space-y-4 animate-fadeIn">
-                    {/* Key Executive Finding */}
-                    <div className="p-4 bg-indigo-50/80 border border-indigo-100 rounded-2xl space-y-1.5 shadow-xs">
-                      <div className="flex items-center space-x-1.5 text-xs font-bold text-indigo-800">
-                        <span>✦</span>
-                        <span>Key Executive Finding</span>
-                      </div>
-                      <p className="text-xs sm:text-sm text-slate-800 leading-relaxed font-semibold">
+                  <div className="space-y-6 animate-fadeIn">
+                    <div className="p-5 bg-blue-50/80 border border-blue-200 rounded-2xl space-y-1.5">
+                      <span className="text-xs font-bold text-[#0070f2] uppercase tracking-wider block">Analytical Finding</span>
+                      <p className="text-sm font-semibold text-slate-900 leading-relaxed">
                         {chartInsight.finding}
                       </p>
                     </div>
 
-                    {/* Detailed Multi-Paragraph Quantitative Analysis */}
-                    {chartInsight.detailedAnalysis && (
-                      <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-1.5 shadow-xs">
-                        <div className="flex items-center space-x-1.5 text-xs font-bold text-slate-700">
-                          <span>📊</span>
-                          <span>In-Depth Quantitative Analysis & Variance Drivers</span>
-                        </div>
-                        <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
-                          {chartInsight.detailedAnalysis}
-                        </p>
-                      </div>
-                    )}
+                    <div className="space-y-2">
+                      <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider">Detailed Strategic Analysis</h4>
+                      <p className="text-xs sm:text-sm text-slate-600 leading-relaxed bg-slate-50 p-4 rounded-2xl border border-[#d9e2ec]">
+                        {chartInsight.detailedAnalysis}
+                      </p>
+                    </div>
 
-                    {/* Key Metrics Grid */}
                     {chartInsight.keyMetrics && chartInsight.keyMetrics.length > 0 && (
-                      <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-2.5">
-                        <span className="text-[11px] font-bold text-slate-700 block uppercase tracking-wider">
-                          Key Financial Metrics & Drivers
-                        </span>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 text-xs">
-                          {chartInsight.keyMetrics.map((metric, idx) => (
-                            <div key={idx} className="bg-white p-3 rounded-xl border border-slate-200 space-y-1 shadow-xs">
-                              <span className="text-slate-500 text-[10px] uppercase font-bold block">{metric.label}</span>
-                              <span className="text-base font-black text-slate-900 font-mono block">{metric.value}</span>
-                              {metric.detail && (
-                                <span className="text-[10px] text-slate-600 block">{metric.detail}</span>
-                              )}
-                            </div>
-                          ))}
-                        </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        {chartInsight.keyMetrics.map((m, idx) => (
+                          <div key={idx} className="p-4 bg-slate-50 border border-[#d9e2ec] rounded-2xl space-y-1">
+                            <span className="text-xs text-slate-500 font-medium block">{m.label}</span>
+                            <span className="text-base font-bold font-mono text-slate-900 block">{m.value}</span>
+                            <span className="text-[11px] text-slate-500 block">{m.detail}</span>
+                          </div>
+                        ))}
                       </div>
                     )}
-
-                    {/* Financial & Business Impact */}
-                    <div className="p-4 bg-emerald-50/80 border border-emerald-100 rounded-2xl space-y-1.5 shadow-xs">
-                      <div className="flex items-center space-x-1.5 text-xs font-bold text-emerald-800">
-                        <span>📈</span>
-                        <span>Financial & Business Impact</span>
-                      </div>
-                      <p className="text-xs sm:text-sm text-slate-800 leading-relaxed">
-                        {chartInsight.businessImpact}
-                      </p>
-                    </div>
-
-                    {/* Implementation Playbook & Execution Milestones */}
-                    {chartInsight.actionRoadmap && chartInsight.actionRoadmap.length > 0 && (
-                      <div className="space-y-2.5">
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs font-bold text-slate-800 flex items-center space-x-1.5">
-                            <span>🚀</span>
-                            <span>Implementation Playbook & Phased Execution</span>
-                          </span>
-                          <span className="text-[10px] text-slate-500 font-medium">Milestone progression</span>
-                        </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-                          {chartInsight.actionRoadmap.map((item, idx) => (
-                            <div key={idx} className="p-3 bg-white border border-slate-200 rounded-xl text-xs space-y-1 shadow-xs">
-                              <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200 uppercase inline-block">
-                                {item.phase}
-                              </span>
-                              <h5 className="font-bold text-slate-900 text-xs mt-1">{item.title}</h5>
-                              <p className="text-slate-600 text-[11px] leading-relaxed">{item.detail}</p>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Operational Safeguards & Gating Controls */}
-                    {chartInsight.riskSafeguards && chartInsight.riskSafeguards.length > 0 && (
-                      <div className="space-y-2.5">
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs font-bold text-slate-800 flex items-center space-x-1.5">
-                            <span>🛡️</span>
-                            <span>Operational Safeguards & Risk Controls</span>
-                          </span>
-                          <span className="text-[10px] text-slate-500 font-medium">Mitigation governance</span>
-                        </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                          {chartInsight.riskSafeguards.map((item, idx) => (
-                            <div key={idx} className="p-3 bg-white border border-slate-200 rounded-xl text-xs space-y-1 shadow-xs">
-                              <div className="flex items-center space-x-1.5">
-                                <span className="w-2 h-2 rounded-full bg-amber-500 shrink-0"></span>
-                                <span className="font-bold text-slate-900 text-xs">{item.risk}</span>
-                              </div>
-                              <p className="text-slate-600 text-[11px] leading-relaxed pl-3.5 border-l-2 border-amber-200 mt-1">
-                                <strong className="text-slate-700">Mitigation: </strong>{item.mitigation}
-                              </p>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Strategic Steering Recommendation */}
-                    <div className="p-4 bg-amber-50/80 border border-amber-100 rounded-2xl space-y-1.5 shadow-xs">
-                      <div className="flex items-center space-x-1.5 text-xs font-bold text-amber-900">
-                        <span>🎯</span>
-                        <span>Strategic Steering Recommendation</span>
-                      </div>
-                      <p className="text-xs sm:text-sm text-slate-800 leading-relaxed">
-                        {chartInsight.recommendation}
-                      </p>
-                    </div>
                   </div>
                 )}
 
-                {/* TAB 5: Executive Full Advisory View */}
                 {aiModalTab === 'executive' && aiAnalysis && (
-                  <div className="space-y-4 animate-fadeIn">
-                    {/* Executive Decision Banner */}
-                    <div className="p-4 bg-slate-900 text-white rounded-2xl flex flex-wrap items-center justify-between gap-4 shadow-md">
-                      <div>
-                        <span className="text-[10px] text-slate-400 uppercase tracking-wider block font-bold">
-                          Autonomous Strategic Recommendation
-                        </span>
-                        <div className="flex items-center space-x-2 mt-0.5">
-                          <span className="text-xl font-black text-emerald-400">{aiAnalysis.decision}</span>
-                          <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-950 text-emerald-300 border border-emerald-800">
-                            MIGRATION HIGHLY RECOMMENDED
-                          </span>
-                        </div>
-                        <p className="text-xs text-slate-300 mt-1">
-                          Rapid payback within <strong className="text-white font-bold">{breakEvenMonths.toFixed(1)} months</strong> with 5-year ROI of <strong className="text-emerald-400 font-bold">{fiveYearRoi.toFixed(2)}%</strong>.
-                        </p>
-                      </div>
-                      <div className="text-right border-l border-slate-800 pl-4 space-y-1">
-                        <span className="text-[10px] text-slate-400 uppercase tracking-wider block font-bold">Model Confidence</span>
-                        <span className="text-2xl font-black text-indigo-400 font-mono">
-                          {Math.round((aiAnalysis.confidence || 0.91) * 100)}%
-                        </span>
-                        <span className="text-[10px] text-slate-400 block">High Statistical Certainty</span>
-                      </div>
-                    </div>
-
-                    {/* Executive Summary */}
-                    <div className="p-4 bg-blue-50/80 border border-blue-100 rounded-2xl space-y-1.5 shadow-xs">
-                      <div className="flex items-center space-x-1.5 text-xs font-bold text-blue-900">
-                        <span>📋</span>
-                        <span>Executive Summary & Strategic Context</span>
-                      </div>
-                      <p className="text-xs sm:text-sm text-slate-800 leading-relaxed font-normal">
+                  <div className="space-y-6 animate-fadeIn">
+                    <div className="p-5 bg-slate-900 text-white rounded-2xl space-y-2">
+                      <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider block">
+                        Autonomous Recommendation: {aiAnalysis.decision}
+                      </span>
+                      <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
                         {aiAnalysis.executiveSummary}
                       </p>
                     </div>
 
-                    {/* Financial Assessment */}
-                    <div className="p-4 bg-emerald-50/80 border border-emerald-100 rounded-2xl space-y-1.5 shadow-xs">
-                      <div className="flex items-center space-x-1.5 text-xs font-bold text-emerald-900">
-                        <span>💰</span>
-                        <span>Financial Assessment & Margin Impact</span>
-                      </div>
-                      <p className="text-xs sm:text-sm text-slate-800 leading-relaxed font-normal">
+                    <div className="p-5 bg-emerald-50 border border-emerald-200 rounded-2xl space-y-2">
+                      <span className="text-xs font-bold text-[#107e3e] uppercase tracking-wider block">Financial Appraisal</span>
+                      <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
                         {aiAnalysis.financialAssessment}
                       </p>
                     </div>
-
-                    {/* Key Strategic Recommendations */}
-                    {aiAnalysis.recommendations && aiAnalysis.recommendations.length > 0 && (
-                      <div className="space-y-2.5">
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs font-bold text-slate-800 flex items-center space-x-1.5">
-                            <span>🎯</span>
-                            <span>Key Strategic Recommendations & Action Plan</span>
-                          </span>
-                          <span className="text-[10px] text-slate-500 font-medium">Prioritized by business impact</span>
-                        </div>
-                        <div className="space-y-2">
-                          {aiAnalysis.recommendations.map((rec, idx) => (
-                            <div key={idx} className="p-3 bg-white border border-slate-200 rounded-xl text-xs space-y-1.5 shadow-xs">
-                              <div className="flex items-start justify-between gap-2">
-                                <div className="flex items-center space-x-2">
-                                  <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${rec.priority === 'HIGH' ? 'bg-rose-100 text-rose-800 border border-rose-200' : 'bg-amber-100 text-amber-800 border border-amber-200'
-                                    }`}>
-                                    {rec.priority} PRIORITY
-                                  </span>
-                                  <span className="font-bold text-slate-900 text-xs sm:text-sm">{rec.action}</span>
-                                </div>
-                                <div className="shrink-0 text-right">
-                                  <span className="text-[10px] font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded">
-                                    {rec.timing}
-                                  </span>
-                                </div>
-                              </div>
-                              <p className="text-slate-600 text-[11px] leading-relaxed">{rec.reason}</p>
-                              <div className="flex items-center justify-between text-[11px] pt-1 border-t border-slate-100">
-                                <span className="text-indigo-700 font-semibold">Expected Impact: {rec.expectedImpact}</span>
-                                <span className="text-slate-500 font-medium">Owner: {rec.owner}</span>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Risk Register */}
-                    {aiAnalysis.risks && aiAnalysis.risks.length > 0 && (
-                      <div className="space-y-2.5 pt-2">
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs font-bold text-slate-800 flex items-center space-x-1.5">
-                            <span>⚠️</span>
-                            <span>Enterprise Technical & Operational Risk Register</span>
-                          </span>
-                          <span className="text-[10px] text-slate-500 font-medium">Audit & governance verified</span>
-                        </div>
-                        <div className="space-y-2">
-                          {aiAnalysis.risks.map((risk, idx) => (
-                            <div key={idx} className="p-3 bg-white border border-slate-200 rounded-xl text-xs space-y-1.5 shadow-xs">
-                              <div className="flex items-center justify-between">
-                                <div className="flex items-center space-x-2">
-                                  <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${risk.severity === 'HIGH' ? 'bg-rose-100 text-rose-800 border border-rose-200' :
-                                      risk.severity === 'MEDIUM' ? 'bg-amber-100 text-amber-800 border border-amber-200' :
-                                        'bg-blue-100 text-blue-800 border border-blue-200'
-                                    }`}>
-                                    {risk.severity} SEVERITY
-                                  </span>
-                                  <span className="font-bold text-slate-900 text-xs sm:text-sm">{risk.title}</span>
-                                </div>
-                              </div>
-                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] pt-1">
-                                <div className="p-2 bg-slate-50 rounded-lg border border-slate-100">
-                                  <span className="font-bold text-slate-700 block mb-0.5">Root Cause & Exposure:</span>
-                                  <p className="text-slate-600">{risk.reason} {risk.potentialImpact}</p>
-                                </div>
-                                <div className="p-2 bg-emerald-50/70 rounded-lg border border-emerald-100">
-                                  <span className="font-bold text-emerald-800 block mb-0.5">Recommended Mitigation:</span>
-                                  <p className="text-emerald-900">{risk.mitigation}</p>
-                                </div>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
                   </div>
                 )}
               </div>
 
               {/* Modal Footer */}
-              <div className="p-4 border-t border-slate-100 flex items-center justify-between bg-slate-50 text-xs">
-                <span className="text-slate-500 font-mono text-[11px]">
-                  Assessment: {assessmentId}
+              <div className="p-4 border-t border-[#d9e2ec] flex items-center justify-between bg-slate-50 text-xs">
+                <span className="text-[#556b82] font-mono">
+                  Assessment ID: {assessmentId}
                 </span>
-                <div className="flex items-center space-x-2">
-                  <button
-                    onClick={() => router.push(`/report/${assessmentId}`)}
-                    className="px-3.5 py-1.5 rounded-xl bg-white border border-[#d9e2ec] text-[#1d2d3e] hover:bg-slate-100 font-bold transition-colors cursor-pointer inline-flex items-center gap-1.5"
-                  >
-                    <span>Executive Report</span>
-                    <svg className="w-3 h-3 text-[#1d2d3e]" fill="none" viewBox="0 0 16 16" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M6 3.5l4.5 4.5-4.5 4.5" />
-                    </svg>
-                  </button>
-                  <button
-                    onClick={() => setAiModalOpen(false)}
-                    className="px-4 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold transition-colors cursor-pointer"
-                  >
-                    Done
-                  </button>
-                </div>
+                <button
+                  type="button"
+                  onClick={() => setAiModalOpen(false)}
+                  className="px-5 py-2 rounded-xl bg-[#0070f2] hover:bg-[#0057d2] text-white font-bold transition-colors cursor-pointer"
+                >
+                  Done
+                </button>
               </div>
             </div>
           </div>

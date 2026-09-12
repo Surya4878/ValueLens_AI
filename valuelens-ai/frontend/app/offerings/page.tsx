@@ -70,7 +70,7 @@ export default function OfferingsPage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10 space-y-8">
       {/* Breadcrumb Navigation */}
       <nav className="flex items-center space-x-2 text-xs text-[#556b82] font-medium">
         <Link href="/" className="hover:text-[#0070f2] transition-colors">
@@ -81,14 +81,14 @@ export default function OfferingsPage() {
       </nav>
 
       {/* Hero Header Section */}
-      <section className="relative rounded-2xl bg-gradient-to-r from-[#eef5fc] via-[#f2f7fc] to-[#e8f2fa] border border-[#d9e2ec] p-6 sm:p-8 lg:p-8 shadow-xs overflow-hidden">
-        <div className="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+      <section className="relative rounded-3xl bg-gradient-to-r from-[#eef5fc] via-[#f2f7fc] to-[#e8f2fa] border border-[#d9e2ec] p-8 sm:p-10 lg:p-12 shadow-xs overflow-hidden">
+        <div className="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8">
           {/* Left Title & Subtitle */}
-          <div className="space-y-3 max-w-xl">
-            <h1 className="text-3xl sm:text-4xl font-extrabold text-[#1d2d3e] tracking-tight leading-tight">
+          <div className="space-y-4 max-w-xl">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#1d2d3e] tracking-tight leading-tight font-['72',sans-serif]">
               Migration Packages
             </h1>
-            <p className="text-xs sm:text-sm text-[#556b82] leading-relaxed font-normal">
+            <p className="text-base text-[#556b82] leading-relaxed font-normal">
               Choose your current integration platform to explore our migration packages and accelerate your journey to SAP Integration Suite.
             </p>
           </div>
@@ -98,18 +98,18 @@ export default function OfferingsPage() {
             <img
               src="/images/offerings-hub-banner-right.png"
               alt="Different Platforms. A Smarter Path. A Greater Tomorrow."
-              className="h-28 sm:h-32 lg:h-36 w-auto object-contain rounded-xl"
+              className="h-32 sm:h-36 lg:h-40 w-auto object-contain rounded-2xl"
             />
           </div>
         </div>
       </section>
 
       {/* 2x2 Grid of Middleware Options (4 Options) */}
-      <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <section className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {platforms.map((p) => (
           <div
             key={p.id}
-            className="bg-white rounded-2xl border border-[#d9e2ec] hover:border-[#0070f2] hover:shadow-md transition-all p-5 sm:p-6 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-6 group"
+            className="bg-white rounded-3xl border border-[#d9e2ec] hover:border-[#0070f2] hover:shadow-md transition-all p-8 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-8 group"
           >
             {/* Left: Architecture Flow Lockup (Source Logo -> Target Cloud) */}
             <div className="flex items-center justify-center sm:justify-start space-x-3 bg-gradient-to-br from-slate-50/80 to-blue-50/40 p-4 rounded-xl border border-slate-100 shrink-0 min-w-[210px]">

@@ -417,77 +417,77 @@ export function AssessmentWizard() {
   // =========================================================================
   if (currentStep === 0) {
     return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10 space-y-8">
         {/* Breadcrumbs */}
-        <div className="flex items-center space-x-2 text-xs font-medium text-slate-500">
-          <Link href="/" className="hover:text-blue-600 transition-colors">
+        <div className="flex items-center space-x-2 text-xs sm:text-sm font-medium text-[#556b82]">
+          <Link href="/" className="hover:text-[#0070f2] transition-colors">
             Home
           </Link>
           <span>&gt;</span>
-          <span className="text-slate-900 font-semibold">Business Value</span>
+          <span className="text-[#1d2d3e] font-semibold">Business Value</span>
         </div>
 
         {/* Hero Banner */}
-        <div className="relative rounded-3xl bg-gradient-to-r from-[#eef6ff] via-[#f4f8fe] to-white border border-blue-100/90 p-6 sm:p-8 lg:p-10 shadow-xs overflow-hidden">
+        <div className="relative rounded-3xl bg-gradient-to-r from-[#eef6ff] via-[#f4f8fe] to-white border border-[#d9e2ec] p-8 sm:p-10 lg:p-12 shadow-xs overflow-hidden">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             {/* Left Column */}
-            <div className="lg:col-span-7 z-10 space-y-3">
-              <div className="text-[11px] font-bold text-blue-600 tracking-wider uppercase">
+            <div className="lg:col-span-7 z-10 space-y-4">
+              <div className="text-xs font-bold text-[#0070f2] tracking-wider uppercase">
                 INTEGRATION MODERNIZATION
               </div>
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight">
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#1d2d3e] tracking-tight leading-tight font-['72',sans-serif]">
                 Discover Business Value
               </h1>
-              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-xl">
+              <p className="text-base text-[#556b82] leading-relaxed max-w-xl">
                 Choose your current integration platform to understand the business value of your migration to SAP BTP Integration Suite with Incture&apos;s Business ValueLens AI.
               </p>
 
               {/* 4 Feature Pills */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3">
-                <div className="flex items-center space-x-2.5 p-1.5">
-                  <div className="w-8 h-8 rounded-full bg-blue-100/80 flex items-center justify-center shrink-0">
-                    <BarChart2 className="w-4 h-4 text-blue-600" />
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4">
+                <div className="flex items-center space-x-3 p-2">
+                  <div className="w-10 h-10 rounded-2xl bg-blue-100/80 flex items-center justify-center shrink-0">
+                    <BarChart2 className="w-5 h-5 text-[#0070f2]" />
                   </div>
                   <div>
-                    <div className="text-[11px] font-bold text-slate-800 leading-tight">Data-driven</div>
-                    <div className="text-[10px] text-slate-500 leading-tight">insights</div>
+                    <div className="text-xs font-bold text-[#1d2d3e] leading-tight">Data-driven</div>
+                    <div className="text-xs text-[#556b82] leading-tight">insights</div>
                   </div>
                 </div>
 
-                <div className="flex items-center space-x-2.5 p-1.5">
-                  <div className="w-8 h-8 rounded-full bg-blue-100/80 flex items-center justify-center shrink-0">
-                    <Settings className="w-4 h-4 text-blue-600" />
+                <div className="flex items-center space-x-3 p-2">
+                  <div className="w-10 h-10 rounded-2xl bg-blue-100/80 flex items-center justify-center shrink-0">
+                    <Settings className="w-5 h-5 text-[#0070f2]" />
                   </div>
                   <div>
-                    <div className="text-[11px] font-bold text-slate-800 leading-tight">Tailored</div>
-                    <div className="text-[10px] text-slate-500 leading-tight">recommendations</div>
+                    <div className="text-xs font-bold text-[#1d2d3e] leading-tight">Tailored</div>
+                    <div className="text-xs text-[#556b82] leading-tight">recommendations</div>
                   </div>
                 </div>
 
-                <div className="flex items-center space-x-2.5 p-1.5">
-                  <div className="w-8 h-8 rounded-full bg-blue-100/80 flex items-center justify-center shrink-0">
-                    <FileText className="w-4 h-4 text-blue-600" />
+                <div className="flex items-center space-x-3 p-2">
+                  <div className="w-10 h-10 rounded-2xl bg-blue-100/80 flex items-center justify-center shrink-0">
+                    <FileText className="w-5 h-5 text-[#0070f2]" />
                   </div>
                   <div>
-                    <div className="text-[11px] font-bold text-slate-800 leading-tight">Clear business</div>
-                    <div className="text-[10px] text-slate-500 leading-tight">value</div>
+                    <div className="text-xs font-bold text-[#1d2d3e] leading-tight">Clear business</div>
+                    <div className="text-xs text-[#556b82] leading-tight">value</div>
                   </div>
                 </div>
 
-                <div className="flex items-center space-x-2.5 p-1.5">
-                  <div className="w-8 h-8 rounded-full bg-blue-100/80 flex items-center justify-center shrink-0">
-                    <Zap className="w-4 h-4 text-blue-600" />
+                <div className="flex items-center space-x-3 p-2">
+                  <div className="w-10 h-10 rounded-2xl bg-blue-100/80 flex items-center justify-center shrink-0">
+                    <Zap className="w-5 h-5 text-[#0070f2]" />
                   </div>
                   <div>
-                    <div className="text-[11px] font-bold text-slate-800 leading-tight">Faster path</div>
-                    <div className="text-[10px] text-slate-500 leading-tight">to innovation</div>
+                    <div className="text-xs font-bold text-[#1d2d3e] leading-tight">Faster path</div>
+                    <div className="text-xs text-[#556b82] leading-tight">to innovation</div>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Right Column: Skyline Graphic */}
-            <div className="lg:col-span-5 flex items-center justify-end relative h-48 sm:h-56 overflow-hidden rounded-2xl">
+            <div className="lg:col-span-5 flex items-center justify-end relative h-48 sm:h-56 overflow-hidden rounded-3xl">
               <img
                 src="/images/discover-value-banner-right.png"
                 alt="From Integration To What's Next"
@@ -498,33 +498,33 @@ export function AssessmentWizard() {
         </div>
 
         {/* Platform Selection Section */}
-        <div className="space-y-4">
+        <div className="space-y-6">
           <div>
-            <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+            <h2 className="text-2xl sm:text-3xl font-bold text-[#1d2d3e] tracking-tight font-['72',sans-serif]">
               Select your current integration platform
             </h2>
-            <p className="text-xs sm:text-sm text-slate-500 mt-1">
+            <p className="text-base text-[#556b82] mt-1">
               Choose the platform you are currently using to begin your business value analysis.
             </p>
           </div>
 
           {/* 4 Cards Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {PLATFORM_OPTIONS.map((plat) => {
               const isSelected = selectedPlatform === plat.id;
               return (
                 <div
                   key={plat.id}
                   onClick={() => handleSelectPlatform(plat.id)}
-                  className={`relative rounded-2xl p-5 bg-white cursor-pointer transition-all flex flex-col items-center justify-center min-h-[110px] select-none ${isSelected
-                      ? 'border-2 border-blue-600 ring-4 ring-blue-500/10 shadow-md scale-[1.01]'
-                      : 'border border-slate-200/90 hover:border-slate-300 hover:shadow-xs shadow-2xs'
+                  className={`relative rounded-3xl p-6 bg-white cursor-pointer transition-all flex flex-col items-center justify-center min-h-[125px] select-none ${isSelected
+                      ? 'border-2 border-[#0070f2] ring-4 ring-[#0070f2]/10 shadow-md scale-[1.01]'
+                      : 'border border-[#d9e2ec] hover:border-slate-400 hover:shadow-xs shadow-2xs'
                     }`}
                 >
                   {/* Radio Circle */}
-                  <div className="absolute top-3.5 right-3.5">
+                  <div className="absolute top-4 right-4">
                     <div
-                      className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${isSelected ? 'border-blue-600 bg-blue-600' : 'border-slate-300 bg-white'
+                      className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${isSelected ? 'border-[#0070f2] bg-[#0070f2]' : 'border-slate-300 bg-white'
                         }`}
                     >
                       {isSelected && <div className="w-2 h-2 rounded-full bg-white" />}
@@ -532,25 +532,25 @@ export function AssessmentWizard() {
                   </div>
 
                   {/* Card Diagram: Source -> Target */}
-                  <div className="py-2 flex items-center justify-center space-x-3">
+                  <div className="py-2 flex items-center justify-center space-x-4">
                     {/* Source Logo */}
                     <div className="flex flex-col items-center justify-center min-w-[75px]">
                       {plat.id === 'sap-pipo' && (
                         <>
                           <img src="/images/sap-logo.svg" alt="SAP" className="h-6 w-auto object-contain" />
-                          <span className="text-[11px] font-bold text-[#0b1b36] mt-1.5">SAP PI/PO</span>
+                          <span className="text-xs font-bold text-[#1d2d3e] mt-1.5">SAP PI/PO</span>
                         </>
                       )}
                       {plat.id === 'mulesoft' && (
                         <>
                           <img src="/images/logos/logo_mulesoft.png" alt="MuleSoft" className="h-7 w-7 object-contain" />
-                          <span className="text-[11px] font-bold text-[#0b1b36] mt-1">MuleSoft</span>
+                          <span className="text-xs font-bold text-[#1d2d3e] mt-1">MuleSoft</span>
                         </>
                       )}
                       {plat.id === 'sap-neo' && (
                         <>
                           <img src="/images/sap-logo.svg" alt="SAP" className="h-6 w-auto object-contain" />
-                          <span className="text-[11px] font-bold text-[#0b1b36] mt-1.5">SAP CPI (Neo)</span>
+                          <span className="text-xs font-bold text-[#1d2d3e] mt-1.5">SAP CPI (Neo)</span>
                         </>
                       )}
                       {plat.id === 'boomi' && (
@@ -559,12 +559,12 @@ export function AssessmentWizard() {
                             <span>boom</span>
                             <span className="text-[#ff595a]">i</span>
                           </div>
-                          <span className="text-[11px] font-bold text-[#0b1b36] mt-1">Boomi</span>
+                          <span className="text-xs font-bold text-[#1d2d3e] mt-1">Boomi</span>
                         </>
                       )}
                     </div>
 
-                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-slate-100/90 text-slate-400 shrink-0">
+                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 text-slate-400 shrink-0">
                       <svg className="w-4 h-4" fill="none" viewBox="0 0 20 20" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M3 10h13m-4-4l4 4-4 4" />
                       </svg>
@@ -584,7 +584,7 @@ export function AssessmentWizard() {
                           fill={`url(#cloudGrad-${plat.id})`}
                         />
                       </svg>
-                      <span className="text-xs font-bold text-[#0b1b36] leading-tight text-center mt-1">
+                      <span className="text-xs font-bold text-[#1d2d3e] leading-tight text-center mt-1">
                         SAP BTP<br />Integration Suite
                       </span>
                     </div>
@@ -596,8 +596,8 @@ export function AssessmentWizard() {
         </div>
 
         {/* 5-Item "What you'll get" Box */}
-        <div className="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-xs">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 divide-y sm:divide-y-0 sm:divide-x divide-slate-100">
+        <div className="bg-white rounded-3xl border border-[#d9e2ec] p-8 md:p-10 shadow-xs">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 divide-y sm:divide-y-0 sm:divide-x divide-slate-100">
             <div className="flex items-start space-x-3 pt-2 sm:pt-0 sm:px-2">
               <div className="w-9 h-9 rounded-xl bg-blue-50 text-[#0070f2] flex items-center justify-center shrink-0 mt-0.5">
                 <Gift className="w-5 h-5" />
@@ -692,15 +692,15 @@ export function AssessmentWizard() {
   const isWideLayout = currentStep === 6 || currentStep === 7;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10 space-y-8">
       {/* Breadcrumb & Platform Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 text-sm">
-        <div className="flex items-center space-x-2 text-slate-500 font-medium">
+      <div className="flex flex-wrap items-center justify-between gap-4 text-sm">
+        <div className="flex items-center space-x-2 text-[#556b82] font-medium">
           <Link href="/" className="hover:text-[#0070f2] transition-colors">Home</Link>
           <span>&gt;</span>
           <button onClick={() => setCurrentStep(0)} className="hover:text-[#0070f2] transition-colors">Business Value</button>
           <span>&gt;</span>
-          <span className="text-slate-900 font-semibold">{activePlat.name}</span>
+          <span className="text-[#1d2d3e] font-semibold">{activePlat.name}</span>
         </div>
         <button
           type="button"
@@ -715,64 +715,64 @@ export function AssessmentWizard() {
       </div>
 
       {/* Hero Banner */}
-      <div className="relative rounded-2xl bg-gradient-to-r from-blue-50/90 via-sky-50/50 to-indigo-50/80 border border-blue-100/90 p-6 sm:p-8 overflow-hidden shadow-xs">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
-          <div className="lg:col-span-7 z-10 space-y-3">
-            <div className="text-[11px] font-bold text-blue-600 tracking-wider uppercase">
+      <div className="relative rounded-3xl bg-gradient-to-r from-blue-50/90 via-sky-50/50 to-indigo-50/80 border border-[#d9e2ec] p-8 sm:p-10 lg:p-12 overflow-hidden shadow-xs">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          <div className="lg:col-span-7 z-10 space-y-4">
+            <div className="text-xs font-bold text-[#0070f2] tracking-wider uppercase">
               PLAN | MODERNIZE | OPTIMIZE | REALIZE VALUE
             </div>
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#1d2d3e] tracking-tight leading-tight font-['72',sans-serif]">
               {activePlat.name} to SAP BTP Migration
             </h1>
-            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-xl">
+            <p className="text-base text-[#556b82] leading-relaxed max-w-xl">
               Assess your current landscape. Plan with confidence. Accelerate your journey to a connected, intelligent enterprise with Incture&apos;s Business ValueLens AI.
             </p>
 
             {/* 4 Feature Pills */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3">
-              <div className="flex items-center space-x-2.5 p-1.5">
-                <div className="w-9 h-9 rounded-xl bg-blue-100/80 flex items-center justify-center shrink-0">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4">
+              <div className="flex items-center space-x-3 p-2">
+                <div className="w-10 h-10 rounded-2xl bg-blue-100/80 flex items-center justify-center shrink-0">
                   <BarChart2 className="w-5 h-5 text-[#0070f2]" />
                 </div>
                 <div>
-                  <div className="text-xs sm:text-sm font-bold text-slate-800 leading-tight">Data-Driven</div>
-                  <div className="text-xs text-slate-500 leading-tight">Insights</div>
+                  <div className="text-xs font-bold text-[#1d2d3e] leading-tight">Data-Driven</div>
+                  <div className="text-xs text-[#556b82] leading-tight">Insights</div>
                 </div>
               </div>
 
-              <div className="flex items-center space-x-2.5 p-1.5">
-                <div className="w-9 h-9 rounded-xl bg-blue-100/80 flex items-center justify-center shrink-0">
+              <div className="flex items-center space-x-3 p-2">
+                <div className="w-10 h-10 rounded-2xl bg-blue-100/80 flex items-center justify-center shrink-0">
                   <Settings className="w-5 h-5 text-[#0070f2]" />
                 </div>
                 <div>
-                  <div className="text-xs sm:text-sm font-bold text-slate-800 leading-tight">Tailored</div>
-                  <div className="text-xs text-slate-500 leading-tight">Recommendations</div>
+                  <div className="text-xs font-bold text-[#1d2d3e] leading-tight">Tailored</div>
+                  <div className="text-xs text-[#556b82] leading-tight">Recommendations</div>
                 </div>
               </div>
 
-              <div className="flex items-center space-x-2.5 p-1.5">
-                <div className="w-9 h-9 rounded-xl bg-blue-100/80 flex items-center justify-center shrink-0">
+              <div className="flex items-center space-x-3 p-2">
+                <div className="w-10 h-10 rounded-2xl bg-blue-100/80 flex items-center justify-center shrink-0">
                   <Database className="w-5 h-5 text-[#0070f2]" />
                 </div>
                 <div>
-                  <div className="text-xs sm:text-sm font-bold text-slate-800 leading-tight">Clear Business</div>
-                  <div className="text-xs text-slate-500 leading-tight">Value</div>
+                  <div className="text-xs font-bold text-[#1d2d3e] leading-tight">Clear Business</div>
+                  <div className="text-xs text-[#556b82] leading-tight">Value</div>
                 </div>
               </div>
 
-              <div className="flex items-center space-x-2.5 p-1.5">
-                <div className="w-9 h-9 rounded-xl bg-blue-100/80 flex items-center justify-center shrink-0">
+              <div className="flex items-center space-x-3 p-2">
+                <div className="w-10 h-10 rounded-2xl bg-blue-100/80 flex items-center justify-center shrink-0">
                   <Rocket className="w-5 h-5 text-[#0070f2]" />
                 </div>
                 <div>
-                  <div className="text-xs sm:text-sm font-bold text-slate-800 leading-tight">Faster Path</div>
-                  <div className="text-xs text-slate-500 leading-tight">to Innovation</div>
+                  <div className="text-xs font-bold text-[#1d2d3e] leading-tight">Faster Path</div>
+                  <div className="text-xs text-[#556b82] leading-tight">to Innovation</div>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="lg:col-span-5 flex items-center justify-end relative h-48 sm:h-52 overflow-hidden rounded-xl">
+          <div className="lg:col-span-5 flex items-center justify-end relative h-48 sm:h-56 overflow-hidden rounded-3xl">
             <img
               src="/images/banner-right.png"
               alt="From Integration To What's Next"
@@ -790,11 +790,11 @@ export function AssessmentWizard() {
       )}
 
       {/* 7-Milestone Stepper Bar */}
-      <div className="bg-white rounded-2xl border border-slate-200/90 p-4 shadow-xs">
+      <div className="bg-white rounded-3xl border border-[#d9e2ec] p-6 sm:p-8 shadow-xs">
         <div className="flex items-start justify-between max-w-5xl mx-auto relative px-4 sm:px-6">
-          <div className="absolute top-4 left-10 right-10 h-0.5 bg-slate-200 -z-0" />
+          <div className="absolute top-5 left-10 right-10 h-0.5 bg-[#e5e9f0] -z-0" />
           <div
-            className="absolute top-4 left-10 h-0.5 bg-[#0070f2] transition-all duration-300 -z-0"
+            className="absolute top-5 left-10 h-0.5 bg-[#0070f2] transition-all duration-300 -z-0"
             style={{
               width: `${((Math.max(1, currentStep) - 1) / (milestones.length - 1)) * 92}%`,
             }}
@@ -815,23 +815,23 @@ export function AssessmentWizard() {
                 }}
               >
                 <div
-                  className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold transition-all ${
+                  className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold transition-all ${
                     isCurrent
-                      ? 'bg-[#0070f2] text-white shadow-sm ring-4 ring-blue-500/20'
+                      ? 'bg-[#0070f2] text-white shadow-sm ring-4 ring-[#0070f2]/20'
                       : isCompleted
-                        ? 'bg-teal-500 text-white shadow-xs'
+                        ? 'bg-teal-600 text-white shadow-xs'
                         : 'bg-white text-slate-500 border border-slate-300'
                   }`}
                 >
-                  {isCompleted ? <Check className="w-4.5 h-4.5 stroke-[2.5]" /> : m.id}
+                  {isCompleted ? <Check className="w-5 h-5 stroke-[2.5]" /> : m.id}
                 </div>
-                <div className="flex flex-col items-center mt-2 text-center">
+                <div className="flex flex-col items-center mt-2.5 text-center">
                   <span
-                    className={`text-xs sm:text-sm mt-0.5 leading-tight ${
+                    className={`text-xs sm:text-sm mt-0.5 leading-tight font-medium ${
                       isCurrent
                         ? 'text-[#0070f2] font-bold'
                         : isCompleted
-                          ? 'text-slate-700 font-medium'
+                          ? 'text-[#1d2d3e]'
                           : 'text-slate-400'
                     }`}
                   >
@@ -1062,47 +1062,47 @@ export function AssessmentWizard() {
 
             {/* Live Economics Summary Card (Steps 3, 4, 5 and Step 1) */}
             {currentStep !== 2 && (
-              <div className="bg-white rounded-2xl border border-slate-200/90 p-6 shadow-xs sticky top-20 space-y-4">
-                <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                  <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+              <div className="bg-white rounded-3xl border border-[#d9e2ec] p-8 shadow-xs sticky top-24 space-y-6">
+                <div className="flex items-center justify-between border-b border-[#e5e9f0] pb-4">
+                  <h3 className="text-sm font-bold text-[#1d2d3e] font-['72',sans-serif] uppercase tracking-wider">
                     Business value insights
                   </h3>
-                  <span className="text-[10px] bg-emerald-50 text-emerald-700 font-bold px-2 py-0.5 rounded-full border border-emerald-200">
+                  <span className="text-[11px] bg-emerald-50 text-emerald-700 font-bold px-2.5 py-0.5 rounded-full border border-emerald-200">
                     Dynamic
                   </span>
                 </div>
 
-                <div className="space-y-3.5 text-xs">
+                <div className="space-y-4 text-xs">
                   <div className="flex justify-between items-center px-1">
-                    <span className="text-slate-600 font-medium">Current {activeConfig.name} TCO</span>
-                    <span className="text-sm font-extrabold text-slate-900 font-mono">
+                    <span className="text-[#556b82] font-medium">Current {activeConfig.name} TCO</span>
+                    <span className="text-sm font-bold text-[#1d2d3e] font-mono">
                       {formatCurrency(currentTcoPreview, assessment.currency)}
                     </span>
                   </div>
 
                   <div className="flex justify-between items-center px-1">
-                    <span className="text-slate-600 font-medium">Target SAP BTP TCO</span>
-                    <span className="text-sm font-extrabold text-blue-600 font-mono">
+                    <span className="text-[#556b82] font-medium">Target SAP BTP TCO</span>
+                    <span className="text-sm font-bold text-[#0070f2] font-mono">
                       {formatCurrency(targetTcoPreview, assessment.currency)}
                     </span>
                   </div>
 
-                  <div className="p-3 bg-emerald-50/70 rounded-xl flex justify-between items-center border border-emerald-200/90">
+                  <div className="p-4 bg-emerald-50/70 rounded-2xl flex justify-between items-center border border-emerald-200/90">
                     <span className="text-xs text-emerald-800 font-bold">Projected Annual Savings</span>
-                    <span className="text-sm font-extrabold text-emerald-700 font-mono">
+                    <span className="text-base font-bold text-emerald-700 font-mono">
                       {formatCurrency(annualSavingsPreview, assessment.currency)}
                     </span>
                   </div>
 
                   <div className="flex justify-between items-center px-1">
-                    <span className="text-slate-600 font-medium">Migration Investment</span>
-                    <span className="text-sm font-extrabold text-slate-900 font-mono">
+                    <span className="text-[#556b82] font-medium">Migration Investment</span>
+                    <span className="text-sm font-bold text-[#1d2d3e] font-mono">
                       {formatCurrency(migrationCostPreview, assessment.currency)}
                     </span>
                   </div>
 
                   <div className="flex justify-between items-center px-1 pt-1">
-                    <span className="text-slate-600 font-medium">Estimated Payback</span>
+                    <span className="text-[#556b82] font-medium">Estimated Payback</span>
                     <span className="text-sm font-bold text-emerald-600 font-mono">
                       {annualSavingsPreview > 0 && paybackMonthsPreview > 0
                         ? `${paybackMonthsPreview.toFixed(1)} Months`
@@ -1112,33 +1112,38 @@ export function AssessmentWizard() {
                 </div>
 
                 {/* Grounded IntSwitch Advantage Box */}
-                <div className="p-3 bg-blue-50/60 rounded-xl border border-blue-100 text-[11px] text-blue-900 space-y-1">
-                  <span className="font-bold block text-blue-950">IntSwitch Opportunity:</span>
-                  <p className="text-slate-600 leading-snug">{activeConfig.intSwitch.scopeDescription}</p>
+                <div className="p-4 bg-blue-50/80 rounded-2xl border border-blue-200 text-xs text-blue-900 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-blue-950">IntSwitch Value Add:</span>
+                    <span className="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full border border-emerald-200">
+                      Included Free ($0 Cost)
+                    </span>
+                  </div>
+                  <p className="text-[#556b82] text-[11px] leading-relaxed">{activeConfig.intSwitch.scopeDescription}</p>
                 </div>
               </div>
             )}
 
             {/* Step 1 Why we ask info */}
             {currentStep === 1 && (
-              <div className="bg-white rounded-2xl border border-blue-100/90 p-6 shadow-xs space-y-3">
-                <div className="flex items-center space-x-2 text-blue-600">
-                  <Info className="w-4 h-4" />
-                  <h4 className="text-xs font-bold text-blue-700">
+              <div className="bg-white rounded-3xl border border-[#d9e2ec] p-8 shadow-xs space-y-4">
+                <div className="flex items-center space-x-2.5 text-[#0070f2]">
+                  <Info className="w-5 h-5" />
+                  <h4 className="text-sm font-bold text-[#1d2d3e] font-['72',sans-serif]">
                     Why we ask for this information?
                   </h4>
                 </div>
-                <ul className="space-y-2 text-xs text-slate-600 pl-1">
+                <ul className="space-y-2.5 text-xs text-[#556b82] pl-1">
                   <li className="flex items-start space-x-2">
-                    <span className="text-blue-500 font-bold">•</span>
+                    <span className="text-[#0070f2] font-bold">•</span>
                     <span>Provides context for industry-specific benchmarks</span>
                   </li>
                   <li className="flex items-start space-x-2">
-                    <span className="text-blue-500 font-bold">•</span>
+                    <span className="text-[#0070f2] font-bold">•</span>
                     <span>Helps us estimate the right sizing and costs</span>
                   </li>
                   <li className="flex items-start space-x-2">
-                    <span className="text-blue-500 font-bold">•</span>
+                    <span className="text-[#0070f2] font-bold">•</span>
                     <span>Enables more accurate ROI and savings analysis</span>
                   </li>
                 </ul>

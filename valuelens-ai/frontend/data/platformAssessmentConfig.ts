@@ -684,7 +684,8 @@ export function matchIncturePackage(
   platformId: PlatformId,
   interfacesCount: number,
   applicationsCount: number = 1,
-  complexity: string = 'Simple'
+  complexity: string = 'Simple',
+  isDualStack: boolean = false
 ): MatchedPackageResult {
   const cfg = PLATFORM_CONFIGS[platformId] || PLATFORM_CONFIGS['sap-pipo'];
   const packages = cfg.packages;
@@ -702,29 +703,70 @@ export function matchIncturePackage(
     if (!matched.complexitySupport.toLowerCase().includes('moderate') && !matched.complexitySupport.toLowerCase().includes('mixed')) {
       const nextPkg = packages.find((p) => p.id !== 'starter');
       if (nextPkg) {
+        let pkg = nextPkg;
+        if (platformId === 'sap-pipo' && isDualStack) {
+          pkg = {
+            ...pkg,
+            name: `${pkg.name} (Dual-Stack +15%)`,
+            price: Math.round(pkg.price * 1.15),
+          };
+        }
         return {
-          package: nextPkg,
+          package: pkg,
           suitabilityStatus: 'OPTIMAL',
-          suitabilityNote: `Scope upgraded to ${nextPkg.name} to satisfy ${complexity} complexity requirements per Incture offering specification.`,
+          suitabilityNote: `Scope upgraded to ${pkg.name} to satisfy ${complexity} complexity requirements per Incture offering specification.`,
         };
       }
     }
   }
 
-  // If scope exceeds all packages, use the largest available package (Platinum)
+  // If scope exceeds standard package boundaries, calculate indicative enterprise custom tier based on Platinum benchmark
   if (!matched) {
     const largest = packages[packages.length - 1];
+    const scaleFactor = Math.max(
+      interfacesCount / largest.maxInterfaces,
+      applicationsCount / largest.maxApplications,
+      1
+    );
+    let enterprisePrice = Math.round(largest.price * scaleFactor);
+    let pkgName = `Enterprise Custom Tier (${interfacesCount} Interfaces)`;
+    if (platformId === 'sap-pipo' && isDualStack) {
+      enterprisePrice = Math.round(enterprisePrice * 1.15);
+      pkgName = `${pkgName} (Dual-Stack +15%)`;
+    }
+
+    const enterprisePackage: IncturePackageTier = {
+      ...largest,
+      id: 'enterprise-custom',
+      name: pkgName,
+      price: enterprisePrice,
+      scopeSummary: `${interfacesCount} Interfaces / Up to ${applicationsCount} Applications with custom enterprise delivery`,
+      maxInterfaces: interfacesCount,
+      maxApplications: applicationsCount,
+      interfaceLimit: `Up to ${interfacesCount} Interfaces`,
+      applicationLimit: `Up to ${applicationsCount} Applications`,
+    };
+
     return {
-      package: largest,
+      package: enterprisePackage,
       suitabilityStatus: 'SCOPE_EXCEEDED',
-      suitabilityNote: `Scope of ${interfacesCount} interfaces / ${applicationsCount} apps exceeds standard package boundaries. Matched to ${largest.name} as indicative tier.`,
+      suitabilityNote: `Scope of ${interfacesCount} interfaces / ${applicationsCount} apps exceeds standard package boundaries. Sized to Enterprise Custom Tier based on Incture Platinum benchmark.`,
+    };
+  }
+
+  let finalPkg = matched;
+  if (platformId === 'sap-pipo' && isDualStack) {
+    finalPkg = {
+      ...finalPkg,
+      name: `${finalPkg.name} (Dual-Stack +15%)`,
+      price: Math.round(finalPkg.price * 1.15),
     };
   }
 
   return {
-    package: matched,
+    package: finalPkg,
     suitabilityStatus: 'OPTIMAL',
-    suitabilityNote: `Scope of ${interfacesCount} interfaces and ${applicationsCount} apps perfectly matches Incture's ${matched.name}.`,
+    suitabilityNote: `Scope of ${interfacesCount} interfaces and ${applicationsCount} apps perfectly matches Incture's ${finalPkg.name}.`,
   };
 }
 

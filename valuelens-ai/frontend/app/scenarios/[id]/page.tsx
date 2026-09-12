@@ -236,18 +236,18 @@ export default function ScenariosPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 py-8">
+    <div className="min-h-screen bg-[#f5f6f8] py-8 md:py-10 text-[#1d2d3e]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         {/* Header */}
-        <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-slate-200">
+        <div className="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-[#d9e2ec]">
           <div>
             <div className="flex items-center space-x-2">
-              <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-                Scenario & Sensitivity Simulator
+              <h1 className="text-3xl md:text-4xl font-extrabold text-[#1d2d3e] tracking-tight">
+                Scenario &amp; Sensitivity Simulator
               </h1>
               <ValueOriginChip origin="DERIVED" />
             </div>
-            <p className="text-xs text-slate-500 mt-1">
+            <p className="text-sm text-[#556b82] mt-1.5 font-normal">
               Stress-test migration capital payback, recurring savings, and multi-year ROI against fluctuating assumptions.
             </p>
           </div>
@@ -255,15 +255,15 @@ export default function ScenariosPage() {
           <div className="flex items-center space-x-3">
             <button
               onClick={resetDefaults}
-              className="px-3.5 py-2 text-xs font-semibold text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors shadow-xs"
+              className="px-4 py-2.5 text-xs sm:text-sm font-semibold text-[#1d2d3e] bg-white border border-[#d9e2ec] rounded-xl hover:bg-slate-50 transition-colors shadow-xs cursor-pointer"
             >
               Reset to Base Case
             </button>
             <Link
               href={`/dashboard/${assessmentId}`}
-              className="px-4 py-2 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl transition-colors shadow-xs inline-flex items-center gap-1.5"
+              className="px-4 py-2.5 text-xs sm:text-sm font-bold text-white bg-[#0070f2] hover:bg-[#0057d2] rounded-xl transition-colors shadow-xs inline-flex items-center gap-1.5"
             >
-              <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 16 16" stroke="currentColor">
+              <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 16 16" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M10 12.5l-4.5-4.5 4.5-4.5" />
               </svg>
               <span>Back to Dashboard</span>
@@ -272,7 +272,7 @@ export default function ScenariosPage() {
         </div>
 
         {/* Sliders Card */}
-        <div className="bg-white rounded-3xl border border-slate-200 p-6 shadow-xs space-y-6">
+        <div className="bg-white rounded-3xl border border-[#d9e2ec] p-8 md:p-10 shadow-xs space-y-8">
           <div className="flex items-center justify-between">
             <h2 className="text-base font-bold text-slate-900">
               Sensitivity Tuning Sliders (Real-time Deterministic Calculation)
@@ -285,12 +285,12 @@ export default function ScenariosPage() {
             )}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Slider 1: Savings Realization */}
-            <div className="space-y-2 bg-slate-50 p-4 rounded-2xl border border-slate-200">
-              <div className="flex justify-between items-center text-xs">
-                <label className="font-bold text-slate-700">Annual Savings Factor</label>
-                <span className="font-mono font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">
+            <div className="space-y-3 bg-slate-50 p-6 rounded-2xl border border-[#d9e2ec]">
+              <div className="flex justify-between items-center text-xs sm:text-sm">
+                <label className="font-bold text-[#1d2d3e]">Annual Savings Factor</label>
+                <span className="font-mono font-bold text-[#0070f2] bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-200">
                   {savingsFactor.toFixed(2)}x ({((savingsFactor - 1) * 100).toFixed(0)}%)
                 </span>
               </div>
@@ -301,18 +301,18 @@ export default function ScenariosPage() {
                 step="0.05"
                 value={savingsFactor}
                 onChange={(e) => setSavingsFactor(parseFloat(e.target.value))}
-                className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600"
+                className="w-full h-3 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#0070f2]"
               />
-              <p className="text-[11px] text-slate-400">
+              <p className="text-xs text-[#556b82]">
                 Models lower interface adoption or higher operational realization.
               </p>
             </div>
 
             {/* Slider 2: Migration Cost Variance */}
-            <div className="space-y-2 bg-slate-50 p-4 rounded-2xl border border-slate-200">
-              <div className="flex justify-between items-center text-xs">
-                <label className="font-bold text-slate-700">Migration Cost Factor</label>
-                <span className="font-mono font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">
+            <div className="space-y-3 bg-slate-50 p-6 rounded-2xl border border-[#d9e2ec]">
+              <div className="flex justify-between items-center text-xs sm:text-sm">
+                <label className="font-bold text-[#1d2d3e]">Migration Cost Factor</label>
+                <span className="font-mono font-bold text-[#0070f2] bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-200">
                   {migrationCostFactor.toFixed(2)}x ({((migrationCostFactor - 1) * 100).toFixed(0)}%)
                 </span>
               </div>
@@ -323,18 +323,18 @@ export default function ScenariosPage() {
                 step="0.05"
                 value={migrationCostFactor}
                 onChange={(e) => setMigrationCostFactor(parseFloat(e.target.value))}
-                className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600"
+                className="w-full h-3 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#0070f2]"
               />
-              <p className="text-[11px] text-slate-400">
+              <p className="text-xs text-[#556b82]">
                 Tests delivery overruns or accelerated content pack efficiencies.
               </p>
             </div>
 
             {/* Slider 3: Target TCO Variance */}
-            <div className="space-y-2 bg-slate-50 p-4 rounded-2xl border border-slate-200">
-              <div className="flex justify-between items-center text-xs">
-                <label className="font-bold text-slate-700">Target BTP Cost Factor</label>
-                <span className="font-mono font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">
+            <div className="space-y-3 bg-slate-50 p-6 rounded-2xl border border-[#d9e2ec]">
+              <div className="flex justify-between items-center text-xs sm:text-sm">
+                <label className="font-bold text-[#1d2d3e]">Target BTP Cost Factor</label>
+                <span className="font-mono font-bold text-[#0070f2] bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-200">
                   {targetCostFactor.toFixed(2)}x ({((targetCostFactor - 1) * 100).toFixed(0)}%)
                 </span>
               </div>
@@ -345,9 +345,9 @@ export default function ScenariosPage() {
                 step="0.05"
                 value={targetCostFactor}
                 onChange={(e) => setTargetCostFactor(parseFloat(e.target.value))}
-                className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600"
+                className="w-full h-3 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#0070f2]"
               />
-              <p className="text-[11px] text-slate-400">
+              <p className="text-xs text-[#556b82]">
                 Simulates unexpected message volume expansion or storage uplift.
               </p>
             </div>
@@ -364,62 +364,62 @@ export default function ScenariosPage() {
           ].map((item, idx) => (
             <div
               key={idx}
-              className={`rounded-3xl p-6 transition-all duration-200 ${
+              className={`rounded-3xl p-6 md:p-8 transition-all duration-200 ${
                 item.highlight
-                  ? 'bg-slate-900 text-white shadow-xl shadow-slate-900/10 border-2 border-indigo-500 scale-[1.02]'
-                  : 'bg-white text-slate-900 border border-slate-200 shadow-xs'
+                  ? 'bg-[#1d2d3e] text-white shadow-xl shadow-slate-900/10 border-2 border-[#0070f2] scale-[1.02]'
+                  : 'bg-white text-[#1d2d3e] border border-[#d9e2ec] shadow-xs'
               }`}
             >
               <div className="flex items-center justify-between mb-4">
-                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                  item.highlight ? 'bg-indigo-900 text-indigo-200' : 'bg-slate-100 text-slate-600'
+                <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full ${
+                  item.highlight ? 'bg-blue-900/60 text-blue-200 border border-blue-700' : 'bg-slate-100 text-[#556b82]'
                 }`}>
                   {item.tag}
                 </span>
-                <span className={`text-xs font-mono ${item.highlight ? 'text-slate-400' : 'text-slate-400'}`}>
+                <span className={`text-xs font-mono ${item.highlight ? 'text-slate-400' : 'text-[#556b82]'}`}>
                   {item.sub}
                 </span>
               </div>
 
-              <h3 className={`text-base font-bold mb-4 ${item.highlight ? 'text-white' : 'text-slate-900'}`}>
+              <h3 className={`text-base font-bold mb-4 ${item.highlight ? 'text-white' : 'text-[#1d2d3e]'}`}>
                 {item.outcome?.scenarioName || 'Scenario'}
               </h3>
 
-              <div className="space-y-3 text-xs">
+              <div className="space-y-3.5 text-xs sm:text-sm">
                 <div className="flex justify-between items-center">
-                  <span className={item.highlight ? 'text-slate-400' : 'text-slate-500'}>Annual Savings:</span>
+                  <span className={item.highlight ? 'text-slate-400' : 'text-[#556b82]'}>Annual Savings:</span>
                   <span className={`font-mono font-bold ${
                     item.outcome?.annualSavings && item.outcome.annualSavings > 0
-                      ? 'text-emerald-500'
-                      : 'text-rose-500'
+                      ? 'text-emerald-400'
+                      : 'text-rose-400'
                   }`}>
                     {item.outcome ? formatCurrency(item.outcome.annualSavings) : '—'}
                   </span>
                 </div>
 
                 <div className="flex justify-between items-center">
-                  <span className={item.highlight ? 'text-slate-400' : 'text-slate-500'}>Payback Horizon:</span>
+                  <span className={item.highlight ? 'text-slate-400' : 'text-[#556b82]'}>Payback Horizon:</span>
                   <span className="font-mono font-bold">
                     {item.outcome ? formatMonths(item.outcome.breakEvenMonths) : '—'}
                   </span>
                 </div>
 
                 <div className="flex justify-between items-center">
-                  <span className={item.highlight ? 'text-slate-400' : 'text-slate-500'}>Migration Cost:</span>
+                  <span className={item.highlight ? 'text-slate-400' : 'text-[#556b82]'}>Migration Cost:</span>
                   <span className="font-mono font-bold">
                     {item.outcome ? formatCurrency(item.outcome.migrationCost) : '—'}
                   </span>
                 </div>
 
                 <div className="flex justify-between items-center">
-                  <span className={item.highlight ? 'text-slate-400' : 'text-slate-500'}>5-Year Net Benefit:</span>
-                  <span className="font-mono font-bold text-indigo-400">
+                  <span className={item.highlight ? 'text-slate-400' : 'text-[#556b82]'}>5-Year Net Benefit:</span>
+                  <span className="font-mono font-bold text-blue-400">
                     {item.outcome ? formatCurrency(item.outcome.fiveYearNetBenefit) : '—'}
                   </span>
                 </div>
 
                 <div className="pt-3 border-t border-slate-200/20 flex justify-between items-center font-bold">
-                  <span className={item.highlight ? 'text-slate-300' : 'text-slate-700'}>5-Year ROI:</span>
+                  <span className={item.highlight ? 'text-slate-300' : 'text-[#1d2d3e]'}>5-Year ROI:</span>
                   <span className="font-mono text-sm text-emerald-400">
                     {item.outcome ? formatPercent(item.outcome.fiveYearRoi) : '—'}
                   </span>
@@ -430,18 +430,18 @@ export default function ScenariosPage() {
         </div>
 
         {/* Sensitivity Advisory Box: Pure Deep AI Sensitivity Intelligence */}
-        <div className="p-6 bg-gradient-to-br from-purple-50 via-indigo-50/50 to-white rounded-3xl border border-purple-200 text-purple-950 space-y-5 shadow-xs">
-          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-purple-100 pb-4">
-            <div className="flex items-center space-x-2.5">
-              <div className="w-8 h-8 rounded-xl bg-purple-600 text-white flex items-center justify-center text-sm font-bold shadow-xs">
+        <div className="p-8 bg-gradient-to-br from-blue-50/60 via-slate-50 to-white rounded-3xl border border-[#d9e2ec] text-[#1d2d3e] space-y-6 shadow-xs">
+          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#d9e2ec] pb-5">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 rounded-2xl bg-[#0070f2] text-white flex items-center justify-center text-base font-bold shadow-xs">
                 ✦
               </div>
               <div>
                 <div className="flex items-center space-x-2">
-                  <h4 className="text-sm font-bold text-purple-950">Autonomous Sensitivity Assessment & Risk Bounds</h4>
-                  <ValueOriginChip origin="AI_INTERPRETED" className="bg-purple-950 text-purple-200 border-purple-800" />
+                  <h4 className="text-base font-bold text-[#1d2d3e]">Autonomous Sensitivity Assessment &amp; Risk Bounds</h4>
+                  <ValueOriginChip origin="AI_INTERPRETED" className="bg-[#1d2d3e] text-white border-slate-700" />
                 </div>
-                <span className="text-[11px] text-purple-700">
+                <span className="text-xs text-[#556b82]">
                   Continuous multi-horizon evaluation synthesized against user assessment parameters
                 </span>
               </div>
@@ -450,7 +450,7 @@ export default function ScenariosPage() {
             <button
               onClick={fetchLiveAiScenarioAnalysis}
               disabled={loadingAi}
-              className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 active:scale-95 text-white text-xs font-bold transition-all shadow-xs flex items-center space-x-1.5 cursor-pointer disabled:opacity-50"
+              className="px-5 py-2.5 rounded-xl bg-[#0070f2] hover:bg-[#0057d2] active:scale-95 text-white text-xs sm:text-sm font-semibold transition-all shadow-xs flex items-center space-x-2 cursor-pointer disabled:opacity-50"
             >
               {loadingAi ? (
                 <>
