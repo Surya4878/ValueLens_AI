@@ -123,9 +123,12 @@ export default function ReportPage() {
           <div className="flex items-center space-x-2">
             <Link
               href={`/dashboard/${assessmentId}`}
-              className="text-xs font-bold text-slate-600 hover:text-indigo-600 flex items-center space-x-1"
+              className="text-xs font-bold text-slate-600 hover:text-[#0070f2] inline-flex items-center gap-1.5 transition-colors group"
             >
-              <span>← Back to Dashboard</span>
+              <svg className="w-3 h-3 text-slate-500 group-hover:text-[#0070f2] transition-transform group-hover:-translate-x-0.5" fill="none" viewBox="0 0 16 16" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M10 12.5l-4.5-4.5 4.5-4.5" />
+              </svg>
+              <span>Back to Dashboard</span>
             </Link>
           </div>
 

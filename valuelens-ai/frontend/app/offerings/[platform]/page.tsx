@@ -11,7 +11,7 @@ function highlightIntSwitch(text: string | undefined): React.ReactNode {
   const parts = text.split(/(IntSwitch)/g);
   return parts.map((part, i) =>
     part === 'IntSwitch' ? (
-      <span key={i} className="text-[#0066cc] font-bold">
+      <span key={i} className="text-[#0070f2] font-bold">
         {part}
       </span>
     ) : (
@@ -36,7 +36,7 @@ export default function OfferingDetailPage() {
         <p className="text-sm text-slate-500">The requested migration offering does not exist.</p>
         <Link
           href="/offerings"
-          className="inline-block px-4 py-2 rounded-lg bg-[#0066cc] text-white font-bold text-sm"
+          className="inline-block px-4 py-2 rounded-lg bg-[#0070f2] text-white font-bold text-sm"
         >
           View all offerings
         </Link>
@@ -50,11 +50,11 @@ export default function OfferingDetailPage() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
       {/* 1. Breadcrumb Navigation */}
       <nav className="flex items-center space-x-2 text-xs text-slate-500 font-medium">
-        <Link href="/" className="hover:text-[#0066cc] transition-colors">
+        <Link href="/" className="hover:text-[#0070f2] transition-colors">
           Home
         </Link>
         <span>›</span>
-        <Link href="/offerings" className="hover:text-[#0066cc] transition-colors">
+        <Link href="/offerings" className="hover:text-[#0070f2] transition-colors">
           Packages
         </Link>
         <span>›</span>
@@ -75,15 +75,17 @@ export default function OfferingDetailPage() {
                 </span>
               </div>
 
-              {/* Blue Arrow */}
-              <div className="text-[#0066cc] text-xl font-bold shrink-0">
-                →
+              {/* SAP Directional Transition Arrow */}
+              <div className="text-[#0070f2] shrink-0">
+                <svg className="w-5 h-5" viewBox="0 0 20 20" fill="none" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M3 10h13m-4-4l4 4-4 4" />
+                </svg>
               </div>
 
               {/* Target SAP Integration Suite */}
               <div className="flex-1 flex flex-col items-center justify-center text-center">
                 <img src={offering.cloudLogo} alt="SAP Integration Suite" className="h-10 max-w-[80px] object-contain mb-1.5" />
-                <span className="text-[11px] font-black text-[#0066cc] tracking-tight leading-tight">
+                <span className="text-[11px] font-black text-[#0070f2] tracking-tight leading-tight">
                   SAP Integration<br />Suite
                 </span>
               </div>
@@ -119,7 +121,7 @@ export default function OfferingDetailPage() {
             type="button"
             onClick={() => setActiveTab('packages')}
             className={`px-4 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all cursor-pointer ${activeTab === 'packages'
-              ? 'bg-[#0066cc] text-white shadow-xs'
+              ? 'bg-[#0070f2] text-white shadow-xs'
               : 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-200'
               }`}
           >
@@ -130,7 +132,7 @@ export default function OfferingDetailPage() {
             type="button"
             onClick={() => setActiveTab('whats-included')}
             className={`px-4 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all cursor-pointer ${activeTab === 'whats-included'
-              ? 'bg-[#0066cc] text-white shadow-xs'
+              ? 'bg-[#0070f2] text-white shadow-xs'
               : 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-200'
               }`}
           >
@@ -141,7 +143,7 @@ export default function OfferingDetailPage() {
             type="button"
             onClick={() => setActiveTab('approach')}
             className={`px-4 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all cursor-pointer ${activeTab === 'approach'
-              ? 'bg-[#0066cc] text-white shadow-xs'
+              ? 'bg-[#0070f2] text-white shadow-xs'
               : 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-200'
               }`}
           >
@@ -152,7 +154,7 @@ export default function OfferingDetailPage() {
             type="button"
             onClick={() => setActiveTab('enablement')}
             className={`px-4 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all cursor-pointer ${activeTab === 'enablement'
-              ? 'bg-[#0066cc] text-white shadow-xs'
+              ? 'bg-[#0070f2] text-white shadow-xs'
               : 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-200'
               }`}
           >
@@ -163,7 +165,7 @@ export default function OfferingDetailPage() {
             type="button"
             onClick={() => setActiveTab('faqs')}
             className={`px-4 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all cursor-pointer ${activeTab === 'faqs'
-              ? 'bg-[#0066cc] text-white shadow-xs'
+              ? 'bg-[#0070f2] text-white shadow-xs'
               : 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-200'
               }`}
           >
@@ -177,10 +179,10 @@ export default function OfferingDetailPage() {
           <a
             href="/documents/Incture-Migration-Offering-SAP-Integration-Suite.pdf"
             download="Incture-Migration-Offering-SAP-Integration-Suite.pdf"
-            className="inline-flex items-center space-x-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-bold bg-white text-[#0066cc] border border-[#0066cc]/40 hover:bg-blue-50/50 shadow-2xs transition-colors cursor-pointer"
+            className="inline-flex items-center space-x-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-bold bg-white text-[#0070f2] border border-[#0070f2]/40 hover:bg-blue-50/50 shadow-2xs transition-colors cursor-pointer"
             title="Download full 10-page Incture Migration Offering Report"
           >
-            <svg className="w-4 h-4 text-[#0066cc]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-4 h-4 text-[#0070f2]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.4} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
             </svg>
             <span>Download Offering (PDF)</span>
@@ -189,10 +191,12 @@ export default function OfferingDetailPage() {
           {/* Button 2: Discover Business Value (links to /assessment) */}
           <Link
             href="/assessment"
-            className="inline-flex items-center space-x-1.5 px-4 py-2 rounded-lg text-xs sm:text-sm font-bold bg-[#0066cc] hover:bg-blue-700 text-white shadow-xs transition-colors cursor-pointer"
+            className="group inline-flex items-center space-x-1.5 px-4 py-2 rounded-lg text-xs sm:text-sm font-bold bg-[#0070f2] hover:bg-[#0057d2] text-white shadow-xs transition-colors cursor-pointer"
           >
             <span>Discover Business Value</span>
-            <span className="text-sm">→</span>
+            <svg className="w-3.5 h-3.5 shrink-0 transition-transform group-hover:translate-x-0.5" viewBox="0 0 16 16" fill="none" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M6 3.5l4.5 4.5-4.5 4.5" />
+            </svg>
           </Link>
         </div>
       </div>
@@ -231,7 +235,7 @@ export default function OfferingDetailPage() {
                     <th scope="col" className="py-3 px-4 text-left font-extrabold text-slate-900 min-w-[200px]">
                       {packages.packageNames.gold}
                     </th>
-                    <th scope="col" className="py-3 px-4 text-left font-extrabold text-[#0066cc] min-w-[220px]">
+                    <th scope="col" className="py-3 px-4 text-left font-extrabold text-[#0070f2] min-w-[220px]">
                       {packages.packageNames.platinum}
                     </th>
                   </tr>
@@ -273,7 +277,7 @@ export default function OfferingDetailPage() {
                       {/* Platinum Package */}
                       <td
                         className={`py-3 px-4 align-top leading-relaxed ${row.highlight
-                          ? 'text-[#0066cc] font-black'
+                          ? 'text-[#0070f2] font-black'
                           : 'text-slate-900 font-semibold'
                           }`}
                       >
@@ -288,7 +292,7 @@ export default function OfferingDetailPage() {
 
           {/* Bottom Please Note Box (Matching Reference Image 1) */}
           <div className="rounded-2xl bg-[#f0f7ff] border border-blue-200/70 p-4 sm:p-5 shadow-2xs flex items-start space-x-3.5">
-            <div className="w-6 h-6 rounded-full bg-[#0066cc] text-white text-xs font-black flex items-center justify-center shrink-0 mt-0.5 shadow-2xs">
+            <div className="w-6 h-6 rounded-full bg-[#0070f2] text-white text-xs font-black flex items-center justify-center shrink-0 mt-0.5 shadow-2xs">
               i
             </div>
             <div className="space-y-1.5 flex-1">
@@ -321,8 +325,8 @@ export default function OfferingDetailPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {whatsIncluded.items.map((item, iIdx) => (
                 <div key={iIdx} className="bg-slate-50/70 rounded-xl p-5 border border-slate-200/80 space-y-3">
-                  <h3 className="text-sm font-extrabold text-[#0066cc] flex items-center space-x-2">
-                    <span className="w-2 h-2 rounded-full bg-[#0066cc]" />
+                  <h3 className="text-sm font-extrabold text-[#0070f2] flex items-center space-x-2">
+                    <span className="w-2 h-2 rounded-full bg-[#0070f2]" />
                     <span>{highlightIntSwitch(item.category)}</span>
                   </h3>
                   <ul className="space-y-2">
@@ -360,13 +364,13 @@ export default function OfferingDetailPage() {
                   className="bg-slate-50/70 rounded-xl p-4 sm:p-5 border border-slate-200/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
                 >
                   <div className="flex items-start space-x-3.5">
-                    <div className="w-8 h-8 rounded-lg bg-[#0066cc] text-white font-black text-sm flex items-center justify-center shrink-0">
+                    <div className="w-8 h-8 rounded-lg bg-[#0070f2] text-white font-black text-sm flex items-center justify-center shrink-0">
                       0{step.stepNumber}
                     </div>
                     <div>
                       <div className="flex items-center space-x-2">
                         <h3 className="text-sm font-extrabold text-slate-900">{step.title}</h3>
-                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-100 text-[#0066cc]">
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-100 text-[#0070f2]">
                           {step.duration}
                         </span>
                       </div>
@@ -380,7 +384,7 @@ export default function OfferingDetailPage() {
                     <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
                       Key Deliverables
                     </span>
-                    <p className="text-xs font-semibold text-[#0066cc] mt-0.5">
+                    <p className="text-xs font-semibold text-[#0070f2] mt-0.5">
                       {step.deliverables.map((deliv, dIdx) => (
                         <React.Fragment key={dIdx}>
                           {dIdx > 0 && ' • '}
@@ -417,7 +421,9 @@ export default function OfferingDetailPage() {
                   <ul className="space-y-2 pt-1">
                     {cat.highlights.map((h, hIdx) => (
                       <li key={hIdx} className="flex items-start space-x-2 text-xs text-slate-700">
-                        <span className="text-[#0066cc] font-bold shrink-0">→</span>
+                        <svg className="w-3.5 h-3.5 text-[#0070f2] shrink-0 mt-0.5" viewBox="0 0 16 16" fill="none" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M6 3.5l4.5 4.5-4.5 4.5" />
+                        </svg>
                         <span>{highlightIntSwitch(h)}</span>
                       </li>
                     ))}
@@ -446,7 +452,7 @@ export default function OfferingDetailPage() {
               {faqs.map((faq, fIdx) => (
                 <div key={fIdx} className="bg-slate-50/60 rounded-xl p-5 border border-slate-200/80 space-y-2">
                   <h3 className="text-sm font-bold text-slate-900 flex items-start space-x-2">
-                    <span className="text-[#0066cc] font-black">Q:</span>
+                    <span className="text-[#0070f2] font-black">Q:</span>
                     <span>{highlightIntSwitch(faq.question)}</span>
                   </h3>
                   <p className="text-xs text-slate-600 leading-relaxed pl-5 font-normal">

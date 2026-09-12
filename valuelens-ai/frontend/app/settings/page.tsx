@@ -127,8 +127,11 @@ export default function SettingsPage() {
         </div>
 
         <div className="text-center pt-2">
-          <Link href="/dashboard/demo-assessment-1" className="text-xs font-bold text-indigo-600 hover:underline">
-            ← Return to Dashboard
+          <Link href="/dashboard/demo-assessment-1" className="text-xs font-bold text-[#0070f2] hover:text-[#0057d2] inline-flex items-center gap-1.5 group">
+            <svg className="w-3 h-3 text-[#0070f2] transition-transform group-hover:-translate-x-0.5" fill="none" viewBox="0 0 16 16" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M10 12.5l-4.5-4.5 4.5-4.5" />
+            </svg>
+            <span>Return to Dashboard</span>
           </Link>
         </div>
       </div>

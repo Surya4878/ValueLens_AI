@@ -2,24 +2,76 @@
 @tailwind components;
 @tailwind utilities;
 
+/* SAP Standard "72" Font Family */
+@font-face {
+  font-family: '72';
+  src: url('/fonts/72-Light.woff2') format('woff2');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: '72';
+  src: url('/fonts/72-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: '72';
+  src: url('/fonts/72-SemiboldDuplex.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: '72';
+  src: url('/fonts/72-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: '72';
+  src: url('/fonts/72-Black.woff2') format('woff2');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 @layer base {
   :root {
-    --background: 210 40% 98%;
-    --foreground: 222 47% 11%;
+    --background: 210 20% 97%;
+    --foreground: 215 35% 18%;
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
-    --border: 214 32% 91%;
-    --primary: 238 82% 59%;
-    --primary-foreground: 210 40% 98%;
+    --card-foreground: 215 35% 18%;
+    --border: 214 28% 90%;
+    --primary: 212 100% 47%; /* SAP Horizon Blue #0070f2 */
+    --primary-foreground: 0 0% 100%;
     --ai-purple: 262 83% 58%;
-    --fin-green: 158 64% 45%;
+    --fin-green: 142 76% 28%; /* SAP Positive #107e3e */
+    --sap-blue: #0070f2;
+    --sap-blue-hover: #0057d2;
+    --sap-blue-active: #0040b0;
+    --sap-text-primary: #1d2d3e;
+    --sap-text-secondary: #556b82;
+    --sap-bg: #f5f6f7;
+    --sap-border: #d9e2ec;
+    --sap-positive: #107e3e;
+    --sap-critical: #df6e0c;
+    --sap-negative: #bb0000;
   }
 
   body {
-    background-color: #f8fafc;
-    color: #0f172a;
-    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    background-color: #f5f6f7;
+    color: #1d2d3e;
+    font-family: "72", "72Black", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
+    letter-spacing: -0.01em;
   }
 }
 

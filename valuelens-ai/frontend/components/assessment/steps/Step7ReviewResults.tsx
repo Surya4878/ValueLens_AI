@@ -92,8 +92,12 @@ export const Step7ReviewResults: React.FC<Step7Props> = ({
           <span className="text-xs font-bold text-emerald-600 uppercase tracking-wider">
             Results Analysis • Step 7 of 7
           </span>
-          <h2 className="text-2xl font-black text-slate-900 mt-1">
-            Your {config.name} → SAP BTP Migration Analysis
+          <h2 className="text-2xl font-black text-slate-900 mt-1 flex items-center gap-2">
+            <span>Your {config.name}</span>
+            <svg className="w-5 h-5 text-slate-400 shrink-0" fill="none" viewBox="0 0 20 20" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M3 10h13m-4-4l4 4-4 4" />
+            </svg>
+            <span>SAP BTP Migration Analysis</span>
           </h2>
           <p className="text-sm text-slate-500 mt-0.5">
             Based on your inputs, here are the calculated economic results.
@@ -278,7 +282,7 @@ export const Step7ReviewResults: React.FC<Step7Props> = ({
             <span className="h-4 w-px bg-blue-300"></span>
             <div>
               <div className="flex items-center space-x-2">
-                <span className="text-xs font-bold text-[#0066cc] uppercase tracking-wider">
+                <span className="text-xs font-bold text-[#0070f2] uppercase tracking-wider">
                   Incture IntSwitch Business Value &amp; ROI
                 </span>
                 <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold border border-emerald-200">
@@ -292,10 +296,12 @@ export const Step7ReviewResults: React.FC<Step7Props> = ({
           </div>
           <a
             href="/intswitch"
-            className="inline-flex items-center space-x-1 text-xs font-bold text-[#0066cc] hover:text-blue-800 transition-colors"
+            className="inline-flex items-center space-x-1.5 text-xs font-bold text-[#0070f2] hover:text-blue-800 transition-colors group"
           >
             <span>Explore IntSwitch Platform</span>
-            <span>→</span>
+            <svg className="w-3 h-3 text-[#0070f2] transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 16 16" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M6 3.5l4.5 4.5-4.5 4.5" />
+            </svg>
           </a>
         </div>
 
@@ -317,7 +323,7 @@ export const Step7ReviewResults: React.FC<Step7Props> = ({
             <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
               Estimated Payback
             </span>
-            <span className="text-2xl sm:text-3xl font-black text-[#0066cc] font-mono block mt-1">
+            <span className="text-2xl sm:text-3xl font-black text-[#0070f2] font-mono block mt-1">
               {displaySavings > 0 && displayMigrationCost > 0
                 ? `< ${Math.max(1, Math.ceil(displayPayback))} Months`
                 : '—'}
@@ -359,12 +365,14 @@ export const Step7ReviewResults: React.FC<Step7Props> = ({
           <div className="flex items-center space-x-2">
             <span className="font-semibold text-slate-600">Current Run-Rate:</span>
             <span className="font-extrabold text-slate-900 font-mono">${displayCurrentTco.toLocaleString()} / yr</span>
-            <span className="text-slate-400">→</span>
+            <svg className="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 16 16" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8h10m-3-3l3 3-3 3" />
+            </svg>
             <span className="font-semibold text-slate-600">Target SAP BTP TCO:</span>
-            <span className="font-extrabold text-[#0066cc] font-mono">${displayTargetTco.toLocaleString()} / yr</span>
+            <span className="font-extrabold text-[#0070f2] font-mono">${displayTargetTco.toLocaleString()} / yr</span>
           </div>
           <div className="text-[11px] text-slate-600 font-medium">
-            <span className="text-[#0066cc] font-bold">IntSwitch Scope:</span> {config.intSwitch.automationScope}
+            <span className="text-[#0070f2] font-bold">IntSwitch Scope:</span> {config.intSwitch.automationScope}
           </div>
         </div>
 
@@ -432,9 +440,12 @@ export const Step7ReviewResults: React.FC<Step7Props> = ({
         <button
           type="button"
           onClick={onBack}
-          className="px-5 py-2.5 text-xs font-bold text-slate-600 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors"
+          className="inline-flex items-center gap-1.5 px-5 py-2.5 text-xs font-bold text-slate-600 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors group"
         >
-          ← Back to Inputs
+          <svg className="w-3 h-3 text-slate-500 group-hover:text-slate-700 transition-transform group-hover:-translate-x-0.5" fill="none" viewBox="0 0 16 16" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M10 12.5l-4.5-4.5 4.5-4.5" />
+          </svg>
+          <span>Back to Inputs</span>
         </button>
 
         <button

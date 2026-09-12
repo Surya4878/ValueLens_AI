@@ -12,11 +12,10 @@ export function TopNavbar() {
     { label: 'Packages', href: '/offerings' },
     { label: 'Business Value', href: '/assessment' },
     { label: 'Dashboard', href: '/dashboard/demo-assessment-1' },
-    { label: 'Scenarios', href: '/scenarios/demo-assessment-1' },
   ];
 
   return (
-    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-xs">
+    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-[#d9e2ec] shadow-[0_1px_3px_rgba(0,0,0,0.05)]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center h-16">
           {/* Left: Incture Logo (redirects to incture.com) | Business ValueLens AI */}
@@ -44,7 +43,7 @@ export function TopNavbar() {
             </Link>
           </div>
 
-          {/* Nav Links: Positioned closer to brand block, matching reference image */}
+          {/* Nav Links: SAP Standard Fiori Horizon Tab Bar */}
           <nav className="hidden md:flex items-center space-x-7 lg:space-x-8 ml-8 sm:ml-12 lg:ml-16">
             {navLinks.map((link) => {
               const isActive =
@@ -54,10 +53,10 @@ export function TopNavbar() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`text-sm transition-all pb-1 ${
+                  className={`text-sm transition-all pb-1.5 pt-1 ${
                     isActive
-                      ? 'text-[#0066cc] font-bold border-b-2 border-[#0066cc]'
-                      : 'text-slate-600 font-medium hover:text-[#0066cc] border-b-2 border-transparent'
+                      ? 'text-[#0070f2] font-bold border-b-2 border-[#0070f2]'
+                      : 'text-[#556b82] font-semibold hover:text-[#0070f2] border-b-2 border-transparent'
                   }`}
                 >
                   {link.label}

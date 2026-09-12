@@ -261,9 +261,12 @@ export default function ScenariosPage() {
             </button>
             <Link
               href={`/dashboard/${assessmentId}`}
-              className="px-4 py-2 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl transition-colors shadow-xs"
+              className="px-4 py-2 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl transition-colors shadow-xs inline-flex items-center gap-1.5"
             >
-              ← Back to Dashboard
+              <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 16 16" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M10 12.5l-4.5-4.5 4.5-4.5" />
+              </svg>
+              <span>Back to Dashboard</span>
             </Link>
           </div>
         </div>

@@ -564,7 +564,11 @@ export function AssessmentWizard() {
                       )}
                     </div>
 
-                    <div className="text-slate-400 font-light text-xl px-1">→</div>
+                    <div className="flex items-center justify-center w-7 h-7 rounded-full bg-slate-100/90 text-slate-400 shrink-0">
+                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 20 20" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M3 10h13m-4-4l4 4-4 4" />
+                      </svg>
+                    </div>
 
                     {/* Target BTP Block */}
                     <div className="flex flex-col items-center justify-center min-w-[85px]">
@@ -660,18 +664,22 @@ export function AssessmentWizard() {
         <div className="flex items-center justify-between pt-2">
           <Link
             href="/"
-            className="inline-flex items-center space-x-2 text-xs sm:text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors"
+            className="inline-flex items-center space-x-1.5 text-xs sm:text-sm font-semibold text-slate-600 hover:text-[#0070f2] transition-colors group"
           >
-            <span>←</span>
+            <svg className="w-3.5 h-3.5 text-slate-500 group-hover:text-[#0070f2] transition-transform group-hover:-translate-x-0.5" fill="none" viewBox="0 0 16 16" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M10 12.5l-4.5-4.5 4.5-4.5" />
+            </svg>
             <span>Back to Home</span>
           </Link>
           <button
             type="button"
             onClick={() => setCurrentStep(1)}
-            className="inline-flex items-center space-x-2 px-6 py-3 bg-[#0066cc] hover:bg-blue-700 text-white rounded-xl text-xs sm:text-sm font-bold shadow-md shadow-blue-500/20 active:scale-95 transition-all"
+            className="inline-flex items-center space-x-2 px-6 py-3 bg-[#0070f2] hover:bg-[#0057d2] text-white rounded-xl text-xs sm:text-sm font-bold shadow-md shadow-blue-500/20 active:scale-95 transition-all group"
           >
             <span>Explore Business Value</span>
-            <span>→</span>
+            <svg className="w-3.5 h-3.5 text-white transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 16 16" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M6 3.5l4.5 4.5-4.5 4.5" />
+            </svg>
           </button>
         </div>
       </div>
@@ -697,9 +705,12 @@ export function AssessmentWizard() {
         <button
           type="button"
           onClick={() => setCurrentStep(0)}
-          className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 font-bold text-xs border border-blue-200 transition-colors"
+          className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 font-bold text-xs border border-blue-200 transition-colors group"
         >
-          <span>← Change Platform ({activePlat.name})</span>
+          <svg className="w-3 h-3 text-blue-600 transition-transform group-hover:-translate-x-0.5" fill="none" viewBox="0 0 16 16" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M10 12.5l-4.5-4.5 4.5-4.5" />
+          </svg>
+          <span>Change Platform ({activePlat.name})</span>
         </button>
       </div>
 

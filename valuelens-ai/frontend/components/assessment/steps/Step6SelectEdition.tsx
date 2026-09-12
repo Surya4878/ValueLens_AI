@@ -586,9 +586,13 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
           <button
             type="button"
             onClick={() => setSubView('comparison')}
-            className="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1"
+            className="text-xs font-bold text-indigo-600 hover:text-indigo-800 inline-flex items-center gap-1 group"
           >
-            <Scale className="w-3.5 h-3.5" /> View Full Comparison Matrix →
+            <Scale className="w-3.5 h-3.5" />
+            <span>View Full Comparison Matrix</span>
+            <svg className="w-3 h-3 text-indigo-600 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 16 16" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M6 3.5l4.5 4.5-4.5 4.5" />
+            </svg>
           </button>
         </div>
 

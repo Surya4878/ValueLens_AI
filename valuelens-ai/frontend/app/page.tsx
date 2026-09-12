@@ -85,7 +85,7 @@ export default function HomePage() {
             <h1 className="text-3xl sm:text-4xl lg:text-[40px] font-black text-slate-900 leading-[1.14] tracking-tight">
               Turn Your Integration<br />
               Migration into<br />
-              <span className="text-[#0066cc]">Business Value.</span>
+              <span className="text-[#0070f2]">Business Value.</span>
             </h1>
 
             {/* Paragraph */}
@@ -108,14 +108,14 @@ export default function HomePage() {
                 <div className="flex items-center space-x-3">
                   {/* Left: Power Icon + IntSwitch & Incture Migration Tool */}
                   <div className="flex items-center space-x-2 shrink-0">
-                    <div className="w-8 h-8 rounded-lg bg-blue-50/90 border border-blue-100 flex items-center justify-center text-[#0066cc] shrink-0 group-hover:scale-105 transition-transform">
+                    <div className="w-8 h-8 rounded-lg bg-blue-50/90 border border-blue-100 flex items-center justify-center text-[#0070f2] shrink-0 group-hover:scale-105 transition-transform">
                       <svg className="w-4.5 h-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.4} d="M12 2v9" />
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.4} d="M18.36 6.64a9 9 0 11-12.73 0" />
                       </svg>
                     </div>
                     <div>
-                      <h4 className="text-sm font-extrabold text-[#0066cc] leading-none group-hover:text-blue-700 transition-colors">
+                      <h4 className="text-sm font-extrabold text-[#0070f2] leading-none group-hover:text-blue-700 transition-colors">
                         IntSwitch
                       </h4>
                       <p className="text-[10px] text-slate-500 font-medium leading-tight mt-0.5">
@@ -135,25 +135,29 @@ export default function HomePage() {
                   </div>
 
                   {/* Right Circle Arrow Button */}
-                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-blue-50 border border-blue-100 text-[#0066cc] group-hover:bg-[#0066cc] group-hover:text-white flex items-center justify-center transition-all shrink-0 shadow-xs">
-                    <span className="text-xs sm:text-sm leading-none">→</span>
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-blue-50 border border-blue-100 text-[#0070f2] group-hover:bg-[#0070f2] group-hover:text-white flex items-center justify-center transition-all shrink-0 shadow-xs">
+                    <svg className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" viewBox="0 0 16 16" fill="none" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 3.5l4.5 4.5-4.5 4.5" />
+                    </svg>
                   </div>
                 </div>
               </Link>
             </div>
 
             {/* 3 Action Buttons strictly in ONE Row with Subtext */}
-            <div className="grid grid-cols-3 gap-2.5 sm:gap-3 pt-1 w-full">
+            <div className="grid grid-cols-3 gap-2 sm:gap-3 pt-1 w-full">
               {/* Button 1: Explore Package Offerings (Navigates to /offerings) */}
               <div className="flex flex-col">
                 <Link
                   href="/offerings"
-                  className="inline-flex items-center justify-center space-x-1 px-2 sm:px-2.5 py-2.5 rounded-lg text-[10.5px] sm:text-[11.5px] xl:text-xs font-bold bg-[#0066cc] hover:bg-[#0052a3] text-white shadow-xs transition-colors cursor-pointer text-center whitespace-nowrap"
+                  className="group inline-flex items-center justify-center space-x-1 px-2 sm:px-2.5 py-2 min-h-[46px] rounded-xl text-[11px] sm:text-[11.5px] lg:text-xs font-bold bg-[#0070f2] hover:bg-[#0057d2] text-white shadow-xs transition-all cursor-pointer text-center leading-tight"
                 >
                   <span>Explore Package Offerings</span>
-                  <span className="text-xs shrink-0">→</span>
+                  <svg className="w-3 h-3 shrink-0 transition-transform group-hover:translate-x-0.5" viewBox="0 0 16 16" fill="none" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M6 3.5l4.5 4.5-4.5 4.5" />
+                  </svg>
                 </Link>
-                <span className="text-[10px] text-slate-500 font-medium mt-1.5 text-center leading-tight">
+                <span className="text-[11px] sm:text-xs text-slate-500 font-medium mt-1.5 text-center leading-tight">
                   Discover how Incture can help
                 </span>
               </div>
@@ -164,12 +168,14 @@ export default function HomePage() {
                   href="https://incture.com/case-studies/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center space-x-1 px-2 sm:px-2.5 py-2.5 rounded-lg text-[10.5px] sm:text-[11.5px] xl:text-xs font-bold bg-white hover:bg-slate-50 text-[#0066cc] border border-[#0066cc]/40 shadow-xs transition-colors cursor-pointer text-center whitespace-nowrap"
+                  className="group inline-flex items-center justify-center space-x-1 px-2 sm:px-2.5 py-2 min-h-[46px] rounded-xl text-[11px] sm:text-[11.5px] lg:text-xs font-bold bg-white hover:bg-slate-50 text-[#0070f2] border border-[#0070f2]/40 shadow-xs transition-all cursor-pointer text-center leading-tight"
                 >
                   <span>Customer Success</span>
-                  <span className="text-xs shrink-0">→</span>
+                  <svg className="w-3 h-3 shrink-0 transition-transform group-hover:translate-x-0.5" viewBox="0 0 16 16" fill="none" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M6 3.5l4.5 4.5-4.5 4.5" />
+                  </svg>
                 </a>
-                <span className="text-[10px] text-slate-500 font-medium mt-1.5 text-center leading-tight">
+                <span className="text-[11px] sm:text-xs text-slate-500 font-medium mt-1.5 text-center leading-tight">
                   See real-world transformation stories
                 </span>
               </div>
@@ -178,12 +184,14 @@ export default function HomePage() {
               <div className="flex flex-col">
                 <Link
                   href="/assessment"
-                  className="inline-flex items-center justify-center space-x-1 px-2 sm:px-2.5 py-2.5 rounded-lg text-[10.5px] sm:text-[11.5px] xl:text-xs font-bold bg-[#7928ca] hover:bg-[#6820b0] text-white shadow-xs transition-colors cursor-pointer text-center whitespace-nowrap"
+                  className="group inline-flex items-center justify-center space-x-1 px-2 sm:px-2.5 py-2 min-h-[46px] rounded-xl text-[11px] sm:text-[11.5px] lg:text-xs font-bold bg-[#7928ca] hover:bg-[#6820b0] text-white shadow-xs transition-all cursor-pointer text-center leading-tight"
                 >
                   <span>Discover Business Value</span>
-                  <span className="text-xs shrink-0">→</span>
+                  <svg className="w-3 h-3 shrink-0 transition-transform group-hover:translate-x-0.5" viewBox="0 0 16 16" fill="none" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M6 3.5l4.5 4.5-4.5 4.5" />
+                  </svg>
                 </Link>
-                <span className="text-[10px] text-slate-500 font-medium mt-1.5 text-center leading-tight">
+                <span className="text-[11px] sm:text-xs text-slate-500 font-medium mt-1.5 text-center leading-tight">
                   Get your personalized business case
                 </span>
               </div>
@@ -208,55 +216,55 @@ export default function HomePage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {/* Badge 1 */}
           <div className="flex items-center space-x-4">
-            <div className="w-11 h-11 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center text-[#0066cc] shrink-0">
+            <div className="w-11 h-11 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center text-[#0070f2] shrink-0">
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
               </svg>
             </div>
             <div>
-              <h4 className="text-xs font-bold text-slate-900 leading-tight">Lower TCO with AI Insights</h4>
-              <p className="text-[11px] text-slate-500 mt-0.5 leading-snug">Identify cost savings and optimize investments</p>
+              <h4 className="text-sm font-bold text-slate-900 leading-tight">Lower TCO with AI Insights</h4>
+              <p className="text-xs text-slate-500 mt-1 leading-snug">Identify cost savings and optimize investments</p>
             </div>
           </div>
 
           {/* Badge 2 */}
           <div className="flex items-center space-x-4">
-            <div className="w-11 h-11 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center text-[#0066cc] shrink-0">
+            <div className="w-11 h-11 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center text-[#0070f2] shrink-0">
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <circle cx="12" cy="12" r="9" strokeWidth={2} />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 7v5l3 3" />
               </svg>
             </div>
             <div>
-              <h4 className="text-xs font-bold text-slate-900 leading-tight">Faster Time to Value</h4>
-              <p className="text-[11px] text-slate-500 mt-0.5 leading-snug">Accelerate migration planning and execution</p>
+              <h4 className="text-sm font-bold text-slate-900 leading-tight">Faster Time to Value</h4>
+              <p className="text-xs text-slate-500 mt-1 leading-snug">Accelerate migration planning and execution</p>
             </div>
           </div>
 
           {/* Badge 3 */}
           <div className="flex items-center space-x-4">
-            <div className="w-11 h-11 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center text-[#0066cc] shrink-0">
+            <div className="w-11 h-11 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center text-[#0070f2] shrink-0">
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                 <circle cx="12" cy="12" r="3" strokeWidth={2} />
               </svg>
             </div>
             <div>
-              <h4 className="text-xs font-bold text-slate-900 leading-tight">Informed AI-Driven Decisions</h4>
-              <p className="text-[11px] text-slate-500 mt-0.5 leading-snug">Leverage AI for accurate recommendations</p>
+              <h4 className="text-sm font-bold text-slate-900 leading-tight">Informed AI-Driven Decisions</h4>
+              <p className="text-xs text-slate-500 mt-1 leading-snug">Leverage AI for accurate recommendations</p>
             </div>
           </div>
 
           {/* Badge 4 */}
           <div className="flex items-center space-x-4">
-            <div className="w-11 h-11 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center text-[#0066cc] shrink-0">
+            <div className="w-11 h-11 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center text-[#0070f2] shrink-0">
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
               </svg>
             </div>
             <div>
-              <h4 className="text-xs font-bold text-slate-900 leading-tight">Quantifiable Business Value</h4>
-              <p className="text-[11px] text-slate-500 mt-0.5 leading-snug">Measure ROI, payback and long-term business impact</p>
+              <h4 className="text-sm font-bold text-slate-900 leading-tight">Quantifiable Business Value</h4>
+              <p className="text-xs text-slate-500 mt-1 leading-snug">Measure ROI, payback and long-term business impact</p>
             </div>
           </div>
         </div>

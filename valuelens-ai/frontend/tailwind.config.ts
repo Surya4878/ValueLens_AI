@@ -9,7 +9,24 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['"72"', '"72Black"', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],
+        mono: ['"72Mono"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
+      },
       colors: {
+        sap: {
+          blue: "#0070f2",
+          dark: "#0057d2",
+          active: "#0040b0",
+          light: "#e5f0ff",
+          shell: "#1d2d3e",
+          muted: "#556b82",
+          bg: "#f5f6f7",
+          border: "#d9e2ec",
+          positive: "#107e3e",
+          critical: "#df6e0c",
+          negative: "#bb0000",
+        },
         brand: {
           50: "#eef2ff",
           100: "#e0e7ff",
@@ -31,9 +48,9 @@ const config: Config = {
           700: "#6d28d9",
         },
         fin: {
-          positive: "#059669",
-          negative: "#dc2626",
-          neutral: "#475569",
+          positive: "#107e3e",
+          negative: "#bb0000",
+          neutral: "#556b82",
         }
       },
     },

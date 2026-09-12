@@ -158,7 +158,9 @@ export default function MethodologyPage() {
             className="inline-flex items-center space-x-2 px-6 py-2.5 bg-indigo-600 text-white rounded-xl text-xs font-bold hover:bg-indigo-700 transition-colors shadow-xs"
           >
             <span>Return to ROI Dashboard</span>
-            <span>→</span>
+            <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 16 16" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M6 3.5l4.5 4.5-4.5 4.5" />
+            </svg>
           </Link>
         </div>
       </div>

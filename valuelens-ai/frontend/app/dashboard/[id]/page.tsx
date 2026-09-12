@@ -598,7 +598,7 @@ export default function DashboardPage() {
         : '55%';
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] py-6 text-slate-800">
+    <div className="min-h-screen bg-[#f5f6f7] py-6 text-slate-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
 
         {/* ========================================================================= */}
@@ -666,10 +666,12 @@ export default function DashboardPage() {
               <button
                 type="button"
                 onClick={openExecutiveAnalysis}
-                className="text-xs font-bold text-indigo-600 hover:text-indigo-800 inline-flex items-center space-x-1 pt-1 cursor-pointer"
+                className="text-xs font-bold text-indigo-600 hover:text-indigo-800 inline-flex items-center space-x-1 pt-1 cursor-pointer group"
               >
                 <span>View Full AI Analysis</span>
-                <span>→</span>
+                <svg className="w-3 h-3 shrink-0 transition-transform group-hover:translate-x-0.5" viewBox="0 0 16 16" fill="none" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M6 3.5l4.5 4.5-4.5 4.5" />
+                </svg>
               </button>
             </div>
           </div>
@@ -684,12 +686,12 @@ export default function DashboardPage() {
             <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-sm font-bold">
               📅
             </div>
-            <span className="text-[11px] font-semibold text-slate-500 block">Current Platform TCO</span>
+            <span className="text-xs font-semibold text-slate-600 block">Current Platform TCO</span>
             <div className="text-xl font-black text-slate-900 font-mono">
               {formatCurrency(currentTco, currency)}
             </div>
-            <span className="text-[10px] text-slate-400 block">per year</span>
-            <span className="text-[10px] font-bold text-rose-600 flex items-center space-x-1">
+            <span className="text-xs text-slate-400 block">per year</span>
+            <span className="text-xs font-bold text-rose-600 flex items-center space-x-1">
               <span>↗</span>
               <span>Baseline cost</span>
             </span>
@@ -700,12 +702,12 @@ export default function DashboardPage() {
             <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-sm font-bold">
               ☁️
             </div>
-            <span className="text-[11px] font-semibold text-slate-500 block">Target Platform TCO</span>
+            <span className="text-xs font-semibold text-slate-600 block">Target Platform TCO</span>
             <div className="text-xl font-black text-indigo-600 font-mono">
               {formatCurrency(targetTco, currency)}
             </div>
-            <span className="text-[10px] text-slate-400 block">per year</span>
-            <span className="text-[10px] font-bold text-emerald-600 flex items-center space-x-1">
+            <span className="text-xs text-slate-400 block">per year</span>
+            <span className="text-xs font-bold text-emerald-600 flex items-center space-x-1">
               <span>↓</span>
               <span>{savingsPct.toFixed(1)}% lower</span>
             </span>
@@ -716,12 +718,12 @@ export default function DashboardPage() {
             <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-sm font-bold">
               💰
             </div>
-            <span className="text-[11px] font-semibold text-slate-500 block">Annual Savings</span>
+            <span className="text-xs font-semibold text-slate-600 block">Annual Savings</span>
             <div className="text-xl font-black text-emerald-600 font-mono">
               {formatCurrency(annualSavings, currency)}
             </div>
-            <span className="text-[10px] text-slate-400 block">per year</span>
-            <span className="text-[10px] font-bold text-emerald-600 flex items-center space-x-1">
+            <span className="text-xs text-slate-400 block">per year</span>
+            <span className="text-xs font-bold text-emerald-600 flex items-center space-x-1">
               <span>↓</span>
               <span>{savingsPct.toFixed(1)}% reduction</span>
             </span>
@@ -732,11 +734,11 @@ export default function DashboardPage() {
             <div className="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center text-sm font-bold">
               🔒
             </div>
-            <span className="text-[11px] font-semibold text-slate-500 block">Migration Investment</span>
+            <span className="text-xs font-semibold text-slate-600 block">Migration Investment</span>
             <div className="text-xl font-black text-slate-900 font-mono">
               {formatCurrency(migrationCost, currency)}
             </div>
-            <span className="text-[10px] text-slate-400 block">one-time cost</span>
+            <span className="text-xs text-slate-400 block">one-time cost</span>
           </div>
 
           {/* 5. Break-even */}
@@ -744,11 +746,11 @@ export default function DashboardPage() {
             <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-sm font-bold">
               ⏱️
             </div>
-            <span className="text-[11px] font-semibold text-slate-500 block">Break-even</span>
+            <span className="text-xs font-semibold text-slate-600 block">Break-even</span>
             <div className="text-xl font-black text-slate-900 font-mono">
               {breakEvenMonths.toFixed(1)} months
             </div>
-            <span className="text-[10px] text-slate-400 block">Payback period</span>
+            <span className="text-xs text-slate-400 block">Payback period</span>
           </div>
 
           {/* 6. 5-Year ROI */}
@@ -756,11 +758,11 @@ export default function DashboardPage() {
             <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-sm font-bold">
               📊
             </div>
-            <span className="text-[11px] font-semibold text-slate-500 block">5-Year ROI</span>
+            <span className="text-xs font-semibold text-slate-600 block">5-Year ROI</span>
             <div className="text-xl font-black text-indigo-900 font-mono">
               {fiveYearRoi.toFixed(2)}%
             </div>
-            <span className="text-[10px] font-bold text-emerald-600 block">Very strong return</span>
+            <span className="text-xs font-bold text-emerald-600 block">Very strong return</span>
           </div>
         </div>
 
@@ -833,9 +835,12 @@ export default function DashboardPage() {
                   e.stopPropagation();
                   openChartInsight('tco-comparison', 'Platform Cost Breakdown & TCO Reduction');
                 }}
-                className="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 block pt-1 cursor-pointer text-left"
+                className="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 inline-flex items-center space-x-1 pt-1 cursor-pointer text-left group"
               >
-                View Cost Breakdown →
+                <span>View Cost Breakdown</span>
+                <svg className="w-3 h-3 shrink-0 transition-transform group-hover:translate-x-0.5" viewBox="0 0 16 16" fill="none" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M6 3.5l4.5 4.5-4.5 4.5" />
+                </svg>
               </button>
             </div>
           </div>
@@ -843,19 +848,19 @@ export default function DashboardPage() {
           {/* Card 2: Current TCO Cost Drivers */}
           <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs flex flex-col justify-between space-y-4">
             <div>
-              <h3 className="text-sm font-bold text-slate-900 mb-4">Current TCO Cost Drivers</h3>
+              <h3 className="text-sm font-bold text-slate-900 mb-4">Legacy TCO Cost Drivers</h3>
 
-              <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center">
+              <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center">
                 {/* Donut with Center Text (Cols 6) */}
-                <div className="sm:col-span-6 h-48 relative flex items-center justify-center">
+                <div className="sm:col-span-6 h-44 relative flex items-center justify-center">
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                       <Pie
                         data={tcoDriversData}
                         cx="50%"
                         cy="50%"
-                        innerRadius={50}
-                        outerRadius={75}
+                        innerRadius={46}
+                        outerRadius={68}
                         paddingAngle={3}
                         dataKey="value"
                       >
@@ -866,8 +871,10 @@ export default function DashboardPage() {
                     </PieChart>
                   </ResponsiveContainer>
                   <div className="absolute flex flex-col items-center justify-center pointer-events-none">
-                    <span className="text-sm font-black text-slate-900 font-mono">${(currentTco / 1000).toFixed(0)}K</span>
-                    <span className="text-[10px] text-slate-400">per year</span>
+                    <span className="text-sm font-black text-slate-900 font-mono">
+                      ${(currentTco / 1000).toFixed(0)}K
+                    </span>
+                    <span className="text-xs text-slate-400">per year</span>
                   </div>
                 </div>
 
@@ -910,9 +917,12 @@ export default function DashboardPage() {
                   e.stopPropagation();
                   openChartInsight('cost-drivers', 'Legacy TCO Cost Drivers & Elimination Opportunities');
                 }}
-                className="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 block pt-1 cursor-pointer text-left"
+                className="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 inline-flex items-center space-x-1 pt-1 cursor-pointer text-left group"
               >
-                View Detailed Analysis →
+                <span>View Detailed Analysis</span>
+                <svg className="w-3 h-3 shrink-0 transition-transform group-hover:translate-x-0.5" viewBox="0 0 16 16" fill="none" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M6 3.5l4.5 4.5-4.5 4.5" />
+                </svg>
               </button>
             </div>
           </div>
@@ -951,7 +961,7 @@ export default function DashboardPage() {
                     <span className="text-sm font-black text-slate-900 font-mono">
                       ${migrationCost >= 1000 ? `${(migrationCost / 1000).toFixed(migrationCost % 1000 === 0 ? 0 : 1)}K` : migrationCost}
                     </span>
-                    <span className="text-[10px] text-slate-400">package</span>
+                    <span className="text-xs text-slate-400">package</span>
                   </div>
                 </div>
 
@@ -994,9 +1004,12 @@ export default function DashboardPage() {
                   e.stopPropagation();
                   openChartInsight('migration-cost', 'Incture Migration Package & Delivery Structure');
                 }}
-                className="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 block pt-1 cursor-pointer text-left"
+                className="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 inline-flex items-center space-x-1 pt-1 cursor-pointer text-left group"
               >
-                View Delivery Details →
+                <span>View Delivery Details</span>
+                <svg className="w-3 h-3 shrink-0 transition-transform group-hover:translate-x-0.5" viewBox="0 0 16 16" fill="none" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M6 3.5l4.5 4.5-4.5 4.5" />
+                </svg>
               </button>
             </div>
           </div>
@@ -1083,9 +1096,12 @@ export default function DashboardPage() {
                   e.stopPropagation();
                   openChartInsight('roi-timeline', '10-Year ROI Trajectory & Capital Recovery Payback');
                 }}
-                className="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 block pt-1 cursor-pointer text-left"
+                className="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 inline-flex items-center gap-1.5 pt-1 cursor-pointer text-left group"
               >
-                Explore ROI Timeline AI Insights →
+                <span>Explore ROI Timeline AI Insights</span>
+                <svg className="w-3 h-3 text-indigo-600 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 16 16" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M6 3.5l4.5 4.5-4.5 4.5" />
+                </svg>
               </button>
             </div>
           </div>
@@ -1154,8 +1170,11 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            <Link href={`/scenarios/${assessmentId}`} className="text-xs font-bold text-indigo-600 hover:text-indigo-800 block pt-1">
-              Run Custom Scenario →
+            <Link href={`/report/${assessmentId}`} className="text-xs font-bold text-[#0070f2] hover:text-[#0057d2] inline-flex items-center gap-1.5 pt-1 group">
+              <span>View Executive Report</span>
+              <svg className="w-3 h-3 text-[#0070f2] transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 16 16" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M6 3.5l4.5 4.5-4.5 4.5" />
+              </svg>
             </Link>
           </div>
 
@@ -1165,7 +1184,12 @@ export default function DashboardPage() {
             <div>
               <div className="flex items-center justify-between mb-2">
                 <h3 className="text-sm font-bold text-slate-900">Migration Risk Assessment</h3>
-                <Link href={`/report/${assessmentId}`} className="text-[11px] font-bold text-indigo-600">View All Risks →</Link>
+                <Link href={`/report/${assessmentId}`} className="text-[11px] font-bold text-[#0070f2] hover:text-[#0057d2] inline-flex items-center gap-1 group">
+                  <span>View All Risks</span>
+                  <svg className="w-2.5 h-2.5 text-[#0070f2] transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 16 16" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M6 3.5l4.5 4.5-4.5 4.5" />
+                  </svg>
+                </Link>
               </div>
 
               <div className="grid grid-cols-12 gap-3 items-center">
@@ -1205,45 +1229,45 @@ export default function DashboardPage() {
                 </div>
 
                 {/* Risk Items (Cols 7) */}
-                <div className="col-span-7 space-y-1.5 text-[10px]">
+                <div className="col-span-7 space-y-1.5 text-xs">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-1.5 truncate">
-                      <span className="w-3.5 h-3.5 rounded-full bg-rose-600 text-white font-bold flex items-center justify-center text-[8px]">1</span>
+                      <span className="w-3.5 h-3.5 rounded-full bg-rose-600 text-white font-bold flex items-center justify-center text-[9px]">1</span>
                       <span className="text-slate-700 truncate">Migration Dev Effort</span>
                     </div>
-                    <span className="px-1.5 py-0.2 rounded bg-rose-50 text-rose-600 font-bold border border-rose-200">High</span>
+                    <span className="px-1.5 py-0.2 rounded bg-rose-50 text-rose-600 font-bold border border-rose-200 text-[10px]">High</span>
                   </div>
 
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-1.5 truncate">
-                      <span className="w-3.5 h-3.5 rounded-full bg-rose-500 text-white font-bold flex items-center justify-center text-[8px]">2</span>
+                      <span className="w-3.5 h-3.5 rounded-full bg-rose-500 text-white font-bold flex items-center justify-center text-[9px]">2</span>
                       <span className="text-slate-700 truncate">Message Consumption</span>
                     </div>
-                    <span className="px-1.5 py-0.2 rounded bg-rose-50 text-rose-600 font-bold border border-rose-200">High</span>
+                    <span className="px-1.5 py-0.2 rounded bg-rose-50 text-rose-600 font-bold border border-rose-200 text-[10px]">High</span>
                   </div>
 
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-1.5 truncate">
-                      <span className="w-3.5 h-3.5 rounded-full bg-amber-500 text-white font-bold flex items-center justify-center text-[8px]">3</span>
+                      <span className="w-3.5 h-3.5 rounded-full bg-amber-500 text-white font-bold flex items-center justify-center text-[9px]">3</span>
                       <span className="text-slate-700 truncate">Complex Interfaces</span>
                     </div>
-                    <span className="px-1.5 py-0.2 rounded bg-amber-50 text-amber-600 font-bold border border-amber-200">Medium</span>
+                    <span className="px-1.5 py-0.2 rounded bg-amber-50 text-amber-600 font-bold border border-amber-200 text-[10px]">Medium</span>
                   </div>
 
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-1.5 truncate">
-                      <span className="w-3.5 h-3.5 rounded-full bg-emerald-500 text-white font-bold flex items-center justify-center text-[8px]">4</span>
+                      <span className="w-3.5 h-3.5 rounded-full bg-emerald-500 text-white font-bold flex items-center justify-center text-[9px]">4</span>
                       <span className="text-slate-700 truncate">Cutover & Downtime</span>
                     </div>
-                    <span className="px-1.5 py-0.2 rounded bg-emerald-50 text-emerald-600 font-bold border border-emerald-200">Low</span>
+                    <span className="px-1.5 py-0.2 rounded bg-emerald-50 text-emerald-600 font-bold border border-emerald-200 text-[10px]">Low</span>
                   </div>
 
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-1.5 truncate">
-                      <span className="w-3.5 h-3.5 rounded-full bg-blue-500 text-white font-bold flex items-center justify-center text-[8px]">5</span>
+                      <span className="w-3.5 h-3.5 rounded-full bg-blue-500 text-white font-bold flex items-center justify-center text-[9px]">5</span>
                       <span className="text-slate-700 truncate">Compliance & Regulatory</span>
                     </div>
-                    <span className="px-1.5 py-0.2 rounded bg-blue-50 text-blue-600 font-bold border border-blue-200">Low</span>
+                    <span className="px-1.5 py-0.2 rounded bg-blue-50 text-blue-600 font-bold border border-blue-200 text-[10px]">Low</span>
                   </div>
                 </div>
               </div>
@@ -1253,10 +1277,15 @@ export default function DashboardPage() {
             <div className="border-t border-slate-100 pt-3 space-y-2">
               <div className="flex items-center justify-between">
                 <h4 className="text-xs font-bold text-slate-900">Top Recommendations</h4>
-                <Link href={`/report/${assessmentId}`} className="text-[10px] font-bold text-indigo-600">View All →</Link>
+                <Link href={`/report/${assessmentId}`} className="text-xs font-bold text-[#0070f2] hover:text-[#0057d2] inline-flex items-center gap-1 group">
+                  <span>View All</span>
+                  <svg className="w-2.5 h-2.5 text-[#0070f2] transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 16 16" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M6 3.5l4.5 4.5-4.5 4.5" />
+                  </svg>
+                </Link>
               </div>
 
-              <div className="space-y-1.5 text-[10px]">
+              <div className="space-y-1.5 text-xs">
                 <div className="flex items-center justify-between">
                   <span className="text-slate-700 truncate">1. Validate migration development estimate</span>
                   <span className="px-1.5 py-0.2 rounded bg-rose-50 text-rose-600 font-bold border border-rose-200 shrink-0 ml-2">High</span>
@@ -1349,8 +1378,11 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            <Link href={`/scenarios/${assessmentId}`} className="text-xs font-bold text-indigo-600 hover:text-indigo-800 block pt-1">
-              View Sensitivity Analysis →
+            <Link href={`/report/${assessmentId}`} className="text-xs font-bold text-[#0070f2] hover:text-[#0057d2] inline-flex items-center gap-1.5 pt-1 group">
+              <span>View Full Risk Analysis</span>
+              <svg className="w-3 h-3 text-[#0070f2] transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 16 16" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M6 3.5l4.5 4.5-4.5 4.5" />
+              </svg>
             </Link>
           </div>
 
@@ -1719,10 +1751,13 @@ export default function DashboardPage() {
                 </span>
                 <div className="flex items-center space-x-2">
                   <button
-                    onClick={() => router.push(`/scenarios/${assessmentId}`)}
-                    className="px-3.5 py-1.5 rounded-xl bg-white border border-slate-300 text-slate-700 hover:bg-slate-100 font-bold transition-colors cursor-pointer"
+                    onClick={() => router.push(`/report/${assessmentId}`)}
+                    className="px-3.5 py-1.5 rounded-xl bg-white border border-[#d9e2ec] text-[#1d2d3e] hover:bg-slate-100 font-bold transition-colors cursor-pointer inline-flex items-center gap-1.5"
                   >
-                    Scenario Simulator →
+                    <span>Executive Report</span>
+                    <svg className="w-3 h-3 text-[#1d2d3e]" fill="none" viewBox="0 0 16 16" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M6 3.5l4.5 4.5-4.5 4.5" />
+                    </svg>
                   </button>
                   <button
                     onClick={() => setAiModalOpen(false)}
