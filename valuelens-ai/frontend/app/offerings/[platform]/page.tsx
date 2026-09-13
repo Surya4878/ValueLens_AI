@@ -335,7 +335,7 @@ export default function OfferingDetailPage() {
                   <ul className="space-y-2.5">
                     {item.details.map((d, dIdx) => (
                       <li key={dIdx} className="flex items-start space-x-2.5 text-[14px] text-[#1d2d3e] leading-relaxed">
-                        <span className="text-[#107e3e] font-bold shrink-0 mt-0.5">✓</span>
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#0070f2] shrink-0 mt-2" />
                         <span>{highlightIntSwitch(d)}</span>
                       </li>
                     ))}

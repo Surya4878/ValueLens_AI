@@ -819,11 +819,11 @@ export function AssessmentWizard() {
                     isCurrent
                       ? 'bg-[#0070f2] text-white shadow-sm ring-4 ring-[#0070f2]/20'
                       : isCompleted
-                        ? 'bg-teal-600 text-white shadow-xs'
+                        ? 'bg-[#0070f2] text-white shadow-xs'
                         : 'bg-white text-slate-500 border border-slate-300'
                   }`}
                 >
-                  {isCompleted ? <Check className="w-5 h-5 stroke-[2.5]" /> : m.id}
+                  {m.id}
                 </div>
                 <div className="flex flex-col items-center mt-2.5 text-center">
                   <span

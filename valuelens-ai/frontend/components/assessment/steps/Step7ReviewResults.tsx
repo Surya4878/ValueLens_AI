@@ -210,7 +210,7 @@ export const Step7ReviewResults: React.FC<Step7Props> = ({
 
           <div className="text-center">
             <span className="text-xs font-bold text-emerald-700 bg-emerald-100/60 px-4 py-1.5 rounded-full border border-emerald-300 inline-block">
-              ✓ ${displaySavings.toLocaleString()} Annual Run-Rate Efficiency
+              ${displaySavings.toLocaleString()} Annual Run-Rate Efficiency
             </span>
           </div>
         </div>
@@ -385,7 +385,7 @@ export const Step7ReviewResults: React.FC<Step7Props> = ({
                 key={idx}
                 className="flex items-start gap-3 text-[13px] text-[#1d2d3e] bg-white/90 p-3.5 rounded-lg border border-blue-100"
               >
-                <CheckCircle2 className="w-4 h-4 text-[#0070f2] shrink-0 mt-0.5" />
+                <span className="w-1.5 h-1.5 rounded-full bg-[#0070f2] shrink-0 mt-2" />
                 <span>{cap}</span>
               </div>
             ))}
@@ -413,23 +413,23 @@ export const Step7ReviewResults: React.FC<Step7Props> = ({
         <h4 className="text-[14px] font-bold text-[#1d2d3e] font-['72',sans-serif] uppercase tracking-wider">Key Modernization Opportunities</h4>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-[14px] text-[#556b82]">
           <div className="flex items-center space-x-2.5">
-            <span className="text-emerald-600 font-bold">✓</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-[#0070f2] shrink-0" />
             <span>Reduce infrastructure &amp; host server dependency</span>
           </div>
           <div className="flex items-center space-x-2.5">
-            <span className="text-emerald-600 font-bold">✓</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-[#0070f2] shrink-0" />
             <span>Modernize to cloud-native integration runtime</span>
           </div>
           <div className="flex items-center space-x-2.5">
-            <span className="text-emerald-600 font-bold">✓</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-[#0070f2] shrink-0" />
             <span>Unified API lifecycle management &amp; developer portal</span>
           </div>
           <div className="flex items-center space-x-2.5">
-            <span className="text-emerald-600 font-bold">✓</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-[#0070f2] shrink-0" />
             <span>Decommission legacy middleware licensing &amp; technical debt</span>
           </div>
           <div className="flex items-center space-x-2.5 sm:col-span-2">
-            <span className="text-emerald-600 font-bold">✓</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-[#0070f2] shrink-0" />
             <span>Establish foundation for AI-assisted mapping and automated testing</span>
           </div>
         </div>

@@ -289,7 +289,7 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
                     : 'bg-indigo-600 text-white hover:bg-indigo-700'
                 }`}
               >
-                {currentEd === detailEdition ? 'Selected ✓' : `Select ${detailEdition}`}
+                {currentEd === detailEdition ? 'Selected' : `Select ${detailEdition}`}
               </button>
             </div>
           </div>
@@ -422,9 +422,9 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
                 <tr>
                   <td className="py-3 px-3 font-semibold text-slate-900">Prebuilt Content</td>
                   <td className="py-3 px-3 text-slate-600">3,400+ pre-packaged enterprise integrations</td>
-                  <td className="py-3 px-3 text-center"><span className="text-emerald-600 font-bold">✓</span></td>
-                  <td className="py-3 px-3 text-center"><span className="text-emerald-600 font-bold">✓</span></td>
-                  <td className="py-3 px-3 text-center"><span className="text-emerald-600 font-bold">✓</span></td>
+                  <td className="py-3 px-3 text-center"><span className="text-[#0070f2] font-semibold text-xs uppercase">Included</span></td>
+                  <td className="py-3 px-3 text-center"><span className="text-[#0070f2] font-semibold text-xs uppercase">Included</span></td>
+                  <td className="py-3 px-3 text-center"><span className="text-[#0070f2] font-semibold text-xs uppercase">Included</span></td>
                 </tr>
                 <tr className="bg-indigo-50/40">
                   <td colSpan={5} className="py-2.5 px-3 font-black text-indigo-950 text-xs uppercase tracking-wider">
@@ -442,15 +442,15 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
                   <td className="py-3 px-3 font-semibold text-slate-900">B2B & EDI Libraries</td>
                   <td className="py-3 px-3 text-slate-600">Trading Partner Mgmt, EDIFACT, X12, AS2</td>
                   <td className="py-3 px-3 text-center text-slate-400">—</td>
-                  <td className="py-3 px-3 text-center"><span className="text-emerald-600 font-bold">✓</span></td>
-                  <td className="py-3 px-3 text-center"><span className="text-emerald-600 font-bold">✓</span></td>
+                  <td className="py-3 px-3 text-center"><span className="text-[#0070f2] font-semibold text-xs uppercase">Included</span></td>
+                  <td className="py-3 px-3 text-center"><span className="text-[#0070f2] font-semibold text-xs uppercase">Included</span></td>
                 </tr>
                 <tr>
                   <td className="py-3 px-3 font-semibold text-slate-900">API Management</td>
                   <td className="py-3 px-3 text-slate-600">API Gateway, developer portal, traffic policies</td>
                   <td className="py-3 px-3 text-center text-slate-400">—</td>
-                  <td className="py-3 px-3 text-center"><span className="text-emerald-600 font-bold">✓</span></td>
-                  <td className="py-3 px-3 text-center"><span className="text-emerald-600 font-bold">✓</span></td>
+                  <td className="py-3 px-3 text-center"><span className="text-[#0070f2] font-semibold text-xs uppercase">Included</span></td>
+                  <td className="py-3 px-3 text-center"><span className="text-[#0070f2] font-semibold text-xs uppercase">Included</span></td>
                 </tr>
                 <tr>
                   <td className="py-3 px-3 font-semibold text-slate-900">Edge Integration Cell</td>
@@ -674,7 +674,7 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
                     : 'bg-white border border-[#0070f2] text-[#0070f2] hover:bg-blue-50/50'
                 }`}
               >
-                {currentEd === 'Starter Edition' ? 'Selected ✓' : 'Select Starter Edition'}
+                {currentEd === 'Starter Edition' ? 'Selected' : 'Select Starter Edition'}
               </button>
               <div className="text-center">
                 <a
@@ -780,7 +780,7 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
                     : 'bg-white border border-[#0070f2] text-[#0070f2] hover:bg-blue-50/50'
                 }`}
               >
-                {currentEd === 'Standard Edition' ? 'Selected ✓' : 'Select Standard Edition'}
+                {currentEd === 'Standard Edition' ? 'Selected' : 'Select Standard Edition'}
               </button>
               <div className="text-center">
                 <a
@@ -883,7 +883,7 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
                     : 'bg-white border border-[#0070f2] text-[#0070f2] hover:bg-blue-50/50'
                 }`}
               >
-                {currentEd === 'Enhanced Edition' ? 'Selected ✓' : 'Select Enhanced Edition'}
+                {currentEd === 'Enhanced Edition' ? 'Selected' : 'Select Enhanced Edition'}
               </button>
               <div className="text-center">
                 <a
@@ -947,7 +947,7 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
                       : 'bg-slate-100 text-slate-600'
                   }`}
                 >
-                  {packs > 0 ? `✓ In Plan (${packs} blocks)` : 'Optional'}
+                  {packs > 0 ? `In Plan (${packs} blocks)` : 'Optional'}
                 </span>
               </div>
 
@@ -1050,7 +1050,7 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
                       : 'bg-slate-100 text-slate-600'
                   }`}
                 >
-                  {additionalEicTenants > 0 ? `✓ In Plan (${additionalEicTenants} node)` : 'Optional'}
+                  {additionalEicTenants > 0 ? `In Plan (${additionalEicTenants} node)` : 'Optional'}
                 </span>
               </div>
 
@@ -1152,7 +1152,7 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
                       : 'bg-slate-100 text-slate-600'
                   }`}
                 >
-                  {dataSpacePackages > 0 ? `✓ In Plan (${dataSpacePackages} pkg)` : 'Optional'}
+                  {dataSpacePackages > 0 ? `In Plan (${dataSpacePackages} pkg)` : 'Optional'}
                 </span>
               </div>
 

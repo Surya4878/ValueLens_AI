@@ -1144,8 +1144,8 @@ export const Step2Landscape: React.FC<Step2Props> = ({
                 <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
                   Incture Migration Package Matching
                 </span>
-                <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 flex items-center gap-1">
-                  ✓ Package Range Match
+                <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200 flex items-center gap-1">
+                  Package Range Match
                 </span>
               </div>
               <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">

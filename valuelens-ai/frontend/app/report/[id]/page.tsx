@@ -174,7 +174,7 @@ export default function ReportPage() {
           <div className="p-6 bg-slate-900 text-white rounded-2xl space-y-3">
             <div className="flex justify-between items-center">
               <span className="px-3 py-1 bg-emerald-500 text-slate-950 font-black text-xs uppercase tracking-widest rounded-full">
-                RECOMMENDATION: FAVORABLE
+                EXECUTIVE RECOMMENDATION: STRATEGIC MIGRATION
               </span>
               <span className="text-xs text-slate-300 font-mono">Confidence Level: 91%</span>
             </div>

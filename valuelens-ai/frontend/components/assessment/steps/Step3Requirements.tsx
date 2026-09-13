@@ -114,13 +114,13 @@ export const Step3Requirements: React.FC<Step3Props> = ({
                 }`}
               >
                 <div
-                  className={`w-5 h-5 rounded-md flex items-center justify-center shrink-0 mt-0.5 transition-colors ${
+                  className={`w-5 h-5 rounded-md flex items-center justify-center shrink-0 mt-0.5 transition-colors border ${
                     isChecked
-                      ? 'bg-[#0070f2] text-white'
-                      : 'border border-slate-300 bg-white'
+                      ? 'border-[#0070f2] bg-blue-50/50'
+                      : 'border-slate-300 bg-white'
                   }`}
                 >
-                  {isChecked && <CheckCircle2 className="w-4 h-4 stroke-[2.5]" />}
+                  {isChecked && <div className="w-2.5 h-2.5 rounded-xs bg-[#0070f2]" />}
                 </div>
 
                 <div className="flex-1 min-w-0">

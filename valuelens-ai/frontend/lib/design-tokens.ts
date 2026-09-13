@@ -42,7 +42,7 @@ export const designTokens = {
 
   decisions: {
     STRONGLY_FAVORABLE: {
-      label: 'Strongly Favorable',
+      label: 'Highly Recommended',
       bg: 'bg-emerald-600',
       lightBg: 'bg-emerald-50',
       border: 'border-emerald-300',
@@ -51,7 +51,7 @@ export const designTokens = {
       description: 'Exceptional financial payback with low execution risk profile.',
     },
     FAVORABLE: {
-      label: 'Favorable',
+      label: 'Recommended',
       bg: 'bg-emerald-500',
       lightBg: 'bg-emerald-50',
       border: 'border-emerald-300',
@@ -60,7 +60,7 @@ export const designTokens = {
       description: 'The business case is financially attractive and investment is recovered swiftly.',
     },
     CONDITIONALLY_FAVORABLE: {
-      label: 'Conditionally Favorable',
+      label: 'Conditional Fit',
       bg: 'bg-blue-600',
       lightBg: 'bg-blue-50',
       border: 'border-blue-300',

@@ -1025,12 +1025,12 @@ export default function DashboardPage() {
             </div>
 
             {/* IntSwitch Migration Decision Intelligence Card */}
-            <div className="bg-[#f0fdf4] border border-emerald-200/90 rounded-3xl p-8 shadow-xs space-y-6">
+            <div className="bg-white border border-[#d9e2ec] rounded-3xl p-8 shadow-xs space-y-6">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
                 {/* Left: Decision Statement (Cols 5) */}
                 <div className="lg:col-span-5 flex items-start space-x-4">
-                  <div className="w-12 h-12 rounded-2xl bg-[#107e3e] text-white flex items-center justify-center font-black text-xl shrink-0 shadow-sm">
-                    ✓
+                  <div className="w-12 h-12 rounded-2xl bg-blue-50 border border-blue-200/80 text-[#0070f2] flex items-center justify-center shrink-0 shadow-xs">
+                    <TrendingUp className="w-6 h-6" />
                   </div>
                   <div className="space-y-1.5">
                     <div className="flex items-center space-x-2">
@@ -1039,9 +1039,9 @@ export default function DashboardPage() {
                         IntSwitch Migration Decision Intelligence
                       </span>
                     </div>
-                    <h3 className="text-2xl sm:text-3xl font-black text-emerald-900 tracking-tight flex items-center gap-2">
-                      <span>FAVORABLE</span>
-                      <span className="text-[11px] font-bold px-3 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 uppercase">
+                    <h3 className="text-2xl sm:text-3xl font-bold text-[#1d2d3e] tracking-tight flex items-center gap-2">
+                      <span>Strategic Migration Assessment</span>
+                      <span className="text-[11px] font-bold px-3 py-0.5 rounded-full bg-blue-50 text-[#0070f2] border border-blue-200 uppercase">
                         Incture Validated
                       </span>
                     </h3>
@@ -1054,9 +1054,9 @@ export default function DashboardPage() {
                 </div>
 
                 {/* Center: IntSwitch Effort Reduction (Cols 3) */}
-                <div className="lg:col-span-3 border-t lg:border-t-0 lg:border-l lg:border-r border-emerald-200/80 pt-4 lg:pt-0 lg:px-8 space-y-2 flex flex-col justify-center">
+                <div className="lg:col-span-3 border-t lg:border-t-0 lg:border-l lg:border-r border-[#d9e2ec] pt-4 lg:pt-0 lg:px-8 space-y-2 flex flex-col justify-center">
                   <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block">IntSwitch Advantage</span>
-                  <div className="text-3xl font-black text-[#107e3e] tracking-tight font-mono">Up to 40%</div>
+                  <div className="text-3xl font-black text-[#0070f2] tracking-tight font-mono">Up to 40%</div>
                   <p className="text-xs text-slate-600 font-medium leading-relaxed">
                     Reduction in migration delivery effort via automated discovery &amp; testing.
                   </p>
@@ -1240,7 +1240,7 @@ export default function DashboardPage() {
                 </p>
                 <div className="flex items-center space-x-2 pt-1">
                   <span className="inline-flex items-center space-x-1.5 px-3 py-1 bg-emerald-100 text-[#107e3e] border border-emerald-300 rounded-full text-xs font-bold">
-                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    <Calendar className="w-3.5 h-3.5" />
                     <span>Break-even point: {breakEvenMonths.toFixed(1)} months</span>
                   </span>
                 </div>
