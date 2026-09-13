@@ -357,7 +357,7 @@ public class AiAnalysisService {
         double bestNet5 = best != null && best.fiveYearNetBenefit() != null ? best.fiveYearNetBenefit().doubleValue() : 0.0;
 
         if (cur <= 0.0) {
-            return "EXECUTIVE SENSITIVITY ADVISORY:\n\nPlease complete your assessment inputs to simulate sensitivity scenarios and review AI risk modeling.";
+            return "EXECUTIVE SENSITIVITY ADVISORY:\n\nPlease complete your assessment inputs to simulate sensitivity scenarios and review AI decision modeling.";
         }
 
         try {
@@ -373,7 +373,7 @@ public class AiAnalysisService {
 
                     Provide a comprehensive, authoritative executive advisory structured with 3 clear sections:
                     1. Executive Viability & Payback Horizon: Evaluate the payback speed and financial return under this custom scenario relative to the benchmark.
-                    2. Risk Envelope & Sensitivity Thresholds: Assess downside buffer against the stress-test floor and highlight primary sensitivity drivers (e.g. migration burn rate, message volume changes).
+                    2. Strategic Resilience & Sensitivity Thresholds: Assess downside buffer against the stress-test floor and highlight primary sensitivity drivers (e.g. migration burn rate, message volume changes).
                     3. Strategic Leadership Recommendations: Give 2-3 specific, actionable governance actions for the CIO/CFO and integration architecture team.
 
                     Write in professional executive prose. Do NOT include markdown code blocks or placeholders.
@@ -384,7 +384,7 @@ public class AiAnalysisService {
                     cur, tgt
             );
             String aiRaw = nvidiaAiClient.callChatCompletion(
-                    "You are ValueLens AI enterprise risk advisor. Be thorough, quantitative, and concise.",
+                    "You are ValueLens AI enterprise migration economics advisor. Be thorough, quantitative, and concise.",
                     prompt,
                     750
             );
@@ -397,9 +397,9 @@ public class AiAnalysisService {
 
         return String.format(
                 "EXECUTIVE SENSITIVITY ADVISORY:\n\n" +
-                "1. Executive Viability & Payback: Under the active simulation parameters, the business case achieves full capital recovery in %.1f months with annual recurring savings of $%,.0f (%.1f%% run-rate efficiency). Cumulative 5-year net economic returns yield $%,.0f (%.2f%% ROI), demonstrating resilient commercial viability.\n\n" +
-                "2. Capital Risk & Sensitivity Drivers: At a modeled migration investment of $%,.0f, capital recovery remains well protected within enterprise modernization benchmarks (<18 months). Interface refactoring velocity is the predominant sensitivity variable; even with moderate delivery variances, operating cost divergence between legacy ($%,.0f/yr) and cloud ($%,.0f/yr) protects positive Year 1 cash flow.\n\n" +
-                "3. Recommended Steering Actions: Management should institute milestone-gated development sprints to cap delivery burn, accelerate Wave 1 standard interface cutovers to realize initial run-rate relief, and synchronize legacy hardware/license sunset notices to prevent dual-running overlap penalties.",
+                "1. Executive Viability & Payback Horizon: Under the active simulation parameters, the business case achieves full capital recovery in %.1f months with annual recurring savings of $%,.0f (%.1f%% run-rate efficiency). Cumulative 5-year net economic returns yield $%,.0f (%.2f%% ROI), demonstrating resilient commercial viability.\n\n" +
+                "2. Strategic Resilience & Sensitivity Drivers: At a modeled migration investment of $%,.0f, capital recovery remains well protected within enterprise modernization benchmarks (<18 months). Interface refactoring velocity is the predominant sensitivity variable; even with moderate delivery variances, operating cost divergence between legacy ($%,.0f/yr) and cloud ($%,.0f/yr) protects positive Year 1 cash flow.\n\n" +
+                "3. Strategic Leadership Recommendations: Management should institute milestone-gated development sprints to cap delivery burn, accelerate Wave 1 standard interface cutovers to realize initial run-rate relief, and synchronize legacy hardware/license sunset notices to prevent dual-running overlap penalties.",
                 be, sav, savPct, net5, roi, mig, cur, tgt
         );
     }
@@ -431,7 +431,7 @@ public class AiAnalysisService {
                     Structure into 5 numbered points:
                     1. The Challenge (legacy cost structure and hardware/licensing burden)
                     2. The Strategic Opportunity (cloud operational efficiency and margin expansion)
-                    3. The Investment (capital expenditure breakdown and risk mitigation)
+                    3. The Investment (capital expenditure breakdown and transition assurance)
                     4. Payback & ROI (break-even timeline and multi-year economic value)
                     5. Board Recommendation (governance next steps and kickoff approval)
 

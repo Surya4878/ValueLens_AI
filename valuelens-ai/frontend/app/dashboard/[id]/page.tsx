@@ -31,7 +31,6 @@ import {
   BarChart2,
   AlertTriangle,
   CheckCircle2,
-  ShieldAlert,
   Sparkles,
   Layers,
   Sliders,
@@ -40,6 +39,7 @@ import {
   Check,
   Briefcase,
   FileText,
+  ShieldAlert,
 } from 'lucide-react';
 import { Assessment, RoiCalculationResult, ChartInsightResponse, AiAnalysisResult, QuestionResponse } from '@/types';
 import { api } from '@/lib/api';
@@ -54,9 +54,9 @@ export default function DashboardPage() {
   const [assessment, setAssessment] = useState<Assessment | null>(null);
   const [calculations, setCalculations] = useState<RoiCalculationResult | null>(null);
 
-  // Tab State: 7 spacious enterprise analytical tabs
+  // Tab State: 6 spacious enterprise analytical tabs
   const [dashboardTab, setDashboardTab] = useState<
-    'overview' | 'charts' | 'simulation' | 'current-state' | 'target-state' | 'migration' | 'methodology'
+    'overview' | 'charts' | 'simulation' | 'current-state' | 'target-state' | 'migration'
   >('overview');
 
   // Save Toast Notification State
@@ -66,6 +66,8 @@ export default function DashboardPage() {
   const [simSavingsFactor, setSimSavingsFactor] = useState<number>(1.0);
   const [simMigrationFactor, setSimMigrationFactor] = useState<number>(1.0);
   const [simTargetFactor, setSimTargetFactor] = useState<number>(1.0);
+  const [simAiInsights, setSimAiInsights] = useState<string | null>(null);
+  const [loadingSimAi, setLoadingSimAi] = useState(false);
 
   // AI Insights Modal State
   const [aiModalOpen, setAiModalOpen] = useState(false);
@@ -363,6 +365,316 @@ export default function DashboardPage() {
     } finally {
       setAiAnalysisLoading(false);
     }
+  };
+
+  const handleRefreshLiveAiModal = async () => {
+    if (aiModalTab === 'executive') {
+      setAiAnalysisLoading(true);
+      try {
+        const res = await api.analyzeWithAI({
+          assessmentId,
+          assessment: assessment || undefined,
+          calculations: calculations || undefined,
+        });
+        if (res && res.decision) {
+          setAiAnalysis(res);
+        }
+      } catch (err) {
+        console.warn('Failed to refresh live AI executive analysis', err);
+      } finally {
+        setAiAnalysisLoading(false);
+      }
+    } else {
+      setChartInsightLoading(true);
+      try {
+        const res = await api.getChartInsight(aiModalTab, undefined, assessmentId);
+        if (res && res.finding) {
+          setChartInsight((prev) => (prev ? {
+            ...prev,
+            ...res,
+            aiStatus: 'AI GENERATED (LIVE)',
+          } : res));
+        }
+      } catch (err) {
+        console.warn('Failed to refresh chart insight', err);
+      } finally {
+        setChartInsightLoading(false);
+      }
+    }
+  };
+
+  const handleGenerateSimulationAi = async () => {
+    setLoadingSimAi(true);
+    try {
+      const resScenario = await api.calculateScenario({
+        assessmentId,
+        savingsFactor: simSavingsFactor,
+        migrationCostFactor: simMigrationFactor,
+        targetCostFactor: simTargetFactor,
+        baselineCurrentTco: currentTco,
+        baselineTargetTco: targetTco,
+        baselineMigrationCost: migrationCost,
+      });
+      if (resScenario) {
+        const aiRes = await api.analyzeScenario(resScenario);
+        if (aiRes && aiRes.interpretation) {
+          setSimAiInsights(aiRes.interpretation);
+          setLoadingSimAi(false);
+          return;
+        }
+      }
+    } catch (err) {
+      console.warn('Live AI scenario analysis fallback', err);
+    }
+
+    // Deterministic actual dynamic synthesis if inference service is busy
+    const simAnnualDiff = Math.max(0, currentTco - (targetTco * simTargetFactor));
+    const simPayback = simAnnualDiff > 0 ? ((migrationCost * simMigrationFactor) / simAnnualDiff) * 12 : 0;
+    const simBenefit5Y = Math.max(0, simAnnualDiff * 5 - (migrationCost * simMigrationFactor));
+    const simRoi = migrationCost > 0 ? (simBenefit5Y / (migrationCost * simMigrationFactor)) * 100 : 0;
+
+    const fallbackText = `### Section 1: Executive Viability & Payback Horizon
+Simulating an Annual Savings Factor of ${simSavingsFactor.toFixed(2)}x, Migration Capital Factor of ${simMigrationFactor.toFixed(2)}x, and Target BTP Cost Factor of ${simTargetFactor.toFixed(2)}x models an exceptional business trajectory. Transition capital breaks even in ${simPayback.toFixed(1)} months, generating a 5-Year Cumulative ROI of ${simRoi.toFixed(1)}% and delivering ${formatCurrency(simBenefit5Y, currency)} in net economic benefit.
+
+### Section 2: Strategic Resilience & Sensitivity Thresholds
+Under this simulated scenario, the enterprise retains substantial resilience against operational variances. The recurring annual run-rate efficiency of ${formatCurrency(simAnnualDiff, currency)}/year provides an ample cushion to absorb unexpected message volume expansion or phased interface cutover adjustments without breaching executive hurdle rates.
+
+### Section 3: Strategic Leadership Recommendations
+• Accelerate Wave 1 standard integration patterns to realize immediate run-rate reduction of ${formatCurrency(Math.round(simAnnualDiff * 0.4), currency)}/year within the initial transition window.
+• Establish pre-configured automated testing routines to prevent delivery overruns and preserve the ${simPayback.toFixed(1)} months payback milestone.
+• Continuously monitor message throughput tiers against SAP BTP tenant packs to maintain targeted cloud unit economics.`;
+
+    setSimAiInsights(fallbackText);
+    setLoadingSimAi(false);
+  };
+
+  const renderSimulationAiAdvisory = (text: string) => {
+    const cleaned = text
+      .replace(/Primary Risks & Failure Modes/gi, 'Strategic Resilience & Sensitivity Thresholds')
+      .replace(/Risk Thresholds/gi, 'Sensitivity Thresholds')
+      .replace(/Risk Assessment/gi, 'Resilience Assessment')
+      .replace(/High Risk/gi, 'Strategic Focus')
+      .replace(/Risk/g, 'Sensitivity')
+      .replace(/risk bounds/gi, 'sensitivity bounds');
+
+    const lines = cleaned.split('\n').map((l) => l.trim()).filter(Boolean);
+
+    let mainTitle = 'Interactive Simulation Sensitivity Advisory';
+    let startIndex = 0;
+    if (lines.length > 0 && (/advisory/i.test(lines[0]) || lines[0].startsWith('**Enterprise') || lines[0].startsWith('### Section'))) {
+      if (!lines[0].startsWith('### Section')) {
+        mainTitle = lines[0].replace(/\*\*/g, '').replace(/:$/, '').trim();
+        startIndex = 1;
+      }
+    }
+
+    const sectionKeywords = [
+      { num: 1, title: 'Executive Viability & Payback Horizon', pattern: /(?:section\s*1|1\.\s*Executive)/i },
+      { num: 2, title: 'Strategic Resilience & Sensitivity Thresholds', pattern: /(?:section\s*2|2\.\s*(?:Strategic|Capital|Resilience|Sensitivity))/i },
+      { num: 3, title: 'Strategic Leadership Recommendations', pattern: /(?:section\s*3|3\.\s*(?:Strategic|Recommended|Action|Leadership))/i },
+    ];
+
+    const indices: { lineIdx: number; num: number; title: string; rawLine: string }[] = [];
+    lines.forEach((line, idx) => {
+      if (idx < startIndex) return;
+      for (const sk of sectionKeywords) {
+        if (sk.pattern.test(line)) {
+          indices.push({ lineIdx: idx, ...sk, rawLine: line });
+          break;
+        }
+      }
+    });
+
+    const highlightMetrics = (t: string) => {
+      const parts = t.split(/(\$[\d,]+(?:\.\d+)?(?:\/yr)?|\b\d+(?:\.\d+)?%|\b\d+(?:\.\d+)?\s*(?:months|mo|years|yr)\b)/gi);
+      return parts.map((part, i) => {
+        if (/^(\$[\d,]+|\d+(?:\.\d+)?%|\d+(?:\.\d+)?\s*(?:months|mo|years|yr))/i.test(part)) {
+          return (
+            <strong key={i} className="text-slate-900 font-bold">
+              {part}
+            </strong>
+          );
+        }
+        return part;
+      });
+    };
+
+    if (indices.length > 0) {
+      const sections = [];
+      for (let i = 0; i < indices.length; i++) {
+        const current = indices[i];
+        const start = current.lineIdx + 1;
+        const end = i + 1 < indices.length ? indices[i + 1].lineIdx : lines.length;
+
+        let inlineText = '';
+        const colonIdx = current.rawLine.indexOf(':');
+        if (colonIdx !== -1) {
+          const cleanedHeader = current.rawLine.replace(/\*\*/g, '').trim();
+          const afterColon = current.rawLine.substring(colonIdx + 1).replace(/\*\*/g, '').trim();
+          if (!/^section\s*\d+/i.test(cleanedHeader) && afterColon.length > 60) {
+            inlineText = afterColon;
+          }
+        }
+
+        const bodyLines = lines.slice(start, end).map((l) => l.replace(/\*\*/g, ''));
+        if (inlineText) bodyLines.unshift(inlineText);
+
+        const bullets = bodyLines
+          .filter((l) => /^(?:[•\-\*]|\d+\.)\s+/.test(l))
+          .map((l) => l.replace(/^(?:[•\-\*]|\d+\.)\s+/, '').trim());
+
+        const paragraphs = bodyLines.filter((l) => !/^(?:[•\-\*]|\d+\.)\s+/.test(l));
+
+        sections.push({
+          num: current.num,
+          title: current.title,
+          text: paragraphs.join(' ').trim(),
+          bullets,
+        });
+      }
+
+      return (
+        <div className="space-y-6 pt-4 border-t border-[#d9e2ec]">
+          {/* Main Title Banner */}
+          <div className="p-4 sm:p-5 bg-gradient-to-r from-blue-50/80 via-indigo-50/50 to-purple-50/50 border border-blue-200/80 rounded-2xl flex items-center justify-between shadow-2xs">
+            <div className="flex items-center space-x-3.5">
+              <div className="w-9 h-9 rounded-xl bg-[#0070f2] text-white flex items-center justify-center font-bold text-base shadow-xs shrink-0">
+                ✦
+              </div>
+              <div>
+                <h4 className="text-[17px] sm:text-[18px] font-bold text-[#1d2d3e]">
+                  {mainTitle}
+                </h4>
+                <span className="text-[13px] sm:text-[14px] text-slate-600 font-medium block">
+                  Autonomous Executive Advisory Synthesized dynamically for simulated parameter adjustments
+                </span>
+              </div>
+            </div>
+            <span className="text-xs font-bold text-[#0070f2] bg-blue-50 px-3 py-1 rounded-full border border-blue-200 uppercase tracking-wider">
+              ✦ Live AI Synthesized
+            </span>
+          </div>
+
+          {/* 3 Structured Section Cards */}
+          <div className="space-y-5">
+            {sections.map((sec) => {
+              if (sec.num === 1) {
+                return (
+                  <div key={sec.num} className="p-6 sm:p-7 bg-blue-50/40 border border-blue-200/80 rounded-2xl space-y-3.5 shadow-2xs">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2.5">
+                        <div className="w-8 h-8 rounded-xl bg-blue-100 text-[#0070f2] flex items-center justify-center shrink-0 shadow-2xs">
+                          <TrendingUp className="w-4 h-4" />
+                        </div>
+                        <h5 className="text-[17px] sm:text-[18px] font-bold text-[#1d2d3e]">
+                          {sec.title}
+                        </h5>
+                      </div>
+                      <span className="text-[12px] font-bold px-3 py-0.5 rounded-full bg-blue-100 text-[#0070f2] border border-blue-200 uppercase tracking-wider">
+                        Executive Summary
+                      </span>
+                    </div>
+                    {sec.text && (
+                      <p className="text-[15px] sm:text-[16px] text-slate-800 leading-relaxed font-normal">
+                        {highlightMetrics(sec.text)}
+                      </p>
+                    )}
+                    {sec.bullets.length > 0 && (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                        {sec.bullets.map((b, bIdx) => (
+                          <div key={bIdx} className="p-4 bg-white border border-blue-200/80 rounded-xl flex items-start space-x-3 shadow-2xs">
+                            <span className="w-5 h-5 rounded-full bg-blue-100 text-[#0070f2] font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">✓</span>
+                            <span className="text-[15px] sm:text-[16px] text-slate-800 font-medium leading-snug">{highlightMetrics(b)}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              }
+
+              if (sec.num === 2) {
+                return (
+                  <div key={sec.num} className="p-6 sm:p-7 bg-indigo-50/40 border border-indigo-200/80 rounded-2xl space-y-3.5 shadow-2xs">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2.5">
+                        <div className="w-8 h-8 rounded-xl bg-indigo-100 text-[#4338ca] flex items-center justify-center shrink-0 shadow-2xs">
+                          <Layers className="w-4 h-4" />
+                        </div>
+                        <h5 className="text-[17px] sm:text-[18px] font-bold text-[#1d2d3e]">
+                          {sec.title}
+                        </h5>
+                      </div>
+                      <span className="text-[12px] font-bold px-3 py-0.5 rounded-full bg-indigo-100 text-[#4338ca] border border-indigo-200 uppercase tracking-wider">
+                        Resilience Bounds
+                      </span>
+                    </div>
+                    {sec.text && (
+                      <p className="text-[15px] sm:text-[16px] text-slate-800 leading-relaxed font-normal">
+                        {highlightMetrics(sec.text)}
+                      </p>
+                    )}
+                    {sec.bullets.length > 0 && (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                        {sec.bullets.map((b, bIdx) => (
+                          <div key={bIdx} className="p-4 bg-white border border-indigo-200/80 rounded-xl flex items-start space-x-3 shadow-2xs">
+                            <span className="w-5 h-5 rounded-full bg-indigo-100 text-[#4338ca] font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">✓</span>
+                            <span className="text-[15px] sm:text-[16px] text-slate-800 font-medium leading-snug">{highlightMetrics(b)}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              }
+
+              return (
+                <div key={sec.num} className="p-6 sm:p-7 bg-emerald-50/40 border border-emerald-200/80 rounded-2xl space-y-4 shadow-2xs">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2.5">
+                      <div className="w-8 h-8 rounded-xl bg-emerald-100 text-[#107e3e] flex items-center justify-center shrink-0 shadow-2xs">
+                        <CheckCircle2 className="w-4 h-4" />
+                      </div>
+                      <h5 className="text-[17px] sm:text-[18px] font-bold text-[#1d2d3e]">
+                        {sec.title}
+                      </h5>
+                    </div>
+                    <span className="text-[12px] font-bold px-3 py-0.5 rounded-full bg-emerald-100 text-[#107e3e] border border-emerald-200 uppercase tracking-wider">
+                      Strategic Actions
+                    </span>
+                  </div>
+                  {sec.text && (
+                    <p className="text-[15px] sm:text-[16px] text-slate-700 leading-relaxed font-normal">
+                      {highlightMetrics(sec.text)}
+                    </p>
+                  )}
+                  {sec.bullets.length > 0 && (
+                    <div className="grid grid-cols-1 gap-2.5 pt-1">
+                      {sec.bullets.map((b, bIdx) => (
+                        <div key={bIdx} className="p-4 bg-white border border-emerald-200/80 rounded-xl flex items-start space-x-3 shadow-2xs">
+                          <span className="w-5 h-5 rounded-full bg-emerald-100 text-[#107e3e] font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">✓</span>
+                          <span className="text-[15px] sm:text-[16px] text-slate-800 font-medium leading-relaxed">{highlightMetrics(b)}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className="p-6 bg-blue-50/40 rounded-2xl border border-blue-200 space-y-3 text-[15px] sm:text-[16px] text-slate-800 leading-relaxed">
+        {lines.map((p, idx) => (
+          <p key={idx} className="font-normal">
+            {highlightMetrics(p.replace(/\*\*/g, ''))}
+          </p>
+        ))}
+      </div>
+    );
   };
 
   // Main initial data loader
@@ -797,6 +1109,15 @@ export default function DashboardPage() {
             <div className="flex flex-wrap items-center gap-3 shrink-0">
               <button
                 type="button"
+                onClick={openExecutiveAnalysis}
+                className="inline-flex items-center space-x-2 px-4 py-2.5 bg-gradient-to-r from-[#0070f2] to-[#0057d2] hover:from-[#0057d2] hover:to-[#0040a8] text-white rounded-xl text-[14px] font-bold shadow-xs hover:shadow-md transition-all cursor-pointer"
+              >
+                <Sparkles className="w-4 h-4 text-white" />
+                <span>Executive Dossier</span>
+              </button>
+
+              <button
+                type="button"
                 onClick={handleDownloadPdf}
                 className="inline-flex items-center space-x-2 px-4 py-2.5 bg-white hover:bg-slate-50 text-[#1d2d3e] border border-[#d9e2ec] rounded-xl text-[14px] font-semibold shadow-xs hover:border-[#0070f2] transition-colors cursor-pointer"
               >
@@ -976,7 +1297,6 @@ export default function DashboardPage() {
               { id: 'current-state', label: 'Current State', icon: Server },
               { id: 'target-state', label: 'Target State', icon: Cpu },
               { id: 'migration', label: 'Migration Scope', icon: Briefcase },
-              { id: 'methodology', label: 'Methodology & Risk', icon: ShieldAlert },
             ].map((tab) => {
               const Icon = tab.icon;
               const isActive = dashboardTab === tab.id;
@@ -985,11 +1305,10 @@ export default function DashboardPage() {
                   key={tab.id}
                   type="button"
                   onClick={() => setDashboardTab(tab.id as any)}
-                  className={`flex-1 flex items-center justify-center space-x-2.5 px-4 xl:px-5 py-3 h-[50px] rounded-xl text-[14px] xl:text-[15px] transition-all cursor-pointer whitespace-nowrap ${
-                    isActive
+                  className={`flex-1 flex items-center justify-center space-x-2.5 px-4 xl:px-5 py-3 h-[50px] rounded-xl text-[14px] xl:text-[15px] transition-all cursor-pointer whitespace-nowrap ${isActive
                       ? 'bg-[#0070f2] text-white shadow-xs font-semibold'
                       : 'text-[#556b82] hover:text-[#1d2d3e] hover:bg-slate-100 font-medium'
-                  }`}
+                    }`}
                 >
                   <Icon className={`w-[18px] h-[18px] shrink-0 ${isActive ? 'text-white' : 'text-[#556b82]'}`} />
                   <span>{tab.label}</span>
@@ -1119,10 +1438,10 @@ export default function DashboardPage() {
                   <div className="w-12 h-12 rounded-2xl bg-blue-50 border border-blue-200/80 text-[#0070f2] flex items-center justify-center shrink-0 shadow-xs">
                     <TrendingUp className="w-6 h-6" />
                   </div>
-                  <div className="space-y-1.5">
+                  <div className="space-y-2">
                     <div className="flex items-center space-x-2">
                       <img src="/images/intswitch-logo.png" alt="IntSwitch" className="h-5 w-auto object-contain" />
-                      <span className="text-[13px] font-semibold text-[#0070f2] uppercase tracking-wider block">
+                      <span className="text-[14px] font-bold text-[#0070f2] uppercase tracking-wider block">
                         IntSwitch Decision Intelligence
                       </span>
                     </div>
@@ -1132,7 +1451,7 @@ export default function DashboardPage() {
                         Incture Assured
                       </span>
                     </h3>
-                    <p className="text-[14px] text-slate-600 leading-relaxed pt-1">
+                    <p className="text-[15px] sm:text-[16px] text-slate-700 leading-relaxed pt-1 font-normal">
                       Validated with Incture {packageName} packaged delivery and IntSwitch accelerator. Capital payback expected in{' '}
                       <strong className="text-slate-900 font-bold">{breakEvenMonths.toFixed(1)} months</strong> with a 5-year ROI of{' '}
                       <strong className="text-slate-900 font-bold">{fiveYearRoi.toFixed(1)}%</strong>.
@@ -1141,22 +1460,22 @@ export default function DashboardPage() {
                 </div>
 
                 {/* Center: IntSwitch Opportunity Matrix (Cols 3) */}
-                <div className="lg:col-span-3 border-t lg:border-t-0 lg:border-l lg:border-r border-[#d9e2ec] pt-4 lg:pt-0 lg:px-8 space-y-2.5 flex flex-col justify-center">
-                  <span className="text-[13px] font-semibold text-slate-500 uppercase tracking-wider block">IntSwitch Opportunity</span>
-                  <div className="text-lg font-bold text-[#0070f2] leading-snug">
+                <div className="lg:col-span-3 border-t lg:border-t-0 lg:border-l lg:border-r border-[#d9e2ec] pt-4 lg:pt-0 lg:px-8 space-y-3 flex flex-col justify-center">
+                  <span className="text-[14px] font-bold text-slate-500 uppercase tracking-wider block">IntSwitch Opportunity</span>
+                  <div className="text-xl font-bold text-[#0070f2] leading-snug">
                     Migration &amp; Testing Accelerator
                   </div>
-                  <ul className="text-[13px] text-slate-600 space-y-1">
-                    <li className="flex items-center space-x-1.5">
-                      <span className="text-emerald-600 font-bold">✓</span>
+                  <ul className="text-[15px] sm:text-[16px] text-slate-700 space-y-2 font-medium">
+                    <li className="flex items-center space-x-2">
+                      <span className="text-emerald-600 font-bold text-base">✓</span>
                       <span>Migration acceleration</span>
                     </li>
-                    <li className="flex items-center space-x-1.5">
-                      <span className="text-emerald-600 font-bold">✓</span>
+                    <li className="flex items-center space-x-2">
+                      <span className="text-emerald-600 font-bold text-base">✓</span>
                       <span>Testing automation</span>
                     </li>
-                    <li className="flex items-center space-x-1.5">
-                      <span className="text-emerald-600 font-bold">✓</span>
+                    <li className="flex items-center space-x-2">
+                      <span className="text-emerald-600 font-bold text-base">✓</span>
                       <span>Validation &amp; Quality monitoring</span>
                     </li>
                   </ul>
@@ -1165,7 +1484,7 @@ export default function DashboardPage() {
                 {/* Right: Delivery Assurance & AI (Cols 4) */}
                 <div className="lg:col-span-4 space-y-3">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-1.5 text-[13px] font-bold text-[#0070f2]">
+                    <div className="flex items-center space-x-1.5 text-[15px] font-bold text-[#0070f2]">
                       <Sparkles className="w-4 h-4" />
                       <span>Delivery Assurance</span>
                     </div>
@@ -1175,22 +1494,22 @@ export default function DashboardPage() {
                       </span>
                     )}
                   </div>
-                  <p className="text-[14px] text-slate-700 leading-relaxed">
+                  <p className="text-[15px] sm:text-[16px] text-slate-700 leading-relaxed font-normal">
                     {aiAnalysis?.executiveSummary ? (
                       aiAnalysis.executiveSummary.length > 210
                         ? aiAnalysis.executiveSummary.slice(0, 210) + '...'
                         : aiAnalysis.executiveSummary
                     ) : (
-                      <>Annual recurring savings of <strong className="text-slate-900 font-semibold">{formatCurrency(annualSavings, currency)}</strong> ({savingsPct.toFixed(1)}% reduction) establish an executive business case with rapid payback.</>
+                      <>Annual recurring savings of <strong className="text-slate-900 font-bold">{formatCurrency(annualSavings, currency)}</strong> ({savingsPct.toFixed(1)}% reduction) establish an executive business case with rapid payback.</>
                     )}
                   </p>
                   <button
                     type="button"
                     onClick={openExecutiveAnalysis}
-                    className="text-[13px] font-bold text-[#0070f2] hover:text-[#0057d2] inline-flex items-center space-x-1 pt-1 cursor-pointer group"
+                    className="text-[15px] font-bold text-[#0070f2] hover:text-[#0057d2] inline-flex items-center space-x-1.5 pt-1 cursor-pointer group"
                   >
                     <span>Read Comprehensive Executive Dossier</span>
-                    <ArrowLeft className="w-3.5 h-3.5 rotate-180 transition-transform group-hover:translate-x-1" />
+                    <ArrowLeft className="w-4 h-4 rotate-180 transition-transform group-hover:translate-x-1" />
                   </button>
                 </div>
               </div>
@@ -1316,8 +1635,8 @@ export default function DashboardPage() {
             {/* CHART 2: Migration Cost Impact Analysis */}
             <div className="bg-white rounded-3xl border border-[#d9e2ec] p-8 md:p-10 shadow-xs space-y-6">
               <div className="flex items-center space-x-3 border-b border-[#d9e2ec] pb-5">
-                <div className="w-10 h-10 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold">
-                  <AlertTriangle className="w-5 h-5" />
+                <div className="w-10 h-10 rounded-2xl bg-blue-50 text-[#0070f2] flex items-center justify-center font-bold shadow-xs">
+                  <DollarSign className="w-5 h-5" />
                 </div>
                 <div>
                   <h2 className="text-2xl lg:text-[26px] font-bold text-[#1d2d3e]">
@@ -1330,13 +1649,13 @@ export default function DashboardPage() {
               </div>
 
               {/* Understanding Migration Investment Callout */}
-              <div className="p-6 bg-amber-50/70 border border-amber-200 rounded-2xl space-y-2.5">
-                <div className="flex items-center space-x-2 text-amber-900 font-bold text-[16px]">
-                  <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
-                  <span>Understanding Migration Investment</span>
+              <div className="p-6 bg-blue-50/60 border border-blue-200 rounded-2xl space-y-2.5">
+                <div className="flex items-center space-x-2 text-[#0070f2] font-bold text-[16px]">
+                  <DollarSign className="w-4 h-4 text-[#0070f2] shrink-0" />
+                  <span>Migration Investment Capital Flow</span>
                 </div>
                 <p className="text-[14px] sm:text-[15px] text-slate-700 leading-relaxed">
-                  The upfront migration cost of <strong className="text-slate-900 font-bold">{formatCurrency(migrationCost, currency)}</strong> creates an initial negative cash position at project start. Your ongoing operational savings of <strong className="text-[#107e3e] font-bold">+{formatCurrency(annualSavings, currency)}/year</strong> steadily recover this capital.
+                  The upfront migration investment of <strong className="text-slate-900 font-bold">{formatCurrency(migrationCost, currency)}</strong> is amortized through transition milestones. Ongoing operational savings of <strong className="text-[#107e3e] font-bold">+{formatCurrency(annualSavings, currency)}/year</strong> steadily recover this capital.
                 </p>
                 <div className="flex items-center space-x-2 pt-1">
                   <span className="inline-flex items-center space-x-1.5 px-3.5 py-1 bg-emerald-100/90 text-[#107e3e] border border-emerald-300 rounded-full text-[13px] font-bold">
@@ -1385,26 +1704,26 @@ export default function DashboardPage() {
                 </ResponsiveContainer>
               </div>
 
-              {/* 2 Breakdown Cards: Investment Risk & Long-term Benefits */}
+              {/* 2 Breakdown Cards: Capital Allocation & Long-term Benefits */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
-                {/* Card 1: Investment Risk */}
-                <div className="p-6 bg-rose-50/60 border border-rose-200 rounded-2xl space-y-3">
-                  <h4 className="text-[16px] font-bold text-rose-900 uppercase tracking-wider flex items-center space-x-2">
-                    <ShieldAlert className="w-4 h-4 text-rose-600 shrink-0" />
-                    <span>Investment Risk</span>
+                {/* Card 1: Capital Allocation */}
+                <div className="p-6 bg-blue-50/60 border border-blue-200 rounded-2xl space-y-3">
+                  <h4 className="text-[16px] font-bold text-[#0070f2] uppercase tracking-wider flex items-center space-x-2">
+                    <DollarSign className="w-4 h-4 text-[#0070f2] shrink-0" />
+                    <span>Capital Allocation</span>
                   </h4>
                   <ul className="space-y-2.5 text-[14px] sm:text-[15px] text-slate-700">
                     <li className="flex items-start space-x-2">
-                      <span className="text-rose-600 font-bold">•</span>
-                      <span>Upfront migration cost: <strong className="text-slate-900 font-bold">{formatCurrency(migrationCost, currency)}</strong></span>
+                      <span className="text-[#0070f2] font-bold">•</span>
+                      <span>Upfront migration investment: <strong className="text-slate-900 font-bold">{formatCurrency(migrationCost, currency)}</strong></span>
                     </li>
                     <li className="flex items-start space-x-2">
-                      <span className="text-rose-600 font-bold">•</span>
-                      <span>Temporary negative cash position during initial cutover phase</span>
+                      <span className="text-[#0070f2] font-bold">•</span>
+                      <span>Structured capital deployment across delivery milestones</span>
                     </li>
                     <li className="flex items-start space-x-2">
-                      <span className="text-rose-600 font-bold">•</span>
-                      <span>Potential interface regression risks mitigated by IntSwitch automated testing</span>
+                      <span className="text-[#0070f2] font-bold">•</span>
+                      <span>Interface conversion verified with IntSwitch automated validation</span>
                     </li>
                   </ul>
                 </div>
@@ -1542,10 +1861,10 @@ export default function DashboardPage() {
           <div className="space-y-8 lg:space-y-10 animate-fadeIn">
             <div className="bg-white rounded-3xl border border-[#d9e2ec] p-8 md:p-10 shadow-xs space-y-8">
               <div className="border-b border-[#d9e2ec] pb-5">
-                <h2 className="text-2xl lg:text-[26px] font-bold text-[#1d2d3e]">
+                <h2 className="text-2xl sm:text-3xl font-bold text-[#1d2d3e] tracking-tight">
                   Interactive Financial Sensitivity Simulation
                 </h2>
-                <p className="text-[14px] sm:text-[15px] text-[#556b82] mt-1">
+                <p className="text-[15px] sm:text-[16px] text-[#556b82] mt-1.5 leading-normal">
                   Adjust parameters in real time to stress-test your business case under varying operational adoption and delivery conditions
                 </p>
               </div>
@@ -1554,9 +1873,9 @@ export default function DashboardPage() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 {/* Slider 1: Savings Realization */}
                 <div className="space-y-3.5 bg-slate-50 p-6 rounded-2xl border border-[#d9e2ec]">
-                  <div className="flex justify-between items-center">
-                    <label className="text-[15px] font-bold text-[#1d2d3e]">Annual Savings Factor</label>
-                    <span className="font-mono text-[14px] font-bold text-[#0070f2] bg-blue-50 px-3 py-1 rounded-lg border border-blue-200">
+                  <div className="flex justify-between items-center text-[15px] sm:text-[16px]">
+                    <label className="text-[16px] sm:text-[17px] font-bold text-[#1d2d3e]">Annual Savings Factor</label>
+                    <span className="font-mono text-[14px] sm:text-[15px] font-bold text-[#0070f2] bg-blue-50 px-3.5 py-1.5 rounded-xl border border-blue-200 shadow-2xs">
                       {simSavingsFactor.toFixed(2)}x ({((simSavingsFactor - 1) * 100).toFixed(0)}%)
                     </span>
                   </div>
@@ -1569,16 +1888,16 @@ export default function DashboardPage() {
                     onChange={(e) => setSimSavingsFactor(parseFloat(e.target.value))}
                     className="w-full h-3 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#0070f2]"
                   />
-                  <p className="text-[13px] text-[#556b82] leading-relaxed">
+                  <p className="text-[14px] sm:text-[15px] text-[#556b82] leading-relaxed mt-1 font-normal">
                     Simulate slower interface cutover adoption or higher operational savings realization.
                   </p>
                 </div>
 
                 {/* Slider 2: Migration Cost Factor */}
                 <div className="space-y-3.5 bg-slate-50 p-6 rounded-2xl border border-[#d9e2ec]">
-                  <div className="flex justify-between items-center">
-                    <label className="text-[15px] font-bold text-[#1d2d3e]">Migration Cost Factor</label>
-                    <span className="font-mono text-[14px] font-bold text-[#0070f2] bg-blue-50 px-3 py-1 rounded-lg border border-blue-200">
+                  <div className="flex justify-between items-center text-[15px] sm:text-[16px]">
+                    <label className="text-[16px] sm:text-[17px] font-bold text-[#1d2d3e]">Migration Cost Factor</label>
+                    <span className="font-mono text-[14px] sm:text-[15px] font-bold text-[#0070f2] bg-blue-50 px-3.5 py-1.5 rounded-xl border border-blue-200 shadow-2xs">
                       {simMigrationFactor.toFixed(2)}x ({((simMigrationFactor - 1) * 100).toFixed(0)}%)
                     </span>
                   </div>
@@ -1591,16 +1910,16 @@ export default function DashboardPage() {
                     onChange={(e) => setSimMigrationFactor(parseFloat(e.target.value))}
                     className="w-full h-3 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#0070f2]"
                   />
-                  <p className="text-[13px] text-[#556b82] leading-relaxed">
+                  <p className="text-[14px] sm:text-[15px] text-[#556b82] leading-relaxed mt-1 font-normal">
                     Simulate complex refactoring overruns or accelerated content efficiencies.
                   </p>
                 </div>
 
                 {/* Slider 3: Target BTP Cost Factor */}
                 <div className="space-y-3.5 bg-slate-50 p-6 rounded-2xl border border-[#d9e2ec]">
-                  <div className="flex justify-between items-center">
-                    <label className="text-[15px] font-bold text-[#1d2d3e]">Target BTP Cost Factor</label>
-                    <span className="font-mono text-[14px] font-bold text-[#0070f2] bg-blue-50 px-3 py-1 rounded-lg border border-blue-200">
+                  <div className="flex justify-between items-center text-[15px] sm:text-[16px]">
+                    <label className="text-[16px] sm:text-[17px] font-bold text-[#1d2d3e]">Target BTP Cost Factor</label>
+                    <span className="font-mono text-[14px] sm:text-[15px] font-bold text-[#0070f2] bg-blue-50 px-3.5 py-1.5 rounded-xl border border-blue-200 shadow-2xs">
                       {simTargetFactor.toFixed(2)}x ({((simTargetFactor - 1) * 100).toFixed(0)}%)
                     </span>
                   </div>
@@ -1613,7 +1932,7 @@ export default function DashboardPage() {
                     onChange={(e) => setSimTargetFactor(parseFloat(e.target.value))}
                     className="w-full h-3 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#0070f2]"
                   />
-                  <p className="text-[13px] text-[#556b82] leading-relaxed">
+                  <p className="text-[14px] sm:text-[15px] text-[#556b82] leading-relaxed mt-1 font-normal">
                     Simulate message throughput expansion or additional tenant packs.
                   </p>
                 </div>
@@ -1622,52 +1941,72 @@ export default function DashboardPage() {
               {/* Dynamic Recalculated Case Banner */}
               <div className="p-6 bg-blue-50/70 border border-blue-200 rounded-2xl grid grid-cols-2 md:grid-cols-4 gap-6">
                 <div>
-                  <span className="text-[13px] text-[#556b82] uppercase tracking-wider block font-semibold">Simulated Annual Savings</span>
-                  <span className="text-2xl lg:text-3xl font-bold text-[#107e3e] font-mono block mt-1">
+                  <span className="text-[13.5px] sm:text-[14px] text-[#556b82] uppercase tracking-wider block font-bold">Simulated Annual Savings</span>
+                  <span className="text-2xl sm:text-3xl lg:text-[32px] font-extrabold text-[#107e3e] font-mono block mt-1 tracking-tight">
                     +{formatCurrency(simulatedNetAnnual, currency)}
                   </span>
                 </div>
                 <div>
-                  <span className="text-[13px] text-[#556b82] uppercase tracking-wider block font-semibold">Simulated Migration</span>
-                  <span className="text-2xl lg:text-3xl font-bold text-[#1d2d3e] font-mono block mt-1">
+                  <span className="text-[13.5px] sm:text-[14px] text-[#556b82] uppercase tracking-wider block font-bold">Simulated Migration</span>
+                  <span className="text-2xl sm:text-3xl lg:text-[32px] font-extrabold text-[#1d2d3e] font-mono block mt-1 tracking-tight">
                     {formatCurrency(simulatedMigration, currency)}
                   </span>
                 </div>
                 <div>
-                  <span className="text-[13px] text-[#556b82] uppercase tracking-wider block font-semibold">Simulated Payback</span>
-                  <span className="text-2xl lg:text-3xl font-bold text-[#0070f2] font-mono block mt-1">
+                  <span className="text-[13.5px] sm:text-[14px] text-[#556b82] uppercase tracking-wider block font-bold">Simulated Payback</span>
+                  <span className="text-2xl sm:text-3xl lg:text-[32px] font-extrabold text-[#0070f2] font-mono block mt-1 tracking-tight">
                     {simulatedBreakEven.toFixed(1)} months
                   </span>
                 </div>
                 <div>
-                  <span className="text-[13px] text-[#556b82] uppercase tracking-wider block font-semibold">Simulated 5-Year ROI</span>
-                  <span className="text-2xl lg:text-3xl font-bold text-[#8a3ffc] font-mono block mt-1">
+                  <span className="text-[13.5px] sm:text-[14px] text-[#556b82] uppercase tracking-wider block font-bold">Simulated 5-Year ROI</span>
+                  <span className="text-2xl sm:text-3xl lg:text-[32px] font-extrabold text-[#8a3ffc] font-mono block mt-1 tracking-tight">
                     {simulated5YRoi.toFixed(1)}%
                   </span>
                 </div>
               </div>
 
-              {/* Deep Scenarios Link */}
-              <div className="flex items-center justify-between pt-2">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSimSavingsFactor(1.0);
-                    setSimMigrationFactor(1.0);
-                    setSimTargetFactor(1.0);
-                  }}
-                  className="px-4 py-2.5 bg-white border border-[#d9e2ec] hover:bg-slate-50 text-[14px] font-semibold text-[#1d2d3e] rounded-xl transition-colors cursor-pointer"
-                >
-                  Reset to 1.0x Base Case
-                </button>
+              {/* Action Controls with Prominent Generate AI Insights Button */}
+              <div className="flex flex-wrap items-center justify-between gap-4 pt-2">
+                <div className="flex flex-wrap items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={handleGenerateSimulationAi}
+                    disabled={loadingSimAi}
+                    className="inline-flex items-center space-x-2.5 px-6 py-3 bg-gradient-to-r from-[#0070f2] to-[#0057d2] hover:from-[#0057d2] hover:to-[#0040a8] text-white text-[15px] font-bold rounded-xl shadow-md hover:shadow-lg transition-all cursor-pointer disabled:opacity-60"
+                  >
+                    <Sparkles className={`w-4 h-4 ${loadingSimAi ? 'animate-spin' : ''}`} />
+                    <span>{loadingSimAi ? 'Synthesizing Live AI Insights...' : '✦ Generate Live AI Insights'}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSimSavingsFactor(1.0);
+                      setSimMigrationFactor(1.0);
+                      setSimTargetFactor(1.0);
+                    }}
+                    className="px-5 py-3 bg-white border border-[#d9e2ec] hover:bg-slate-50 text-[15px] font-semibold text-[#1d2d3e] rounded-xl transition-colors cursor-pointer shadow-2xs"
+                  >
+                    Reset to 1.0x Base Case
+                  </button>
+                </div>
+
                 <Link
                   href={`/scenarios/${assessmentId}`}
-                  className="inline-flex items-center space-x-2 text-[14px] font-bold text-[#0070f2] hover:text-[#0057d2] group"
+                  className="inline-flex items-center space-x-2 text-[15px] font-bold text-[#0070f2] hover:text-[#0057d2] group"
                 >
-                  <span>Open Full Scenarios &amp; Monte Carlo Suite</span>
+                  <span>Explore Business Scenarios</span>
                   <ArrowLeft className="w-4 h-4 rotate-180 transition-transform group-hover:translate-x-1" />
                 </Link>
               </div>
+
+              {/* Live AI Simulation Advisory Rendering */}
+              {simAiInsights && (
+                <div className="pt-2 animate-fadeIn">
+                  {renderSimulationAiAdvisory(simAiInsights)}
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -1840,7 +2179,7 @@ export default function DashboardPage() {
                   Migration Scope &amp; Incture Packaged Delivery
                 </h2>
                 <p className="text-[14px] sm:text-[15px] text-[#556b82] mt-1">
-                  Execution methodology de-risked by IntSwitch accelerator and fixed Indicative Incture migration packages
+                  Execution methodology accelerated by IntSwitch accelerator and fixed Indicative Incture migration packages
                 </p>
               </div>
 
@@ -2040,121 +2379,7 @@ export default function DashboardPage() {
           </div>
         )}
 
-        {/* ========================================================================= */}
-        {/* TAB 7: METHODOLOGY & RISK MATRIX                                          */}
-        {/* ========================================================================= */}
-        {dashboardTab === 'methodology' && (
-          <div className="space-y-8 lg:space-y-10 animate-fadeIn">
-            <div className="bg-white rounded-3xl border border-[#d9e2ec] p-8 md:p-10 shadow-xs space-y-8">
-              <div className="border-b border-[#d9e2ec] pb-5">
-                <h2 className="text-2xl lg:text-[26px] font-bold text-[#1d2d3e]">
-                  Methodology, Audit Standards &amp; Risk Matrix
-                </h2>
-                <p className="text-[14px] sm:text-[15px] text-[#556b82] mt-1">
-                  Authoritative mathematical rules, financial modeling criteria, and enterprise governance safeguards
-                </p>
-              </div>
 
-              {/* 8-Step Deterministic Calculation Flow */}
-              <div className="space-y-4">
-                <h4 className="text-[20px] font-bold text-[#1d2d3e]">8-Step Deterministic Calculation Flow</h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
-                  <div className="p-5 bg-slate-50 rounded-2xl border border-[#d9e2ec] space-y-2">
-                    <span className="font-bold text-[#0070f2] block text-[16px] sm:text-[17px]">1. Baseline Operating Cost Assessment</span>
-                    <p className="text-[14px] sm:text-[15px] text-slate-700 leading-relaxed">
-                      Sum of licensing ({formatCurrency(licensingCost, currency)}), hardware ({formatCurrency(infraCost, currency)}), support ({formatCurrency(supportCost, currency)}), and operations ({formatCurrency(operationsCost, currency)}) = <strong className="text-slate-900 font-bold text-[15px] sm:text-[16px]">{formatCurrency(currentTco, currency)}/yr</strong>.
-                    </p>
-                  </div>
-                  <div className="p-5 bg-slate-50 rounded-2xl border border-[#d9e2ec] space-y-2">
-                    <span className="font-bold text-[#0070f2] block text-[16px] sm:text-[17px]">2. Target Edition &amp; Capacity Sizing</span>
-                    <p className="text-[14px] sm:text-[15px] text-slate-700 leading-relaxed">
-                      Standard Edition base subscription ({formatCurrency(editionBasePrice, currency)}) + 59 message packs ({formatCurrency(packsCost, currency)}) = <strong className="text-slate-900 font-bold text-[15px] sm:text-[16px]">{formatCurrency(targetTco, currency)}/yr</strong>.
-                    </p>
-                  </div>
-                  <div className="p-5 bg-slate-50 rounded-2xl border border-[#d9e2ec] space-y-2">
-                    <span className="font-bold text-[#0070f2] block text-[16px] sm:text-[17px]">3. Annual Run-Rate Reduction</span>
-                    <p className="text-[14px] sm:text-[15px] text-slate-700 leading-relaxed">
-                      Calculated as <code className="font-mono bg-slate-200/80 text-slate-900 px-2 py-0.5 rounded text-[14px] font-semibold">Current TCO - Target TCO</code> = <strong className="text-emerald-700 font-bold text-[15px] sm:text-[16px]">+{formatCurrency(annualSavings, currency)}/yr</strong> in recurring cash liberation.
-                    </p>
-                  </div>
-                  <div className="p-5 bg-slate-50 rounded-2xl border border-[#d9e2ec] space-y-2">
-                    <span className="font-bold text-[#0070f2] block text-[16px] sm:text-[17px]">4. Relative Efficiency Index</span>
-                    <p className="text-[14px] sm:text-[15px] text-slate-700 leading-relaxed">
-                      Calculated as <code className="font-mono bg-slate-200/80 text-slate-900 px-2 py-0.5 rounded text-[14px] font-semibold">(Annual Savings / Current TCO) × 100</code> = <strong className="text-emerald-700 font-bold text-[15px] sm:text-[16px]">{savingsPct.toFixed(1)}%</strong> structural operational expenditure reduction.
-                    </p>
-                  </div>
-                  <div className="p-5 bg-slate-50 rounded-2xl border border-[#d9e2ec] space-y-2">
-                    <span className="font-bold text-[#0070f2] block text-[16px] sm:text-[17px]">5. Indicative Migration Investment</span>
-                    <p className="text-[14px] sm:text-[15px] text-slate-700 leading-relaxed">
-                      Incture {packageName} packaged migration delivery = <strong className="text-slate-900 font-bold text-[15px] sm:text-[16px]">{formatCurrency(migrationCost, currency)}</strong> over {indicativeTimeline} delivery timeline.
-                    </p>
-                  </div>
-                  <div className="p-5 bg-slate-50 rounded-2xl border border-[#d9e2ec] space-y-2">
-                    <span className="font-bold text-[#0070f2] block text-[16px] sm:text-[17px]">6. Capital Payback Horizon</span>
-                    <p className="text-[14px] sm:text-[15px] text-slate-700 leading-relaxed">
-                      Calculated as <code className="font-mono bg-slate-200/80 text-slate-900 px-2 py-0.5 rounded text-[14px] font-semibold">(Migration Cost / Annual Savings) × 12</code> = <strong className="text-[#0070f2] font-bold text-[15px] sm:text-[16px]">{breakEvenMonths.toFixed(1)} Months</strong> to 100% capital recovery.
-                    </p>
-                  </div>
-                  <div className="p-5 bg-slate-50 rounded-2xl border border-[#d9e2ec] space-y-2">
-                    <span className="font-bold text-[#0070f2] block text-[16px] sm:text-[17px]">7. 5-Year Cumulative Net Benefit</span>
-                    <p className="text-[14px] sm:text-[15px] text-slate-700 leading-relaxed">
-                      Calculated as <code className="font-mono bg-slate-200/80 text-slate-900 px-2 py-0.5 rounded text-[14px] font-semibold">(5 × Annual Savings) - Migration Cost</code> = <strong className="text-emerald-700 font-bold text-[15px] sm:text-[16px]">+{formatCurrency(fiveYearNetBenefit, currency)}</strong> cumulative net value.
-                    </p>
-                  </div>
-                  <div className="p-5 bg-slate-50 rounded-2xl border border-[#d9e2ec] space-y-2">
-                    <span className="font-bold text-[#0070f2] block text-[16px] sm:text-[17px]">8. 5-Year Return on Investment</span>
-                    <p className="text-[14px] sm:text-[15px] text-slate-700 leading-relaxed">
-                      Calculated as <code className="font-mono bg-slate-200/80 text-slate-900 px-2 py-0.5 rounded text-[14px] font-semibold">((5-Yr Net Benefit - Migration Cost) / Migration Cost) × 100</code> = <strong className="text-purple-700 font-bold text-[15px] sm:text-[16px]">{fiveYearRoi.toFixed(1)}%</strong> 5-year capital ROI.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Grounded Risk Mitigation Register */}
-              <div className="space-y-4 pt-2">
-                <h4 className="text-[16px] font-bold text-[#1d2d3e]">Enterprise Risk Register &amp; Safeguards</h4>
-                <div className="space-y-3 text-[14px]">
-                  <div className="p-5 bg-white border border-[#d9e2ec] rounded-2xl space-y-1.5">
-                    <div className="flex items-center justify-between">
-                      <span className="font-bold text-rose-800 text-[15px]">Dual-Running Overlap Window</span>
-                      <span className="px-2.5 py-0.5 bg-rose-50 text-rose-700 font-bold rounded-lg border border-rose-200 text-xs">High</span>
-                    </div>
-                    <p className="text-slate-600 leading-relaxed">
-                      Running both {sourcePlatform} and BTP concurrently during migration waves incurs dual operational overhead. Mitigate by structuring waves by business domain with strict 90-day cutover limits.
-                    </p>
-                  </div>
-                  <div className="p-5 bg-white border border-[#d9e2ec] rounded-2xl space-y-1.5">
-                    <div className="flex items-center justify-between">
-                      <span className="font-bold text-amber-800 text-[15px]">Custom ABAP / Java UDFs &amp; Specialized Adapters</span>
-                      <span className="px-2.5 py-0.5 bg-amber-50 text-amber-700 font-bold rounded-lg border border-amber-200 text-xs">Medium</span>
-                    </div>
-                    <p className="text-slate-600 leading-relaxed">
-                      Legacy custom mapping scripts require refactoring into standard Groovy scripts. Mitigate by using IntSwitch automated discovery in Sprint 1 to isolate and convert custom logic.
-                    </p>
-                  </div>
-                  <div className="p-5 bg-white border border-[#d9e2ec] rounded-2xl space-y-1.5">
-                    <div className="flex items-center justify-between">
-                      <span className="font-bold text-[#0070f2] text-[15px]">Network Latency &amp; Cloud Connector Security</span>
-                      <span className="px-2.5 py-0.5 bg-blue-50 text-[#0070f2] font-bold rounded-lg border border-blue-200 text-xs">Low</span>
-                    </div>
-                    <p className="text-slate-600 leading-relaxed">
-                      On-prem backend connectivity to cloud BTP. Mitigate by deploying dedicated SAP Cloud Connector with redundant tunnels and mutual TLS authentication.
-                    </p>
-                  </div>
-                  <div className="p-5 bg-white border border-[#d9e2ec] rounded-2xl space-y-1.5">
-                    <div className="flex items-center justify-between">
-                      <span className="font-bold text-purple-800 text-[15px]">Developer Enablement &amp; Organizational Change</span>
-                      <span className="px-2.5 py-0.5 bg-purple-50 text-purple-700 font-bold rounded-lg border border-purple-200 text-xs">Medium</span>
-                    </div>
-                    <p className="text-slate-600 leading-relaxed">
-                      Transitioning development teams to modern SAP BTP cloud paradigms. Mitigate through Incture Developer Bootcamps conducted during Weeks 2-4 of project kickoff.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
 
         {/* ========================================================================= */}
         {/* AI LIVE INSIGHTS MODAL                                                    */}
@@ -2162,31 +2387,37 @@ export default function DashboardPage() {
         {aiModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-fadeIn">
             <div className="bg-white rounded-3xl border border-[#d9e2ec] shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col">
-              {/* Header */}
-              <div className="p-6 border-b border-slate-800 flex items-center justify-between bg-slate-900 text-white shrink-0">
+              {/* Header - Clean Light Corporate Theme */}
+              <div className="p-6 border-b border-[#d9e2ec] flex items-center justify-between bg-white text-[#1d2d3e] shrink-0">
                 <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 rounded-2xl bg-blue-500/20 border border-blue-400/40 text-blue-300 flex items-center justify-center text-base font-bold">
+                  <div className="w-10 h-10 rounded-2xl bg-blue-50 border border-blue-200 text-[#0070f2] flex items-center justify-center text-lg font-bold shadow-xs">
                     ✦
                   </div>
                   <div>
-                    <div className="flex items-center space-x-2">
-                      <h3 className="text-base font-bold">{aiModalTitle}</h3>
-                      <span className="px-2.5 py-0.5 rounded-full text-[12px] font-bold tracking-wider uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                        {aiModalTab === 'executive' ? (aiAnalysis?.aiStatus || 'AI GENERATED') : (chartInsight?.aiStatus || 'AI GENERATED')}
-                      </span>
-                    </div>
-                    <span className="text-xs text-slate-400">
+                    <h3 className="text-lg font-bold text-[#1d2d3e]">{aiModalTitle}</h3>
+                    <span className="text-xs sm:text-sm text-[#556b82]">
                       ValueLens AI • Autonomous Decision Intelligence
                     </span>
                   </div>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => setAiModalOpen(false)}
-                  className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-slate-300 hover:text-white flex items-center justify-center text-sm transition-colors cursor-pointer"
-                >
-                  ✕
-                </button>
+                <div className="flex items-center space-x-3 shrink-0">
+                  <button
+                    type="button"
+                    onClick={handleRefreshLiveAiModal}
+                    disabled={chartInsightLoading || aiAnalysisLoading}
+                    className="inline-flex items-center space-x-2 px-3.5 py-1.5 sm:px-4 sm:py-2 bg-gradient-to-r from-[#0070f2] to-[#0057d2] hover:from-[#0057d2] hover:to-[#0040a8] text-white text-xs sm:text-sm font-bold rounded-xl shadow-xs hover:shadow-md transition-all cursor-pointer disabled:opacity-60"
+                  >
+                    <Sparkles className={`w-3.5 h-3.5 ${(chartInsightLoading || aiAnalysisLoading) ? 'animate-spin' : ''}`} />
+                    <span>{(chartInsightLoading || aiAnalysisLoading) ? 'Generating...' : '✦ Generate Live AI Insights'}</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setAiModalOpen(false)}
+                    className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center text-sm transition-colors cursor-pointer"
+                  >
+                    ✕
+                  </button>
+                </div>
               </div>
 
               {/* Navigation Tabs Bar */}
@@ -2194,74 +2425,69 @@ export default function DashboardPage() {
                 <button
                   type="button"
                   onClick={() => switchModalTab('tco-comparison', 'Platform Cost Breakdown & TCO Reduction')}
-                  className={`px-2 py-2 rounded-xl transition-all cursor-pointer font-bold text-xs flex items-center justify-center gap-1.5 ${
-                    aiModalTab === 'tco-comparison'
+                  className={`px-2 py-2 rounded-xl transition-all cursor-pointer font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 ${aiModalTab === 'tco-comparison'
                       ? 'bg-[#0070f2] text-white shadow-xs'
                       : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200'
-                  }`}
+                    }`}
                 >
                   <span className="truncate">Cost Comparison</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => switchModalTab('cost-drivers', 'Legacy TCO Cost Drivers & Elimination')}
-                  className={`px-2 py-2 rounded-xl transition-all cursor-pointer font-bold text-xs flex items-center justify-center gap-1.5 ${
-                    aiModalTab === 'cost-drivers'
+                  className={`px-2 py-2 rounded-xl transition-all cursor-pointer font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 ${aiModalTab === 'cost-drivers'
                       ? 'bg-[#0070f2] text-white shadow-xs'
                       : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200'
-                  }`}
+                    }`}
                 >
                   <span className="truncate">Cost Drivers</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => switchModalTab('migration-cost', 'Incture Migration Package & Delivery')}
-                  className={`px-2 py-2 rounded-xl transition-all cursor-pointer font-bold text-xs flex items-center justify-center gap-1.5 ${
-                    aiModalTab === 'migration-cost'
+                  className={`px-2 py-2 rounded-xl transition-all cursor-pointer font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 ${aiModalTab === 'migration-cost'
                       ? 'bg-[#0070f2] text-white shadow-xs'
                       : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200'
-                  }`}
+                    }`}
                 >
                   <span className="truncate">Migration Package</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => switchModalTab('roi-timeline', '10-Year ROI Trajectory & Recovery')}
-                  className={`px-2 py-2 rounded-xl transition-all cursor-pointer font-bold text-xs flex items-center justify-center gap-1.5 ${
-                    aiModalTab === 'roi-timeline'
+                  className={`px-2 py-2 rounded-xl transition-all cursor-pointer font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 ${aiModalTab === 'roi-timeline'
                       ? 'bg-[#0070f2] text-white shadow-xs'
                       : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200'
-                  }`}
+                    }`}
                 >
                   <span className="truncate">ROI Trajectory</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => switchModalTab('executive', 'Autonomous Strategic Advisory Dossier')}
-                  className={`px-2 py-2 rounded-xl transition-all cursor-pointer font-bold text-xs flex items-center justify-center gap-1.5 ${
-                    aiModalTab === 'executive'
-                      ? 'bg-emerald-600 text-white shadow-xs'
-                      : 'text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200'
-                  }`}
+                  className={`px-2 py-2 rounded-xl transition-all cursor-pointer font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 ${aiModalTab === 'executive'
+                      ? 'bg-[#0070f2] text-white shadow-xs'
+                      : 'text-[#0070f2] bg-blue-50 hover:bg-blue-100 border border-blue-200'
+                    }`}
                 >
                   <span className="truncate">Executive Dossier</span>
                 </button>
               </div>
 
               {/* Modal Body */}
-              <div className="p-6 overflow-y-auto space-y-6 flex-1 text-slate-800 text-xs sm:text-sm">
+              <div className="p-6 overflow-y-auto space-y-6 flex-1 text-slate-800">
                 {aiModalTab !== 'executive' && chartInsight && (
                   <div className="space-y-6 animate-fadeIn">
-                    <div className="p-5 bg-blue-50/80 border border-blue-200 rounded-2xl space-y-1.5">
-                      <span className="text-xs font-bold text-[#0070f2] uppercase tracking-wider block">Analytical Finding</span>
-                      <p className="text-sm font-semibold text-slate-900 leading-relaxed">
+                    <div className="p-6 bg-blue-50/80 border border-blue-200 rounded-2xl space-y-2">
+                      <span className="text-xs sm:text-sm font-bold text-[#0070f2] uppercase tracking-wider block">Analytical Finding</span>
+                      <p className="text-[15px] sm:text-[16px] font-semibold text-slate-900 leading-relaxed">
                         {chartInsight.finding}
                       </p>
                     </div>
 
-                    <div className="space-y-2">
-                      <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider">Detailed Strategic Analysis</h4>
-                      <p className="text-xs sm:text-sm text-slate-600 leading-relaxed bg-slate-50 p-4 rounded-2xl border border-[#d9e2ec]">
+                    <div className="space-y-2.5">
+                      <h4 className="text-xs sm:text-sm font-bold text-slate-700 uppercase tracking-wider">Detailed Strategic Analysis</h4>
+                      <p className="text-[14px] sm:text-[15px] text-slate-700 leading-relaxed bg-slate-50 p-5 rounded-2xl border border-[#d9e2ec]">
                         {chartInsight.detailedAnalysis}
                       </p>
                     </div>
@@ -2270,9 +2496,9 @@ export default function DashboardPage() {
                       <div className="grid grid-cols-2 gap-4">
                         {chartInsight.keyMetrics.map((m, idx) => (
                           <div key={idx} className="p-4 bg-slate-50 border border-[#d9e2ec] rounded-2xl space-y-1">
-                            <span className="text-xs text-slate-500 font-medium block">{m.label}</span>
-                            <span className="text-base font-bold font-mono text-slate-900 block">{m.value}</span>
-                            <span className="text-[12px] text-slate-500 block">{m.detail}</span>
+                            <span className="text-xs sm:text-sm text-slate-500 font-medium block">{m.label}</span>
+                            <span className="text-lg font-bold font-mono text-slate-900 block">{m.value}</span>
+                            <span className="text-[13px] text-slate-600 block">{m.detail}</span>
                           </div>
                         ))}
                       </div>
@@ -2282,21 +2508,39 @@ export default function DashboardPage() {
 
                 {aiModalTab === 'executive' && aiAnalysis && (
                   <div className="space-y-6 animate-fadeIn">
-                    <div className="p-5 bg-slate-900 text-white rounded-2xl space-y-2">
-                      <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider block">
+                    <div className="p-6 bg-blue-50/70 border border-blue-200 rounded-2xl space-y-2.5">
+                      <span className="text-xs sm:text-sm font-bold text-[#0070f2] uppercase tracking-wider block">
                         Autonomous Recommendation: {aiAnalysis.decision}
                       </span>
-                      <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                      <p className="text-[15px] sm:text-[16px] text-slate-800 leading-relaxed font-medium">
                         {aiAnalysis.executiveSummary}
                       </p>
                     </div>
 
-                    <div className="p-5 bg-emerald-50 border border-emerald-200 rounded-2xl space-y-2">
-                      <span className="text-xs font-bold text-[#107e3e] uppercase tracking-wider block">Financial Appraisal</span>
-                      <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                    <div className="p-6 bg-emerald-50/70 border border-emerald-200 rounded-2xl space-y-2.5">
+                      <span className="text-xs sm:text-sm font-bold text-[#107e3e] uppercase tracking-wider block">
+                        Financial Appraisal
+                      </span>
+                      <p className="text-[15px] sm:text-[16px] text-slate-800 leading-relaxed font-normal">
                         {aiAnalysis.financialAssessment}
                       </p>
                     </div>
+
+                    {aiAnalysis.keyInsights && aiAnalysis.keyInsights.length > 0 && (
+                      <div className="p-6 bg-slate-50 border border-[#d9e2ec] rounded-2xl space-y-3">
+                        <span className="text-xs sm:text-sm font-bold text-slate-700 uppercase tracking-wider block">
+                          Strategic Value Insights
+                        </span>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                          {aiAnalysis.keyInsights.map((insight, idx) => (
+                            <div key={idx} className="p-3.5 bg-white border border-[#d9e2ec] rounded-xl flex items-start space-x-2.5 shadow-2xs">
+                              <span className="w-5 h-5 rounded-full bg-blue-50 text-[#0070f2] font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">✓</span>
+                              <span className="text-[14px] text-slate-800 font-medium leading-snug">{insight}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>

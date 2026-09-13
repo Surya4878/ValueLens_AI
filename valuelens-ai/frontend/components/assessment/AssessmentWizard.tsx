@@ -212,6 +212,58 @@ export function AssessmentWizard() {
             setAssessment((prev) => ({
               ...prev,
               ...parsed,
+              sourceSystem: {
+                ...prev.sourceSystem,
+                ...(parsed?.sourceSystem || {}),
+                companyInformation: {
+                  ...prev.sourceSystem.companyInformation,
+                  ...(parsed?.sourceSystem?.companyInformation || {}),
+                },
+                environmentAssessment: {
+                  ...prev.sourceSystem.environmentAssessment,
+                  ...(parsed?.sourceSystem?.environmentAssessment || {}),
+                },
+                volumetrics: {
+                  ...prev.sourceSystem.volumetrics,
+                  ...(parsed?.sourceSystem?.volumetrics || {}),
+                },
+                sapPiPoAnnualCostBreakdown: {
+                  ...prev.sourceSystem.sapPiPoAnnualCostBreakdown,
+                  ...(parsed?.sourceSystem?.sapPiPoAnnualCostBreakdown || {}),
+                  licensing: {
+                    ...prev.sourceSystem.sapPiPoAnnualCostBreakdown.licensing,
+                    ...(parsed?.sourceSystem?.sapPiPoAnnualCostBreakdown?.licensing || {}),
+                  },
+                  infrastructure: {
+                    ...prev.sourceSystem.sapPiPoAnnualCostBreakdown.infrastructure,
+                    ...(parsed?.sourceSystem?.sapPiPoAnnualCostBreakdown?.infrastructure || {}),
+                  },
+                  support: {
+                    ...prev.sourceSystem.sapPiPoAnnualCostBreakdown.support,
+                    ...(parsed?.sourceSystem?.sapPiPoAnnualCostBreakdown?.support || {}),
+                  },
+                  operations: {
+                    ...prev.sourceSystem.sapPiPoAnnualCostBreakdown.operations,
+                    ...(parsed?.sourceSystem?.sapPiPoAnnualCostBreakdown?.operations || {}),
+                  },
+                },
+              },
+              targetSystem: {
+                ...prev.targetSystem,
+                ...(parsed?.targetSystem || {}),
+                configuration: {
+                  ...prev.targetSystem.configuration,
+                  ...(parsed?.targetSystem?.configuration || {}),
+                },
+                additionalTcoComponents: {
+                  ...prev.targetSystem.additionalTcoComponents,
+                  ...(parsed?.targetSystem?.additionalTcoComponents || {}),
+                },
+              },
+              migrationRelatedDetails: {
+                ...prev.migrationRelatedDetails,
+                ...(parsed?.migrationRelatedDetails || {}),
+              },
             }));
           }
         }
@@ -224,8 +276,7 @@ export function AssessmentWizard() {
   // Handle switching platform on Step 0
   const handleSelectPlatform = (platId: PlatformId) => {
     setSelectedPlatform(platId);
-    const targetConfig = PLATFORM_CONFIGS[platId];
-    if (!targetConfig) return;
+    const targetConfig = PLATFORM_CONFIGS[platId] || PLATFORM_CONFIGS['sap-pipo'];
 
     const newCosts: Step5CostsState = {
       licensing: 0,
@@ -244,7 +295,7 @@ export function AssessmentWizard() {
       sourceSystem: {
         ...prev.sourceSystem,
         environmentAssessment: {
-          ...prev.sourceSystem.environmentAssessment,
+          ...(prev.sourceSystem?.environmentAssessment || {}),
           totalInterfaces: 0,
           simpleInterfaces: 0,
           mediumInterfaces: 0,
@@ -896,40 +947,40 @@ export function AssessmentWizard() {
                 setCompanyName(name);
                 setAssessment((prev) => ({ ...prev, name }));
               }}
-              companySize={assessment.sourceSystem.companyInformation.companySize}
+              companySize={assessment?.sourceSystem?.companyInformation?.companySize || ''}
               onCompanySizeChange={(companySize) =>
                 setAssessment((prev) => ({
                   ...prev,
                   sourceSystem: {
                     ...prev.sourceSystem,
                     companyInformation: {
-                      ...prev.sourceSystem.companyInformation,
+                      ...(prev.sourceSystem?.companyInformation || {}),
                       companySize,
                     },
                   },
                 }))
               }
-              industry={assessment.sourceSystem.companyInformation.industry}
+              industry={assessment?.sourceSystem?.companyInformation?.industry || ''}
               onIndustryChange={(industry) =>
                 setAssessment((prev) => ({
                   ...prev,
                   sourceSystem: {
                     ...prev.sourceSystem,
                     companyInformation: {
-                      ...prev.sourceSystem.companyInformation,
+                      ...(prev.sourceSystem?.companyInformation || {}),
                       industry,
                     },
                   },
                 }))
               }
-              migrationTimeline={assessment.sourceSystem.companyInformation.migrationTimeline}
+              migrationTimeline={assessment?.sourceSystem?.companyInformation?.migrationTimeline || ''}
               onMigrationTimelineChange={(migrationTimeline) =>
                 setAssessment((prev) => ({
                   ...prev,
                   sourceSystem: {
                     ...prev.sourceSystem,
                     companyInformation: {
-                      ...prev.sourceSystem.companyInformation,
+                      ...(prev.sourceSystem?.companyInformation || {}),
                       migrationTimeline,
                     },
                   },
@@ -959,7 +1010,7 @@ export function AssessmentWizard() {
                   prev.includes(id) ? prev.filter((q) => q !== id) : [...prev, id]
                 );
               }}
-              recommendedEdition={assessment.targetSystem.configuration.selectedEditionName || 'Standard Edition'}
+              recommendedEdition={assessment?.targetSystem?.configuration?.selectedEditionName || 'Standard Edition'}
               recommendationReason="Standard Edition is recommended for enterprise integration with API Management and B2B capabilities."
               onBack={() => setCurrentStep(2)}
               onContinue={() => setCurrentStep(4)}
@@ -968,35 +1019,35 @@ export function AssessmentWizard() {
 
           {currentStep === 4 && (
             <Step4Sizing
-              currentThroughput={assessment.sourceSystem.volumetrics.currentMessageThroughput || ''}
+              currentThroughput={assessment?.sourceSystem?.volumetrics?.currentMessageThroughput || ''}
               setCurrentThroughput={(v) =>
                 setAssessment((prev) => ({
                   ...prev,
                   sourceSystem: {
                     ...prev.sourceSystem,
                     volumetrics: {
-                      ...prev.sourceSystem.volumetrics,
+                      ...(prev.sourceSystem?.volumetrics || {}),
                       currentMessageThroughput: v,
                     },
                   },
                 }))
               }
-              expectedThroughput={assessment.sourceSystem.volumetrics.indicativeMessageThroughput || ''}
+              expectedThroughput={assessment?.sourceSystem?.volumetrics?.indicativeMessageThroughput || ''}
               setExpectedThroughput={(v) =>
                 setAssessment((prev) => ({
                   ...prev,
                   sourceSystem: {
                     ...prev.sourceSystem,
                     volumetrics: {
-                      ...prev.sourceSystem.volumetrics,
+                      ...(prev.sourceSystem?.volumetrics || {}),
                       indicativeMessageThroughput: v,
                     },
                   },
                 }))
               }
-              recommendedEdition={assessment.targetSystem.configuration.selectedEditionName || 'Standard Edition'}
-              additionalMessagePacks={assessment.targetSystem.configuration.additionalMessagePacks || 0}
-              additionalEicTenants={assessment.targetSystem.configuration.additionalEicTenants || 0}
+              recommendedEdition={assessment?.targetSystem?.configuration?.selectedEditionName || 'Standard Edition'}
+              additionalMessagePacks={assessment?.targetSystem?.configuration?.additionalMessagePacks || 0}
+              additionalEicTenants={assessment?.targetSystem?.configuration?.additionalEicTenants || 0}
               needsAem={false}
               onBack={() => setCurrentStep(3)}
               onContinue={() => setCurrentStep(5)}
@@ -1050,10 +1101,10 @@ export function AssessmentWizard() {
         {/* Right Sticky Sidebar (Steps 1 to 5) */}
         {!isWideLayout && (
           <div className="w-full lg:w-[340px] xl:w-[350px] shrink-0 space-y-5">
-            {/* Assessment Progress Card */}
+            {/* Input Progress Card */}
             <div className="bg-white rounded-2xl border border-[#d9e2ec] p-6 shadow-xs space-y-3">
               <h3 className="text-[15px] font-bold text-slate-900">
-                Assessment Progress
+                Input Progress
               </h3>
               <div className="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
                 <div
@@ -1069,13 +1120,10 @@ export function AssessmentWizard() {
 
             {/* Business Value Insights Card (Steps 1 to 5) */}
             <div className="bg-white rounded-2xl border border-[#d9e2ec] p-6 sm:p-7 shadow-xs sticky top-24">
-              <div className="flex items-center justify-between border-b border-[#e5e9f0] pb-4">
+              <div className="border-b border-[#e5e9f0] pb-4">
                 <h3 className="text-[16px] sm:text-[18px] font-semibold text-[#1d2d3e] uppercase tracking-wider">
                   Business Value Insights
                 </h3>
-                <span className="text-[12px] sm:text-[13px] bg-emerald-50 text-emerald-700 font-bold px-3 py-1 rounded-full border border-emerald-200">
-                  Dynamic
-                </span>
               </div>
 
               <div className="space-y-3 pt-5">
@@ -1086,7 +1134,7 @@ export function AssessmentWizard() {
                   </span>
                   <span className="text-[14px] sm:text-[16px] font-semibold text-[#1d2d3e] text-right whitespace-nowrap min-w-[110px] sm:min-w-[130px]">
                     {currentTcoPreview > 0 ? formatCurrency(currentTcoPreview, assessment.currency) : (
-                      <span className="text-[13px] sm:text-[14px] font-normal text-slate-400">Awaiting assessment</span>
+                      <span className="text-[13px] sm:text-[14px] font-normal text-slate-400">Awaiting input</span>
                     )}
                   </span>
                 </div>
@@ -1098,7 +1146,7 @@ export function AssessmentWizard() {
                   </span>
                   <span className="text-[14px] sm:text-[16px] font-semibold text-[#0070f2] text-right whitespace-nowrap min-w-[110px] sm:min-w-[130px]">
                     {targetTcoPreview > 0 ? formatCurrency(targetTcoPreview, assessment.currency) : (
-                      <span className="text-[13px] sm:text-[14px] font-normal text-slate-400">Awaiting assessment</span>
+                      <span className="text-[13px] sm:text-[14px] font-normal text-slate-400">Awaiting input</span>
                     )}
                   </span>
                 </div>
@@ -1110,7 +1158,7 @@ export function AssessmentWizard() {
                   </span>
                   <span className="text-[15px] sm:text-[16px] font-semibold text-emerald-700 text-right whitespace-nowrap min-w-[110px] sm:min-w-[130px]">
                     {annualSavingsPreview > 0 ? formatCurrency(annualSavingsPreview, assessment.currency) : (
-                      <span className="text-[13px] sm:text-[14px] font-semibold text-emerald-600/80">Awaiting assessment</span>
+                      <span className="text-[13px] sm:text-[14px] font-semibold text-emerald-600/80">Awaiting input</span>
                     )}
                   </span>
                 </div>
@@ -1122,7 +1170,7 @@ export function AssessmentWizard() {
                   </span>
                   <span className="text-[14px] sm:text-[16px] font-semibold text-[#1d2d3e] text-right whitespace-nowrap min-w-[110px] sm:min-w-[130px]">
                     {migrationCostPreview > 0 ? formatCurrency(migrationCostPreview, assessment.currency) : (
-                      <span className="text-[13px] sm:text-[14px] font-normal text-slate-400">Awaiting assessment</span>
+                      <span className="text-[13px] sm:text-[14px] font-normal text-slate-400">Awaiting input</span>
                     )}
                   </span>
                 </div>
@@ -1136,7 +1184,7 @@ export function AssessmentWizard() {
                     {annualSavingsPreview > 0 && paybackMonthsPreview > 0
                       ? `${paybackMonthsPreview.toFixed(1)} months`
                       : (
-                        <span className="text-[13px] sm:text-[14px] font-normal text-slate-400">Awaiting assessment</span>
+                        <span className="text-[13px] sm:text-[14px] font-normal text-slate-400">Awaiting input</span>
                       )}
                   </span>
                 </div>

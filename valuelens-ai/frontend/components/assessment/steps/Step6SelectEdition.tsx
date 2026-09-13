@@ -73,15 +73,15 @@ export const Step6SelectEdition: React.FC<Step6Props> = ({
     suggestedMessagePacks?: number;
   } | null>(null);
 
-  const currentEd = assessment.targetSystem.configuration.selectedEditionName || '';
-  const units = assessment.targetSystem.configuration.numberOfUnits !== undefined
+  const currentEd = assessment?.targetSystem?.configuration?.selectedEditionName || '';
+  const units = assessment?.targetSystem?.configuration?.numberOfUnits !== undefined
     ? assessment.targetSystem.configuration.numberOfUnits
     : (currentEd ? 1 : 0);
-  const packs = assessment.targetSystem.configuration.additionalMessagePacks !== undefined
+  const packs = assessment?.targetSystem?.configuration?.additionalMessagePacks !== undefined
     ? assessment.targetSystem.configuration.additionalMessagePacks
     : 0;
-  const dataSpacePackages = assessment.targetSystem.configuration.dataSpacePackages || 0;
-  const additionalEicTenants = assessment.targetSystem.configuration.additionalEicTenants || 0;
+  const dataSpacePackages = assessment?.targetSystem?.configuration?.dataSpacePackages || 0;
+  const additionalEicTenants = assessment?.targetSystem?.configuration?.additionalEicTenants || 0;
 
   // Official SAP BTP Pricing calculation
   const getEditionBasePrice = (editionName: string) => {

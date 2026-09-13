@@ -303,11 +303,11 @@ export default function HomePage() {
       {/* 4. Featured Migration Scenario: SAP PI/PO to SAP BTP */}
       <section className="relative rounded-3xl overflow-hidden shadow-xs border border-[#d9e2ec] bg-white hover:shadow-md transition-shadow">
         <img
-          src="/images/featured-sap-pipo-scenario.png?v=2"
+          src="/images/featured-sap-pipo-scenario.png?v=3"
           alt="Featured Migration Scenario: SAP PI/PO to SAP BTP"
           className="w-full h-auto object-contain block select-none"
         />
-        {/* Exact Clickable Overlay for 'Assess Your SAP PI/PO Landscape' Button */}
+        {/* Exact Clickable Overlay for 'Business Value' Button */}
         <Link
           href="/assessment"
           style={{
@@ -317,7 +317,8 @@ export default function HomePage() {
             height: '9.38%',
           }}
           className="absolute rounded-lg cursor-pointer transition-all hover:bg-white/10 active:bg-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
-          title="Assess Your SAP PI/PO Landscape"
+          title="Business Value"
+          aria-label="Business Value"
         />
       </section>
     </div>

@@ -573,11 +573,11 @@ export default function IntSwitchPage() {
             </div>
           </div>
 
-          {/* D. Product Preview (Illustrative) Mock Dashboard */}
+          {/* D. Product Preview Mock Dashboard */}
           <div className="space-y-4">
             <div>
               <h3 className="text-[26px] sm:text-[30px] font-black text-slate-900 tracking-tight">
-                Product Preview (Illustrative)
+                Product Preview
               </h3>
               <p className="text-[14px] sm:text-[15px] text-slate-600 mt-1">
                 A unified view to assess, migrate, validate, and track progress.

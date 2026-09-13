@@ -9,35 +9,35 @@ export type RiskSeverity = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
 export type PriorityLevel = 'HIGH' | 'MEDIUM' | 'LOW';
 
 export interface CompanyInfo {
-  companySize: string;
-  industry: string;
-  migrationTimeline: string;
-  integrationComplexity: string;
-  availabilityRequirements: string;
-  complianceRequirements: string;
-  customDevelopment: string;
-  monitoringMaturity: string;
+  companySize?: string;
+  industry?: string;
+  migrationTimeline?: string;
+  integrationComplexity?: string;
+  availabilityRequirements?: string;
+  complianceRequirements?: string;
+  customDevelopment?: string;
+  monitoringMaturity?: string;
 }
 
 export interface EnvironmentAssessment {
-  integrationVolume: string;
-  systemComplexity: string;
-  availabilityRequirements: string;
-  customDevelopment: string;
-  complianceRequirements: string;
-  monitoring: string;
-  simpleInterfaces: number;
-  mediumInterfaces: number;
-  complexInterfaces: number;
-  totalInterfaces: number;
+  integrationVolume?: string;
+  systemComplexity?: string;
+  availabilityRequirements?: string;
+  customDevelopment?: string;
+  complianceRequirements?: string;
+  monitoring?: string;
+  simpleInterfaces?: number;
+  mediumInterfaces?: number;
+  complexInterfaces?: number;
+  totalInterfaces?: number;
   numberOfApplications?: number;
 }
 
 export interface Volumetrics {
-  currentMessageThroughput: string;
-  indicativeMessageThroughput: string;
-  apiCount: number;
-  b2bInterfaces: number;
+  currentMessageThroughput?: string;
+  indicativeMessageThroughput?: string;
+  apiCount?: number;
+  b2bInterfaces?: number;
 }
 
 export interface LicensingCosts {

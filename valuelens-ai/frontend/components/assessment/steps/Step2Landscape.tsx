@@ -38,7 +38,7 @@ export const Step2Landscape: React.FC<Step2Props> = ({
   // PI/PO state (defaults all empty/zero initially)
   const [piPoVersion, setPiPoVersion] = React.useState<string>('');
   const [piPoInterfacesCount, setPiPoInterfacesCountState] = React.useState<number>(
-    assessment.sourceSystem.environmentAssessment.totalInterfaces || 0
+    assessment?.sourceSystem?.environmentAssessment?.totalInterfaces || 0
   );
   const [piPoApplicationsCount, setPiPoApplicationsCount] = React.useState<number>(0);
   const [sapBackendSystem, setSapBackendSystem] = React.useState<string>('');
@@ -47,7 +47,7 @@ export const Step2Landscape: React.FC<Step2Props> = ({
   const [b2bProtocols, setB2bProtocols] = React.useState<string[]>([]);
   const [ediDocumentTypes, setEdiDocumentTypes] = React.useState<string[]>([]);
   const [b2bInterfacesCount, setB2bInterfacesCount] = React.useState<number>(
-    assessment.sourceSystem.volumetrics.b2bInterfaces || 0
+    assessment?.sourceSystem?.volumetrics?.b2bInterfaces || 0
   );
   const [hasGroundToGround, setHasGroundToGround] = React.useState<'Yes' | 'No' | 'Not sure' | ''>('');
   const [groundToGroundInterfaces, setGroundToGroundInterfaces] = React.useState<number>(0);
@@ -141,7 +141,7 @@ export const Step2Landscape: React.FC<Step2Props> = ({
           sourceSystem: {
             ...assessment.sourceSystem,
             environmentAssessment: {
-              ...assessment.sourceSystem.environmentAssessment,
+              ...(assessment.sourceSystem?.environmentAssessment || {}),
               totalInterfaces: 0,
               simpleInterfaces: 0,
               mediumInterfaces: 0,
@@ -173,11 +173,11 @@ export const Step2Landscape: React.FC<Step2Props> = ({
         sourceSystem: {
           ...assessment.sourceSystem,
           companyInformation: {
-            ...assessment.sourceSystem.companyInformation,
+            ...(assessment.sourceSystem?.companyInformation || {}),
             migrationTimeline: `${pkg.timelineMonths} (Incture ${pkg.name})`,
           },
           environmentAssessment: {
-            ...assessment.sourceSystem.environmentAssessment,
+            ...(assessment.sourceSystem?.environmentAssessment || {}),
             totalInterfaces: currentScopeCount,
             systemComplexity: currentComplexity,
           },
@@ -214,7 +214,7 @@ export const Step2Landscape: React.FC<Step2Props> = ({
       sourceSystem: {
         ...assessment.sourceSystem,
         environmentAssessment: {
-          ...assessment.sourceSystem.environmentAssessment,
+          ...(assessment.sourceSystem?.environmentAssessment || {}),
           totalInterfaces: val,
           integrationVolume: volume,
           simpleInterfaces: simple,

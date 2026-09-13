@@ -10,7 +10,6 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
-import { ValueOriginChip } from '@/components/ui/ValueOriginChip';
 import { formatCompactCurrency, formatCurrency, formatPercent } from '@/lib/formatters';
 
 interface RoiTimelineChartProps {
@@ -70,7 +69,6 @@ export function RoiTimelineChart({
         <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
           <div className="flex items-center space-x-2">
             <h3 className="text-base font-bold text-slate-900">Multi-Year Economic Horizon</h3>
-            <ValueOriginChip origin="DERIVED" />
           </div>
 
           <div className="flex items-center bg-slate-100 p-0.5 rounded-lg text-xs font-semibold">
