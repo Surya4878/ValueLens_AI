@@ -30,6 +30,7 @@ export interface EnvironmentAssessment {
   mediumInterfaces: number;
   complexInterfaces: number;
   totalInterfaces: number;
+  numberOfApplications?: number;
 }
 
 export interface Volumetrics {
@@ -209,6 +210,10 @@ export interface RoiCalculationResult {
   calculationVersion: string;
   calculatedAt: string;
   currency: string;
+  sourcePlatform?: string;
+  recommendedMigrationPackage?: string;
+  recommendedBtpEdition?: string;
+  indicativeTimeline?: string;
 }
 
 export interface ScenarioOutcome {

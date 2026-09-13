@@ -4,6 +4,8 @@ server:
 spring:
   application:
     name: valuelens-backend
+  profiles:
+    default: dev
   datasource:
     url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/valuelens_db}
     username: ${DATABASE_USER:postgres}

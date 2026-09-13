@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
@@ -185,6 +185,41 @@ export function AssessmentWizard() {
     development: 0,
     other: 0,
   });
+
+  // Restore saved assessment data from localStorage if available
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem('valuelens_active_assessment');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          const hasData =
+            (parsed?.sourceSystem?.sapPiPoAnnualCostBreakdown?.licensing?.subtotal ?? 0) > 0 ||
+            (parsed?.sourceSystem?.sapPiPoAnnualCostBreakdown?.licensing?.sapPiPoLicenseCosts ?? 0) > 0 ||
+            (parsed?.migrationRelatedDetails?.totalMigrationCost ?? 0) > 0;
+          if (hasData) {
+            const breakdown = parsed.sourceSystem?.sapPiPoAnnualCostBreakdown;
+            if (breakdown) {
+              setCostsState({
+                licensing: breakdown.licensing?.subtotal || breakdown.licensing?.sapPiPoLicenseCosts || 0,
+                infrastructure: breakdown.infrastructure?.subtotal || breakdown.infrastructure?.hardwareServerCosts || 0,
+                support: breakdown.support?.subtotal || breakdown.support?.sapSupportMaintenance || 0,
+                operations: breakdown.operations?.subtotal || breakdown.operations?.administrativeStaffCosts || 0,
+                development: 0,
+                other: 0,
+              });
+            }
+            setAssessment((prev) => ({
+              ...prev,
+              ...parsed,
+            }));
+          }
+        }
+      } catch {
+        // ignore parse error
+      }
+    }
+  }, []);
 
   // Handle switching platform on Step 0
   const handleSelectPlatform = (platId: PlatformId) => {
@@ -1033,72 +1068,87 @@ export function AssessmentWizard() {
             </div>
 
             {/* Business Value Insights Card (Steps 1 to 5) */}
-            <div className="bg-white rounded-2xl border border-[#d9e2ec] p-6 sm:p-7 shadow-xs sticky top-24 space-y-5">
+            <div className="bg-white rounded-2xl border border-[#d9e2ec] p-6 sm:p-7 shadow-xs sticky top-24">
               <div className="flex items-center justify-between border-b border-[#e5e9f0] pb-4">
-                <h3 className="text-[16px] sm:text-[17px] font-bold text-[#1d2d3e] font-['72',sans-serif] uppercase tracking-wider">
-                  Business value insights
+                <h3 className="text-[16px] sm:text-[18px] font-semibold text-[#1d2d3e] uppercase tracking-wider">
+                  Business Value Insights
                 </h3>
-                <span className="text-[13px] bg-emerald-50 text-emerald-700 font-bold px-2.5 py-0.5 rounded-full border border-emerald-200">
+                <span className="text-[12px] sm:text-[13px] bg-emerald-50 text-emerald-700 font-bold px-3 py-1 rounded-full border border-emerald-200">
                   Dynamic
                 </span>
               </div>
 
-              <div className="space-y-4">
-                <div className="flex justify-between items-center gap-3 px-1">
-                  <span className="text-[14px] sm:text-[15px] text-[#556b82] font-medium">
+              <div className="space-y-3 pt-5">
+                {/* Row 1: Current TCO */}
+                <div className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-6 items-center min-h-[44px] px-4 border border-transparent">
+                  <span className="text-[14px] sm:text-[15px] text-[#556b82] font-medium text-left">
                     Current {activeConfig.name} TCO
                   </span>
-                  <span className="text-[15px] sm:text-[16px] font-semibold text-[#1d2d3e] font-mono shrink-0 text-right">
-                    {formatCurrency(currentTcoPreview, assessment.currency)}
+                  <span className="text-[14px] sm:text-[16px] font-semibold text-[#1d2d3e] text-right whitespace-nowrap min-w-[110px] sm:min-w-[130px]">
+                    {currentTcoPreview > 0 ? formatCurrency(currentTcoPreview, assessment.currency) : (
+                      <span className="text-[13px] sm:text-[14px] font-normal text-slate-400">Awaiting assessment</span>
+                    )}
                   </span>
                 </div>
 
-                <div className="flex justify-between items-center gap-3 px-1">
-                  <span className="text-[14px] sm:text-[15px] text-[#556b82] font-medium">
+                {/* Row 2: Target TCO */}
+                <div className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-6 items-center min-h-[44px] px-4 border border-transparent">
+                  <span className="text-[14px] sm:text-[15px] text-[#556b82] font-medium text-left">
                     Target SAP BTP TCO
                   </span>
-                  <span className="text-[15px] sm:text-[16px] font-semibold text-[#0070f2] font-mono shrink-0 text-right">
-                    {formatCurrency(targetTcoPreview, assessment.currency)}
+                  <span className="text-[14px] sm:text-[16px] font-semibold text-[#0070f2] text-right whitespace-nowrap min-w-[110px] sm:min-w-[130px]">
+                    {targetTcoPreview > 0 ? formatCurrency(targetTcoPreview, assessment.currency) : (
+                      <span className="text-[13px] sm:text-[14px] font-normal text-slate-400">Awaiting assessment</span>
+                    )}
                   </span>
                 </div>
 
-                <div className="p-4 sm:p-4.5 bg-emerald-50/80 rounded-xl flex justify-between items-center gap-3 border border-emerald-200/90">
-                  <span className="text-[14px] sm:text-[15px] text-emerald-800 font-bold">
+                {/* Row 3: Projected Annual Savings (Highlight) */}
+                <div className="p-4 bg-emerald-50/80 rounded-xl border border-emerald-200/90 grid grid-cols-[minmax(0,1fr)_auto] gap-x-6 items-center min-h-[46px]">
+                  <span className="text-[14px] sm:text-[15px] text-emerald-800 font-bold text-left">
                     Projected Annual Savings
                   </span>
-                  <span className="text-[16px] sm:text-[17px] font-bold text-emerald-700 font-mono shrink-0 text-right">
-                    {formatCurrency(annualSavingsPreview, assessment.currency)}
+                  <span className="text-[15px] sm:text-[16px] font-semibold text-emerald-700 text-right whitespace-nowrap min-w-[110px] sm:min-w-[130px]">
+                    {annualSavingsPreview > 0 ? formatCurrency(annualSavingsPreview, assessment.currency) : (
+                      <span className="text-[13px] sm:text-[14px] font-semibold text-emerald-600/80">Awaiting assessment</span>
+                    )}
                   </span>
                 </div>
 
-                <div className="flex justify-between items-center gap-3 px-1">
-                  <span className="text-[14px] sm:text-[15px] text-[#556b82] font-medium">
+                {/* Row 4: Migration Investment */}
+                <div className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-6 items-center min-h-[44px] px-4 border border-transparent">
+                  <span className="text-[14px] sm:text-[15px] text-[#556b82] font-medium text-left">
                     Migration Investment
                   </span>
-                  <span className="text-[15px] sm:text-[16px] font-semibold text-[#1d2d3e] font-mono shrink-0 text-right">
-                    {formatCurrency(migrationCostPreview, assessment.currency)}
+                  <span className="text-[14px] sm:text-[16px] font-semibold text-[#1d2d3e] text-right whitespace-nowrap min-w-[110px] sm:min-w-[130px]">
+                    {migrationCostPreview > 0 ? formatCurrency(migrationCostPreview, assessment.currency) : (
+                      <span className="text-[13px] sm:text-[14px] font-normal text-slate-400">Awaiting assessment</span>
+                    )}
                   </span>
                 </div>
 
-                <div className="flex justify-between items-center gap-3 px-1 pt-1">
-                  <span className="text-[14px] sm:text-[15px] text-[#556b82] font-medium">
+                {/* Row 5: Estimated Payback */}
+                <div className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-6 items-center min-h-[44px] px-4 border border-transparent">
+                  <span className="text-[14px] sm:text-[15px] text-[#556b82] font-medium text-left">
                     Estimated Payback
                   </span>
-                  <span className="text-[15px] sm:text-[16px] font-semibold text-emerald-600 font-mono shrink-0 text-right">
+                  <span className="text-[14px] sm:text-[16px] font-semibold text-emerald-600 text-right whitespace-nowrap min-w-[110px] sm:min-w-[130px]">
                     {annualSavingsPreview > 0 && paybackMonthsPreview > 0
-                      ? `${paybackMonthsPreview.toFixed(1)} Months`
-                      : '—'}
+                      ? `${paybackMonthsPreview.toFixed(1)} months`
+                      : (
+                        <span className="text-[13px] sm:text-[14px] font-normal text-slate-400">Awaiting assessment</span>
+                      )}
                   </span>
                 </div>
               </div>
 
               {/* Grounded IntSwitch Advantage Box */}
-              <div className="p-4 sm:p-[18px] bg-blue-50/80 rounded-xl border border-blue-200 text-blue-900 space-y-2">
+              <div className="mt-6 p-5 bg-blue-50/80 rounded-xl border border-blue-200 text-blue-900 space-y-2.5">
                 <div className="flex items-center justify-between gap-2">
-                  <span className="font-bold text-blue-950 text-[15px] sm:text-[16px]">
+                  <span className="font-semibold text-blue-950 text-[16px] sm:text-[18px]">
                     IntSwitch Value Add:
                   </span>
-                  <span className="text-[12px] sm:text-[13px] bg-emerald-100 text-emerald-800 font-bold px-2.5 py-0.5 rounded-full border border-emerald-200 shrink-0 whitespace-nowrap">
+                  <span className="text-[12px] sm:text-[13px] bg-emerald-100 text-emerald-800 font-bold px-3 py-1 rounded-full border border-emerald-200 shrink-0 whitespace-nowrap">
                     Included Free ($0 Cost)
                   </span>
                 </div>

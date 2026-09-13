@@ -21,6 +21,8 @@ public class AssessmentService {
         // Preload demo assessment into store
         AssessmentDto demo = buildDemoAssessment();
         inMemoryStore.put(demo.getId(), demo);
+        inMemoryStore.put("demo-assessment-1", demo);
+        inMemoryStore.put("demo-sap-pipo-to-btp", demo);
     }
 
     @Transactional
@@ -60,7 +62,11 @@ public class AssessmentService {
             dto.setCurrency(opt.get().getCurrency());
             return dto;
         }
-        return buildDemoAssessment();
+        AssessmentDto fallback = buildDemoAssessment();
+        if (id != null && !id.isBlank()) {
+            fallback.setId(id);
+        }
+        return fallback;
     }
 
     public List<AssessmentDto> listAssessments() {
@@ -69,30 +75,38 @@ public class AssessmentService {
 
     public AssessmentDto buildDemoAssessment() {
         AssessmentDto dto = new AssessmentDto();
-        dto.setId("demo-sap-pipo-to-btp");
-        dto.setName("Retail Enterprise SAP PI/PO Migration Assessment");
+        dto.setId("demo-assessment-1");
+        dto.setName("Enterprise SAP PI/PO to SAP BTP Migration Assessment");
         dto.setSourcePlatform("SAP PI/PO");
         dto.setTargetPlatform("SAP BTP Integration Suite");
         dto.setStatus("COMPLETED");
         dto.setCurrency("USD");
 
-        // Licensing: 150k + 50k + 30k + 20k = 250k
+        // Licensing & Maintenance: $85,000
         var lic = dto.getSourceSystem().getSapPiPoAnnualCostBreakdown().getLicensing();
-        lic.setSapPiPoLicenseCosts(BigDecimal.valueOf(45000));
-        lic.setThirdPartyAdapterLicenses(BigDecimal.valueOf(10000));
+        lic.setSapPiPoLicenseCosts(BigDecimal.valueOf(55000));
+        lic.setThirdPartyAdapterLicenses(BigDecimal.valueOf(15000));
         lic.setDevelopmentEnvironmentLicenses(BigDecimal.valueOf(10000));
         lic.setTestingEnvironmentLicenses(BigDecimal.valueOf(5000));
-        lic.setSubtotal(BigDecimal.valueOf(70000));
+        lic.setSubtotal(BigDecimal.valueOf(85000));
 
-        // Infrastructure: 15k + 5k + 5k + 5k = 30k
+        // Infrastructure & Hosting: $35,000
         var inf = dto.getSourceSystem().getSapPiPoAnnualCostBreakdown().getInfrastructure();
-        inf.setHardwareServerCosts(BigDecimal.valueOf(15000));
-        inf.setStorageBackupCosts(BigDecimal.valueOf(5000));
+        inf.setHardwareServerCosts(BigDecimal.valueOf(18000));
+        inf.setStorageBackupCosts(BigDecimal.valueOf(7000));
         inf.setNetworkingConnectivity(BigDecimal.valueOf(5000));
         inf.setDataCenterFacilities(BigDecimal.valueOf(5000));
-        inf.setSubtotal(BigDecimal.valueOf(30000));
+        inf.setSubtotal(BigDecimal.valueOf(35000));
 
-        // Support: 15k + 5k + 5k = 25k
+        // Operations & Administration: $45,000
+        var ops = dto.getSourceSystem().getSapPiPoAnnualCostBreakdown().getOperations();
+        ops.setAdministrativeStaffCosts(BigDecimal.valueOf(25000));
+        ops.setSupportStaffCosts(BigDecimal.valueOf(15000));
+        ops.setTrainingCertificationCosts(BigDecimal.valueOf(5000));
+        ops.setDataCenterFacilities(BigDecimal.ZERO);
+        ops.setSubtotal(BigDecimal.valueOf(45000));
+
+        // Support & External Contracts: $25,000
         var sup = dto.getSourceSystem().getSapPiPoAnnualCostBreakdown().getSupport();
         sup.setSapSupportMaintenance(BigDecimal.valueOf(15000));
         sup.setThirdPartySupportContracts(BigDecimal.valueOf(5000));
@@ -100,64 +114,59 @@ public class AssessmentService {
         sup.setDataCenterFacilities(BigDecimal.ZERO);
         sup.setSubtotal(BigDecimal.valueOf(25000));
 
-        // Operations: 12k + 8k = 20k
-        var ops = dto.getSourceSystem().getSapPiPoAnnualCostBreakdown().getOperations();
-        ops.setAdministrativeStaffCosts(BigDecimal.valueOf(12000));
-        ops.setSupportStaffCosts(BigDecimal.valueOf(8000));
-        ops.setTrainingCertificationCosts(BigDecimal.ZERO);
-        ops.setDataCenterFacilities(BigDecimal.ZERO);
-        ops.setSubtotal(BigDecimal.valueOf(20000));
+        // Total Current TCO: $85,000 + $35,000 + $45,000 + $25,000 = $190,000
 
         // Company Information
         var comp = dto.getSourceSystem().getCompanyInformation();
-        comp.setCompanySize("200");
-        comp.setIndustry("Retail");
-        comp.setMigrationTimeline("2 Months (Incture Starter Package)");
+        comp.setCompanySize("500");
+        comp.setIndustry("Manufacturing / Retail");
+        comp.setMigrationTimeline("4 Months (Incture Silver Package)");
+        comp.setIntegrationComplexity("Moderate");
 
-        // Environment Assessment
+        // Environment Assessment (PO 7.5, 45 interfaces, 5 applications, SAP ECC backend, B2B/EDI: Yes, Ground-to-Ground: 20)
         var env = dto.getSourceSystem().getEnvironmentAssessment();
-        env.setIntegrationVolume("low");
-        env.setSystemComplexity("simple");
+        env.setIntegrationVolume("medium");
+        env.setSystemComplexity("moderate");
         env.setAvailabilityRequirements("high");
-        env.setCustomDevelopment("low");
+        env.setCustomDevelopment("moderate");
         env.setComplianceRequirements("standard");
         env.setMonitoring("standard");
-        env.setSimpleInterfaces(10);
-        env.setMediumInterfaces(0);
-        env.setComplexInterfaces(0);
-        env.setTotalInterfaces(10);
+        env.setSimpleInterfaces(20);
+        env.setMediumInterfaces(15);
+        env.setComplexInterfaces(10);
+        env.setTotalInterfaces(45);
 
-        // Volumetrics
+        // Volumetrics (Current 350,000, Expected 600,000, 25 KB payload)
         var vol = dto.getSourceSystem().getVolumetrics();
-        vol.setCurrentMessageThroughput("50000");
-        vol.setIndicativeMessageThroughput("50000");
-        vol.setApiCount(10);
-        vol.setB2bInterfaces(0);
+        vol.setCurrentMessageThroughput("350000");
+        vol.setIndicativeMessageThroughput("600000");
+        vol.setApiCount(45);
+        vol.setB2bInterfaces(15);
 
-        // Target System Configuration (Starter Edition: 1 unit * $20,736 = $20,736 + $25,000 = $45,736)
+        // Target System Configuration (Standard Edition: $64,068 + 59 message blocks * $84 = $4,956 -> $69,024)
         var targetConfig = dto.getTargetSystem().getConfiguration();
-        targetConfig.setSelectedEditionName("SAP Integration Suite, Starter Edition");
+        targetConfig.setSelectedEditionName("SAP Integration Suite, Standard Edition");
         targetConfig.setNumberOfUnits(1);
-        targetConfig.setAdditionalMessagePacks(0);
-        targetConfig.setTotalAnnualCost(BigDecimal.valueOf(20736.00));
-        targetConfig.setCalculationFormula("1 x $ 20,736.00");
+        targetConfig.setAdditionalMessagePacks(59);
+        targetConfig.setTotalAnnualCost(BigDecimal.valueOf(69024.00));
+        targetConfig.setCalculationFormula("1 x $ 64,068.00 + 59 x $ 84.00");
 
         var targetAdd = dto.getTargetSystem().getAdditionalTcoComponents();
-        targetAdd.setTotalAdditionalTcoAnnual(BigDecimal.valueOf(25000.00));
+        targetAdd.setTotalAdditionalTcoAnnual(BigDecimal.ZERO);
 
-        // Migration Costs: Incture Starter Package ($19,000 total indicative cost)
-        // 11.4k Development (60%) + 3.8k IntSwitch Testing (20%) + 1.9k Setup/Architecture (10%) + 1.9k PM/Hypercare (10%) = 19k
+        // Migration Costs: Incture Silver Package ($65,000 total indicative cost, 4 months timeline)
+        // 39k Development (60%) + 13k Testing (20%) + 6.5k Architecture (10%) + 6.5k PM/Hypercare (10%) = 65k
         var mig = dto.getMigrationRelatedDetails();
-        mig.setDevelopmentCost(BigDecimal.valueOf(11400));
-        mig.setTestingCost(BigDecimal.valueOf(3800));
-        mig.setArchitectureCost(BigDecimal.valueOf(1900));
-        mig.setProjectManagementCost(BigDecimal.valueOf(1900));
+        mig.setDevelopmentCost(BigDecimal.valueOf(39000));
+        mig.setTestingCost(BigDecimal.valueOf(13000));
+        mig.setArchitectureCost(BigDecimal.valueOf(6500));
+        mig.setProjectManagementCost(BigDecimal.valueOf(6500));
         mig.setTrainingCost(BigDecimal.ZERO);
         mig.setDeploymentCutoverCost(BigDecimal.ZERO);
         mig.setDocumentationCost(BigDecimal.ZERO);
-        mig.setBaseMigrationCost(BigDecimal.valueOf(19000));
+        mig.setBaseMigrationCost(BigDecimal.valueOf(65000));
         mig.setContingencyCost(BigDecimal.ZERO);
-        mig.setTotalMigrationCost(BigDecimal.valueOf(19000));
+        mig.setTotalMigrationCost(BigDecimal.valueOf(65000));
         mig.setCurrency("USD");
         mig.setRoiAnalysisPeriodYears(5);
 

@@ -329,6 +329,20 @@ public class RoiCalculationService {
         response.setCalculationVersion(calculationVersion);
         response.setCalculatedAt(entity.getCalculatedAt());
         response.setCurrency(assessment.getCurrency() != null ? assessment.getCurrency() : "USD");
+        response.setSourcePlatform(assessment.getSourcePlatform() != null ? assessment.getSourcePlatform() : "SAP PI/PO");
+        String pkg = "Silver";
+        if (migrationResult.totalMigrationCost().compareTo(BigDecimal.valueOf(30000)) <= 0) {
+            pkg = "Starter";
+        } else if (migrationResult.totalMigrationCost().compareTo(BigDecimal.valueOf(100000)) >= 0) {
+            pkg = "Platinum";
+        } else if (migrationResult.totalMigrationCost().compareTo(BigDecimal.valueOf(70000)) > 0) {
+            pkg = "Gold";
+        }
+        response.setRecommendedMigrationPackage(pkg);
+        response.setRecommendedBtpEdition(targetConfig.getSelectedEditionName() != null && !targetConfig.getSelectedEditionName().isBlank()
+                ? targetConfig.getSelectedEditionName() : "SAP Integration Suite, Standard Edition");
+        response.setIndicativeTimeline(assessment.getMigrationTimeline() != null && !assessment.getMigrationTimeline().isBlank()
+                ? assessment.getMigrationTimeline() : "4 months");
 
         return response;
     }

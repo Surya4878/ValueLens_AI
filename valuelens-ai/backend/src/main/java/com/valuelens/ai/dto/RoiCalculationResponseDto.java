@@ -147,6 +147,20 @@ public class RoiCalculationResponseDto {
     public String getCurrency() { return currency; }
     public void setCurrency(String currency) { this.currency = currency; }
 
+    private String sourcePlatform;
+    private String recommendedMigrationPackage;
+    private String recommendedBtpEdition;
+    private String indicativeTimeline;
+
+    public String getSourcePlatform() { return sourcePlatform; }
+    public void setSourcePlatform(String sourcePlatform) { this.sourcePlatform = sourcePlatform; }
+    public String getRecommendedMigrationPackage() { return recommendedMigrationPackage; }
+    public void setRecommendedMigrationPackage(String recommendedMigrationPackage) { this.recommendedMigrationPackage = recommendedMigrationPackage; }
+    public String getRecommendedBtpEdition() { return recommendedBtpEdition; }
+    public void setRecommendedBtpEdition(String recommendedBtpEdition) { this.recommendedBtpEdition = recommendedBtpEdition; }
+    public String getIndicativeTimeline() { return indicativeTimeline; }
+    public void setIndicativeTimeline(String indicativeTimeline) { this.indicativeTimeline = indicativeTimeline; }
+
     public static class CostDriverDto {
         private String category;
         private BigDecimal amount;
