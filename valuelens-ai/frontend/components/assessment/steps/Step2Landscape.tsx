@@ -261,10 +261,10 @@ export const Step2Landscape: React.FC<Step2Props> = ({
               </h3>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 sm:gap-7">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 lg:gap-6">
               {/* Q1: Version */}
-              <div>
-                <label className="block text-[14px] sm:text-[15px] font-semibold text-slate-800 mb-2 leading-[1.4]">
+              <div className="min-w-0">
+                <label className="block text-[14px] sm:text-[15px] font-semibold text-slate-800 mb-2 leading-[1.35] whitespace-normal">
                   1. PI/PO Version <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
@@ -287,8 +287,8 @@ export const Step2Landscape: React.FC<Step2Props> = ({
               </div>
 
               {/* Q2: Interface Count */}
-              <div>
-                <label className="block text-[14px] sm:text-[15px] font-semibold text-slate-800 mb-2 leading-[1.4]">
+              <div className="min-w-0">
+                <label className="block text-[14px] sm:text-[15px] font-semibold text-slate-800 mb-2 leading-[1.35] whitespace-normal">
                   2. Number of Interfaces <span className="text-red-500">*</span>
                 </label>
                 <div className="h-12 flex rounded-lg border border-slate-300 overflow-hidden focus-within:ring-2 focus-within:ring-[#0070f2] bg-white">
@@ -300,18 +300,18 @@ export const Step2Landscape: React.FC<Step2Props> = ({
                       if (['-', '+', 'e', 'E', '.'].includes(e.key)) e.preventDefault();
                     }}
                     onChange={(e) => setPiPoInterfacesCount(Math.max(0, parseInt(e.target.value) || 0))}
-                    className="w-full text-[15px] font-medium px-4 focus:outline-none bg-white text-slate-900 placeholder:text-[15px] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    className="w-full min-w-0 text-[15px] font-medium px-4 focus:outline-none bg-white text-slate-900 placeholder:text-[15px] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                     placeholder="0"
                   />
-                  <div className="bg-slate-50 border-l border-slate-200 px-4 flex items-center text-[14px] font-medium text-slate-600 shrink-0">
+                  <div className="bg-slate-50 border-l border-slate-200 px-3 sm:px-3.5 flex items-center text-[13px] sm:text-[14px] font-medium text-slate-600 shrink-0">
                     interfaces
                   </div>
                 </div>
               </div>
 
               {/* Q3: Applications Count */}
-              <div>
-                <label className="block text-[14px] sm:text-[15px] font-semibold text-slate-800 mb-2 leading-[1.4]">
+              <div className="min-w-0">
+                <label className="block text-[14px] sm:text-[15px] font-semibold text-slate-800 mb-2 leading-[1.35] whitespace-normal">
                   3. Connected Applications <span className="text-red-500">*</span>
                 </label>
                 <div className="h-12 flex rounded-lg border border-slate-300 overflow-hidden focus-within:ring-2 focus-within:ring-[#0070f2] bg-white">
@@ -323,18 +323,18 @@ export const Step2Landscape: React.FC<Step2Props> = ({
                       if (['-', '+', 'e', 'E', '.'].includes(e.key)) e.preventDefault();
                     }}
                     onChange={(e) => setPiPoApplicationsCount(Math.max(0, parseInt(e.target.value) || 0))}
-                    className="w-full text-[15px] font-medium px-4 focus:outline-none bg-white text-slate-900 placeholder:text-[15px] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    className="w-full min-w-0 text-[15px] font-medium px-4 focus:outline-none bg-white text-slate-900 placeholder:text-[15px] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                     placeholder="0"
                   />
-                  <div className="bg-slate-50 border-l border-slate-200 px-4 flex items-center text-[14px] font-medium text-slate-600 shrink-0">
+                  <div className="bg-slate-50 border-l border-slate-200 px-3 sm:px-3.5 flex items-center text-[13px] sm:text-[14px] font-medium text-slate-600 shrink-0">
                     apps
                   </div>
                 </div>
               </div>
 
               {/* Q4: Backend System */}
-              <div>
-                <label className="block text-[14px] sm:text-[15px] font-semibold text-slate-800 mb-2 leading-[1.4]">
+              <div className="min-w-0">
+                <label className="block text-[14px] sm:text-[15px] font-semibold text-slate-800 mb-2 leading-[1.35] whitespace-normal">
                   4. Connected SAP Backend <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
@@ -389,26 +389,26 @@ export const Step2Landscape: React.FC<Step2Props> = ({
                 </div>
 
                 {hasB2bIntegrations === 'Yes' && (
-                  <div className="p-5 bg-slate-50/80 rounded-xl border border-slate-200 space-y-4">
-                    <span className="text-[14px] sm:text-[15px] font-bold text-blue-700 block">
-                      B2B / EDI Standards &amp; Protocols (Select all that apply)
+                  <div className="p-[18px] sm:p-[22px] bg-slate-50/80 rounded-xl border border-slate-200 space-y-4 overflow-visible">
+                    <span className="text-[15px] sm:text-[16px] font-semibold text-blue-900 block leading-[1.4] break-words">
+                      B2B / EDI Standards &amp; Protocols (that apply)
                     </span>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3.5">
                       {['EDIFACT', 'ANSI X12', 'EANCOM', 'TRADACOMS', 'Odette', 'VDA', 'AS2', 'SFTP', 'Other'].map((std) => (
-                        <label key={std} className="flex items-center space-x-2.5 cursor-pointer text-[14px] sm:text-[15px] text-slate-700">
+                        <label key={std} className="flex items-center space-x-2.5 cursor-pointer text-[14px] sm:text-[15px] text-slate-700 min-w-0 select-none">
                           <input
                             type="checkbox"
                             checked={b2bStandards.includes(std)}
                             onChange={() => toggleArrayItem(b2bStandards, setB2bStandards, std)}
-                            className="w-5 h-5 rounded text-[#0070f2] border-slate-300"
+                            className="w-5 h-5 rounded text-[#0070f2] border-slate-300 shrink-0"
                           />
-                          <span>{std}</span>
+                          <span className="break-words">{std}</span>
                         </label>
                       ))}
                     </div>
 
                     <div className="pt-2">
-                      <label className="block text-[14px] sm:text-[15px] font-semibold text-slate-800 mb-2">
+                      <label className="block text-[14px] sm:text-[15px] font-semibold text-slate-800 mb-2 leading-[1.35]">
                         Approximate B2B Interfaces Count
                       </label>
                       <input
@@ -552,9 +552,9 @@ export const Step2Landscape: React.FC<Step2Props> = ({
               </h3>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 sm:gap-7">
-              <div>
-                <label className="block text-[14px] sm:text-[15px] font-semibold text-slate-800 mb-2 leading-[1.4]">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 lg:gap-6">
+              <div className="min-w-0">
+                <label className="block text-[14px] sm:text-[15px] font-semibold text-slate-800 mb-2 leading-[1.35] whitespace-normal">
                   Deployment Model <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
@@ -574,8 +574,8 @@ export const Step2Landscape: React.FC<Step2Props> = ({
                 </div>
               </div>
 
-              <div>
-                <label className="block text-[14px] sm:text-[15px] font-semibold text-slate-800 mb-2 leading-[1.4]">
+              <div className="min-w-0">
+                <label className="block text-[14px] sm:text-[15px] font-semibold text-slate-800 mb-2 leading-[1.35] whitespace-normal">
                   Total Number of APIs <span className="text-red-500">*</span>
                 </label>
                 <div className="h-12 flex rounded-lg border border-slate-300 overflow-hidden focus-within:ring-2 focus-within:ring-[#0070f2] bg-white">
@@ -583,17 +583,17 @@ export const Step2Landscape: React.FC<Step2Props> = ({
                     type="number"
                     value={muleTotalApis === 0 ? '' : muleTotalApis}
                     onChange={(e) => setMuleTotalApis(parseInt(e.target.value) || 0)}
-                    className="w-full text-[15px] font-medium px-4 focus:outline-none bg-white text-slate-900 placeholder:text-[15px]"
+                    className="w-full min-w-0 text-[15px] font-medium px-4 focus:outline-none bg-white text-slate-900 placeholder:text-[15px]"
                     placeholder="e.g. 95"
                   />
-                  <div className="bg-slate-50 border-l border-slate-200 px-4 flex items-center text-[14px] font-medium text-slate-600 shrink-0">
+                  <div className="bg-slate-50 border-l border-slate-200 px-3 sm:px-3.5 flex items-center text-[13px] sm:text-[14px] font-medium text-slate-600 shrink-0">
                     APIs
                   </div>
                 </div>
               </div>
 
-              <div>
-                <label className="block text-[14px] sm:text-[15px] font-semibold text-slate-800 mb-2 leading-[1.4]">
+              <div className="min-w-0">
+                <label className="block text-[14px] sm:text-[15px] font-semibold text-slate-800 mb-2 leading-[1.35] whitespace-normal">
                   Number of Applications <span className="text-red-500">*</span>
                 </label>
                 <div className="h-12 flex rounded-lg border border-slate-300 overflow-hidden focus-within:ring-2 focus-within:ring-[#0070f2] bg-white">
@@ -601,17 +601,17 @@ export const Step2Landscape: React.FC<Step2Props> = ({
                     type="number"
                     value={muleApplicationsCount === 0 ? '' : muleApplicationsCount}
                     onChange={(e) => setMuleApplicationsCount(parseInt(e.target.value) || 0)}
-                    className="w-full text-[15px] font-medium px-4 focus:outline-none bg-white text-slate-900 placeholder:text-[15px]"
+                    className="w-full min-w-0 text-[15px] font-medium px-4 focus:outline-none bg-white text-slate-900 placeholder:text-[15px]"
                     placeholder="e.g. 14"
                   />
-                  <div className="bg-slate-50 border-l border-slate-200 px-4 flex items-center text-[14px] font-medium text-slate-600 shrink-0">
+                  <div className="bg-slate-50 border-l border-slate-200 px-3 sm:px-3.5 flex items-center text-[13px] sm:text-[14px] font-medium text-slate-600 shrink-0">
                     apps
                   </div>
                 </div>
               </div>
 
-              <div>
-                <label className="block text-[14px] sm:text-[15px] font-semibold text-slate-800 mb-2 leading-[1.4]">
+              <div className="min-w-0">
+                <label className="block text-[14px] sm:text-[15px] font-semibold text-slate-800 mb-2 leading-[1.35] whitespace-normal">
                   Total Mule Flows <span className="text-red-500">*</span>
                 </label>
                 <div className="h-12 flex rounded-lg border border-slate-300 overflow-hidden focus-within:ring-2 focus-within:ring-[#0070f2] bg-white">
@@ -619,10 +619,10 @@ export const Step2Landscape: React.FC<Step2Props> = ({
                     type="number"
                     value={muleFlowsCount === 0 ? '' : muleFlowsCount}
                     onChange={(e) => setMuleFlowsCount(parseInt(e.target.value) || 0)}
-                    className="w-full text-[15px] font-medium px-4 focus:outline-none bg-white text-slate-900 placeholder:text-[15px]"
+                    className="w-full min-w-0 text-[15px] font-medium px-4 focus:outline-none bg-white text-slate-900 placeholder:text-[15px]"
                     placeholder="e.g. 280"
                   />
-                  <div className="bg-slate-50 border-l border-slate-200 px-4 flex items-center text-[14px] font-medium text-slate-600 shrink-0">
+                  <div className="bg-slate-50 border-l border-slate-200 px-3 sm:px-3.5 flex items-center text-[13px] sm:text-[14px] font-medium text-slate-600 shrink-0">
                     flows
                   </div>
                 </div>
@@ -813,9 +813,9 @@ export const Step2Landscape: React.FC<Step2Props> = ({
               </h3>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 sm:gap-7">
-              <div>
-                <label className="block text-[14px] sm:text-[15px] font-semibold text-slate-800 mb-2 leading-[1.4]">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 lg:gap-6">
+              <div className="min-w-0">
+                <label className="block text-[14px] sm:text-[15px] font-semibold text-slate-800 mb-2 leading-[1.35] whitespace-normal">
                   Neo Environment Scope <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
@@ -833,8 +833,8 @@ export const Step2Landscape: React.FC<Step2Props> = ({
                 </div>
               </div>
 
-              <div>
-                <label className="block text-[14px] sm:text-[15px] font-semibold text-slate-800 mb-2 leading-[1.4]">
+              <div className="min-w-0">
+                <label className="block text-[14px] sm:text-[15px] font-semibold text-slate-800 mb-2 leading-[1.35] whitespace-normal">
                   Custom Integration Flows (iFlows) <span className="text-red-500">*</span>
                 </label>
                 <div className="h-12 flex rounded-lg border border-slate-300 overflow-hidden focus-within:ring-2 focus-within:ring-[#0070f2] bg-white">
@@ -842,17 +842,17 @@ export const Step2Landscape: React.FC<Step2Props> = ({
                     type="number"
                     value={neoFlowsCount === 0 ? '' : neoFlowsCount}
                     onChange={(e) => setNeoFlowsCount(parseInt(e.target.value) || 0)}
-                    className="w-full text-[15px] font-medium px-4 focus:outline-none bg-white text-slate-900 placeholder:text-[15px]"
+                    className="w-full min-w-0 text-[15px] font-medium px-4 focus:outline-none bg-white text-slate-900 placeholder:text-[15px]"
                     placeholder="e.g. 140"
                   />
-                  <div className="bg-slate-50 border-l border-slate-200 px-4 flex items-center text-[14px] font-medium text-slate-600 shrink-0">
+                  <div className="bg-slate-50 border-l border-slate-200 px-3 sm:px-3.5 flex items-center text-[13px] sm:text-[14px] font-medium text-slate-600 shrink-0">
                     iFlows
                   </div>
                 </div>
               </div>
 
-              <div>
-                <label className="block text-[14px] sm:text-[15px] font-semibold text-slate-800 mb-2 leading-[1.4]">
+              <div className="min-w-0">
+                <label className="block text-[14px] sm:text-[15px] font-semibold text-slate-800 mb-2 leading-[1.35] whitespace-normal">
                   Connected Subaccounts / Apps <span className="text-red-500">*</span>
                 </label>
                 <div className="h-12 flex rounded-lg border border-slate-300 overflow-hidden focus-within:ring-2 focus-within:ring-[#0070f2] bg-white">
@@ -860,17 +860,17 @@ export const Step2Landscape: React.FC<Step2Props> = ({
                     type="number"
                     value={neoApplicationsCount === 0 ? '' : neoApplicationsCount}
                     onChange={(e) => setNeoApplicationsCount(parseInt(e.target.value) || 0)}
-                    className="w-full text-[15px] font-medium px-4 focus:outline-none bg-white text-slate-900 placeholder:text-[15px]"
+                    className="w-full min-w-0 text-[15px] font-medium px-4 focus:outline-none bg-white text-slate-900 placeholder:text-[15px]"
                     placeholder="e.g. 8"
                   />
-                  <div className="bg-slate-50 border-l border-slate-200 px-4 flex items-center text-[14px] font-medium text-slate-600 shrink-0">
+                  <div className="bg-slate-50 border-l border-slate-200 px-3 sm:px-3.5 flex items-center text-[13px] sm:text-[14px] font-medium text-slate-600 shrink-0">
                     apps
                   </div>
                 </div>
               </div>
 
-              <div>
-                <label className="block text-[14px] sm:text-[15px] font-semibold text-slate-800 mb-2 leading-[1.4]">
+              <div className="min-w-0">
+                <label className="block text-[14px] sm:text-[15px] font-semibold text-slate-800 mb-2 leading-[1.35] whitespace-normal">
                   Monthly Message Volume <span className="text-red-500">*</span>
                 </label>
                 <div className="h-12 flex rounded-lg border border-slate-300 overflow-hidden focus-within:ring-2 focus-within:ring-[#0070f2] bg-white">
@@ -878,10 +878,10 @@ export const Step2Landscape: React.FC<Step2Props> = ({
                     type="number"
                     value={neoMonthlyMessageVol}
                     onChange={(e) => setNeoMonthlyMessageVol(e.target.value)}
-                    className="w-full text-[15px] font-medium px-4 focus:outline-none bg-white text-slate-900 placeholder:text-[15px]"
+                    className="w-full min-w-0 text-[15px] font-medium px-4 focus:outline-none bg-white text-slate-900 placeholder:text-[15px]"
                     placeholder="e.g. 450000"
                   />
-                  <div className="bg-slate-50 border-l border-slate-200 px-4 flex items-center text-[14px] font-medium text-slate-600 shrink-0">
+                  <div className="bg-slate-50 border-l border-slate-200 px-3 sm:px-3.5 flex items-center text-[13px] sm:text-[14px] font-medium text-slate-600 shrink-0">
                     msg/mo
                   </div>
                 </div>
@@ -973,9 +973,9 @@ export const Step2Landscape: React.FC<Step2Props> = ({
               </h3>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 sm:gap-7">
-              <div>
-                <label className="block text-[14px] sm:text-[15px] font-semibold text-slate-800 mb-2 leading-[1.4]">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 lg:gap-6">
+              <div className="min-w-0">
+                <label className="block text-[14px] sm:text-[15px] font-semibold text-slate-800 mb-2 leading-[1.35] whitespace-normal">
                   Runtime Architecture <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
@@ -994,8 +994,8 @@ export const Step2Landscape: React.FC<Step2Props> = ({
                 </div>
               </div>
 
-              <div>
-                <label className="block text-[14px] sm:text-[15px] font-semibold text-slate-800 mb-2 leading-[1.4]">
+              <div className="min-w-0">
+                <label className="block text-[14px] sm:text-[15px] font-semibold text-slate-800 mb-2 leading-[1.35] whitespace-normal">
                   Total Boomi Processes <span className="text-red-500">*</span>
                 </label>
                 <div className="h-12 flex rounded-lg border border-slate-300 overflow-hidden focus-within:ring-2 focus-within:ring-[#0070f2] bg-white">
@@ -1003,17 +1003,17 @@ export const Step2Landscape: React.FC<Step2Props> = ({
                     type="number"
                     value={boomiProcessCount === 0 ? '' : boomiProcessCount}
                     onChange={(e) => setBoomiProcessCount(parseInt(e.target.value) || 0)}
-                    className="w-full text-[15px] font-medium px-4 focus:outline-none bg-white text-slate-900 placeholder:text-[15px]"
+                    className="w-full min-w-0 text-[15px] font-medium px-4 focus:outline-none bg-white text-slate-900 placeholder:text-[15px]"
                     placeholder="e.g. 110"
                   />
-                  <div className="bg-slate-50 border-l border-slate-200 px-4 flex items-center text-[14px] font-medium text-slate-600 shrink-0">
+                  <div className="bg-slate-50 border-l border-slate-200 px-3 sm:px-3.5 flex items-center text-[13px] sm:text-[14px] font-medium text-slate-600 shrink-0">
                     processes
                   </div>
                 </div>
               </div>
 
-              <div>
-                <label className="block text-[14px] sm:text-[15px] font-semibold text-slate-800 mb-2 leading-[1.4]">
+              <div className="min-w-0">
+                <label className="block text-[14px] sm:text-[15px] font-semibold text-slate-800 mb-2 leading-[1.35] whitespace-normal">
                   Connected Applications <span className="text-red-500">*</span>
                 </label>
                 <div className="h-12 flex rounded-lg border border-slate-300 overflow-hidden focus-within:ring-2 focus-within:ring-[#0070f2] bg-white">
@@ -1021,17 +1021,17 @@ export const Step2Landscape: React.FC<Step2Props> = ({
                     type="number"
                     value={boomiApplicationsCount === 0 ? '' : boomiApplicationsCount}
                     onChange={(e) => setBoomiApplicationsCount(parseInt(e.target.value) || 0)}
-                    className="w-full text-[15px] font-medium px-4 focus:outline-none bg-white text-slate-900 placeholder:text-[15px]"
+                    className="w-full min-w-0 text-[15px] font-medium px-4 focus:outline-none bg-white text-slate-900 placeholder:text-[15px]"
                     placeholder="e.g. 10"
                   />
-                  <div className="bg-slate-50 border-l border-slate-200 px-4 flex items-center text-[14px] font-medium text-slate-600 shrink-0">
+                  <div className="bg-slate-50 border-l border-slate-200 px-3 sm:px-3.5 flex items-center text-[13px] sm:text-[14px] font-medium text-slate-600 shrink-0">
                     apps
                   </div>
                 </div>
               </div>
 
-              <div>
-                <label className="block text-[14px] sm:text-[15px] font-semibold text-slate-800 mb-2 leading-[1.4]">
+              <div className="min-w-0">
+                <label className="block text-[14px] sm:text-[15px] font-semibold text-slate-800 mb-2 leading-[1.35] whitespace-normal">
                   Active Connectors <span className="text-red-500">*</span>
                 </label>
                 <div className="h-12 flex rounded-lg border border-slate-300 overflow-hidden focus-within:ring-2 focus-within:ring-[#0070f2] bg-white">
@@ -1039,10 +1039,10 @@ export const Step2Landscape: React.FC<Step2Props> = ({
                     type="number"
                     value={boomiConnectorsCount === 0 ? '' : boomiConnectorsCount}
                     onChange={(e) => setBoomiConnectorsCount(parseInt(e.target.value) || 0)}
-                    className="w-full text-[15px] font-medium px-4 focus:outline-none bg-white text-slate-900 placeholder:text-[15px]"
+                    className="w-full min-w-0 text-[15px] font-medium px-4 focus:outline-none bg-white text-slate-900 placeholder:text-[15px]"
                     placeholder="e.g. 18"
                   />
-                  <div className="bg-slate-50 border-l border-slate-200 px-4 flex items-center text-[14px] font-medium text-slate-600 shrink-0">
+                  <div className="bg-slate-50 border-l border-slate-200 px-3 sm:px-3.5 flex items-center text-[13px] sm:text-[14px] font-medium text-slate-600 shrink-0">
                     connectors
                   </div>
                 </div>

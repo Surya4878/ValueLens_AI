@@ -1237,7 +1237,40 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
 
         {/* Live Configured SAP BTP Annual Cloud Subscription Summary Banner */}
         {(() => {
-          const effectiveEd = currentEd || 'Standard Edition';
+          if (!currentEd) {
+            return (
+              <div className="bg-slate-50/90 rounded-3xl border border-slate-200 p-7 sm:p-8 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6 mt-6">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2.5">
+                    <span className="text-[13px] font-bold text-slate-500 uppercase tracking-wider">
+                      CONFIGURED SAP BTP CLOUD SUBSCRIPTION
+                    </span>
+                    <span className="text-[12px] sm:text-[13px] font-bold text-slate-600 bg-slate-200/80 px-3 py-0.5 rounded-full">
+                      Awaiting Selection
+                    </span>
+                  </div>
+                  <h4 className="text-xl sm:text-2xl font-bold text-slate-700 font-['72',sans-serif]">
+                    No edition selected yet
+                  </h4>
+                  <p className="text-[14px] text-[#556b82] leading-relaxed">
+                    Select an SAP Integration Suite edition above to configure and calculate your annual subscription baseline.
+                  </p>
+                </div>
+
+                <div className="text-right shrink-0 bg-white p-6 rounded-2xl border border-slate-200 shadow-xs">
+                  <span className="text-[13px] text-[#556b82] block mb-1">Total Configured Annual Subscription</span>
+                  <div className="text-2xl sm:text-3xl font-bold font-mono text-slate-400">
+                    —
+                  </div>
+                  <div className="text-[13px] text-slate-400 font-mono mt-1">
+                    Select edition above
+                  </div>
+                </div>
+              </div>
+            );
+          }
+
+          const effectiveEd = currentEd;
           const effectiveUnits = units || 1;
           const basePrice = getEditionBasePrice(effectiveEd);
           const monthlyBase = getEditionMonthlyPrice(effectiveEd);
@@ -1267,7 +1300,7 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
                   {dataSpacePackages > 0 && ` + ${dataSpacePackages} Data Space ($${dataSpaceCost.toLocaleString()})`}
                 </h4>
                 <p className="text-[13px] text-[#556b82] font-mono leading-relaxed">
-                  Quoting formula: {effectiveUnits} unit(s) &times; ${basePrice.toLocaleString()}/yr
+                  {effectiveUnits} unit(s) &times; ${basePrice.toLocaleString()}/yr
                   {packs > 0 ? ` + ${packs} packs &times; $84` : ''}
                   {dataSpacePackages > 0 ? ` + ${dataSpacePackages} DataSpace &times; $900` : ''}
                   {additionalEicTenants > 0 ? ` + ${additionalEicTenants} EIC &times; $41,460` : ''}

@@ -692,7 +692,7 @@ export function AssessmentWizard() {
   const isWideLayout = currentStep === 6 || currentStep === 7;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10 space-y-8">
+    <div className="max-w-[1380px] mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10 space-y-8">
       {/* Breadcrumb & Platform Bar */}
       <div className="flex flex-wrap items-center justify-between gap-4 text-[14px]">
         <div className="flex items-center space-x-2 text-[#556b82] font-medium">
@@ -845,9 +845,15 @@ export function AssessmentWizard() {
       </div>
 
       {/* Main Content Layout */}
-      <div className={`grid grid-cols-1 ${isWideLayout ? 'lg:grid-cols-1' : 'lg:grid-cols-3'} gap-6`}>
+      <div
+        className={
+          isWideLayout
+            ? 'w-full space-y-6'
+            : 'grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_340px] xl:grid-cols-[minmax(0,1fr)_350px] gap-6 lg:gap-8 items-start'
+        }
+      >
         {/* Step View Area */}
-        <div className={`${isWideLayout ? 'lg:col-span-1' : 'lg:col-span-2'} space-y-6`}>
+        <div className="min-w-0 space-y-6">
           {currentStep === 1 && (
             <Step1Organization
               companyName={companyName}
@@ -1008,7 +1014,7 @@ export function AssessmentWizard() {
 
         {/* Right Sticky Sidebar (Steps 1 to 5) */}
         {!isWideLayout && (
-          <div className="space-y-5">
+          <div className="w-full lg:w-[340px] xl:w-[350px] shrink-0 space-y-5">
             {/* Assessment Progress Card */}
             <div className="bg-white rounded-2xl border border-[#d9e2ec] p-6 shadow-xs space-y-3">
               <h3 className="text-[15px] font-bold text-slate-900">
@@ -1026,11 +1032,87 @@ export function AssessmentWizard() {
               </div>
             </div>
 
+            {/* Business Value Insights Card (Steps 1 to 5) */}
+            <div className="bg-white rounded-2xl border border-[#d9e2ec] p-6 sm:p-7 shadow-xs sticky top-24 space-y-5">
+              <div className="flex items-center justify-between border-b border-[#e5e9f0] pb-4">
+                <h3 className="text-[16px] sm:text-[17px] font-bold text-[#1d2d3e] font-['72',sans-serif] uppercase tracking-wider">
+                  Business value insights
+                </h3>
+                <span className="text-[13px] bg-emerald-50 text-emerald-700 font-bold px-2.5 py-0.5 rounded-full border border-emerald-200">
+                  Dynamic
+                </span>
+              </div>
+
+              <div className="space-y-4">
+                <div className="flex justify-between items-center gap-3 px-1">
+                  <span className="text-[14px] sm:text-[15px] text-[#556b82] font-medium">
+                    Current {activeConfig.name} TCO
+                  </span>
+                  <span className="text-[15px] sm:text-[16px] font-semibold text-[#1d2d3e] font-mono shrink-0 text-right">
+                    {formatCurrency(currentTcoPreview, assessment.currency)}
+                  </span>
+                </div>
+
+                <div className="flex justify-between items-center gap-3 px-1">
+                  <span className="text-[14px] sm:text-[15px] text-[#556b82] font-medium">
+                    Target SAP BTP TCO
+                  </span>
+                  <span className="text-[15px] sm:text-[16px] font-semibold text-[#0070f2] font-mono shrink-0 text-right">
+                    {formatCurrency(targetTcoPreview, assessment.currency)}
+                  </span>
+                </div>
+
+                <div className="p-4 sm:p-4.5 bg-emerald-50/80 rounded-xl flex justify-between items-center gap-3 border border-emerald-200/90">
+                  <span className="text-[14px] sm:text-[15px] text-emerald-800 font-bold">
+                    Projected Annual Savings
+                  </span>
+                  <span className="text-[16px] sm:text-[17px] font-bold text-emerald-700 font-mono shrink-0 text-right">
+                    {formatCurrency(annualSavingsPreview, assessment.currency)}
+                  </span>
+                </div>
+
+                <div className="flex justify-between items-center gap-3 px-1">
+                  <span className="text-[14px] sm:text-[15px] text-[#556b82] font-medium">
+                    Migration Investment
+                  </span>
+                  <span className="text-[15px] sm:text-[16px] font-semibold text-[#1d2d3e] font-mono shrink-0 text-right">
+                    {formatCurrency(migrationCostPreview, assessment.currency)}
+                  </span>
+                </div>
+
+                <div className="flex justify-between items-center gap-3 px-1 pt-1">
+                  <span className="text-[14px] sm:text-[15px] text-[#556b82] font-medium">
+                    Estimated Payback
+                  </span>
+                  <span className="text-[15px] sm:text-[16px] font-semibold text-emerald-600 font-mono shrink-0 text-right">
+                    {annualSavingsPreview > 0 && paybackMonthsPreview > 0
+                      ? `${paybackMonthsPreview.toFixed(1)} Months`
+                      : '—'}
+                  </span>
+                </div>
+              </div>
+
+              {/* Grounded IntSwitch Advantage Box */}
+              <div className="p-4 sm:p-[18px] bg-blue-50/80 rounded-xl border border-blue-200 text-blue-900 space-y-2">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="font-bold text-blue-950 text-[15px] sm:text-[16px]">
+                    IntSwitch Value Add:
+                  </span>
+                  <span className="text-[12px] sm:text-[13px] bg-emerald-100 text-emerald-800 font-bold px-2.5 py-0.5 rounded-full border border-emerald-200 shrink-0 whitespace-nowrap">
+                    Included Free ($0 Cost)
+                  </span>
+                </div>
+                <p className="text-slate-600 text-[14px] sm:text-[15px] leading-[1.5]">
+                  {activeConfig.intSwitch.scopeDescription}
+                </p>
+              </div>
+            </div>
+
             {/* Step 2 Help Card */}
             {currentStep === 2 && (
               <div className="bg-blue-50/40 rounded-2xl border border-blue-100/90 p-6 shadow-xs space-y-4">
                 <div className="flex items-center space-x-2 text-blue-700">
-                  <Info className="w-5 h-5 text-blue-600" />
+                  <Info className="w-5 h-5 text-blue-600 shrink-0" />
                   <h3 className="text-[15px] font-bold text-blue-900">Help &amp; Information</h3>
                 </div>
                 <p className="text-[14px] text-slate-600 leading-relaxed">
@@ -1060,75 +1142,11 @@ export function AssessmentWizard() {
               </div>
             )}
 
-            {/* Live Economics Summary Card (Steps 3, 4, 5 and Step 1) */}
-            {currentStep !== 2 && (
-              <div className="bg-white rounded-2xl border border-[#d9e2ec] p-6 sm:p-7 shadow-xs sticky top-24 space-y-5">
-                <div className="flex items-center justify-between border-b border-[#e5e9f0] pb-4">
-                  <h3 className="text-[14px] font-bold text-[#1d2d3e] font-['72',sans-serif] uppercase tracking-wider">
-                    Business value insights
-                  </h3>
-                  <span className="text-[13px] bg-emerald-50 text-emerald-700 font-bold px-2.5 py-0.5 rounded-full border border-emerald-200">
-                    Dynamic
-                  </span>
-                </div>
-
-                <div className="space-y-4 text-[14px]">
-                  <div className="flex justify-between items-center px-1">
-                    <span className="text-[#556b82] font-medium">Current {activeConfig.name} TCO</span>
-                    <span className="text-[15px] font-bold text-[#1d2d3e] font-mono">
-                      {formatCurrency(currentTcoPreview, assessment.currency)}
-                    </span>
-                  </div>
-
-                  <div className="flex justify-between items-center px-1">
-                    <span className="text-[#556b82] font-medium">Target SAP BTP TCO</span>
-                    <span className="text-[15px] font-bold text-[#0070f2] font-mono">
-                      {formatCurrency(targetTcoPreview, assessment.currency)}
-                    </span>
-                  </div>
-
-                  <div className="p-4 bg-emerald-50/70 rounded-xl flex justify-between items-center border border-emerald-200/90">
-                    <span className="text-[14px] text-emerald-800 font-bold">Projected Annual Savings</span>
-                    <span className="text-[17px] font-bold text-emerald-700 font-mono">
-                      {formatCurrency(annualSavingsPreview, assessment.currency)}
-                    </span>
-                  </div>
-
-                  <div className="flex justify-between items-center px-1">
-                    <span className="text-[#556b82] font-medium">Migration Investment</span>
-                    <span className="text-[15px] font-bold text-[#1d2d3e] font-mono">
-                      {formatCurrency(migrationCostPreview, assessment.currency)}
-                    </span>
-                  </div>
-
-                  <div className="flex justify-between items-center px-1 pt-1">
-                    <span className="text-[#556b82] font-medium">Estimated Payback</span>
-                    <span className="text-[15px] font-bold text-emerald-600 font-mono">
-                      {annualSavingsPreview > 0 && paybackMonthsPreview > 0
-                        ? `${paybackMonthsPreview.toFixed(1)} Months`
-                        : '—'}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Grounded IntSwitch Advantage Box */}
-                <div className="p-4 bg-blue-50/80 rounded-xl border border-blue-200 text-blue-900 space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold text-blue-950 text-[14px]">IntSwitch Value Add:</span>
-                    <span className="text-[12px] bg-emerald-100 text-emerald-800 font-bold px-2.5 py-0.5 rounded-full border border-emerald-200">
-                      Included Free ($0 Cost)
-                    </span>
-                  </div>
-                  <p className="text-[#556b82] text-[13px] leading-relaxed">{activeConfig.intSwitch.scopeDescription}</p>
-                </div>
-              </div>
-            )}
-
             {/* Step 1 Why we ask info */}
             {currentStep === 1 && (
               <div className="bg-white rounded-2xl border border-[#d9e2ec] p-6 sm:p-7 shadow-xs space-y-4">
                 <div className="flex items-center space-x-2.5 text-[#0070f2]">
-                  <Info className="w-5 h-5" />
+                  <Info className="w-5 h-5 shrink-0" />
                   <h4 className="text-[15px] font-bold text-[#1d2d3e] font-['72',sans-serif]">
                     Why we ask for this information?
                   </h4>
