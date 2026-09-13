@@ -419,7 +419,7 @@ export function AssessmentWizard() {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10 space-y-8">
         {/* Breadcrumbs */}
-        <div className="flex items-center space-x-2 text-xs sm:text-sm font-medium text-[#556b82]">
+        <div className="flex items-center space-x-2 text-[14px] font-medium text-[#556b82] py-2">
           <Link href="/" className="hover:text-[#0070f2] transition-colors">
             Home
           </Link>
@@ -432,7 +432,7 @@ export function AssessmentWizard() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             {/* Left Column */}
             <div className="lg:col-span-7 z-10 space-y-5">
-              <span className="text-[12px] sm:text-[13px] font-semibold text-[#0070f2] tracking-wider uppercase">
+              <span className="text-[13px] font-semibold text-[#0070f2] tracking-wider uppercase">
                 INTEGRATION MODERNIZATION
               </span>
               <h1 className="text-3xl sm:text-4xl lg:text-[42px] font-bold text-[#1d2d3e] tracking-tight leading-tight">
@@ -449,8 +449,8 @@ export function AssessmentWizard() {
                     <BarChart2 className="w-5 h-5 text-[#0070f2]" />
                   </div>
                   <div>
-                    <div className="text-[13px] sm:text-[14px] font-semibold text-[#1d2d3e] leading-tight">Data-driven</div>
-                    <div className="text-[12px] text-[#556b82] leading-tight">insights</div>
+                    <div className="text-[14px] sm:text-[15px] font-semibold text-[#1d2d3e] leading-tight">Data-driven</div>
+                    <div className="text-[13px] text-[#556b82] leading-tight">insights</div>
                   </div>
                 </div>
 
@@ -459,8 +459,8 @@ export function AssessmentWizard() {
                     <Settings className="w-5 h-5 text-[#0070f2]" />
                   </div>
                   <div>
-                    <div className="text-[13px] sm:text-[14px] font-semibold text-[#1d2d3e] leading-tight">Tailored</div>
-                    <div className="text-[12px] text-[#556b82] leading-tight">recommendations</div>
+                    <div className="text-[14px] sm:text-[15px] font-semibold text-[#1d2d3e] leading-tight">Tailored</div>
+                    <div className="text-[13px] text-[#556b82] leading-tight">recommendations</div>
                   </div>
                 </div>
 
@@ -469,8 +469,8 @@ export function AssessmentWizard() {
                     <FileText className="w-5 h-5 text-[#0070f2]" />
                   </div>
                   <div>
-                    <div className="text-[13px] sm:text-[14px] font-semibold text-[#1d2d3e] leading-tight">Clear business</div>
-                    <div className="text-[12px] text-[#556b82] leading-tight">value</div>
+                    <div className="text-[14px] sm:text-[15px] font-semibold text-[#1d2d3e] leading-tight">Clear business</div>
+                    <div className="text-[13px] text-[#556b82] leading-tight">value</div>
                   </div>
                 </div>
 
@@ -479,8 +479,8 @@ export function AssessmentWizard() {
                     <Zap className="w-5 h-5 text-[#0070f2]" />
                   </div>
                   <div>
-                    <div className="text-[13px] sm:text-[14px] font-semibold text-[#1d2d3e] leading-tight">Faster path</div>
-                    <div className="text-[12px] text-[#556b82] leading-tight">to innovation</div>
+                    <div className="text-[14px] sm:text-[15px] font-semibold text-[#1d2d3e] leading-tight">Faster path</div>
+                    <div className="text-[13px] text-[#556b82] leading-tight">to innovation</div>
                   </div>
                 </div>
               </div>
@@ -503,20 +503,20 @@ export function AssessmentWizard() {
             <h2 className="text-2xl sm:text-3xl font-bold text-[#1d2d3e] tracking-tight font-['72',sans-serif]">
               Select your current integration platform
             </h2>
-            <p className="text-base text-[#556b82] mt-1">
+            <p className="text-[15px] sm:text-[16px] text-[#556b82] mt-1.5 leading-relaxed">
               Choose the platform you are currently using to begin your business value analysis.
             </p>
           </div>
 
           {/* 4 Cards Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
             {PLATFORM_OPTIONS.map((plat) => {
               const isSelected = selectedPlatform === plat.id;
               return (
                 <div
                   key={plat.id}
                   onClick={() => handleSelectPlatform(plat.id)}
-                  className={`relative rounded-2xl p-6 sm:p-7 bg-white cursor-pointer transition-all flex flex-col items-center justify-center min-h-[145px] select-none ${isSelected
+                  className={`relative rounded-2xl p-7 sm:p-8 bg-white cursor-pointer transition-all flex flex-col items-center justify-center min-h-[160px] select-none ${isSelected
                       ? 'border-2 border-[#0070f2] ring-4 ring-[#0070f2]/10 shadow-md scale-[1.01]'
                       : 'border border-[#d9e2ec] hover:border-slate-400 hover:shadow-xs shadow-2xs'
                     }`}
@@ -527,7 +527,7 @@ export function AssessmentWizard() {
                       className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${isSelected ? 'border-[#0070f2] bg-[#0070f2]' : 'border-slate-300 bg-white'
                         }`}
                     >
-                      {isSelected && <div className="w-2 h-2 rounded-full bg-white" />}
+                      {isSelected && <div className="w-2.5 h-2.5 rounded-full bg-white" />}
                     </div>
                   </div>
 
@@ -538,19 +538,19 @@ export function AssessmentWizard() {
                       {plat.id === 'sap-pipo' && (
                         <>
                           <img src="/images/sap-logo.svg" alt="SAP" className="h-6 w-auto object-contain" />
-                          <span className="text-[13px] font-semibold text-[#1d2d3e] mt-1.5">SAP PI/PO</span>
+                          <span className="text-[14px] sm:text-[15px] font-semibold text-[#1d2d3e] mt-2">SAP PI/PO</span>
                         </>
                       )}
                       {plat.id === 'mulesoft' && (
                         <>
                           <img src="/images/logos/logo_mulesoft.png" alt="MuleSoft" className="h-7 w-7 object-contain" />
-                          <span className="text-[13px] font-semibold text-[#1d2d3e] mt-1">MuleSoft</span>
+                          <span className="text-[14px] sm:text-[15px] font-semibold text-[#1d2d3e] mt-1.5">MuleSoft</span>
                         </>
                       )}
                       {plat.id === 'sap-neo' && (
                         <>
                           <img src="/images/sap-logo.svg" alt="SAP" className="h-6 w-auto object-contain" />
-                          <span className="text-[13px] font-semibold text-[#1d2d3e] mt-1.5">SAP CPI (Neo)</span>
+                          <span className="text-[14px] sm:text-[15px] font-semibold text-[#1d2d3e] mt-2">SAP CPI (Neo)</span>
                         </>
                       )}
                       {plat.id === 'boomi' && (
@@ -559,7 +559,7 @@ export function AssessmentWizard() {
                             <span>boom</span>
                             <span className="text-[#ff595a]">i</span>
                           </div>
-                          <span className="text-[13px] font-semibold text-[#1d2d3e] mt-1">Boomi</span>
+                          <span className="text-[14px] sm:text-[15px] font-semibold text-[#1d2d3e] mt-1.5">Boomi</span>
                         </>
                       )}
                     </div>
@@ -584,7 +584,7 @@ export function AssessmentWizard() {
                           fill={`url(#cloudGrad-${plat.id})`}
                         />
                       </svg>
-                      <span className="text-[13px] font-semibold text-[#1d2d3e] leading-tight text-center mt-1">
+                      <span className="text-[14px] sm:text-[15px] font-semibold text-[#1d2d3e] leading-tight text-center mt-1.5">
                         SAP BTP<br />Integration Suite
                       </span>
                     </div>
@@ -596,63 +596,63 @@ export function AssessmentWizard() {
         </div>
 
         {/* 5-Item "What you'll get" Box */}
-        <div className="bg-white rounded-2xl border border-[#d9e2ec] p-6 sm:p-8 shadow-xs">
+        <div className="bg-white rounded-2xl border border-[#d9e2ec] p-7 sm:p-8 shadow-xs">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 divide-y sm:divide-y-0 sm:divide-x divide-slate-100">
-            <div className="flex items-start space-x-3 pt-2 sm:pt-0 sm:px-2">
-              <div className="w-9 h-9 rounded-lg bg-blue-50 text-[#0070f2] flex items-center justify-center shrink-0 mt-0.5">
+            <div className="flex items-start space-x-3.5 pt-2 sm:pt-0 sm:px-2">
+              <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#0070f2] flex items-center justify-center shrink-0 mt-0.5">
                 <Gift className="w-5 h-5" />
               </div>
               <div>
-                <h4 className="text-[14px] font-bold text-slate-900">What you&apos;ll get</h4>
-                <p className="text-[13px] text-slate-500 leading-relaxed mt-0.5">
+                <h4 className="text-[15px] font-bold text-slate-900">What you&apos;ll get</h4>
+                <p className="text-[13px] sm:text-[14px] text-slate-500 leading-relaxed mt-1">
                   A comprehensive analysis with clear insights and business value.
                 </p>
               </div>
             </div>
 
-            <div className="flex items-start space-x-3 pt-2 sm:pt-0 sm:px-2">
-              <div className="w-9 h-9 rounded-lg bg-blue-50 text-[#0070f2] flex items-center justify-center shrink-0 mt-0.5">
+            <div className="flex items-start space-x-3.5 pt-2 sm:pt-0 sm:px-2">
+              <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#0070f2] flex items-center justify-center shrink-0 mt-0.5">
                 <FileText className="w-5 h-5" />
               </div>
               <div>
-                <h4 className="text-[14px] font-bold text-slate-900">Tailored Analysis</h4>
-                <p className="text-[13px] text-slate-500 leading-relaxed mt-0.5">
+                <h4 className="text-[15px] font-bold text-slate-900">Tailored Analysis</h4>
+                <p className="text-[13px] sm:text-[14px] text-slate-500 leading-relaxed mt-1">
                   Based on your integration landscape and requirements.
                 </p>
               </div>
             </div>
 
-            <div className="flex items-start space-x-3 pt-2 sm:pt-0 sm:px-2">
-              <div className="w-9 h-9 rounded-lg bg-blue-50 text-[#0070f2] flex items-center justify-center shrink-0 mt-0.5">
+            <div className="flex items-start space-x-3.5 pt-2 sm:pt-0 sm:px-2">
+              <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#0070f2] flex items-center justify-center shrink-0 mt-0.5">
                 <TrendingUp className="w-5 h-5" />
               </div>
               <div>
-                <h4 className="text-[14px] font-bold text-slate-900">Migration Sizing</h4>
-                <p className="text-[13px] text-slate-500 leading-relaxed mt-0.5">
+                <h4 className="text-[15px] font-bold text-slate-900">Migration Sizing</h4>
+                <p className="text-[13px] sm:text-[14px] text-slate-500 leading-relaxed mt-1">
                   Estimate effort, complexity and timelines.
                 </p>
               </div>
             </div>
 
-            <div className="flex items-start space-x-3 pt-2 sm:pt-0 sm:px-2">
-              <div className="w-9 h-9 rounded-lg bg-blue-50 text-[#0070f2] flex items-center justify-center shrink-0 mt-0.5">
+            <div className="flex items-start space-x-3.5 pt-2 sm:pt-0 sm:px-2">
+              <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#0070f2] flex items-center justify-center shrink-0 mt-0.5">
                 <Database className="w-5 h-5" />
               </div>
               <div>
-                <h4 className="text-[14px] font-bold text-slate-900">TCO &amp; ROI</h4>
-                <p className="text-[13px] text-slate-500 leading-relaxed mt-0.5">
+                <h4 className="text-[15px] font-bold text-slate-900">TCO &amp; ROI</h4>
+                <p className="text-[13px] sm:text-[14px] text-slate-500 leading-relaxed mt-1">
                   Understand potential savings and business value.
                 </p>
               </div>
             </div>
 
-            <div className="flex items-start space-x-3 pt-2 sm:pt-0 sm:px-2">
-              <div className="w-9 h-9 rounded-lg bg-blue-50 text-[#0070f2] flex items-center justify-center shrink-0 mt-0.5">
+            <div className="flex items-start space-x-3.5 pt-2 sm:pt-0 sm:px-2">
+              <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#0070f2] flex items-center justify-center shrink-0 mt-0.5">
                 <Lightbulb className="w-5 h-5" />
               </div>
               <div>
-                <h4 className="text-[14px] font-bold text-slate-900">Actionable Recommendations</h4>
-                <p className="text-[13px] text-slate-500 leading-relaxed mt-0.5">
+                <h4 className="text-[15px] font-bold text-slate-900">Actionable Recommendations</h4>
+                <p className="text-[13px] sm:text-[14px] text-slate-500 leading-relaxed mt-1">
                   Get next steps to accelerate your migration journey.
                 </p>
               </div>
@@ -661,10 +661,10 @@ export function AssessmentWizard() {
         </div>
 
         {/* Bottom Navigation */}
-        <div className="flex items-center justify-between pt-2">
+        <div className="flex items-center justify-between pt-4">
           <Link
             href="/"
-            className="inline-flex items-center space-x-2 text-[14px] font-semibold text-slate-600 hover:text-[#0070f2] transition-colors group"
+            className="inline-flex items-center space-x-2 text-[15px] font-semibold text-slate-600 hover:text-[#0070f2] transition-colors group"
           >
             <svg className="w-4 h-4 text-slate-500 group-hover:text-[#0070f2] transition-transform group-hover:-translate-x-0.5" fill="none" viewBox="0 0 16 16" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M10 12.5l-4.5-4.5 4.5-4.5" />
@@ -674,7 +674,7 @@ export function AssessmentWizard() {
           <button
             type="button"
             onClick={() => setCurrentStep(1)}
-            className="inline-flex items-center space-x-2 h-[44px] px-6 bg-[#0070f2] hover:bg-[#0057d2] text-white rounded-lg text-[14px] font-semibold shadow-xs transition-all group cursor-pointer"
+            className="inline-flex items-center space-x-2 h-12 px-7 bg-[#0070f2] hover:bg-[#0057d2] text-white rounded-xl text-[15px] font-semibold shadow-xs transition-all group cursor-pointer"
           >
             <span>Explore Business Value</span>
             <svg className="w-4 h-4 text-white transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 16 16" stroke="currentColor">
@@ -694,7 +694,7 @@ export function AssessmentWizard() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10 space-y-8">
       {/* Breadcrumb & Platform Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-4 text-sm">
+      <div className="flex flex-wrap items-center justify-between gap-4 text-[14px]">
         <div className="flex items-center space-x-2 text-[#556b82] font-medium">
           <Link href="/" className="hover:text-[#0070f2] transition-colors">Home</Link>
           <span>&gt;</span>
@@ -705,7 +705,7 @@ export function AssessmentWizard() {
         <button
           type="button"
           onClick={() => setCurrentStep(0)}
-          className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-blue-50 text-[#0070f2] hover:bg-blue-100 font-semibold text-sm border border-blue-200 transition-colors group"
+          className="inline-flex items-center space-x-2 h-11 px-4 rounded-xl bg-blue-50 text-[#0070f2] hover:bg-blue-100 font-semibold text-[14px] border border-blue-200 transition-colors group"
         >
           <svg className="w-4 h-4 text-[#0070f2] transition-transform group-hover:-translate-x-0.5" fill="none" viewBox="0 0 16 16" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M10 12.5l-4.5-4.5 4.5-4.5" />
@@ -718,55 +718,55 @@ export function AssessmentWizard() {
       <div className="relative rounded-3xl bg-gradient-to-r from-blue-50/90 via-sky-50/50 to-indigo-50/80 border border-[#d9e2ec] p-8 sm:p-10 lg:p-12 overflow-hidden shadow-xs">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           <div className="lg:col-span-7 z-10 space-y-4">
-            <div className="text-xs font-bold text-[#0070f2] tracking-wider uppercase">
+            <div className="text-[13px] font-bold text-[#0070f2] tracking-wider uppercase">
               PLAN | MODERNIZE | OPTIMIZE | REALIZE VALUE
             </div>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#1d2d3e] tracking-tight leading-tight font-['72',sans-serif]">
               {activePlat.name} to SAP BTP Migration
             </h1>
-            <p className="text-base text-[#556b82] leading-relaxed max-w-xl">
+            <p className="text-[15px] sm:text-[16px] text-[#556b82] leading-relaxed max-w-xl">
               Assess your current landscape. Plan with confidence. Accelerate your journey to a connected, intelligent enterprise with Incture&apos;s Business ValueLens AI.
             </p>
 
             {/* 4 Feature Pills */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4">
               <div className="flex items-center space-x-3 p-2">
-                <div className="w-10 h-10 rounded-2xl bg-blue-100/80 flex items-center justify-center shrink-0">
+                <div className="w-11 h-11 rounded-2xl bg-blue-100/80 flex items-center justify-center shrink-0">
                   <BarChart2 className="w-5 h-5 text-[#0070f2]" />
                 </div>
                 <div>
-                  <div className="text-xs font-bold text-[#1d2d3e] leading-tight">Data-Driven</div>
-                  <div className="text-xs text-[#556b82] leading-tight">Insights</div>
+                  <div className="text-[14px] font-bold text-[#1d2d3e] leading-tight">Data-Driven</div>
+                  <div className="text-[13px] text-[#556b82] leading-tight">Insights</div>
                 </div>
               </div>
 
               <div className="flex items-center space-x-3 p-2">
-                <div className="w-10 h-10 rounded-2xl bg-blue-100/80 flex items-center justify-center shrink-0">
+                <div className="w-11 h-11 rounded-2xl bg-blue-100/80 flex items-center justify-center shrink-0">
                   <Settings className="w-5 h-5 text-[#0070f2]" />
                 </div>
                 <div>
-                  <div className="text-xs font-bold text-[#1d2d3e] leading-tight">Tailored</div>
-                  <div className="text-xs text-[#556b82] leading-tight">Recommendations</div>
+                  <div className="text-[14px] font-bold text-[#1d2d3e] leading-tight">Tailored</div>
+                  <div className="text-[13px] text-[#556b82] leading-tight">Recommendations</div>
                 </div>
               </div>
 
               <div className="flex items-center space-x-3 p-2">
-                <div className="w-10 h-10 rounded-2xl bg-blue-100/80 flex items-center justify-center shrink-0">
+                <div className="w-11 h-11 rounded-2xl bg-blue-100/80 flex items-center justify-center shrink-0">
                   <Database className="w-5 h-5 text-[#0070f2]" />
                 </div>
                 <div>
-                  <div className="text-xs font-bold text-[#1d2d3e] leading-tight">Clear Business</div>
-                  <div className="text-xs text-[#556b82] leading-tight">Value</div>
+                  <div className="text-[14px] font-bold text-[#1d2d3e] leading-tight">Clear Business</div>
+                  <div className="text-[13px] text-[#556b82] leading-tight">Value</div>
                 </div>
               </div>
 
               <div className="flex items-center space-x-3 p-2">
-                <div className="w-10 h-10 rounded-2xl bg-blue-100/80 flex items-center justify-center shrink-0">
+                <div className="w-11 h-11 rounded-2xl bg-blue-100/80 flex items-center justify-center shrink-0">
                   <Rocket className="w-5 h-5 text-[#0070f2]" />
                 </div>
                 <div>
-                  <div className="text-xs font-bold text-[#1d2d3e] leading-tight">Faster Path</div>
-                  <div className="text-xs text-[#556b82] leading-tight">to Innovation</div>
+                  <div className="text-[14px] font-bold text-[#1d2d3e] leading-tight">Faster Path</div>
+                  <div className="text-[13px] text-[#556b82] leading-tight">to Innovation</div>
                 </div>
               </div>
             </div>
@@ -783,7 +783,7 @@ export function AssessmentWizard() {
       </div>
 
       {errorMsg && (
-        <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-sm text-red-700 flex items-center justify-between">
+        <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-[14px] text-red-700 flex items-center justify-between">
           <span>{errorMsg}</span>
           <button onClick={() => setErrorMsg(null)} className="font-bold ml-4">✕</button>
         </div>
@@ -815,7 +815,7 @@ export function AssessmentWizard() {
                 }}
               >
                 <div
-                  className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold transition-all ${
+                  className={`w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center text-[14px] sm:text-[15px] font-bold transition-all ${
                     isCurrent
                       ? 'bg-[#0070f2] text-white shadow-sm ring-4 ring-[#0070f2]/20'
                       : isCompleted
@@ -827,9 +827,9 @@ export function AssessmentWizard() {
                 </div>
                 <div className="flex flex-col items-center mt-2.5 text-center">
                   <span
-                    className={`text-xs sm:text-sm mt-0.5 leading-tight font-medium ${
+                    className={`text-[13px] sm:text-[14px] mt-0.5 leading-tight font-semibold ${
                       isCurrent
-                        ? 'text-[#0070f2] font-bold'
+                        ? 'text-[#0070f2]'
                         : isCompleted
                           ? 'text-[#1d2d3e]'
                           : 'text-slate-400'
@@ -1020,7 +1020,7 @@ export function AssessmentWizard() {
                   style={{ width: `${Math.round((currentStep / 7) * 100)}%` }}
                 />
               </div>
-              <div className="flex justify-between items-center text-[13px] text-slate-500 pt-0.5">
+              <div className="flex justify-between items-center text-[14px] text-slate-600 pt-0.5">
                 <span>{currentStep} of 7 steps completed</span>
                 <span className="font-bold text-slate-800">{Math.round((currentStep / 7) * 100)}%</span>
               </div>
@@ -1033,12 +1033,12 @@ export function AssessmentWizard() {
                   <Info className="w-5 h-5 text-blue-600" />
                   <h3 className="text-[15px] font-bold text-blue-900">Help &amp; Information</h3>
                 </div>
-                <p className="text-[13px] text-slate-600 leading-relaxed">
+                <p className="text-[14px] text-slate-600 leading-relaxed">
                   This information helps us analyze your current {activeConfig.name} environment and provide accurate migration recommendations and cost estimates.
                 </p>
                 <div className="pt-1">
-                  <h4 className="text-[13px] font-bold text-blue-700 mb-2">Why we ask this?</h4>
-                  <ul className="space-y-2 text-[13px] text-slate-600">
+                  <h4 className="text-[14px] font-bold text-blue-700 mb-2">Why we ask this?</h4>
+                  <ul className="space-y-2.5 text-[14px] text-slate-600">
                     <li className="flex items-start space-x-2">
                       <span className="text-blue-500 font-bold">•</span>
                       <span>Understand your integration footprint</span>
@@ -1067,43 +1067,43 @@ export function AssessmentWizard() {
                   <h3 className="text-[14px] font-bold text-[#1d2d3e] font-['72',sans-serif] uppercase tracking-wider">
                     Business value insights
                   </h3>
-                  <span className="text-[12px] bg-emerald-50 text-emerald-700 font-bold px-2.5 py-0.5 rounded-full border border-emerald-200">
+                  <span className="text-[13px] bg-emerald-50 text-emerald-700 font-bold px-2.5 py-0.5 rounded-full border border-emerald-200">
                     Dynamic
                   </span>
                 </div>
 
-                <div className="space-y-4 text-[13px]">
+                <div className="space-y-4 text-[14px]">
                   <div className="flex justify-between items-center px-1">
                     <span className="text-[#556b82] font-medium">Current {activeConfig.name} TCO</span>
-                    <span className="text-[14px] font-bold text-[#1d2d3e] font-mono">
+                    <span className="text-[15px] font-bold text-[#1d2d3e] font-mono">
                       {formatCurrency(currentTcoPreview, assessment.currency)}
                     </span>
                   </div>
 
                   <div className="flex justify-between items-center px-1">
                     <span className="text-[#556b82] font-medium">Target SAP BTP TCO</span>
-                    <span className="text-[14px] font-bold text-[#0070f2] font-mono">
+                    <span className="text-[15px] font-bold text-[#0070f2] font-mono">
                       {formatCurrency(targetTcoPreview, assessment.currency)}
                     </span>
                   </div>
 
                   <div className="p-4 bg-emerald-50/70 rounded-xl flex justify-between items-center border border-emerald-200/90">
-                    <span className="text-[13px] text-emerald-800 font-bold">Projected Annual Savings</span>
-                    <span className="text-[16px] font-bold text-emerald-700 font-mono">
+                    <span className="text-[14px] text-emerald-800 font-bold">Projected Annual Savings</span>
+                    <span className="text-[17px] font-bold text-emerald-700 font-mono">
                       {formatCurrency(annualSavingsPreview, assessment.currency)}
                     </span>
                   </div>
 
                   <div className="flex justify-between items-center px-1">
                     <span className="text-[#556b82] font-medium">Migration Investment</span>
-                    <span className="text-[14px] font-bold text-[#1d2d3e] font-mono">
+                    <span className="text-[15px] font-bold text-[#1d2d3e] font-mono">
                       {formatCurrency(migrationCostPreview, assessment.currency)}
                     </span>
                   </div>
 
                   <div className="flex justify-between items-center px-1 pt-1">
                     <span className="text-[#556b82] font-medium">Estimated Payback</span>
-                    <span className="text-[14px] font-bold text-emerald-600 font-mono">
+                    <span className="text-[15px] font-bold text-emerald-600 font-mono">
                       {annualSavingsPreview > 0 && paybackMonthsPreview > 0
                         ? `${paybackMonthsPreview.toFixed(1)} Months`
                         : '—'}
@@ -1112,14 +1112,14 @@ export function AssessmentWizard() {
                 </div>
 
                 {/* Grounded IntSwitch Advantage Box */}
-                <div className="p-4 bg-blue-50/80 rounded-xl border border-blue-200 text-xs text-blue-900 space-y-2">
+                <div className="p-4 bg-blue-50/80 rounded-xl border border-blue-200 text-blue-900 space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="font-bold text-blue-950 text-[13px]">IntSwitch Value Add:</span>
-                    <span className="text-[11px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full border border-emerald-200">
+                    <span className="font-bold text-blue-950 text-[14px]">IntSwitch Value Add:</span>
+                    <span className="text-[12px] bg-emerald-100 text-emerald-800 font-bold px-2.5 py-0.5 rounded-full border border-emerald-200">
                       Included Free ($0 Cost)
                     </span>
                   </div>
-                  <p className="text-[#556b82] text-[12px] leading-relaxed">{activeConfig.intSwitch.scopeDescription}</p>
+                  <p className="text-[#556b82] text-[13px] leading-relaxed">{activeConfig.intSwitch.scopeDescription}</p>
                 </div>
               </div>
             )}
@@ -1133,7 +1133,7 @@ export function AssessmentWizard() {
                     Why we ask for this information?
                   </h4>
                 </div>
-                <ul className="space-y-2.5 text-[13px] text-[#556b82] pl-1">
+                <ul className="space-y-2.5 text-[14px] text-[#556b82] pl-1">
                   <li className="flex items-start space-x-2">
                     <span className="text-[#0070f2] font-bold">•</span>
                     <span>Provides context for industry-specific benchmarks</span>

@@ -49,7 +49,7 @@ export default function OfferingDetailPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10 space-y-8 md:space-y-10">
       {/* 1. Breadcrumb Navigation */}
-      <nav className="flex items-center space-x-2 text-[13px] text-[#556b82] font-medium">
+      <nav className="flex items-center space-x-2 text-[14px] text-[#556b82] font-medium py-1">
         <Link href="/" className="hover:text-[#0070f2] transition-colors">
           Home
         </Link>
@@ -70,7 +70,7 @@ export default function OfferingDetailPage() {
               {/* Source Middleware Platform */}
               <div className="flex-1 flex flex-col items-center justify-center text-center">
                 <img src={offering.logo} alt={offering.name} className="h-10 max-w-[84px] object-contain mb-2" />
-                <span className="text-[13px] font-semibold text-[#1d2d3e] tracking-tight leading-tight">
+                <span className="text-[14px] font-semibold text-[#1d2d3e] tracking-tight leading-tight">
                   {offering.shortTitle}
                 </span>
               </div>
@@ -85,7 +85,7 @@ export default function OfferingDetailPage() {
               {/* Target SAP Integration Suite */}
               <div className="flex-1 flex flex-col items-center justify-center text-center">
                 <img src={offering.cloudLogo} alt="SAP Integration Suite" className="h-10 max-w-[84px] object-contain mb-2" />
-                <span className="text-[12px] font-bold text-[#0070f2] tracking-tight leading-tight">
+                <span className="text-[13px] font-bold text-[#0070f2] tracking-tight leading-tight">
                   SAP Integration<br />Suite
                 </span>
               </div>
@@ -94,7 +94,7 @@ export default function OfferingDetailPage() {
 
           {/* Middle: Title & Subtitle */}
           <div className="flex-1 space-y-3.5 max-w-xl">
-            <span className="text-[12px] sm:text-[13px] font-semibold text-[#0070f2] tracking-wider uppercase">
+            <span className="text-[13px] sm:text-[14px] font-bold text-[#0070f2] tracking-wider uppercase">
               Migration Package Details
             </span>
             <h1 className="text-3xl sm:text-4xl lg:text-[40px] font-bold text-[#1d2d3e] tracking-tight leading-tight">
@@ -123,7 +123,7 @@ export default function OfferingDetailPage() {
           <button
             type="button"
             onClick={() => setActiveTab('packages')}
-            className={`px-5 py-2.5 h-[42px] rounded-lg text-[14px] font-semibold transition-all cursor-pointer ${activeTab === 'packages'
+            className={`px-5 h-11 sm:h-12 rounded-xl text-[14px] sm:text-[15px] font-semibold transition-all cursor-pointer ${activeTab === 'packages'
               ? 'bg-[#0070f2] text-white shadow-xs'
               : 'bg-white text-[#556b82] hover:text-[#1d2d3e] hover:bg-slate-50 border border-[#d9e2ec]'
               }`}
@@ -134,7 +134,7 @@ export default function OfferingDetailPage() {
           <button
             type="button"
             onClick={() => setActiveTab('whats-included')}
-            className={`px-4.5 py-2.5 h-[42px] rounded-lg text-[14px] font-semibold transition-all cursor-pointer ${activeTab === 'whats-included'
+            className={`px-5 h-11 sm:h-12 rounded-xl text-[14px] sm:text-[15px] font-semibold transition-all cursor-pointer ${activeTab === 'whats-included'
               ? 'bg-[#0070f2] text-white shadow-xs'
               : 'bg-white text-[#556b82] hover:text-[#1d2d3e] hover:bg-slate-50 border border-[#d9e2ec]'
               }`}
@@ -145,7 +145,7 @@ export default function OfferingDetailPage() {
           <button
             type="button"
             onClick={() => setActiveTab('approach')}
-            className={`px-4.5 py-2.5 h-[42px] rounded-lg text-[14px] font-semibold transition-all cursor-pointer ${activeTab === 'approach'
+            className={`px-5 h-11 sm:h-12 rounded-xl text-[14px] sm:text-[15px] font-semibold transition-all cursor-pointer ${activeTab === 'approach'
               ? 'bg-[#0070f2] text-white shadow-xs'
               : 'bg-white text-[#556b82] hover:text-[#1d2d3e] hover:bg-slate-50 border border-[#d9e2ec]'
               }`}
@@ -156,7 +156,7 @@ export default function OfferingDetailPage() {
           <button
             type="button"
             onClick={() => setActiveTab('enablement')}
-            className={`px-4.5 py-2.5 h-[42px] rounded-lg text-[14px] font-semibold transition-all cursor-pointer ${activeTab === 'enablement'
+            className={`px-5 h-11 sm:h-12 rounded-xl text-[14px] sm:text-[15px] font-semibold transition-all cursor-pointer ${activeTab === 'enablement'
               ? 'bg-[#0070f2] text-white shadow-xs'
               : 'bg-white text-[#556b82] hover:text-[#1d2d3e] hover:bg-slate-50 border border-[#d9e2ec]'
               }`}
@@ -167,7 +167,7 @@ export default function OfferingDetailPage() {
           <button
             type="button"
             onClick={() => setActiveTab('faqs')}
-            className={`px-4.5 py-2.5 h-[42px] rounded-lg text-[14px] font-semibold transition-all cursor-pointer ${activeTab === 'faqs'
+            className={`px-5 h-11 sm:h-12 rounded-xl text-[14px] sm:text-[15px] font-semibold transition-all cursor-pointer ${activeTab === 'faqs'
               ? 'bg-[#0070f2] text-white shadow-xs'
               : 'bg-white text-[#556b82] hover:text-[#1d2d3e] hover:bg-slate-50 border border-[#d9e2ec]'
               }`}
@@ -182,7 +182,7 @@ export default function OfferingDetailPage() {
           <a
             href="/documents/Incture-Migration-Offering-SAP-Integration-Suite.pdf"
             download="Incture-Migration-Offering-SAP-Integration-Suite.pdf"
-            className="inline-flex items-center space-x-2 px-5 py-2.5 h-[44px] rounded-lg text-[14px] font-semibold bg-white text-[#0070f2] border border-[#0070f2]/40 hover:bg-blue-50/50 shadow-2xs transition-colors cursor-pointer"
+            className="inline-flex items-center space-x-2 px-5 h-11 sm:h-12 rounded-xl text-[14px] sm:text-[15px] font-semibold bg-white text-[#0070f2] border border-[#0070f2]/40 hover:bg-blue-50/50 shadow-2xs transition-colors cursor-pointer"
             title="Download full 10-page Incture Migration Offering Report"
           >
             <svg className="w-4 h-4 text-[#0070f2]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -194,7 +194,7 @@ export default function OfferingDetailPage() {
           {/* Button 2: Discover Business Value (links to /assessment) */}
           <Link
             href="/assessment"
-            className="group inline-flex items-center space-x-2 px-5 py-2.5 h-[44px] rounded-lg text-[14px] font-semibold bg-[#0070f2] hover:bg-[#0057d2] text-white shadow-xs transition-colors cursor-pointer"
+            className="group inline-flex items-center space-x-2 px-6 h-11 sm:h-12 rounded-xl text-[14px] sm:text-[15px] font-semibold bg-[#0070f2] hover:bg-[#0057d2] text-white shadow-xs transition-colors cursor-pointer"
           >
             <span>Discover Business Value</span>
             <svg className="w-4 h-4 shrink-0 transition-transform group-hover:translate-x-0.5" viewBox="0 0 16 16" fill="none" stroke="currentColor">
@@ -224,21 +224,21 @@ export default function OfferingDetailPage() {
               <table className="min-w-full divide-y divide-[#d9e2ec] text-[14px]">
                 <thead className="bg-[#eef5fc]">
                   <tr>
-                    <th scope="col" className="py-3.5 px-4.5 text-left font-bold text-[#1d2d3e] min-w-[210px]">
+                    <th scope="col" className="py-3.5 px-4 text-left text-[14px] sm:text-[15px] font-bold text-[#1d2d3e] min-w-[210px]">
                       Features
                     </th>
                     {packages.hasStarter && (
-                      <th scope="col" className="py-3.5 px-4.5 text-left font-bold text-[#1d2d3e] min-w-[160px]">
+                      <th scope="col" className="py-3.5 px-4 text-left text-[14px] sm:text-[15px] font-bold text-[#1d2d3e] min-w-[160px]">
                         {packages.packageNames.starter}
                       </th>
                     )}
-                    <th scope="col" className="py-3.5 px-4.5 text-left font-bold text-[#1d2d3e] min-w-[190px]">
+                    <th scope="col" className="py-3.5 px-4 text-left text-[14px] sm:text-[15px] font-bold text-[#1d2d3e] min-w-[190px]">
                       {packages.packageNames.silver}
                     </th>
-                    <th scope="col" className="py-3.5 px-4.5 text-left font-bold text-[#1d2d3e] min-w-[210px]">
+                    <th scope="col" className="py-3.5 px-4 text-left text-[14px] sm:text-[15px] font-bold text-[#1d2d3e] min-w-[210px]">
                       {packages.packageNames.gold}
                     </th>
-                    <th scope="col" className="py-3.5 px-4.5 text-left font-bold text-[#0070f2] min-w-[230px]">
+                    <th scope="col" className="py-3.5 px-4 text-left text-[14px] sm:text-[15px] font-bold text-[#0070f2] min-w-[230px]">
                       {packages.packageNames.platinum}
                     </th>
                   </tr>
@@ -256,30 +256,30 @@ export default function OfferingDetailPage() {
                       }
                     >
                       {/* Feature Name */}
-                      <td className="py-3.5 px-4.5 font-bold text-[#1d2d3e] align-top">
+                      <td className="py-3.5 px-4 font-bold text-[#1d2d3e] align-top">
                         {highlightIntSwitch(row.feature)}
                       </td>
 
                       {/* Starter Package (if applicable) */}
                       {packages.hasStarter && (
-                        <td className="py-3.5 px-4.5 text-[#556b82] align-top leading-relaxed">
+                        <td className="py-3.5 px-4 text-[#556b82] align-top leading-relaxed">
                           {highlightIntSwitch(row.starter || '-')}
                         </td>
                       )}
 
                       {/* Silver Package */}
-                      <td className="py-3.5 px-4.5 text-[#556b82] align-top leading-relaxed">
+                      <td className="py-3.5 px-4 text-[#556b82] align-top leading-relaxed">
                         {highlightIntSwitch(row.silver)}
                       </td>
 
                       {/* Gold Package */}
-                      <td className="py-3.5 px-4.5 text-[#556b82] align-top leading-relaxed">
+                      <td className="py-3.5 px-4 text-[#556b82] align-top leading-relaxed">
                         {highlightIntSwitch(row.gold)}
                       </td>
 
                       {/* Platinum Package */}
                       <td
-                        className={`py-3.5 px-4.5 align-top leading-relaxed ${row.highlight
+                        className={`py-3.5 px-4 align-top leading-relaxed ${row.highlight
                           ? 'text-[#0070f2] font-bold'
                           : 'text-[#1d2d3e] font-semibold'
                           }`}
@@ -295,14 +295,14 @@ export default function OfferingDetailPage() {
 
           {/* Bottom Please Note Box */}
           <div className="rounded-3xl bg-[#f0f7ff] border border-blue-200/80 p-5 sm:p-6 shadow-2xs flex items-start space-x-4">
-            <div className="w-7 h-7 rounded-full bg-[#0070f2] text-white text-[13px] font-bold flex items-center justify-center shrink-0 mt-0.5 shadow-2xs">
+            <div className="w-7 h-7 rounded-full bg-[#0070f2] text-white text-[14px] font-bold flex items-center justify-center shrink-0 mt-0.5 shadow-2xs">
               i
             </div>
             <div className="space-y-2 flex-1">
-              <h4 className="text-[14px] font-bold text-[#1d2d3e]">
+              <h4 className="text-[15px] font-bold text-[#1d2d3e]">
                 Please Note :
               </h4>
-              <ul className="space-y-1.5 text-[13px] sm:text-[14px] text-[#556b82] list-disc list-inside leading-relaxed font-normal">
+              <ul className="space-y-1.5 text-[14px] sm:text-[15px] text-[#556b82] list-disc list-inside leading-relaxed font-normal">
                 {pleaseNotes.map((note, nIdx) => (
                   <li key={nIdx}>{highlightIntSwitch(note)}</li>
                 ))}
@@ -328,13 +328,13 @@ export default function OfferingDetailPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {whatsIncluded.items.map((item, iIdx) => (
                 <div key={iIdx} className="bg-slate-50/70 rounded-2xl p-6 border border-[#d9e2ec] space-y-3.5">
-                  <h3 className="text-[16px] font-semibold text-[#0070f2] flex items-center space-x-2">
+                  <h3 className="text-[16px] sm:text-[17px] font-semibold text-[#0070f2] flex items-center space-x-2">
                     <span className="w-2 h-2 rounded-full bg-[#0070f2]" />
                     <span>{highlightIntSwitch(item.category)}</span>
                   </h3>
                   <ul className="space-y-2.5">
                     {item.details.map((d, dIdx) => (
-                      <li key={dIdx} className="flex items-start space-x-2.5 text-[14px] text-[#1d2d3e] leading-relaxed">
+                      <li key={dIdx} className="flex items-start space-x-2.5 text-[14px] sm:text-[15px] text-[#1d2d3e] leading-relaxed">
                         <span className="w-1.5 h-1.5 rounded-full bg-[#0070f2] shrink-0 mt-2" />
                         <span>{highlightIntSwitch(d)}</span>
                       </li>
@@ -367,17 +367,17 @@ export default function OfferingDetailPage() {
                   className="bg-slate-50/70 rounded-2xl p-5 sm:p-6 border border-[#d9e2ec] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5"
                 >
                   <div className="flex items-start space-x-4">
-                    <div className="w-10 h-10 rounded-xl bg-[#0070f2] text-white font-bold text-[15px] flex items-center justify-center shrink-0 shadow-2xs">
+                    <div className="w-11 h-11 rounded-xl bg-[#0070f2] text-white font-bold text-[15px] flex items-center justify-center shrink-0 shadow-2xs">
                       0{step.stepNumber}
                     </div>
                     <div>
                       <div className="flex items-center space-x-2.5">
-                        <h3 className="text-[16px] font-semibold text-[#1d2d3e]">{step.title}</h3>
-                        <span className="text-[12px] font-bold px-2.5 py-0.5 rounded-full bg-blue-100 text-[#0070f2]">
+                        <h3 className="text-[16px] sm:text-[17px] font-bold text-[#1d2d3e]">{step.title}</h3>
+                        <span className="text-[13px] font-bold px-2.5 py-0.5 rounded-full bg-blue-100 text-[#0070f2]">
                           {step.duration}
                         </span>
                       </div>
-                      <p className="text-[14px] text-[#556b82] mt-1.5 max-w-xl leading-relaxed">
+                      <p className="text-[14px] sm:text-[15px] text-[#556b82] mt-1.5 max-w-xl leading-relaxed">
                         {highlightIntSwitch(step.description)}
                       </p>
                     </div>
@@ -419,11 +419,11 @@ export default function OfferingDetailPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {enablementAndSupport.map((cat, eIdx) => (
                 <div key={eIdx} className="bg-slate-50/70 rounded-2xl p-6 border border-[#d9e2ec] space-y-3.5">
-                  <h3 className="text-[16px] font-semibold text-[#1d2d3e]">{cat.category}</h3>
-                  <p className="text-[14px] text-[#556b82] leading-relaxed font-normal">{cat.summary}</p>
+                  <h3 className="text-[16px] sm:text-[17px] font-bold text-[#1d2d3e]">{cat.category}</h3>
+                  <p className="text-[14px] sm:text-[15px] text-[#556b82] leading-relaxed font-normal">{cat.summary}</p>
                   <ul className="space-y-2.5 pt-1">
                     {cat.highlights.map((h, hIdx) => (
-                      <li key={hIdx} className="flex items-start space-x-2.5 text-[14px] text-[#1d2d3e] leading-relaxed">
+                      <li key={hIdx} className="flex items-start space-x-2.5 text-[14px] sm:text-[15px] text-[#1d2d3e] leading-relaxed">
                         <svg className="w-4 h-4 text-[#0070f2] shrink-0 mt-0.5" viewBox="0 0 16 16" fill="none" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M6 3.5l4.5 4.5-4.5 4.5" />
                         </svg>
@@ -454,11 +454,11 @@ export default function OfferingDetailPage() {
             <div className="space-y-4">
               {faqs.map((faq, fIdx) => (
                 <div key={fIdx} className="bg-slate-50/60 rounded-2xl p-6 border border-[#d9e2ec] space-y-2.5">
-                  <h3 className="text-[16px] font-semibold text-[#1d2d3e] flex items-start space-x-2.5">
+                  <h3 className="text-[16px] sm:text-[17px] font-bold text-[#1d2d3e] flex items-start space-x-2.5">
                     <span className="text-[#0070f2] font-bold">Q:</span>
                     <span>{highlightIntSwitch(faq.question)}</span>
                   </h3>
-                  <p className="text-[14px] text-[#556b82] leading-relaxed pl-6 font-normal">
+                  <p className="text-[14px] sm:text-[15px] text-[#556b82] leading-relaxed pl-6 font-normal">
                     {highlightIntSwitch(faq.answer)}
                   </p>
                 </div>

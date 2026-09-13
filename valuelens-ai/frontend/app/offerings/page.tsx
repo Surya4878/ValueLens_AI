@@ -73,7 +73,7 @@ export default function OfferingsPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10 space-y-8 md:space-y-10">
       {/* Breadcrumb Navigation */}
-      <nav className="flex items-center space-x-2 text-[13px] text-[#556b82] font-medium">
+      <nav className="flex items-center space-x-2 text-[14px] text-[#556b82] font-medium py-1">
         <Link href="/" className="hover:text-[#0070f2] transition-colors">
           Home
         </Link>
@@ -86,7 +86,7 @@ export default function OfferingsPage() {
         <div className="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8">
           {/* Left Title & Subtitle */}
           <div className="space-y-4 max-w-2xl">
-            <span className="text-[12px] sm:text-[13px] font-semibold text-[#0070f2] tracking-wider uppercase">
+            <span className="text-[13px] sm:text-[14px] font-bold text-[#0070f2] tracking-wider uppercase">
               Migration Package Catalog
             </span>
             <h1 className="text-3xl sm:text-4xl lg:text-[42px] font-bold text-[#1d2d3e] tracking-tight leading-tight">
@@ -113,7 +113,7 @@ export default function OfferingsPage() {
         {platforms.map((p) => (
           <div
             key={p.id}
-            className="bg-white rounded-3xl border border-[#d9e2ec] hover:border-[#0070f2] hover:shadow-md transition-all p-6 sm:p-7 lg:p-8 flex flex-col sm:flex-row items-stretch sm:items-start justify-between gap-6 sm:gap-7 group"
+            className="bg-white rounded-3xl border border-[#d9e2ec] hover:border-[#0070f2] hover:shadow-md transition-all p-7 sm:p-8 lg:p-9 flex flex-col sm:flex-row items-stretch sm:items-start justify-between gap-6 sm:gap-7 group"
           >
             {/* Left: Architecture Flow Lockup (Source Logo -> Target Cloud) with comfortable spacing */}
             <div className="flex items-center justify-center sm:justify-start space-x-3.5 bg-gradient-to-br from-slate-50/90 to-blue-50/40 p-4 sm:p-5 rounded-2xl border border-slate-200/80 shrink-0 min-w-[220px]">
@@ -144,35 +144,35 @@ export default function OfferingsPage() {
             {/* Right: Platform name, Short description, Feature bullets & View Offering button */}
             <div className="flex-1 flex flex-col justify-between space-y-4">
               <div>
-                {/* Platform Name (18px-19px, weight 600) */}
-                <h3 className="text-[18px] sm:text-[19px] font-semibold text-[#1d2d3e] group-hover:text-[#0070f2] transition-colors">
+                {/* Platform Name */}
+                <h3 className="text-[19px] sm:text-[21px] font-bold text-[#1d2d3e] group-hover:text-[#0070f2] transition-colors">
                   {p.name}
                 </h3>
-                {/* Short Description (14px-15px, line-height 1.5) */}
-                <p className="text-[14px] sm:text-[15px] text-[#556b82] leading-normal mt-1.5 line-clamp-2">
+                {/* Short Description */}
+                <p className="text-[14px] sm:text-[15px] text-[#556b82] leading-relaxed mt-1.5 line-clamp-2">
                   {p.heroSubtitle}
                 </p>
               </div>
 
-              {/* Feature/Value Bullets List (Icon 18-20px, text 14-15px, vertical spacing 10-12px) */}
+              {/* Feature/Value Bullets List */}
               <ul className="space-y-3 pt-1">
                 {p.cardBullets.map((bullet, idx) => (
                   <li key={idx} className="flex items-start space-x-3">
                     <div className="w-7 h-7 rounded-lg bg-blue-50/90 border border-blue-100 flex items-center justify-center shrink-0 mt-0.5 shadow-2xs">
                       {renderBulletIcon(bullet.iconType)}
                     </div>
-                    <span className="text-[14px] font-medium text-[#1d2d3e] leading-snug">
+                    <span className="text-[14px] sm:text-[15px] font-medium text-[#1d2d3e] leading-snug">
                       {bullet.text}
                     </span>
                   </li>
                 ))}
               </ul>
 
-              {/* View Offering Button (Height 42-44px, padding 18-22px, font 14px 600, rounded-lg) */}
+              {/* View Offering Button */}
               <div className="pt-2">
                 <Link
                   href={`/offerings/${p.slug}`}
-                  className="inline-flex items-center space-x-2 px-5 py-2.5 h-[44px] rounded-lg text-[14px] font-semibold text-[#0070f2] bg-blue-50/80 hover:bg-[#0070f2] hover:text-white border border-[#0070f2]/40 hover:border-[#0070f2] shadow-2xs transition-all w-fit group/btn cursor-pointer"
+                  className="inline-flex items-center space-x-2 px-6 h-12 rounded-xl text-[15px] font-semibold text-[#0070f2] bg-blue-50/80 hover:bg-[#0070f2] hover:text-white border border-[#0070f2]/40 hover:border-[#0070f2] shadow-2xs transition-all w-fit group/btn cursor-pointer"
                 >
                   <span>View Offering</span>
                   <svg className="w-4 h-4 shrink-0 transition-transform group-hover/btn:translate-x-1" viewBox="0 0 16 16" fill="none" stroke="currentColor">
@@ -185,11 +185,11 @@ export default function OfferingsPage() {
         ))}
       </section>
 
-      {/* Bottom CTA Banner (Generous padding, 14-15px text, 44px button) */}
-      <section className="rounded-3xl bg-white border border-[#d9e2ec] p-6 sm:p-8 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-6">
+      {/* Bottom CTA Banner */}
+      <section className="rounded-3xl bg-white border border-[#d9e2ec] p-7 sm:p-8 lg:p-9 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-6">
         <div className="flex items-center space-x-4 sm:space-x-5">
           {/* Blue Circle Icon */}
-          <div className="w-13 h-13 rounded-2xl bg-blue-50 text-[#0070f2] border border-blue-100 flex items-center justify-center shrink-0 shadow-2xs p-3">
+          <div className="w-14 h-14 rounded-2xl bg-blue-50 text-[#0070f2] border border-blue-100 flex items-center justify-center shrink-0 shadow-2xs p-3.5">
             <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
             </svg>
@@ -197,19 +197,19 @@ export default function OfferingsPage() {
 
           {/* Text */}
           <div>
-            <h3 className="text-[17px] sm:text-[18px] font-bold text-[#1d2d3e]">
+            <h3 className="text-[18px] sm:text-[20px] font-bold text-[#1d2d3e]">
               Not sure which offering fits your landscape?
             </h3>
-            <p className="text-[14px] sm:text-[15px] text-[#556b82] mt-1 leading-normal">
+            <p className="text-[14px] sm:text-[15px] text-[#556b82] mt-1 leading-relaxed">
               Use Business ValueLens AI to assess your current environment and get a personalized migration recommendation.
             </p>
           </div>
         </div>
 
-        {/* Action Button: Discover Business Value -> /assessment (Height 44px, px 22px, font 14px 600) */}
+        {/* Action Button: Discover Business Value */}
         <Link
           href="/assessment"
-          className="group inline-flex items-center justify-center space-x-2 px-6 py-2.5 h-[44px] rounded-lg text-[14px] font-semibold bg-[#0070f2] hover:bg-[#0057d2] text-white shadow-xs transition-colors shrink-0 whitespace-nowrap cursor-pointer"
+          className="group inline-flex items-center justify-center space-x-2 px-7 h-12 rounded-xl text-[15px] font-semibold bg-[#0070f2] hover:bg-[#0057d2] text-white shadow-xs transition-colors shrink-0 whitespace-nowrap cursor-pointer"
         >
           <span>Discover Business Value</span>
           <svg className="w-4 h-4 shrink-0 transition-transform group-hover:translate-x-0.5" viewBox="0 0 16 16" fill="none" stroke="currentColor">

@@ -263,17 +263,17 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
                 {isEnhanced && <Crown className="w-6 h-6" />}
               </div>
               <div>
-                <h2 className="text-xl font-black text-slate-900">{detailEdition}</h2>
-                <p className="text-xs text-slate-500 mt-1">{subtitle}</p>
+                <h2 className="text-xl sm:text-2xl font-bold text-slate-900">{detailEdition}</h2>
+                <p className="text-[14px] text-slate-500 mt-1">{subtitle}</p>
               </div>
             </div>
 
             <div className="flex flex-wrap items-center gap-4 lg:gap-6">
               <div className="text-right">
-                <div className="text-2xl font-black text-slate-900 font-mono">
-                  USD {monthlyPrice} <span className="text-xs font-normal text-slate-500">/ month</span>
+                <div className="text-2xl sm:text-3xl font-bold text-slate-900 font-mono">
+                  USD {monthlyPrice} <span className="text-[14px] font-normal text-slate-500">/ month</span>
                 </div>
-                <div className="text-xs text-slate-500 mt-0.5 font-mono">
+                <div className="text-[13px] text-slate-500 mt-0.5 font-mono">
                   (USD {annualPrice} / year)
                 </div>
               </div>
@@ -283,7 +283,7 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
                   handleSelectEdition(detailEdition);
                   setSubView('cards');
                 }}
-                className={`px-5 py-2.5 rounded-xl text-xs font-bold transition-all shadow-xs active:scale-95 ${
+                className={`px-6 py-3 rounded-xl text-[14px] sm:text-[15px] font-bold transition-all shadow-xs active:scale-95 ${
                   currentEd === detailEdition
                     ? 'bg-emerald-600 text-white'
                     : 'bg-indigo-600 text-white hover:bg-indigo-700'
@@ -294,7 +294,7 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
             </div>
           </div>
 
-          <div className="border-b border-slate-200 mt-6 flex gap-6 text-xs font-bold text-slate-500">
+          <div className="border-b border-slate-200 mt-6 flex gap-6 text-[14px] font-bold text-slate-500">
             <button
               onClick={() => setDetailTab('features')}
               className={`pb-3 border-b-2 transition-colors ${
@@ -315,29 +315,29 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
 
           {detailTab === 'features' && (
             <div className="pt-6 space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
-                <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
-                  <span className="font-bold text-slate-900 block">Monthly Message Entitlement</span>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-[14px]">
+                <div className="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                  <span className="font-bold text-slate-900 block mb-1">Monthly Message Entitlement</span>
                   <span className="text-slate-600">{isStarter ? '50,000' : isStandard ? '10,000' : '500,000'} msgs/mo (250 KB blocks)</span>
                 </div>
-                <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
-                  <span className="font-bold text-slate-900 block">Prebuilt Integration Packages</span>
+                <div className="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                  <span className="font-bold text-slate-900 block mb-1">Prebuilt Integration Packages</span>
                   <span className="text-slate-600">Included (Access to 3,400+ SAP & partner packages)</span>
                 </div>
-                <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
-                  <span className="font-bold text-slate-900 block">Custom iFlow Cap</span>
+                <div className="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                  <span className="font-bold text-slate-900 block mb-1">Custom iFlow Cap</span>
                   <span className="text-slate-600">{isStarter ? 'Cap of 10 custom iFlows' : 'Unlimited custom iFlows'}</span>
                 </div>
-                <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
-                  <span className="font-bold text-slate-900 block">B2B / EDI Trading Partner Management</span>
+                <div className="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                  <span className="font-bold text-slate-900 block mb-1">B2B / EDI Trading Partner Management</span>
                   <span className="text-slate-600">{isStarter ? 'Not Included' : 'Fully Included with Integration Advisor'}</span>
                 </div>
-                <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
-                  <span className="font-bold text-slate-900 block">Edge Integration Cell (On-Prem/Private Cloud)</span>
+                <div className="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                  <span className="font-bold text-slate-900 block mb-1">Edge Integration Cell (On-Prem/Private Cloud)</span>
                   <span className="text-slate-600">{isStarter ? 'Not Included' : '1+ Runtime Node Included'}</span>
                 </div>
-                <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
-                  <span className="font-bold text-slate-900 block">Advanced Event Mesh / Operations</span>
+                <div className="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                  <span className="font-bold text-slate-900 block mb-1">Advanced Event Mesh / Operations</span>
                   <span className="text-slate-600">{isEnhanced ? 'Included (AEM 100 + ANS + TMS)' : 'Optional Add-on'}</span>
                 </div>
               </div>
@@ -350,15 +350,15 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
                 href="https://www.sap.com/products/technology-platform/integration-suite/pricing.html"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-4 rounded-xl border border-slate-200 hover:border-indigo-300 bg-white flex items-center justify-between transition-colors group block"
+                className="p-5 rounded-xl border border-slate-200 hover:border-indigo-300 bg-white flex items-center justify-between transition-colors group block"
               >
                 <div>
-                  <div className="text-sm font-semibold text-slate-900 group-hover:text-[#0070f2] flex items-center gap-1.5">
+                  <div className="text-[15px] font-semibold text-slate-900 group-hover:text-[#0070f2] flex items-center gap-1.5">
                     Official SAP Integration Suite Pricing Guide <ExternalLink className="w-4 h-4" />
                   </div>
-                  <div className="text-xs text-slate-500 mt-0.5">Official SAP pricing page, terms, and packaging breakdown.</div>
+                  <div className="text-[13px] text-slate-500 mt-1">Official SAP pricing page, terms, and packaging breakdown.</div>
                 </div>
-                <span className="text-slate-400 group-hover:text-indigo-600 text-xs font-bold">&gt;</span>
+                <span className="text-slate-400 group-hover:text-indigo-600 text-[14px] font-bold">&gt;</span>
               </a>
             </div>
           )}
@@ -371,93 +371,93 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
   if (subView === 'comparison') {
     return (
       <div className="space-y-6 animate-fadeIn">
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-7 shadow-xs">
+        <div className="bg-white rounded-2xl border border-slate-200 p-7 sm:p-8 shadow-xs">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-200">
             <div>
               <button
                 type="button"
                 onClick={() => setSubView('cards')}
-                className="text-sm font-semibold text-[#0070f2] hover:text-[#0057d2] flex items-center gap-1.5 transition-colors mb-2"
+                className="text-[14px] font-semibold text-[#0070f2] hover:text-[#0057d2] flex items-center gap-1.5 transition-colors mb-2"
               >
                 <ArrowLeft className="w-4 h-4" /> Back to Edition Selection
               </button>
-              <h2 className="text-xl font-black text-slate-900">Feature Comparison Matrix</h2>
-              <p className="text-xs text-slate-500 mt-1">
+              <h2 className="text-2xl font-bold text-slate-900 font-['72',sans-serif]">Feature Comparison Matrix</h2>
+              <p className="text-[14px] text-slate-500 mt-1">
                 Compare Starter, Standard, and Enhanced editions of SAP Integration Suite.
               </p>
             </div>
             <button
               type="button"
               onClick={handleDownloadComparison}
-              className="px-4 py-2 bg-white border border-slate-300 hover:border-slate-400 text-slate-700 hover:bg-slate-50 rounded-xl text-sm font-semibold flex items-center gap-1.5 transition-colors self-start sm:self-auto shadow-2xs"
+              className="px-5 py-2.5 bg-white border border-slate-300 hover:border-slate-400 text-slate-700 hover:bg-slate-50 rounded-xl text-[14px] font-semibold flex items-center gap-2 transition-colors self-start sm:self-auto shadow-2xs"
             >
               <Download className="w-4 h-4 text-slate-600" /> Download Matrix
             </button>
           </div>
 
-          <div className="mt-4 overflow-x-auto">
-            <table className="w-full text-xs text-left">
+          <div className="mt-6 overflow-x-auto">
+            <table className="w-full text-left">
               <thead>
-                <tr className="border-b border-slate-200 text-slate-700 font-bold text-xs">
-                  <th className="py-3 px-3 w-1/4">Feature</th>
-                  <th className="py-3 px-3 w-1/2">Description</th>
-                  <th className="py-3 px-3 text-center w-[10%]">Starter ($20.7K)</th>
-                  <th className="py-3 px-3 text-center w-[10%]">Standard ($64K)</th>
-                  <th className="py-3 px-3 text-center w-[10%]">Enhanced ($92.2K)</th>
+                <tr className="border-b border-slate-200 text-slate-800 font-semibold text-[14px] sm:text-[15px]">
+                  <th className="py-3.5 px-4 w-1/4">Feature</th>
+                  <th className="py-3.5 px-4 w-1/2">Description</th>
+                  <th className="py-3.5 px-4 text-center w-[10%]">Starter ($20.7K)</th>
+                  <th className="py-3.5 px-4 text-center w-[10%]">Standard ($64K)</th>
+                  <th className="py-3.5 px-4 text-center w-[10%]">Enhanced ($92.2K)</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-slate-100 text-[14px] leading-[1.45]">
                 <tr className="bg-indigo-50/40">
-                  <td colSpan={5} className="py-2.5 px-3 font-black text-indigo-950 text-xs uppercase tracking-wider">
+                  <td colSpan={5} className="py-3 px-4 font-bold text-indigo-950 text-[13px] sm:text-[14px] uppercase tracking-wider">
                     General & Volumetrics
                   </td>
                 </tr>
                 <tr>
-                  <td className="py-3 px-3 font-semibold text-slate-900">Messages / Month</td>
-                  <td className="py-3 px-3 text-slate-600">Base included message blocks (250 KB each)</td>
-                  <td className="py-3 px-3 text-center font-bold text-slate-800 font-mono">50K</td>
-                  <td className="py-3 px-3 text-center font-bold text-slate-800 font-mono">10K</td>
-                  <td className="py-3 px-3 text-center font-bold text-slate-800 font-mono">500K</td>
+                  <td className="py-3.5 px-4 font-semibold text-slate-900">Messages / Month</td>
+                  <td className="py-3.5 px-4 text-slate-600">Base included message blocks (250 KB each)</td>
+                  <td className="py-3.5 px-4 text-center font-bold text-slate-800 font-mono">50K</td>
+                  <td className="py-3.5 px-4 text-center font-bold text-slate-800 font-mono">10K</td>
+                  <td className="py-3.5 px-4 text-center font-bold text-slate-800 font-mono">500K</td>
                 </tr>
                 <tr>
-                  <td className="py-3 px-3 font-semibold text-slate-900">Prebuilt Content</td>
-                  <td className="py-3 px-3 text-slate-600">3,400+ pre-packaged enterprise integrations</td>
-                  <td className="py-3 px-3 text-center"><span className="text-[#0070f2] font-semibold text-xs uppercase">Included</span></td>
-                  <td className="py-3 px-3 text-center"><span className="text-[#0070f2] font-semibold text-xs uppercase">Included</span></td>
-                  <td className="py-3 px-3 text-center"><span className="text-[#0070f2] font-semibold text-xs uppercase">Included</span></td>
+                  <td className="py-3.5 px-4 font-semibold text-slate-900">Prebuilt Content</td>
+                  <td className="py-3.5 px-4 text-slate-600">3,400+ pre-packaged enterprise integrations</td>
+                  <td className="py-3.5 px-4 text-center"><span className="text-[#0070f2] font-semibold text-[13px] uppercase">Included</span></td>
+                  <td className="py-3.5 px-4 text-center"><span className="text-[#0070f2] font-semibold text-[13px] uppercase">Included</span></td>
+                  <td className="py-3.5 px-4 text-center"><span className="text-[#0070f2] font-semibold text-[13px] uppercase">Included</span></td>
                 </tr>
                 <tr className="bg-indigo-50/40">
-                  <td colSpan={5} className="py-2.5 px-3 font-black text-indigo-950 text-xs uppercase tracking-wider">
+                  <td colSpan={5} className="py-3 px-4 font-bold text-indigo-950 text-[13px] sm:text-[14px] uppercase tracking-wider">
                     Integration Capabilities
                   </td>
                 </tr>
                 <tr>
-                  <td className="py-3 px-3 font-semibold text-slate-900">Cloud Integration</td>
-                  <td className="py-3 px-3 text-slate-600">A2A, B2B, and B2G runtime flows</td>
-                  <td className="py-3 px-3 text-center font-semibold text-slate-700">10 iFlows Cap</td>
-                  <td className="py-3 px-3 text-center"><span className="text-emerald-600 font-bold">Unlimited</span></td>
-                  <td className="py-3 px-3 text-center"><span className="text-emerald-600 font-bold">Unlimited</span></td>
+                  <td className="py-3.5 px-4 font-semibold text-slate-900">Cloud Integration</td>
+                  <td className="py-3.5 px-4 text-slate-600">A2A, B2B, and B2G runtime flows</td>
+                  <td className="py-3.5 px-4 text-center font-semibold text-slate-700">10 iFlows Cap</td>
+                  <td className="py-3.5 px-4 text-center"><span className="text-emerald-600 font-bold">Unlimited</span></td>
+                  <td className="py-3.5 px-4 text-center"><span className="text-emerald-600 font-bold">Unlimited</span></td>
                 </tr>
                 <tr>
-                  <td className="py-3 px-3 font-semibold text-slate-900">B2B & EDI Libraries</td>
-                  <td className="py-3 px-3 text-slate-600">Trading Partner Mgmt, EDIFACT, X12, AS2</td>
-                  <td className="py-3 px-3 text-center text-slate-400">—</td>
-                  <td className="py-3 px-3 text-center"><span className="text-[#0070f2] font-semibold text-xs uppercase">Included</span></td>
-                  <td className="py-3 px-3 text-center"><span className="text-[#0070f2] font-semibold text-xs uppercase">Included</span></td>
+                  <td className="py-3.5 px-4 font-semibold text-slate-900">B2B & EDI Libraries</td>
+                  <td className="py-3.5 px-4 text-slate-600">Trading Partner Mgmt, EDIFACT, X12, AS2</td>
+                  <td className="py-3.5 px-4 text-center text-slate-400">—</td>
+                  <td className="py-3.5 px-4 text-center"><span className="text-[#0070f2] font-semibold text-[13px] uppercase">Included</span></td>
+                  <td className="py-3.5 px-4 text-center"><span className="text-[#0070f2] font-semibold text-[13px] uppercase">Included</span></td>
                 </tr>
                 <tr>
-                  <td className="py-3 px-3 font-semibold text-slate-900">API Management</td>
-                  <td className="py-3 px-3 text-slate-600">API Gateway, developer portal, traffic policies</td>
-                  <td className="py-3 px-3 text-center text-slate-400">—</td>
-                  <td className="py-3 px-3 text-center"><span className="text-[#0070f2] font-semibold text-xs uppercase">Included</span></td>
-                  <td className="py-3 px-3 text-center"><span className="text-[#0070f2] font-semibold text-xs uppercase">Included</span></td>
+                  <td className="py-3.5 px-4 font-semibold text-slate-900">API Management</td>
+                  <td className="py-3.5 px-4 text-slate-600">API Gateway, developer portal, traffic policies</td>
+                  <td className="py-3.5 px-4 text-center text-slate-400">—</td>
+                  <td className="py-3.5 px-4 text-center"><span className="text-[#0070f2] font-semibold text-[13px] uppercase">Included</span></td>
+                  <td className="py-3.5 px-4 text-center"><span className="text-[#0070f2] font-semibold text-[13px] uppercase">Included</span></td>
                 </tr>
                 <tr>
-                  <td className="py-3 px-3 font-semibold text-slate-900">Edge Integration Cell</td>
-                  <td className="py-3 px-3 text-slate-600">Local runtime on Kubernetes / Private Cloud</td>
-                  <td className="py-3 px-3 text-center text-slate-400">—</td>
-                  <td className="py-3 px-3 text-center"><span className="text-emerald-600 font-bold">1+ Node</span></td>
-                  <td className="py-3 px-3 text-center"><span className="text-emerald-600 font-bold">1+ Node</span></td>
+                  <td className="py-3.5 px-4 font-semibold text-slate-900">Edge Integration Cell</td>
+                  <td className="py-3.5 px-4 text-slate-600">Local runtime on Kubernetes / Private Cloud</td>
+                  <td className="py-3.5 px-4 text-center text-slate-400">—</td>
+                  <td className="py-3.5 px-4 text-center"><span className="text-emerald-600 font-bold">1+ Node</span></td>
+                  <td className="py-3.5 px-4 text-center"><span className="text-emerald-600 font-bold">1+ Node</span></td>
                 </tr>
               </tbody>
             </table>
@@ -473,11 +473,11 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <span className="text-[12px] font-bold text-[#0070f2] uppercase tracking-wider">STEP 6 OF 7</span>
-          <h2 className="text-2xl sm:text-3xl font-bold text-[#1d2d3e] mt-1 font-['72',sans-serif]">
+          <span className="text-[13px] font-bold text-[#0070f2] uppercase tracking-wider">STEP 6 OF 7</span>
+          <h2 className="text-2xl sm:text-3xl font-bold text-[#1d2d3e] mt-1.5 font-['72',sans-serif]">
             SAP BTP Edition &amp; Capacity Sizing
           </h2>
-          <p className="text-[15px] sm:text-[16px] text-[#556b82] mt-1.5 leading-relaxed">
+          <p className="text-[15px] sm:text-[16px] text-[#556b82] mt-2 leading-relaxed">
             Configure your SAP Integration Suite subscription edition and capacity add-ons.
           </p>
         </div>
@@ -488,14 +488,14 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
           className="cursor-pointer bg-white border border-[#d9e2ec] hover:border-[#0070f2] rounded-xl p-4 px-5 shadow-xs hover:shadow-sm transition-all flex items-center gap-3.5 group max-w-xs shrink-0 active:scale-95"
           title="Click to run live AI recommendations"
         >
-          <div className="w-10 h-10 rounded-lg bg-blue-50 text-[#0070f2] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+          <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#0070f2] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
             {aiLoading ? <Loader2 className="w-5 h-5 text-[#0070f2] animate-spin" /> : <Sparkles className="w-5 h-5 text-[#0070f2]" />}
           </div>
           <div>
-            <div className="text-[14px] font-bold text-[#1d2d3e] flex items-center gap-1.5">
+            <div className="text-[15px] font-bold text-[#1d2d3e] flex items-center gap-1.5">
               Generate AI Insights
             </div>
-            <p className="text-[12px] text-[#556b82] leading-tight mt-0.5">
+            <p className="text-[13px] text-[#556b82] leading-tight mt-1">
               Get AI-powered recommendations based on your inputs.
             </p>
           </div>
@@ -569,17 +569,17 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
       <div className="bg-white rounded-3xl border border-[#d9e2ec] p-8 md:p-10 shadow-xs space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#e5e9f0] pb-4">
           <div>
-            <h3 className="text-xl font-bold text-[#1d2d3e] font-['72',sans-serif]">
+            <h3 className="text-xl sm:text-2xl font-bold text-[#1d2d3e] font-['72',sans-serif]">
               Subscription Editions
             </h3>
-            <p className="text-sm text-[#556b82] mt-0.5">
+            <p className="text-[14px] sm:text-[15px] text-[#556b82] mt-1">
               Select the tier that fits your enterprise integration footprint.
             </p>
           </div>
           <button
             type="button"
             onClick={() => setSubView('comparison')}
-            className="text-sm font-semibold text-[#0070f2] hover:text-[#0057d2] inline-flex items-center gap-2 group self-start sm:self-auto bg-blue-50 hover:bg-blue-100 px-4 py-2.5 rounded-xl border border-blue-200 transition-colors"
+            className="text-[14px] font-semibold text-[#0070f2] hover:text-[#0057d2] inline-flex items-center gap-2 group self-start sm:self-auto bg-blue-50 hover:bg-blue-100 px-4 py-2.5 rounded-xl border border-blue-200 transition-colors"
           >
             <Scale className="w-4 h-4" />
             <span>View Full Comparison Matrix</span>
@@ -590,62 +590,62 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
         </div>
 
         {/* 3 SAP Integration Suite Editions Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
           {/* Starter Edition */}
           <div
             onClick={() => handleSelectEdition('Starter Edition', 1)}
-            className={`p-6 sm:p-7 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between relative ${
+            className={`p-7 sm:p-8 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between relative ${
               currentEd === 'Starter Edition'
                 ? 'border-[#0070f2] ring-2 ring-[#0070f2]/20 bg-blue-50/15 shadow-md'
                 : 'border-slate-200 hover:border-slate-300 bg-white shadow-2xs'
             }`}
           >
-            <div className="space-y-3.5">
+            <div className="space-y-4">
               <div className="w-11 h-11 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-[#0070f2]">
                 <Box className="w-5 h-5" />
               </div>
               <div>
-                <h4 className="text-lg font-bold text-slate-900 leading-snug">
+                <h4 className="text-[18px] sm:text-[20px] font-bold text-slate-900 leading-snug">
                   SAP Integration Suite, starter edition
                 </h4>
-                <p className="text-xs text-slate-500 mt-1 leading-normal">
+                <p className="text-[14px] text-slate-500 mt-1.5 leading-normal">
                   Best for small and simple integration landscapes &amp; pilot POCs.
                 </p>
               </div>
 
               <div className="pt-2 border-t border-slate-100">
-                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider block">
+                <span className="text-[13px] font-semibold text-slate-500 uppercase tracking-wider block">
                   MONTHLY PRICE
                 </span>
-                <div className="text-2xl font-bold text-slate-900 font-mono mt-0.5">
-                  USD 1,728<span className="text-sm font-normal text-slate-500">.00</span>
+                <div className="text-[26px] sm:text-[28px] font-bold text-slate-900 font-mono mt-0.5">
+                  USD 1,728<span className="text-[14px] font-normal text-slate-500">.00</span>
                 </div>
-                <div className="text-xs text-slate-500 font-mono mt-0.5">
+                <div className="text-[13px] text-slate-500 font-mono mt-1">
                   (USD 20,736.00 / yr annualized)
                 </div>
               </div>
 
-              <div className="space-y-1 text-xs text-slate-600 pt-1">
+              <div className="space-y-1 text-[13px] sm:text-[14px] text-slate-600 pt-1">
                 <div className="font-medium text-slate-800">&bull; In blocks of 1 Tenants</div>
                 <div className="text-slate-500">&bull; Contract duration 3 to 36 months</div>
                 <div className="text-slate-500">&bull; Auto-renewal</div>
               </div>
 
-              <ul className="space-y-2 text-xs text-slate-700 pt-3 border-t border-slate-100">
-                <li className="flex items-start gap-2">
-                  <Check className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+              <ul className="space-y-2.5 text-[14px] sm:text-[15px] text-slate-700 pt-3 border-t border-slate-100">
+                <li className="flex items-start gap-2.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#0070f2] shrink-0 mt-2" />
                   <span>50,000 messages included per month</span>
                 </li>
-                <li className="flex items-start gap-2">
-                  <Check className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                <li className="flex items-start gap-2.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#0070f2] shrink-0 mt-2" />
                   <span>3,400+ prebuilt enterprise integrations</span>
                 </li>
-                <li className="flex items-start gap-2">
-                  <Check className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                <li className="flex items-start gap-2.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#0070f2] shrink-0 mt-2" />
                   <span>Unlimited SAP-to-SAP free message volume</span>
                 </li>
-                <li className="flex items-start gap-2">
-                  <Info className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
+                <li className="flex items-start gap-2.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-slate-400 shrink-0 mt-2" />
                   <span className="text-slate-600 font-medium">Up to 10 custom iFlows entitlement</span>
                 </li>
               </ul>
@@ -658,17 +658,17 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
                     setDetailEdition('Starter Edition');
                     setSubView('edition-detail');
                   }}
-                  className="text-xs font-semibold text-[#0070f2] hover:underline"
+                  className="text-[13px] sm:text-[14px] font-semibold text-[#0070f2] hover:underline"
                 >
                   See all pricing details
                 </button>
               </div>
             </div>
 
-            <div className="pt-5 mt-3 border-t border-slate-100 space-y-2">
+            <div className="pt-5 mt-4 border-t border-slate-100 space-y-2">
               <button
                 type="button"
-                className={`w-full py-2.5 rounded-xl text-sm font-semibold transition-all ${
+                className={`w-full h-12 py-0 rounded-xl text-[14px] sm:text-[15px] font-semibold transition-all ${
                   currentEd === 'Starter Edition'
                     ? 'bg-[#0070f2] text-white shadow-xs'
                     : 'bg-white border border-[#0070f2] text-[#0070f2] hover:bg-blue-50/50'
@@ -682,7 +682,7 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={(e) => e.stopPropagation()}
-                  className="text-[11px] text-slate-400 hover:text-slate-600 transition-colors"
+                  className="text-[13px] text-slate-400 hover:text-slate-600 transition-colors"
                 >
                   Terms and conditions
                 </a>
@@ -693,65 +693,65 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
           {/* Standard Edition (Enterprise Baseline) */}
           <div
             onClick={() => handleSelectEdition('Standard Edition', 1)}
-            className={`p-6 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between relative ${
+            className={`p-7 sm:p-8 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between relative ${
               currentEd === 'Standard Edition'
                 ? 'border-[#0070f2] ring-2 ring-[#0070f2]/20 bg-blue-50/15 shadow-md'
                 : 'border-slate-200 hover:border-slate-300 bg-white shadow-2xs'
             }`}
           >
-            <span className="absolute -top-3 right-4 bg-[#0070f2] text-white text-xs font-semibold px-3 py-1 rounded-full shadow-xs flex items-center gap-1">
+            <span className="absolute -top-3 right-4 bg-[#0070f2] text-white text-[13px] font-semibold px-3 py-1 rounded-full shadow-xs flex items-center gap-1">
               ★ Enterprise Standard
             </span>
-            <div className="space-y-3.5">
+            <div className="space-y-4">
               <div className="w-11 h-11 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-[#0070f2]">
                 <Layers className="w-5 h-5" />
               </div>
               <div>
-                <h4 className="text-lg font-bold text-slate-900 leading-snug">
+                <h4 className="text-[18px] sm:text-[20px] font-bold text-slate-900 leading-snug">
                   SAP Integration Suite, standard edition
                 </h4>
-                <p className="text-xs text-slate-500 mt-1 leading-normal">
+                <p className="text-[14px] text-slate-500 mt-1.5 leading-normal">
                   Ideal for enterprise integration needs &amp; production workloads.
                 </p>
               </div>
 
               <div className="pt-2 border-t border-slate-100">
-                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider block">
+                <span className="text-[13px] font-semibold text-slate-500 uppercase tracking-wider block">
                   MONTHLY PRICE
                 </span>
-                <div className="text-2xl font-bold text-slate-900 font-mono mt-0.5">
-                  USD 5,339<span className="text-sm font-normal text-slate-500">.00</span>
+                <div className="text-[26px] sm:text-[28px] font-bold text-slate-900 font-mono mt-0.5">
+                  USD 5,339<span className="text-[14px] font-normal text-slate-500">.00</span>
                 </div>
-                <div className="text-xs text-slate-500 font-mono mt-0.5">
+                <div className="text-[13px] text-slate-500 font-mono mt-1">
                   (USD 64,068.00 / yr annualized)
                 </div>
               </div>
 
-              <div className="space-y-1 text-xs text-slate-600 pt-1">
+              <div className="space-y-1 text-[13px] sm:text-[14px] text-slate-600 pt-1">
                 <div className="font-medium text-slate-800">&bull; In blocks of 1 Tenants</div>
                 <div className="text-slate-500">&bull; Contract duration 3 to 36 months</div>
                 <div className="text-slate-500">&bull; Auto-renewal</div>
               </div>
 
-              <ul className="space-y-2 text-xs text-slate-700 pt-3 border-t border-slate-100">
-                <li className="flex items-start gap-2">
-                  <Check className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+              <ul className="space-y-2.5 text-[14px] sm:text-[15px] text-slate-700 pt-3 border-t border-slate-100">
+                <li className="flex items-start gap-2.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#0070f2] shrink-0 mt-2" />
                   <span>Unlimited custom integration flows (iFlows)</span>
                 </li>
-                <li className="flex items-start gap-2">
-                  <Check className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                <li className="flex items-start gap-2.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#0070f2] shrink-0 mt-2" />
                   <span>Full API Lifecycle Management &amp; Developer Portal</span>
                 </li>
-                <li className="flex items-start gap-2">
-                  <Check className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                <li className="flex items-start gap-2.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#0070f2] shrink-0 mt-2" />
                   <span>B2B/EDI libraries, Trading Partner Mgmt &amp; Advisor</span>
                 </li>
-                <li className="flex items-start gap-2">
-                  <Check className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                <li className="flex items-start gap-2.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#0070f2] shrink-0 mt-2" />
                   <span>1+ Edge Integration Cell runtime node included</span>
                 </li>
-                <li className="flex items-start gap-2">
-                  <Check className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                <li className="flex items-start gap-2.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#0070f2] shrink-0 mt-2" />
                   <span>Open Connectors (160+ third-party SaaS apps)</span>
                 </li>
               </ul>
@@ -764,17 +764,17 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
                     setDetailEdition('Standard Edition');
                     setSubView('edition-detail');
                   }}
-                  className="text-xs font-semibold text-[#0070f2] hover:underline"
+                  className="text-[13px] sm:text-[14px] font-semibold text-[#0070f2] hover:underline"
                 >
                   See all pricing details
                 </button>
               </div>
             </div>
 
-            <div className="pt-5 mt-3 border-t border-slate-100 space-y-2">
+            <div className="pt-5 mt-4 border-t border-slate-100 space-y-2">
               <button
                 type="button"
-                className={`w-full py-2.5 rounded-xl text-sm font-semibold transition-all ${
+                className={`w-full h-12 py-0 rounded-xl text-[14px] sm:text-[15px] font-semibold transition-all ${
                   currentEd === 'Standard Edition'
                     ? 'bg-[#0070f2] text-white shadow-xs'
                     : 'bg-white border border-[#0070f2] text-[#0070f2] hover:bg-blue-50/50'
@@ -788,7 +788,7 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={(e) => e.stopPropagation()}
-                  className="text-[11px] text-slate-400 hover:text-slate-600 transition-colors"
+                  className="text-[13px] text-slate-400 hover:text-slate-600 transition-colors"
                 >
                   Terms and conditions
                 </a>
@@ -799,62 +799,62 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
           {/* Enhanced Edition */}
           <div
             onClick={() => handleSelectEdition('Enhanced Edition', 1)}
-            className={`p-6 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between relative ${
+            className={`p-7 sm:p-8 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between relative ${
               currentEd === 'Enhanced Edition'
                 ? 'border-[#0070f2] ring-2 ring-[#0070f2]/20 bg-blue-50/15 shadow-md'
                 : 'border-slate-200 hover:border-slate-300 bg-white shadow-2xs'
             }`}
           >
-            <div className="space-y-3.5">
+            <div className="space-y-4">
               <div className="w-11 h-11 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center text-amber-600">
                 <Crown className="w-5 h-5" />
               </div>
               <div>
-                <h4 className="text-lg font-bold text-slate-900 leading-snug">
+                <h4 className="text-[18px] sm:text-[20px] font-bold text-slate-900 leading-snug">
                   SAP Integration Suite, enhanced edition
                 </h4>
-                <p className="text-xs text-slate-500 mt-1 leading-normal">
+                <p className="text-[14px] text-slate-500 mt-1.5 leading-normal">
                   For high-volume and mission-critical scale &amp; event mesh.
                 </p>
               </div>
 
               <div className="pt-2 border-t border-slate-100">
-                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider block">
+                <span className="text-[13px] font-semibold text-slate-500 uppercase tracking-wider block">
                   MONTHLY PRICE
                 </span>
-                <div className="text-2xl font-bold text-slate-900 font-mono mt-0.5">
-                  USD 7,688<span className="text-sm font-normal text-slate-500">.00</span>
+                <div className="text-[26px] sm:text-[28px] font-bold text-slate-900 font-mono mt-0.5">
+                  USD 7,688<span className="text-[14px] font-normal text-slate-500">.00</span>
                 </div>
-                <div className="text-xs text-slate-500 font-mono mt-0.5">
+                <div className="text-[13px] text-slate-500 font-mono mt-1">
                   (USD 92,256.00 / yr annualized)
                 </div>
               </div>
 
-              <div className="space-y-1 text-xs text-slate-600 pt-1">
+              <div className="space-y-1 text-[13px] sm:text-[14px] text-slate-600 pt-1">
                 <div className="font-medium text-slate-800">&bull; In blocks of 1 Tenants</div>
                 <div className="text-slate-500">&bull; Contract duration 3 to 36 months</div>
                 <div className="text-slate-500">&bull; Auto-renewal</div>
               </div>
 
-              <ul className="space-y-2 text-xs text-slate-700 pt-3 border-t border-slate-100">
-                <li className="flex items-start gap-2">
-                  <Check className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+              <ul className="space-y-2.5 text-[14px] sm:text-[15px] text-slate-700 pt-3 border-t border-slate-100">
+                <li className="flex items-start gap-2.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#0070f2] shrink-0 mt-2" />
                   <span>500,000 messages included per month</span>
                 </li>
-                <li className="flex items-start gap-2">
-                  <Check className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                <li className="flex items-start gap-2.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#0070f2] shrink-0 mt-2" />
                   <span>1 &times; Advanced Event Mesh (AEM 100) tenant</span>
                 </li>
-                <li className="flex items-start gap-2">
-                  <Check className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                <li className="flex items-start gap-2.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#0070f2] shrink-0 mt-2" />
                   <span>Integration Suite AI natural-language generation</span>
                 </li>
-                <li className="flex items-start gap-2">
-                  <Check className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                <li className="flex items-start gap-2.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#0070f2] shrink-0 mt-2" />
                   <span>Alert Notification (ANS) &amp; Cloud Transport (TMS)</span>
                 </li>
-                <li className="flex items-start gap-2">
-                  <Check className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                <li className="flex items-start gap-2.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#0070f2] shrink-0 mt-2" />
                   <span>Document AI (100 documents / month)</span>
                 </li>
               </ul>
@@ -867,17 +867,17 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
                     setDetailEdition('Enhanced Edition');
                     setSubView('edition-detail');
                   }}
-                  className="text-xs font-semibold text-[#0070f2] hover:underline"
+                  className="text-[13px] sm:text-[14px] font-semibold text-[#0070f2] hover:underline"
                 >
                   See all pricing details
                 </button>
               </div>
             </div>
 
-            <div className="pt-5 mt-3 border-t border-slate-100 space-y-2">
+            <div className="pt-5 mt-4 border-t border-slate-100 space-y-2">
               <button
                 type="button"
-                className={`w-full py-2.5 rounded-xl text-sm font-semibold transition-all ${
+                className={`w-full h-12 py-0 rounded-xl text-[14px] sm:text-[15px] font-semibold transition-all ${
                   currentEd === 'Enhanced Edition'
                     ? 'bg-[#0070f2] text-white shadow-xs'
                     : 'bg-white border border-[#0070f2] text-[#0070f2] hover:bg-blue-50/50'
@@ -891,7 +891,7 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={(e) => e.stopPropagation()}
-                  className="text-[11px] text-slate-400 hover:text-slate-600 transition-colors"
+                  className="text-[13px] text-slate-400 hover:text-slate-600 transition-colors"
                 >
                   Terms and conditions
                 </a>
@@ -905,13 +905,13 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
       <div className="bg-white rounded-3xl border border-[#d9e2ec] p-8 md:p-10 shadow-xs space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#e5e9f0] pb-4">
           <div>
-            <span className="text-xs font-bold text-[#0070f2] uppercase tracking-wider block">
+            <span className="text-[13px] font-bold text-[#0070f2] uppercase tracking-wider block">
               OFFICIAL SAP BTP INTEGRATION SUITE ADD-ONS
             </span>
-            <h3 className="text-xl font-bold text-[#1d2d3e] font-['72',sans-serif] mt-0.5">
+            <h3 className="text-xl sm:text-2xl font-bold text-[#1d2d3e] font-['72',sans-serif] mt-1">
               Capacity &amp; Hybrid Extensions
             </h3>
-            <p className="text-sm text-[#556b82] mt-0.5">
+            <p className="text-[14px] sm:text-[15px] text-[#556b82] mt-1">
               Configure optional capacity and hybrid runtime extensions matching the official SAP pricing schedule.
             </p>
           </div>
@@ -919,29 +919,29 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
             <button
               type="button"
               onClick={handleClearAllAddOns}
-              className="text-xs font-semibold text-rose-600 hover:text-rose-800 transition-colors self-start sm:self-auto px-3.5 py-1.5 bg-rose-50 rounded-xl border border-rose-200 shadow-2xs"
+              className="text-[13px] font-semibold text-rose-600 hover:text-rose-800 transition-colors self-start sm:self-auto px-4 py-2 bg-rose-50 rounded-xl border border-rose-200 shadow-2xs"
             >
               Clear all add-ons
             </button>
           )}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
           {/* Add-on 1: Additional Message Packs */}
           <div
-            className={`p-5 rounded-2xl border transition-all flex flex-col justify-between ${
+            className={`p-6 sm:p-7 rounded-2xl border transition-all flex flex-col justify-between ${
               packs > 0
                 ? 'border-[#0070f2] ring-2 ring-[#0070f2]/20 bg-blue-50/15 shadow-sm'
                 : 'border-slate-200 bg-white hover:border-slate-300 shadow-2xs'
             }`}
           >
-            <div className="space-y-3">
+            <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#0070f2] flex items-center justify-center">
                   <MessageSquare className="w-5 h-5" />
                 </div>
                 <span
-                  className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${
+                  className={`px-3 py-0.5 rounded-full text-[13px] font-semibold ${
                     packs > 0
                       ? 'bg-emerald-100 text-emerald-800 border border-emerald-200'
                       : 'bg-slate-100 text-slate-600'
@@ -952,20 +952,20 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
               </div>
 
               <div>
-                <h4 className="text-base font-bold text-slate-900">Additional Messages</h4>
-                <p className="text-xs text-slate-500 mt-1 leading-normal">
+                <h4 className="text-[17px] sm:text-[18px] font-bold text-slate-900">Additional Messages</h4>
+                <p className="text-[13px] sm:text-[14px] text-slate-500 mt-1.5 leading-normal">
                   Blocks of 10,000 monthly transactions to process integrations and APIs.
                 </p>
               </div>
 
               <div className="pt-2 border-t border-slate-100">
-                <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider block">
+                <span className="text-[12px] sm:text-[13px] font-semibold text-slate-500 uppercase tracking-wider block">
                   MONTHLY PRICE
                 </span>
-                <div className="text-lg font-bold text-slate-900 font-mono mt-0.5">
-                  USD 7.00 <span className="text-xs font-normal text-slate-500">/ mo per block</span>
+                <div className="text-[19px] sm:text-[20px] font-bold text-slate-900 font-mono mt-0.5">
+                  USD 7.00 <span className="text-[13px] font-normal text-slate-500">/ mo per block</span>
                 </div>
-                <div className="text-xs text-slate-500 font-mono mt-0.5">
+                <div className="text-[13px] text-slate-500 font-mono mt-0.5">
                   USD 84.00 / 10K-month block / yr
                 </div>
               </div>
@@ -976,13 +976,13 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
                 <button
                   type="button"
                   onClick={() => handleUpdatePacks(50)}
-                  className="w-full py-2 rounded-xl border border-[#0070f2] text-[#0070f2] hover:bg-blue-50 text-sm font-semibold transition-all flex items-center justify-center gap-1.5 active:scale-95"
+                  className="w-full h-11 rounded-xl border border-[#0070f2] text-[#0070f2] hover:bg-blue-50 text-[14px] font-semibold transition-all flex items-center justify-center gap-1.5 active:scale-95"
                 >
                   <Plus className="w-4 h-4" /> Add to Plan (+50 blocks)
                 </button>
               ) : (
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-xs">
+                <div className="space-y-2.5">
+                  <div className="flex items-center justify-between text-[13px]">
                     <span className="font-semibold text-slate-700">Quantity (10K blocks):</span>
                     <span className="font-mono font-bold text-[#0070f2]">{packs} blocks</span>
                   </div>
@@ -991,7 +991,7 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
                       type="button"
                       onClick={() => handleUpdatePacks(packs - 50)}
                       disabled={packs <= 0}
-                      className="w-9 h-9 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-100 flex items-center justify-center font-bold text-sm disabled:opacity-40 transition-colors"
+                      className="w-10 h-10 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-100 flex items-center justify-center font-bold text-sm disabled:opacity-40 transition-colors"
                       title="Decrease message blocks"
                     >
                       <Minus className="w-4 h-4 text-slate-700" />
@@ -1002,25 +1002,25 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
                       step="50"
                       value={packs}
                       onChange={(e) => handleUpdatePacks(parseInt(e.target.value) || 0)}
-                      className="w-full text-center font-mono text-sm font-semibold border border-slate-300 rounded-lg py-1.5 bg-white focus:ring-2 focus:ring-[#0070f2] focus:outline-none"
+                      className="w-full h-10 text-center font-mono text-[14px] font-semibold border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-[#0070f2] focus:outline-none"
                     />
                     <button
                       type="button"
                       onClick={() => handleUpdatePacks(packs + 50)}
-                      className="w-9 h-9 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-100 flex items-center justify-center font-bold text-sm transition-colors"
+                      className="w-10 h-10 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-100 flex items-center justify-center font-bold text-sm transition-colors"
                       title="Increase message blocks"
                     >
                       <Plus className="w-4 h-4 text-slate-700" />
                     </button>
                   </div>
                   <div className="flex items-center justify-between pt-1">
-                    <span className="text-xs text-slate-600 font-mono font-medium">
+                    <span className="text-[13px] text-slate-600 font-mono font-medium">
                       +{(packs * 10).toLocaleString()}K msgs/mo &bull; +USD {(packs * 84).toLocaleString()}/yr
                     </span>
                     <button
                       type="button"
                       onClick={() => handleUpdatePacks(0)}
-                      className="text-xs font-semibold text-rose-600 hover:text-rose-800"
+                      className="text-[13px] font-semibold text-rose-600 hover:text-rose-800"
                     >
                       Remove
                     </button>
@@ -1032,19 +1032,19 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
 
           {/* Add-on 2: Additional Edge Integration Cell */}
           <div
-            className={`p-5 rounded-2xl border transition-all flex flex-col justify-between ${
+            className={`p-6 sm:p-7 rounded-2xl border transition-all flex flex-col justify-between ${
               additionalEicTenants > 0
                 ? 'border-[#0070f2] ring-2 ring-[#0070f2]/20 bg-blue-50/15 shadow-sm'
                 : 'border-slate-200 bg-white hover:border-slate-300 shadow-2xs'
             }`}
           >
-            <div className="space-y-3">
+            <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#0070f2] flex items-center justify-center">
                   <Server className="w-5 h-5" />
                 </div>
                 <span
-                  className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${
+                  className={`px-3 py-0.5 rounded-full text-[13px] font-semibold ${
                     additionalEicTenants > 0
                       ? 'bg-emerald-100 text-emerald-800 border border-emerald-200'
                       : 'bg-slate-100 text-slate-600'
@@ -1055,20 +1055,20 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
               </div>
 
               <div>
-                <h4 className="text-base font-bold text-slate-900">Edge Integration Cell</h4>
-                <p className="text-xs text-slate-500 mt-1 leading-normal">
+                <h4 className="text-[17px] sm:text-[18px] font-bold text-slate-900">Edge Integration Cell</h4>
+                <p className="text-[13px] sm:text-[14px] text-slate-500 mt-1.5 leading-normal">
                   Hybrid runtime node deployed on private cloud or customer-managed Kubernetes.
                 </p>
               </div>
 
               <div className="pt-2 border-t border-slate-100">
-                <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider block">
+                <span className="text-[12px] sm:text-[13px] font-semibold text-slate-500 uppercase tracking-wider block">
                   MONTHLY PRICE
                 </span>
-                <div className="text-lg font-bold text-slate-900 font-mono mt-0.5">
-                  USD 3,455.00 <span className="text-xs font-normal text-slate-500">/ mo</span>
+                <div className="text-[19px] sm:text-[20px] font-bold text-slate-900 font-mono mt-0.5">
+                  USD 3,455.00 <span className="text-[13px] font-normal text-slate-500">/ mo</span>
                 </div>
-                <div className="text-xs text-slate-500 font-mono mt-0.5">
+                <div className="text-[13px] text-slate-500 font-mono mt-0.5">
                   USD 41,460.00 / node / yr
                 </div>
               </div>
@@ -1079,13 +1079,13 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
                 <button
                   type="button"
                   onClick={() => handleUpdateEic(1)}
-                  className="w-full py-2 rounded-xl border border-[#0070f2] text-[#0070f2] hover:bg-blue-50 text-sm font-semibold transition-all flex items-center justify-center gap-1.5 active:scale-95"
+                  className="w-full h-11 rounded-xl border border-[#0070f2] text-[#0070f2] hover:bg-blue-50 text-[14px] font-semibold transition-all flex items-center justify-center gap-1.5 active:scale-95"
                 >
                   <Plus className="w-4 h-4" /> Add to Plan (+1 Node)
                 </button>
               ) : (
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-xs">
+                <div className="space-y-2.5">
+                  <div className="flex items-center justify-between text-[13px]">
                     <span className="font-semibold text-slate-700">Quantity (Worker Nodes):</span>
                     <span className="font-mono font-bold text-[#0070f2]">{additionalEicTenants} node(s)</span>
                   </div>
@@ -1094,7 +1094,7 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
                       type="button"
                       onClick={() => handleUpdateEic(additionalEicTenants - 1)}
                       disabled={additionalEicTenants <= 0}
-                      className="w-9 h-9 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-100 flex items-center justify-center font-bold text-sm disabled:opacity-40 transition-colors"
+                      className="w-10 h-10 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-100 flex items-center justify-center font-bold text-sm disabled:opacity-40 transition-colors"
                       title="Decrease nodes"
                     >
                       <Minus className="w-4 h-4 text-slate-700" />
@@ -1104,25 +1104,25 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
                       min="0"
                       value={additionalEicTenants}
                       onChange={(e) => handleUpdateEic(parseInt(e.target.value) || 0)}
-                      className="w-full text-center font-mono text-sm font-semibold border border-slate-300 rounded-lg py-1.5 bg-white focus:ring-2 focus:ring-[#0070f2] focus:outline-none"
+                      className="w-full h-10 text-center font-mono text-[14px] font-semibold border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-[#0070f2] focus:outline-none"
                     />
                     <button
                       type="button"
                       onClick={() => handleUpdateEic(additionalEicTenants + 1)}
-                      className="w-9 h-9 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-100 flex items-center justify-center font-bold text-sm transition-colors"
+                      className="w-10 h-10 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-100 flex items-center justify-center font-bold text-sm transition-colors"
                       title="Increase nodes"
                     >
                       <Plus className="w-4 h-4 text-slate-700" />
                     </button>
                   </div>
                   <div className="flex items-center justify-between pt-1">
-                    <span className="text-xs text-slate-600 font-mono font-medium">
+                    <span className="text-[13px] text-slate-600 font-mono font-medium">
                       +USD {(additionalEicTenants * 41460).toLocaleString()}/yr
                     </span>
                     <button
                       type="button"
                       onClick={() => handleUpdateEic(0)}
-                      className="text-xs font-semibold text-rose-600 hover:text-rose-800"
+                      className="text-[13px] font-semibold text-rose-600 hover:text-rose-800"
                     >
                       Remove
                     </button>
@@ -1134,19 +1134,19 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
 
           {/* Add-on 3: Data Space Integration */}
           <div
-            className={`p-5 rounded-2xl border transition-all flex flex-col justify-between ${
+            className={`p-6 sm:p-7 rounded-2xl border transition-all flex flex-col justify-between ${
               dataSpacePackages > 0
                 ? 'border-[#0070f2] ring-2 ring-[#0070f2]/20 bg-blue-50/15 shadow-sm'
                 : 'border-slate-200 bg-white hover:border-slate-300 shadow-2xs'
             }`}
           >
-            <div className="space-y-3">
+            <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#0070f2] flex items-center justify-center">
                   <Database className="w-5 h-5" />
                 </div>
                 <span
-                  className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${
+                  className={`px-3 py-0.5 rounded-full text-[13px] font-semibold ${
                     dataSpacePackages > 0
                       ? 'bg-emerald-100 text-emerald-800 border border-emerald-200'
                       : 'bg-slate-100 text-slate-600'
@@ -1157,20 +1157,20 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
               </div>
 
               <div>
-                <h4 className="text-base font-bold text-slate-900">Data Space Integration</h4>
-                <p className="text-xs text-slate-500 mt-1 leading-normal">
+                <h4 className="text-[17px] sm:text-[18px] font-bold text-slate-900">Data Space Integration</h4>
+                <p className="text-[13px] sm:text-[14px] text-slate-500 mt-1.5 leading-normal">
                   Supports secure, sovereign data exchange across industrial ecosystems (Catena-X).
                 </p>
               </div>
 
               <div className="pt-2 border-t border-slate-100">
-                <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider block">
+                <span className="text-[12px] sm:text-[13px] font-semibold text-slate-500 uppercase tracking-wider block">
                   MONTHLY PRICE
                 </span>
-                <div className="text-lg font-bold text-slate-900 font-mono mt-0.5">
-                  USD 75.00 <span className="text-xs font-normal text-slate-500">/ mo</span>
+                <div className="text-[19px] sm:text-[20px] font-bold text-slate-900 font-mono mt-0.5">
+                  USD 75.00 <span className="text-[13px] font-normal text-slate-500">/ mo</span>
                 </div>
-                <div className="text-xs text-slate-500 font-mono mt-0.5">
+                <div className="text-[13px] text-slate-500 font-mono mt-0.5">
                   USD 900.00 / package / yr
                 </div>
               </div>
@@ -1181,13 +1181,13 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
                 <button
                   type="button"
                   onClick={() => handleUpdateDataSpace(1)}
-                  className="w-full py-2 rounded-xl border border-[#0070f2] text-[#0070f2] hover:bg-blue-50 text-sm font-semibold transition-all flex items-center justify-center gap-1.5 active:scale-95"
+                  className="w-full h-11 rounded-xl border border-[#0070f2] text-[#0070f2] hover:bg-blue-50 text-[14px] font-semibold transition-all flex items-center justify-center gap-1.5 active:scale-95"
                 >
                   <Plus className="w-4 h-4" /> Add to Plan (+1 Package)
                 </button>
               ) : (
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-xs">
+                <div className="space-y-2.5">
+                  <div className="flex items-center justify-between text-[13px]">
                     <span className="font-semibold text-slate-700">Quantity (Packages):</span>
                     <span className="font-mono font-bold text-[#0070f2]">{dataSpacePackages} pkg</span>
                   </div>
@@ -1196,7 +1196,7 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
                       type="button"
                       onClick={() => handleUpdateDataSpace(dataSpacePackages - 1)}
                       disabled={dataSpacePackages <= 0}
-                      className="w-9 h-9 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-100 flex items-center justify-center font-bold text-sm disabled:opacity-40 transition-colors"
+                      className="w-10 h-10 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-100 flex items-center justify-center font-bold text-sm disabled:opacity-40 transition-colors"
                       title="Decrease packages"
                     >
                       <Minus className="w-4 h-4 text-slate-700" />
@@ -1206,25 +1206,25 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
                       min="0"
                       value={dataSpacePackages}
                       onChange={(e) => handleUpdateDataSpace(parseInt(e.target.value) || 0)}
-                      className="w-full text-center font-mono text-sm font-semibold border border-slate-300 rounded-lg py-1.5 bg-white focus:ring-2 focus:ring-[#0070f2] focus:outline-none"
+                      className="w-full h-10 text-center font-mono text-[14px] font-semibold border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-[#0070f2] focus:outline-none"
                     />
                     <button
                       type="button"
                       onClick={() => handleUpdateDataSpace(dataSpacePackages + 1)}
-                      className="w-9 h-9 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-100 flex items-center justify-center font-bold text-sm transition-colors"
+                      className="w-10 h-10 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-100 flex items-center justify-center font-bold text-sm transition-colors"
                       title="Increase packages"
                     >
                       <Plus className="w-4 h-4 text-slate-700" />
                     </button>
                   </div>
                   <div className="flex items-center justify-between pt-1">
-                    <span className="text-xs text-slate-600 font-mono font-medium">
+                    <span className="text-[13px] text-slate-600 font-mono font-medium">
                       +USD {(dataSpacePackages * 900).toLocaleString()}/yr
                     </span>
                     <button
                       type="button"
                       onClick={() => handleUpdateDataSpace(0)}
-                      className="text-xs font-semibold text-rose-600 hover:text-rose-800"
+                      className="text-[13px] font-semibold text-rose-600 hover:text-rose-800"
                     >
                       Remove
                     </button>
@@ -1250,23 +1250,23 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
           const totalMonthly = monthlyBase * effectiveUnits + packs * 7 + additionalEicTenants * 3455 + dataSpacePackages * 75;
 
           return (
-            <div className="bg-gradient-to-r from-blue-50/90 via-sky-50/50 to-indigo-50/80 rounded-3xl border border-blue-200/90 p-6 sm:p-8 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6 mt-4">
+            <div className="bg-gradient-to-r from-blue-50/90 via-sky-50/50 to-indigo-50/80 rounded-3xl border border-blue-200/90 p-7 sm:p-8 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6 mt-6">
               <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold text-[#0070f2] uppercase tracking-wider">
+                <div className="flex items-center gap-2.5">
+                  <span className="text-[13px] font-bold text-[#0070f2] uppercase tracking-wider">
                     CONFIGURED SAP BTP CLOUD SUBSCRIPTION
                   </span>
-                  <span className="text-[11px] font-bold text-emerald-800 bg-emerald-100 px-3 py-0.5 rounded-full border border-emerald-200">
+                  <span className="text-[12px] sm:text-[13px] font-bold text-emerald-800 bg-emerald-100 px-3 py-0.5 rounded-full border border-emerald-200">
                     Official SAP Pricing Baseline
                   </span>
                 </div>
-                <h4 className="text-xl font-bold text-[#1d2d3e] font-['72',sans-serif]">
+                <h4 className="text-xl sm:text-2xl font-bold text-[#1d2d3e] font-['72',sans-serif]">
                   {effectiveEd} ({effectiveUnits} tenant) &bull; ${basePrice.toLocaleString()}/yr
                   {packs > 0 && ` + ${packs} msg packs ($${packCost.toLocaleString()})`}
                   {additionalEicTenants > 0 && ` + ${additionalEicTenants} EIC ($${eicCost.toLocaleString()})`}
                   {dataSpacePackages > 0 && ` + ${dataSpacePackages} Data Space ($${dataSpaceCost.toLocaleString()})`}
                 </h4>
-                <p className="text-xs text-[#556b82] font-mono">
+                <p className="text-[13px] text-[#556b82] font-mono leading-relaxed">
                   Quoting formula: {effectiveUnits} unit(s) &times; ${basePrice.toLocaleString()}/yr
                   {packs > 0 ? ` + ${packs} packs &times; $84` : ''}
                   {dataSpacePackages > 0 ? ` + ${dataSpacePackages} DataSpace &times; $900` : ''}
@@ -1274,12 +1274,12 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
                 </p>
               </div>
 
-              <div className="text-right shrink-0 bg-white/95 p-5 rounded-2xl border border-blue-100 shadow-xs">
-                <span className="text-xs text-[#556b82] block">Total Configured Annual Subscription</span>
+              <div className="text-right shrink-0 bg-white/95 p-6 rounded-2xl border border-blue-100 shadow-xs">
+                <span className="text-[13px] text-[#556b82] block mb-1">Total Configured Annual Subscription</span>
                 <div className="text-2xl sm:text-3xl font-bold font-mono text-[#0070f2]">
-                  USD {totalAnnual.toLocaleString()}<span className="text-sm text-[#556b82] font-normal"> / yr</span>
+                  USD {totalAnnual.toLocaleString()}<span className="text-[14px] text-[#556b82] font-normal"> / yr</span>
                 </div>
-                <div className="text-xs text-[#556b82] font-mono mt-1">
+                <div className="text-[13px] text-[#556b82] font-mono mt-1">
                   &asymp; USD {totalMonthly.toLocaleString()} / month
                 </div>
               </div>
@@ -1293,7 +1293,7 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
         <button
           type="button"
           onClick={onBack}
-          className="h-[44px] px-6 text-[14px] font-semibold text-[#1d2d3e] bg-white border border-[#d9e2ec] rounded-lg hover:bg-slate-50 transition-colors flex items-center space-x-2 shadow-xs group cursor-pointer"
+          className="h-12 px-7 text-[15px] font-semibold text-[#1d2d3e] bg-white border border-[#d9e2ec] rounded-xl hover:bg-slate-50 transition-colors flex items-center space-x-2 shadow-xs group cursor-pointer"
         >
           <ArrowLeft className="w-4 h-4 text-slate-500 group-hover:text-[#1d2d3e] transition-transform group-hover:-translate-x-0.5" />
           <span>Back to Cost Parameters</span>
@@ -1303,7 +1303,7 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
           type="button"
           disabled={loading}
           onClick={onCalculate}
-          className="h-[44px] px-6 text-[14px] font-semibold text-white bg-[#0070f2] hover:bg-[#0057d2] rounded-lg shadow-xs disabled:opacity-50 transition-all flex items-center space-x-2 cursor-pointer"
+          className="h-12 px-7 text-[15px] font-semibold text-white bg-[#0070f2] hover:bg-[#0057d2] rounded-xl shadow-xs disabled:opacity-50 transition-all flex items-center space-x-2 cursor-pointer"
         >
           {loading ? (
             <>

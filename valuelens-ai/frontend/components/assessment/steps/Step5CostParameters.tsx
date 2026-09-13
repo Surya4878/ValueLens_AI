@@ -99,24 +99,24 @@ export const Step5CostParameters: React.FC<Step5Props> = ({
     <div className="space-y-8">
       {/* Header */}
       <div className="border-b border-[#d9e2ec] pb-5">
-        <span className="text-[12px] font-bold text-[#0070f2] uppercase tracking-wider">
+        <span className="text-[13px] font-bold text-[#0070f2] uppercase tracking-wider">
           STEP 5 OF 7
         </span>
-        <h2 className="text-2xl sm:text-3xl font-bold text-[#1d2d3e] mt-1 font-['72',sans-serif]">
+        <h2 className="text-2xl sm:text-3xl font-bold text-[#1d2d3e] mt-1.5 font-['72',sans-serif]">
           {config.step5Title}
         </h2>
-        <p className="text-[15px] sm:text-[16px] text-[#556b82] mt-1.5 font-normal leading-relaxed">
+        <p className="text-[15px] sm:text-[16px] text-[#556b82] mt-2 font-normal leading-relaxed">
           {config.step5Description}
         </p>
       </div>
 
       {/* Total Baseline TCO Banner */}
-      <div className="bg-gradient-to-r from-blue-50/90 via-sky-50/50 to-indigo-50/80 rounded-2xl border border-[#d9e2ec] p-6 sm:p-7 shadow-xs flex flex-wrap items-center justify-between gap-6">
+      <div className="bg-gradient-to-r from-blue-50/90 via-sky-50/50 to-indigo-50/80 rounded-2xl border border-[#d9e2ec] p-7 sm:p-8 shadow-xs flex flex-wrap items-center justify-between gap-6">
         <div>
-          <span className="text-[12px] font-bold text-[#0070f2] uppercase tracking-wider block">
+          <span className="text-[13px] font-bold text-[#0070f2] uppercase tracking-wider block">
             Total Annual Current Platform TCO
           </span>
-          <p className="text-[13px] sm:text-[14px] text-[#556b82] mt-1">
+          <p className="text-[14px] sm:text-[15px] text-[#556b82] mt-1">
             Sum of all customer-entered annual operating costs for {config.name}.
           </p>
         </div>
@@ -124,27 +124,27 @@ export const Step5CostParameters: React.FC<Step5Props> = ({
           <span className="text-3xl sm:text-4xl font-bold text-[#1d2d3e] font-mono">
             {formatCurrency(currentTotalTco, currency)}
           </span>
-          <span className="text-[12px] text-[#556b82] block font-semibold">per year baseline</span>
+          <span className="text-[13px] text-[#556b82] block font-semibold mt-0.5">per year baseline</span>
         </div>
       </div>
 
       {/* 6 Category Input Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
         {/* 1. Licensing */}
-        <div className="bg-white rounded-2xl border border-[#d9e2ec] p-6 sm:p-7 shadow-xs space-y-4">
-          <div className="flex items-center space-x-3 border-b border-[#d9e2ec] pb-3">
-            <div className="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center text-[#0070f2]">
+        <div className="bg-white rounded-2xl border border-[#d9e2ec] p-7 sm:p-8 shadow-xs space-y-4">
+          <div className="flex items-center space-x-3.5 border-b border-[#d9e2ec] pb-3.5">
+            <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-[#0070f2]">
               <DollarSign className="w-5 h-5" />
             </div>
-            <h3 className="text-[16px] sm:text-[17px] font-bold text-[#1d2d3e]">
+            <h3 className="text-[17px] sm:text-[18px] font-bold text-[#1d2d3e]">
               1. {details.licensing.label}
             </h3>
           </div>
-          <p className="text-[13px] text-[#556b82] leading-relaxed">
+          <p className="text-[13px] sm:text-[14px] text-[#556b82] leading-relaxed">
             {details.licensing.desc}
           </p>
-          <div className="flex h-[44px] rounded-lg border border-[#d9e2ec] overflow-hidden focus-within:ring-2 focus-within:ring-[#0070f2] bg-white">
-            <div className="bg-slate-50 border-r border-[#d9e2ec] px-4 flex items-center text-[14px] font-bold text-[#556b82]">
+          <div className="flex h-12 rounded-xl border border-[#d9e2ec] overflow-hidden focus-within:ring-2 focus-within:ring-[#0070f2] bg-white">
+            <div className="bg-slate-50 border-r border-[#d9e2ec] px-4 flex items-center text-[15px] font-bold text-[#556b82]">
               $
             </div>
             <input
@@ -163,30 +163,30 @@ export const Step5CostParameters: React.FC<Step5Props> = ({
                   onUpdateCost('licensing', n);
                 }
               }}
-              className="w-full text-[14px] font-mono font-semibold px-3 py-2 focus:outline-none bg-white text-[#1d2d3e] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              className="w-full text-[15px] font-mono font-semibold px-4 py-2.5 focus:outline-none bg-white text-[#1d2d3e] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               placeholder="0"
             />
-            <div className="bg-slate-50 border-l border-[#d9e2ec] px-4 flex items-center text-[13px] text-[#556b82] font-medium">
+            <div className="bg-slate-50 border-l border-[#d9e2ec] px-4 flex items-center text-[13px] text-[#556b82] font-semibold">
               / yr
             </div>
           </div>
         </div>
 
         {/* 2. Infrastructure */}
-        <div className="bg-white rounded-2xl border border-[#d9e2ec] p-6 sm:p-7 shadow-xs space-y-4">
-          <div className="flex items-center space-x-3 border-b border-[#d9e2ec] pb-3">
-            <div className="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center text-[#0070f2]">
+        <div className="bg-white rounded-2xl border border-[#d9e2ec] p-7 sm:p-8 shadow-xs space-y-4">
+          <div className="flex items-center space-x-3.5 border-b border-[#d9e2ec] pb-3.5">
+            <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-[#0070f2]">
               <Server className="w-5 h-5" />
             </div>
-            <h3 className="text-[16px] sm:text-[17px] font-bold text-[#1d2d3e]">
+            <h3 className="text-[17px] sm:text-[18px] font-bold text-[#1d2d3e]">
               2. {details.infrastructure.label}
             </h3>
           </div>
-          <p className="text-[13px] text-[#556b82] leading-relaxed">
+          <p className="text-[13px] sm:text-[14px] text-[#556b82] leading-relaxed">
             {details.infrastructure.desc}
           </p>
-          <div className="flex h-[44px] rounded-lg border border-[#d9e2ec] overflow-hidden focus-within:ring-2 focus-within:ring-[#0070f2] bg-white">
-            <div className="bg-slate-50 border-r border-[#d9e2ec] px-4 flex items-center text-[14px] font-bold text-[#556b82]">
+          <div className="flex h-12 rounded-xl border border-[#d9e2ec] overflow-hidden focus-within:ring-2 focus-within:ring-[#0070f2] bg-white">
+            <div className="bg-slate-50 border-r border-[#d9e2ec] px-4 flex items-center text-[15px] font-bold text-[#556b82]">
               $
             </div>
             <input
@@ -205,30 +205,30 @@ export const Step5CostParameters: React.FC<Step5Props> = ({
                   onUpdateCost('infrastructure', n);
                 }
               }}
-              className="w-full text-[14px] font-mono font-semibold px-3 py-2 focus:outline-none bg-white text-[#1d2d3e] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              className="w-full text-[15px] font-mono font-semibold px-4 py-2.5 focus:outline-none bg-white text-[#1d2d3e] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               placeholder="0"
             />
-            <div className="bg-slate-50 border-l border-[#d9e2ec] px-4 flex items-center text-[13px] text-[#556b82] font-medium">
+            <div className="bg-slate-50 border-l border-[#d9e2ec] px-4 flex items-center text-[13px] text-[#556b82] font-semibold">
               / yr
             </div>
           </div>
         </div>
 
         {/* 3. Support & Maintenance */}
-        <div className="bg-white rounded-2xl border border-[#d9e2ec] p-6 sm:p-7 shadow-xs space-y-4">
-          <div className="flex items-center space-x-3 border-b border-[#d9e2ec] pb-3">
-            <div className="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center text-[#0070f2]">
+        <div className="bg-white rounded-2xl border border-[#d9e2ec] p-7 sm:p-8 shadow-xs space-y-4">
+          <div className="flex items-center space-x-3.5 border-b border-[#d9e2ec] pb-3.5">
+            <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-[#0070f2]">
               <Shield className="w-5 h-5" />
             </div>
-            <h3 className="text-[16px] sm:text-[17px] font-bold text-[#1d2d3e]">
+            <h3 className="text-[17px] sm:text-[18px] font-bold text-[#1d2d3e]">
               3. {details.support.label}
             </h3>
           </div>
-          <p className="text-[13px] text-[#556b82] leading-relaxed">
+          <p className="text-[13px] sm:text-[14px] text-[#556b82] leading-relaxed">
             {details.support.desc}
           </p>
-          <div className="flex h-[44px] rounded-lg border border-[#d9e2ec] overflow-hidden focus-within:ring-2 focus-within:ring-[#0070f2] bg-white">
-            <div className="bg-slate-50 border-r border-[#d9e2ec] px-4 flex items-center text-[14px] font-bold text-[#556b82]">
+          <div className="flex h-12 rounded-xl border border-[#d9e2ec] overflow-hidden focus-within:ring-2 focus-within:ring-[#0070f2] bg-white">
+            <div className="bg-slate-50 border-r border-[#d9e2ec] px-4 flex items-center text-[15px] font-bold text-[#556b82]">
               $
             </div>
             <input
@@ -247,30 +247,30 @@ export const Step5CostParameters: React.FC<Step5Props> = ({
                   onUpdateCost('support', n);
                 }
               }}
-              className="w-full text-[14px] font-mono font-semibold px-3 py-2 focus:outline-none bg-white text-[#1d2d3e] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              className="w-full text-[15px] font-mono font-semibold px-4 py-2.5 focus:outline-none bg-white text-[#1d2d3e] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               placeholder="0"
             />
-            <div className="bg-slate-50 border-l border-[#d9e2ec] px-4 flex items-center text-[13px] text-[#556b82] font-medium">
+            <div className="bg-slate-50 border-l border-[#d9e2ec] px-4 flex items-center text-[13px] text-[#556b82] font-semibold">
               / yr
             </div>
           </div>
         </div>
 
         {/* 4. Operations & Staffing */}
-        <div className="bg-white rounded-2xl border border-[#d9e2ec] p-6 sm:p-7 shadow-xs space-y-4">
-          <div className="flex items-center space-x-3 border-b border-[#d9e2ec] pb-3">
-            <div className="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center text-[#0070f2]">
+        <div className="bg-white rounded-2xl border border-[#d9e2ec] p-7 sm:p-8 shadow-xs space-y-4">
+          <div className="flex items-center space-x-3.5 border-b border-[#d9e2ec] pb-3.5">
+            <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-[#0070f2]">
               <Users className="w-5 h-5" />
             </div>
-            <h3 className="text-[16px] sm:text-[17px] font-bold text-[#1d2d3e]">
+            <h3 className="text-[17px] sm:text-[18px] font-bold text-[#1d2d3e]">
               4. {details.operations.label}
             </h3>
           </div>
-          <p className="text-[13px] text-[#556b82] leading-relaxed">
+          <p className="text-[13px] sm:text-[14px] text-[#556b82] leading-relaxed">
             {details.operations.desc}
           </p>
-          <div className="flex h-[44px] rounded-lg border border-[#d9e2ec] overflow-hidden focus-within:ring-2 focus-within:ring-[#0070f2] bg-white">
-            <div className="bg-slate-50 border-r border-[#d9e2ec] px-4 flex items-center text-[14px] font-bold text-[#556b82]">
+          <div className="flex h-12 rounded-xl border border-[#d9e2ec] overflow-hidden focus-within:ring-2 focus-within:ring-[#0070f2] bg-white">
+            <div className="bg-slate-50 border-r border-[#d9e2ec] px-4 flex items-center text-[15px] font-bold text-[#556b82]">
               $
             </div>
             <input
@@ -289,30 +289,30 @@ export const Step5CostParameters: React.FC<Step5Props> = ({
                   onUpdateCost('operations', n);
                 }
               }}
-              className="w-full text-[14px] font-mono font-semibold px-3 py-2 focus:outline-none bg-white text-[#1d2d3e] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              className="w-full text-[15px] font-mono font-semibold px-4 py-2.5 focus:outline-none bg-white text-[#1d2d3e] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               placeholder="0"
             />
-            <div className="bg-slate-50 border-l border-[#d9e2ec] px-4 flex items-center text-[13px] text-[#556b82] font-medium">
+            <div className="bg-slate-50 border-l border-[#d9e2ec] px-4 flex items-center text-[13px] text-[#556b82] font-semibold">
               / yr
             </div>
           </div>
         </div>
 
         {/* 5. Development & Maintenance */}
-        <div className="bg-white rounded-2xl border border-[#d9e2ec] p-6 sm:p-7 shadow-xs space-y-4">
-          <div className="flex items-center space-x-3 border-b border-[#d9e2ec] pb-3">
-            <div className="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center text-[#0070f2]">
+        <div className="bg-white rounded-2xl border border-[#d9e2ec] p-7 sm:p-8 shadow-xs space-y-4">
+          <div className="flex items-center space-x-3.5 border-b border-[#d9e2ec] pb-3.5">
+            <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-[#0070f2]">
               <Code2 className="w-5 h-5" />
             </div>
-            <h3 className="text-[16px] sm:text-[17px] font-bold text-[#1d2d3e]">
+            <h3 className="text-[17px] sm:text-[18px] font-bold text-[#1d2d3e]">
               5. {details.development.label}
             </h3>
           </div>
-          <p className="text-[13px] text-[#556b82] leading-relaxed">
+          <p className="text-[13px] sm:text-[14px] text-[#556b82] leading-relaxed">
             {details.development.desc}
           </p>
-          <div className="flex h-[44px] rounded-lg border border-[#d9e2ec] overflow-hidden focus-within:ring-2 focus-within:ring-[#0070f2] bg-white">
-            <div className="bg-slate-50 border-r border-[#d9e2ec] px-4 flex items-center text-[14px] font-bold text-[#556b82]">
+          <div className="flex h-12 rounded-xl border border-[#d9e2ec] overflow-hidden focus-within:ring-2 focus-within:ring-[#0070f2] bg-white">
+            <div className="bg-slate-50 border-r border-[#d9e2ec] px-4 flex items-center text-[15px] font-bold text-[#556b82]">
               $
             </div>
             <input
@@ -331,30 +331,30 @@ export const Step5CostParameters: React.FC<Step5Props> = ({
                   onUpdateCost('development', n);
                 }
               }}
-              className="w-full text-[14px] font-mono font-semibold px-3 py-2 focus:outline-none bg-white text-[#1d2d3e] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              className="w-full text-[15px] font-mono font-semibold px-4 py-2.5 focus:outline-none bg-white text-[#1d2d3e] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               placeholder="0"
             />
-            <div className="bg-slate-50 border-l border-[#d9e2ec] px-4 flex items-center text-[13px] text-[#556b82] font-medium">
+            <div className="bg-slate-50 border-l border-[#d9e2ec] px-4 flex items-center text-[13px] text-[#556b82] font-semibold">
               / yr
             </div>
           </div>
         </div>
 
         {/* 6. Other Operational Expenses */}
-        <div className="bg-white rounded-2xl border border-[#d9e2ec] p-6 sm:p-7 shadow-xs space-y-4">
-          <div className="flex items-center space-x-3 border-b border-[#d9e2ec] pb-3">
-            <div className="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center text-[#0070f2]">
+        <div className="bg-white rounded-2xl border border-[#d9e2ec] p-7 sm:p-8 shadow-xs space-y-4">
+          <div className="flex items-center space-x-3.5 border-b border-[#d9e2ec] pb-3.5">
+            <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-[#0070f2]">
               <HelpCircle className="w-5 h-5" />
             </div>
-            <h3 className="text-[16px] sm:text-[17px] font-bold text-[#1d2d3e]">
+            <h3 className="text-[17px] sm:text-[18px] font-bold text-[#1d2d3e]">
               6. {details.other.label}
             </h3>
           </div>
-          <p className="text-[13px] text-[#556b82] leading-relaxed">
+          <p className="text-[13px] sm:text-[14px] text-[#556b82] leading-relaxed">
             {details.other.desc}
           </p>
-          <div className="flex h-[44px] rounded-lg border border-[#d9e2ec] overflow-hidden focus-within:ring-2 focus-within:ring-[#0070f2] bg-white">
-            <div className="bg-slate-50 border-r border-[#d9e2ec] px-4 flex items-center text-[14px] font-bold text-[#556b82]">
+          <div className="flex h-12 rounded-xl border border-[#d9e2ec] overflow-hidden focus-within:ring-2 focus-within:ring-[#0070f2] bg-white">
+            <div className="bg-slate-50 border-r border-[#d9e2ec] px-4 flex items-center text-[15px] font-bold text-[#556b82]">
               $
             </div>
             <input
@@ -373,10 +373,10 @@ export const Step5CostParameters: React.FC<Step5Props> = ({
                   onUpdateCost('other', n);
                 }
               }}
-              className="w-full text-[14px] font-mono font-semibold px-3 py-2 focus:outline-none bg-white text-[#1d2d3e] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              className="w-full text-[15px] font-mono font-semibold px-4 py-2.5 focus:outline-none bg-white text-[#1d2d3e] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               placeholder="0"
             />
-            <div className="bg-slate-50 border-l border-[#d9e2ec] px-4 flex items-center text-[13px] text-[#556b82] font-medium">
+            <div className="bg-slate-50 border-l border-[#d9e2ec] px-4 flex items-center text-[13px] text-[#556b82] font-semibold">
               / yr
             </div>
           </div>
@@ -388,7 +388,7 @@ export const Step5CostParameters: React.FC<Step5Props> = ({
         <button
           type="button"
           onClick={onBack}
-          className="h-[44px] px-6 text-[14px] font-semibold text-[#1d2d3e] bg-white border border-[#d9e2ec] rounded-lg hover:bg-slate-50 transition-colors flex items-center space-x-2 shadow-xs cursor-pointer"
+          className="h-12 px-7 text-[15px] font-semibold text-[#1d2d3e] bg-white border border-[#d9e2ec] rounded-xl hover:bg-slate-50 transition-colors flex items-center space-x-2 shadow-xs cursor-pointer"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Back</span>
@@ -396,7 +396,7 @@ export const Step5CostParameters: React.FC<Step5Props> = ({
         <button
           type="button"
           onClick={onContinue}
-          className="h-[44px] px-6 text-[14px] font-semibold text-white bg-[#0070f2] hover:bg-[#0057d2] rounded-lg shadow-xs transition-all flex items-center space-x-2 cursor-pointer"
+          className="h-12 px-7 text-[15px] font-semibold text-white bg-[#0070f2] hover:bg-[#0057d2] rounded-xl shadow-xs transition-all flex items-center space-x-2 cursor-pointer"
         >
           <span>Continue to Select Edition</span>
           <ArrowRight className="w-4 h-4" />

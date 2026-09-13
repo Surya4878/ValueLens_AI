@@ -16,8 +16,8 @@ export function TopNavbar() {
 
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-[#d9e2ec] shadow-[0_1px_3px_rgba(0,0,0,0.05)]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-[68px]">
+      <div className="max-w-7xl mx-auto px-6 sm:px-8">
+        <div className="flex items-center space-x-8 sm:space-x-10 lg:space-x-12 h-[68px]">
           {/* Left: Incture Logo (redirects to incture.com) | Business ValueLens AI */}
           <div className="flex items-center space-x-3.5 shrink-0">
             <a
@@ -43,8 +43,8 @@ export function TopNavbar() {
             </Link>
           </div>
 
-          {/* Nav Links: SAP Standard Enterprise Tab Bar */}
-          <nav className="hidden md:flex items-center space-x-2 lg:space-x-3 ml-8 sm:ml-12 lg:ml-16">
+          {/* Nav Links: SAP Standard Enterprise Tab Bar immediately following brand */}
+          <nav className="hidden md:flex items-center space-x-2 lg:space-x-3">
             {navLinks.map((link) => {
               const isActive =
                 pathname === link.href ||
@@ -53,7 +53,7 @@ export function TopNavbar() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`text-[14px] lg:text-[15px] transition-all px-3.5 py-2 rounded-lg ${
+                  className={`text-[14px] lg:text-[15px] transition-all px-3.5 sm:px-4 py-2 rounded-lg ${
                     isActive
                       ? 'text-[#0070f2] font-semibold bg-[#e5f0ff]/50 border-b-2 border-[#0070f2]'
                       : 'text-[#556b82] font-medium hover:text-[#0070f2] hover:bg-slate-50 border-b-2 border-transparent'
