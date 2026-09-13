@@ -10,8 +10,26 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['"72"', '"72Black"', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],
+        sans: ['Inter', '"72"', 'system-ui', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],
         mono: ['"72Mono"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
+      },
+      fontSize: {
+        'xs': ['12px', { lineHeight: '1.4' }],
+        'metadata': ['13px', { lineHeight: '1.4' }],
+        'sm': ['14px', { lineHeight: '1.5' }],
+        'supporting': ['14px', { lineHeight: '1.5' }],
+        'base': ['15px', { lineHeight: '1.55' }],
+        'body': ['15px', { lineHeight: '1.55' }],
+        'body-lg': ['16px', { lineHeight: '1.6' }],
+        'lg': ['18px', { lineHeight: '1.4' }],
+        'card-title': ['18px', { lineHeight: '1.35', fontWeight: '600' }],
+        'xl': ['20px', { lineHeight: '1.35' }],
+        '2xl': ['24px', { lineHeight: '1.3' }],
+        'section-heading': ['26px', { lineHeight: '1.3', fontWeight: '600' }],
+        '3xl': ['30px', { lineHeight: '1.25' }],
+        'page-heading': ['32px', { lineHeight: '1.25', fontWeight: '700' }],
+        '4xl': ['36px', { lineHeight: '1.2' }],
+        'hero-title': ['40px', { lineHeight: '1.15', fontWeight: '700' }],
       },
       colors: {
         sap: {

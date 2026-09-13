@@ -77,19 +77,19 @@ export default function HomePage() {
           {/* Left Column: Headings, Subtitle & CTAs */}
           <div className="lg:col-span-6 space-y-6">
             {/* Tagline */}
-            <p className="text-[11px] sm:text-xs font-bold text-[#556b82] tracking-widest uppercase">
+            <p className="text-[12px] sm:text-[13px] font-semibold text-[#556b82] tracking-wider uppercase">
               ASSESS &nbsp;|&nbsp; PLAN &nbsp;|&nbsp; MIGRATE &nbsp;|&nbsp; REALIZE VALUE
             </p>
 
             {/* Main Headline */}
-            <h1 className="text-3xl sm:text-4xl lg:text-[42px] font-black text-[#1d2d3e] leading-[1.15] tracking-tight">
+            <h1 className="text-3xl sm:text-4xl lg:text-[42px] font-bold text-[#1d2d3e] leading-[1.18] tracking-tight">
               Turn Your Integration<br />
               Migration into<br />
               <span className="text-[#0070f2]">Business Value.</span>
             </h1>
 
             {/* Paragraph */}
-            <p className="text-sm text-[#556b82] leading-relaxed font-normal">
+            <p className="text-[15px] sm:text-[16px] text-[#556b82] leading-relaxed font-normal">
               Simplify migration from SAP PI/PO, SAP BTP Neo environment, and third-party platforms to SAP Integration Suite with IntSwitch — an AI-driven integration tool. Streamline assessment, migration, and testing to reduce migration effort by up to 40%, minimize risks, and ensure seamless integration with SAP systems for enhanced scalability and agility.
             </p>
 
@@ -98,27 +98,27 @@ export default function HomePage() {
               <Link
                 href="/intswitch"
                 title="IntSwitch — Incture Migration Tool"
-                className="group inline-flex flex-col bg-white/95 backdrop-blur-md rounded-2xl p-3 sm:py-3 sm:px-4 border border-[#d9e2ec] shadow-xs hover:shadow-md hover:border-[#0070f2] transition-all cursor-pointer w-fit max-w-[440px]"
+                className="group inline-flex flex-col bg-white/95 backdrop-blur-md rounded-2xl p-3.5 sm:py-3.5 sm:px-4.5 border border-[#d9e2ec] shadow-xs hover:shadow-md hover:border-[#0070f2] transition-all cursor-pointer w-fit max-w-[460px]"
               >
                 {/* Powered by label */}
-                <div className="text-[11px] font-bold text-purple-700 tracking-wide mb-1">
+                <div className="text-[12px] font-bold text-purple-700 tracking-wide mb-1">
                   Powered by
                 </div>
 
                 <div className="flex items-center space-x-3.5">
                   {/* Left: Power Icon + IntSwitch & Incture Migration Tool */}
-                  <div className="flex items-center space-x-2 shrink-0">
-                    <div className="w-9 h-9 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-[#0070f2] shrink-0 group-hover:scale-105 transition-transform">
+                  <div className="flex items-center space-x-2.5 shrink-0">
+                    <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-[#0070f2] shrink-0 group-hover:scale-105 transition-transform">
                       <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.4} d="M12 2v9" />
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.4} d="M18.36 6.64a9 9 0 11-12.73 0" />
                       </svg>
                     </div>
                     <div>
-                      <h4 className="text-sm font-extrabold text-[#0070f2] leading-none group-hover:text-blue-700 transition-colors">
+                      <h4 className="text-[16px] font-bold text-[#0070f2] leading-none group-hover:text-blue-700 transition-colors">
                         IntSwitch
                       </h4>
-                      <p className="text-[10.5px] text-[#556b82] font-medium leading-tight mt-0.5">
+                      <p className="text-[12px] text-[#556b82] font-medium leading-tight mt-1">
                         Incture Migration And <br />Automation Tool
                       </p>
                     </div>
@@ -129,7 +129,7 @@ export default function HomePage() {
 
                   {/* Middle Text: Accelerate your migration journey */}
                   <div className="shrink-0 pr-1">
-                    <p className="text-xs font-semibold text-[#1d2d3e] leading-tight">
+                    <p className="text-[13px] font-semibold text-[#1d2d3e] leading-tight">
                       Accelerate your<br />migration journey
                     </p>
                   </div>
@@ -150,14 +150,14 @@ export default function HomePage() {
               <div className="flex flex-col">
                 <Link
                   href="/offerings"
-                  className="group inline-flex items-center justify-center space-x-1.5 px-3 py-2.5 min-h-[48px] rounded-xl text-xs font-bold bg-[#0070f2] hover:bg-[#0057d2] text-white shadow-xs transition-all cursor-pointer text-center leading-tight"
+                  className="group inline-flex items-center justify-center space-x-1.5 px-3.5 py-2.5 h-[46px] rounded-lg text-[14px] font-semibold bg-[#0070f2] hover:bg-[#0057d2] text-white shadow-xs transition-all cursor-pointer text-center leading-tight"
                 >
                   <span>Explore Offerings</span>
-                  <svg className="w-3.5 h-3.5 shrink-0 transition-transform group-hover:translate-x-0.5" viewBox="0 0 16 16" fill="none" stroke="currentColor">
+                  <svg className="w-4 h-4 shrink-0 transition-transform group-hover:translate-x-0.5" viewBox="0 0 16 16" fill="none" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M6 3.5l4.5 4.5-4.5 4.5" />
                   </svg>
                 </Link>
-                <span className="text-[11px] text-[#556b82] font-medium mt-1.5 text-center leading-tight">
+                <span className="text-[12px] text-[#556b82] font-medium mt-1.5 text-center leading-tight">
                   Incture packaged offerings
                 </span>
               </div>
@@ -168,14 +168,14 @@ export default function HomePage() {
                   href="https://incture.com/case-studies/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group inline-flex items-center justify-center space-x-1.5 px-3 py-2.5 min-h-[48px] rounded-xl text-xs font-bold bg-white hover:bg-slate-50 text-[#0070f2] border border-[#0070f2]/40 shadow-xs transition-all cursor-pointer text-center leading-tight"
+                  className="group inline-flex items-center justify-center space-x-1.5 px-3.5 py-2.5 h-[46px] rounded-lg text-[14px] font-semibold bg-white hover:bg-slate-50 text-[#0070f2] border border-[#0070f2]/40 shadow-xs transition-all cursor-pointer text-center leading-tight"
                 >
                   <span>Customer Success</span>
-                  <svg className="w-3.5 h-3.5 shrink-0 transition-transform group-hover:translate-x-0.5" viewBox="0 0 16 16" fill="none" stroke="currentColor">
+                  <svg className="w-4 h-4 shrink-0 transition-transform group-hover:translate-x-0.5" viewBox="0 0 16 16" fill="none" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M6 3.5l4.5 4.5-4.5 4.5" />
                   </svg>
                 </a>
-                <span className="text-[11px] text-[#556b82] font-medium mt-1.5 text-center leading-tight">
+                <span className="text-[12px] text-[#556b82] font-medium mt-1.5 text-center leading-tight">
                   Real transformation stories
                 </span>
               </div>
@@ -184,14 +184,14 @@ export default function HomePage() {
               <div className="flex flex-col">
                 <Link
                   href="/assessment"
-                  className="group inline-flex items-center justify-center space-x-1.5 px-3 py-2.5 min-h-[48px] rounded-xl text-xs font-bold bg-[#7928ca] hover:bg-[#6820b0] text-white shadow-xs transition-all cursor-pointer text-center leading-tight"
+                  className="group inline-flex items-center justify-center space-x-1.5 px-3.5 py-2.5 h-[46px] rounded-lg text-[14px] font-semibold bg-[#7928ca] hover:bg-[#6820b0] text-white shadow-xs transition-all cursor-pointer text-center leading-tight"
                 >
                   <span>Discover Value</span>
-                  <svg className="w-3.5 h-3.5 shrink-0 transition-transform group-hover:translate-x-0.5" viewBox="0 0 16 16" fill="none" stroke="currentColor">
+                  <svg className="w-4 h-4 shrink-0 transition-transform group-hover:translate-x-0.5" viewBox="0 0 16 16" fill="none" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M6 3.5l4.5 4.5-4.5 4.5" />
                   </svg>
                 </Link>
-                <span className="text-[11px] text-[#556b82] font-medium mt-1.5 text-center leading-tight">
+                <span className="text-[12px] text-[#556b82] font-medium mt-1.5 text-center leading-tight">
                   Personalized business case
                 </span>
               </div>
@@ -222,8 +222,8 @@ export default function HomePage() {
               </svg>
             </div>
             <div>
-              <h4 className="text-base font-bold text-[#1d2d3e] leading-tight">Lower TCO with AI Insights</h4>
-              <p className="text-xs text-[#556b82] mt-1 leading-relaxed">Identify cost savings and optimize infrastructure investments</p>
+              <h4 className="text-[16px] font-semibold text-[#1d2d3e] leading-tight">Lower TCO with AI Insights</h4>
+              <p className="text-[14px] text-[#556b82] mt-1.5 leading-relaxed">Identify cost savings and optimize infrastructure investments</p>
             </div>
           </div>
 
@@ -236,8 +236,8 @@ export default function HomePage() {
               </svg>
             </div>
             <div>
-              <h4 className="text-base font-bold text-[#1d2d3e] leading-tight">Faster Time to Value</h4>
-              <p className="text-xs text-[#556b82] mt-1 leading-relaxed">Accelerate migration planning and execution with IntSwitch</p>
+              <h4 className="text-[16px] font-semibold text-[#1d2d3e] leading-tight">Faster Time to Value</h4>
+              <p className="text-[14px] text-[#556b82] mt-1.5 leading-relaxed">Accelerate migration planning and execution with IntSwitch</p>
             </div>
           </div>
 
@@ -250,8 +250,8 @@ export default function HomePage() {
               </svg>
             </div>
             <div>
-              <h4 className="text-base font-bold text-[#1d2d3e] leading-tight">Informed AI Decisions</h4>
-              <p className="text-xs text-[#556b82] mt-1 leading-relaxed">Leverage GenAI for verifiable architectural recommendations</p>
+              <h4 className="text-[16px] font-semibold text-[#1d2d3e] leading-tight">Informed AI Decisions</h4>
+              <p className="text-[14px] text-[#556b82] mt-1.5 leading-relaxed">Leverage GenAI for verifiable architectural recommendations</p>
             </div>
           </div>
 
@@ -263,8 +263,8 @@ export default function HomePage() {
               </svg>
             </div>
             <div>
-              <h4 className="text-base font-bold text-[#1d2d3e] leading-tight">Quantifiable ROI Value</h4>
-              <p className="text-xs text-[#556b82] mt-1 leading-relaxed">Measure 5-year ROI, payback and cumulative business impact</p>
+              <h4 className="text-[16px] font-semibold text-[#1d2d3e] leading-tight">Quantifiable ROI Value</h4>
+              <p className="text-[14px] text-[#556b82] mt-1.5 leading-relaxed">Measure 5-year ROI, payback and cumulative business impact</p>
             </div>
           </div>
         </div>
@@ -273,10 +273,10 @@ export default function HomePage() {
       {/* 3. The 6-Step ValueLens Process */}
       <section className="space-y-8">
         <div className="text-center space-y-2 max-w-2xl mx-auto">
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-[#1d2d3e] tracking-tight">
+          <h2 className="text-2xl sm:text-[28px] font-bold text-[#1d2d3e] tracking-tight">
             The 6-Step ValueLens Process
           </h2>
-          <p className="text-sm text-[#556b82] font-normal">
+          <p className="text-[15px] sm:text-[16px] text-[#556b82] font-normal leading-normal">
             From raw interface telemetry to audit-ready executive investment proposals.
           </p>
         </div>
@@ -285,16 +285,16 @@ export default function HomePage() {
           {steps.map((step) => (
             <div
               key={step.num}
-              className="p-8 bg-white rounded-3xl border border-[#d9e2ec] shadow-xs hover:shadow-md transition-shadow space-y-4"
+              className="p-6 md:p-8 bg-white rounded-3xl border border-[#d9e2ec] shadow-xs hover:shadow-md transition-shadow space-y-3.5"
             >
               <div className="flex items-center space-x-3">
-                <span className="text-xl font-extrabold text-[#0070f2] font-mono">{step.num}</span>
-                <div className="w-10 h-10 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center">
+                <span className="text-[18px] font-bold text-[#0070f2] font-mono">{step.num}</span>
+                <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center">
                   {step.icon}
                 </div>
               </div>
-              <h3 className="text-base font-bold text-[#1d2d3e] leading-snug">{step.title}</h3>
-              <p className="text-xs sm:text-sm text-[#556b82] leading-relaxed">{step.desc}</p>
+              <h3 className="text-[18px] font-semibold text-[#1d2d3e] leading-snug">{step.title}</h3>
+              <p className="text-[14px] text-[#556b82] leading-relaxed">{step.desc}</p>
             </div>
           ))}
         </div>

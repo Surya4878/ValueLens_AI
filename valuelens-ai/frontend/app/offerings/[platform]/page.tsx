@@ -47,9 +47,9 @@ export default function OfferingDetailPage() {
   const { packages, pleaseNotes, whatsIncluded, migrationApproach, enablementAndSupport, faqs } = offering;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10 space-y-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10 space-y-8 md:space-y-10">
       {/* 1. Breadcrumb Navigation */}
-      <nav className="flex items-center space-x-2 text-xs text-[#556b82] font-medium">
+      <nav className="flex items-center space-x-2 text-[13px] text-[#556b82] font-medium">
         <Link href="/" className="hover:text-[#0070f2] transition-colors">
           Home
         </Link>
@@ -62,15 +62,15 @@ export default function OfferingDetailPage() {
       </nav>
 
       {/* 2. Hero Banner Section */}
-      <section className="relative rounded-3xl bg-gradient-to-r from-[#eef5fc] via-[#f2f7fc] to-[#e8f2fa] border border-[#d9e2ec] p-8 sm:p-10 shadow-xs overflow-hidden">
+      <section className="relative rounded-3xl bg-gradient-to-r from-[#eef5fc] via-[#f2f7fc] to-[#e8f2fa] border border-[#d9e2ec] p-8 sm:p-10 lg:p-12 shadow-xs overflow-hidden">
         <div className="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8">
           {/* Left: Architecture Transformation Graphic Lockup */}
           <div className="shrink-0 flex items-center">
-            <div className="bg-white/95 backdrop-blur-md rounded-2xl border border-blue-200/80 p-5 sm:p-6 shadow-xs flex items-center space-x-5 w-full sm:w-[340px]">
+            <div className="bg-white/95 backdrop-blur-md rounded-2xl border border-blue-200/80 p-5 sm:p-6 shadow-xs flex items-center space-x-5 w-full sm:w-[360px]">
               {/* Source Middleware Platform */}
               <div className="flex-1 flex flex-col items-center justify-center text-center">
-                <img src={offering.logo} alt={offering.name} className="h-10 max-w-[80px] object-contain mb-1.5" />
-                <span className="text-xs font-bold text-[#1d2d3e] tracking-tight leading-tight">
+                <img src={offering.logo} alt={offering.name} className="h-10 max-w-[84px] object-contain mb-2" />
+                <span className="text-[13px] font-semibold text-[#1d2d3e] tracking-tight leading-tight">
                   {offering.shortTitle}
                 </span>
               </div>
@@ -84,8 +84,8 @@ export default function OfferingDetailPage() {
 
               {/* Target SAP Integration Suite */}
               <div className="flex-1 flex flex-col items-center justify-center text-center">
-                <img src={offering.cloudLogo} alt="SAP Integration Suite" className="h-10 max-w-[80px] object-contain mb-1.5" />
-                <span className="text-[11px] font-bold text-[#0070f2] tracking-tight leading-tight">
+                <img src={offering.cloudLogo} alt="SAP Integration Suite" className="h-10 max-w-[84px] object-contain mb-2" />
+                <span className="text-[12px] font-bold text-[#0070f2] tracking-tight leading-tight">
                   SAP Integration<br />Suite
                 </span>
               </div>
@@ -93,11 +93,14 @@ export default function OfferingDetailPage() {
           </div>
 
           {/* Middle: Title & Subtitle */}
-          <div className="flex-1 space-y-3 max-w-xl">
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#1d2d3e] tracking-tight leading-tight font-['72',sans-serif]">
+          <div className="flex-1 space-y-3.5 max-w-xl">
+            <span className="text-[12px] sm:text-[13px] font-semibold text-[#0070f2] tracking-wider uppercase">
+              Migration Package Details
+            </span>
+            <h1 className="text-3xl sm:text-4xl lg:text-[40px] font-bold text-[#1d2d3e] tracking-tight leading-tight">
               {offering.heroTitle}
             </h1>
-            <p className="text-base text-[#556b82] leading-relaxed font-normal">
+            <p className="text-[15px] sm:text-[16px] text-[#556b82] leading-relaxed font-normal">
               {offering.heroSubtitle}
             </p>
           </div>
@@ -116,11 +119,11 @@ export default function OfferingDetailPage() {
       {/* 3. Interactive Tabs Navigation Bar with Action Buttons */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 pt-1">
         {/* Left: 5 Nav Tabs */}
-        <div className="flex flex-wrap items-center gap-2.5">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           <button
             type="button"
             onClick={() => setActiveTab('packages')}
-            className={`px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer ${activeTab === 'packages'
+            className={`px-5 py-2.5 h-[42px] rounded-lg text-[14px] font-semibold transition-all cursor-pointer ${activeTab === 'packages'
               ? 'bg-[#0070f2] text-white shadow-xs'
               : 'bg-white text-[#556b82] hover:text-[#1d2d3e] hover:bg-slate-50 border border-[#d9e2ec]'
               }`}
@@ -131,7 +134,7 @@ export default function OfferingDetailPage() {
           <button
             type="button"
             onClick={() => setActiveTab('whats-included')}
-            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer ${activeTab === 'whats-included'
+            className={`px-4.5 py-2.5 h-[42px] rounded-lg text-[14px] font-semibold transition-all cursor-pointer ${activeTab === 'whats-included'
               ? 'bg-[#0070f2] text-white shadow-xs'
               : 'bg-white text-[#556b82] hover:text-[#1d2d3e] hover:bg-slate-50 border border-[#d9e2ec]'
               }`}
@@ -142,7 +145,7 @@ export default function OfferingDetailPage() {
           <button
             type="button"
             onClick={() => setActiveTab('approach')}
-            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer ${activeTab === 'approach'
+            className={`px-4.5 py-2.5 h-[42px] rounded-lg text-[14px] font-semibold transition-all cursor-pointer ${activeTab === 'approach'
               ? 'bg-[#0070f2] text-white shadow-xs'
               : 'bg-white text-[#556b82] hover:text-[#1d2d3e] hover:bg-slate-50 border border-[#d9e2ec]'
               }`}
@@ -153,7 +156,7 @@ export default function OfferingDetailPage() {
           <button
             type="button"
             onClick={() => setActiveTab('enablement')}
-            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer ${activeTab === 'enablement'
+            className={`px-4.5 py-2.5 h-[42px] rounded-lg text-[14px] font-semibold transition-all cursor-pointer ${activeTab === 'enablement'
               ? 'bg-[#0070f2] text-white shadow-xs'
               : 'bg-white text-[#556b82] hover:text-[#1d2d3e] hover:bg-slate-50 border border-[#d9e2ec]'
               }`}
@@ -164,7 +167,7 @@ export default function OfferingDetailPage() {
           <button
             type="button"
             onClick={() => setActiveTab('faqs')}
-            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer ${activeTab === 'faqs'
+            className={`px-4.5 py-2.5 h-[42px] rounded-lg text-[14px] font-semibold transition-all cursor-pointer ${activeTab === 'faqs'
               ? 'bg-[#0070f2] text-white shadow-xs'
               : 'bg-white text-[#556b82] hover:text-[#1d2d3e] hover:bg-slate-50 border border-[#d9e2ec]'
               }`}
@@ -179,7 +182,7 @@ export default function OfferingDetailPage() {
           <a
             href="/documents/Incture-Migration-Offering-SAP-Integration-Suite.pdf"
             download="Incture-Migration-Offering-SAP-Integration-Suite.pdf"
-            className="inline-flex items-center space-x-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-white text-[#0070f2] border border-[#0070f2]/40 hover:bg-blue-50/50 shadow-2xs transition-colors cursor-pointer"
+            className="inline-flex items-center space-x-2 px-5 py-2.5 h-[44px] rounded-lg text-[14px] font-semibold bg-white text-[#0070f2] border border-[#0070f2]/40 hover:bg-blue-50/50 shadow-2xs transition-colors cursor-pointer"
             title="Download full 10-page Incture Migration Offering Report"
           >
             <svg className="w-4 h-4 text-[#0070f2]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -191,10 +194,10 @@ export default function OfferingDetailPage() {
           {/* Button 2: Discover Business Value (links to /assessment) */}
           <Link
             href="/assessment"
-            className="group inline-flex items-center space-x-1.5 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-[#0070f2] hover:bg-[#0057d2] text-white shadow-xs transition-colors cursor-pointer"
+            className="group inline-flex items-center space-x-2 px-5 py-2.5 h-[44px] rounded-lg text-[14px] font-semibold bg-[#0070f2] hover:bg-[#0057d2] text-white shadow-xs transition-colors cursor-pointer"
           >
             <span>Discover Business Value</span>
-            <svg className="w-3.5 h-3.5 shrink-0 transition-transform group-hover:translate-x-0.5" viewBox="0 0 16 16" fill="none" stroke="currentColor">
+            <svg className="w-4 h-4 shrink-0 transition-transform group-hover:translate-x-0.5" viewBox="0 0 16 16" fill="none" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M6 3.5l4.5 4.5-4.5 4.5" />
             </svg>
           </Link>
@@ -208,39 +211,39 @@ export default function OfferingDetailPage() {
         <section className="space-y-6">
           <div className="bg-white rounded-3xl border border-[#d9e2ec] overflow-hidden shadow-xs">
             <div className="p-6 sm:p-8 border-b border-[#d9e2ec] bg-white">
-              <h2 className="text-xl sm:text-2xl font-bold text-[#1d2d3e] tracking-tight font-['72',sans-serif]">
+              <h2 className="text-2xl sm:text-[26px] font-bold text-[#1d2d3e] tracking-tight">
                 Package Comparison
               </h2>
-              <p className="text-sm text-[#556b82] mt-1">
+              <p className="text-[14px] sm:text-[15px] text-[#556b82] mt-1.5 leading-normal">
                 Detailed scope, deliverables, and commercial pricing model for {offering.name} migration.
               </p>
             </div>
 
             {/* Comparison Table */}
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-[#d9e2ec] text-xs">
+              <table className="min-w-full divide-y divide-[#d9e2ec] text-[14px]">
                 <thead className="bg-[#eef5fc]">
                   <tr>
-                    <th scope="col" className="py-3 px-4 text-left font-bold text-[#1d2d3e] min-w-[200px]">
+                    <th scope="col" className="py-3.5 px-4.5 text-left font-bold text-[#1d2d3e] min-w-[210px]">
                       Features
                     </th>
                     {packages.hasStarter && (
-                      <th scope="col" className="py-3 px-4 text-left font-bold text-[#1d2d3e] min-w-[150px]">
+                      <th scope="col" className="py-3.5 px-4.5 text-left font-bold text-[#1d2d3e] min-w-[160px]">
                         {packages.packageNames.starter}
                       </th>
                     )}
-                    <th scope="col" className="py-3 px-4 text-left font-bold text-[#1d2d3e] min-w-[180px]">
+                    <th scope="col" className="py-3.5 px-4.5 text-left font-bold text-[#1d2d3e] min-w-[190px]">
                       {packages.packageNames.silver}
                     </th>
-                    <th scope="col" className="py-3 px-4 text-left font-bold text-[#1d2d3e] min-w-[200px]">
+                    <th scope="col" className="py-3.5 px-4.5 text-left font-bold text-[#1d2d3e] min-w-[210px]">
                       {packages.packageNames.gold}
                     </th>
-                    <th scope="col" className="py-3 px-4 text-left font-bold text-[#0070f2] min-w-[220px]">
+                    <th scope="col" className="py-3.5 px-4.5 text-left font-bold text-[#0070f2] min-w-[230px]">
                       {packages.packageNames.platinum}
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-[#d9e2ec]/60">
                   {packages.rows.map((row, idx) => (
                     <tr
                       key={idx}
@@ -253,30 +256,30 @@ export default function OfferingDetailPage() {
                       }
                     >
                       {/* Feature Name */}
-                      <td className="py-3 px-4 font-bold text-[#1d2d3e] align-top">
+                      <td className="py-3.5 px-4.5 font-bold text-[#1d2d3e] align-top">
                         {highlightIntSwitch(row.feature)}
                       </td>
 
                       {/* Starter Package (if applicable) */}
                       {packages.hasStarter && (
-                        <td className="py-3 px-4 text-[#556b82] align-top leading-relaxed">
+                        <td className="py-3.5 px-4.5 text-[#556b82] align-top leading-relaxed">
                           {highlightIntSwitch(row.starter || '-')}
                         </td>
                       )}
 
                       {/* Silver Package */}
-                      <td className="py-3 px-4 text-[#556b82] align-top leading-relaxed">
+                      <td className="py-3.5 px-4.5 text-[#556b82] align-top leading-relaxed">
                         {highlightIntSwitch(row.silver)}
                       </td>
 
                       {/* Gold Package */}
-                      <td className="py-3 px-4 text-[#556b82] align-top leading-relaxed">
+                      <td className="py-3.5 px-4.5 text-[#556b82] align-top leading-relaxed">
                         {highlightIntSwitch(row.gold)}
                       </td>
 
                       {/* Platinum Package */}
                       <td
-                        className={`py-3 px-4 align-top leading-relaxed ${row.highlight
+                        className={`py-3.5 px-4.5 align-top leading-relaxed ${row.highlight
                           ? 'text-[#0070f2] font-bold'
                           : 'text-[#1d2d3e] font-semibold'
                           }`}
@@ -291,15 +294,15 @@ export default function OfferingDetailPage() {
           </div>
 
           {/* Bottom Please Note Box */}
-          <div className="rounded-2xl bg-[#f0f7ff] border border-blue-200/80 p-4 sm:p-5 shadow-2xs flex items-start space-x-3.5">
-            <div className="w-6 h-6 rounded-full bg-[#0070f2] text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5 shadow-2xs">
+          <div className="rounded-3xl bg-[#f0f7ff] border border-blue-200/80 p-5 sm:p-6 shadow-2xs flex items-start space-x-4">
+            <div className="w-7 h-7 rounded-full bg-[#0070f2] text-white text-[13px] font-bold flex items-center justify-center shrink-0 mt-0.5 shadow-2xs">
               i
             </div>
-            <div className="space-y-1.5 flex-1">
-              <h4 className="text-xs font-bold text-[#1d2d3e]">
+            <div className="space-y-2 flex-1">
+              <h4 className="text-[14px] font-bold text-[#1d2d3e]">
                 Please Note :
               </h4>
-              <ul className="space-y-1 text-xs text-[#556b82] list-disc list-inside leading-relaxed font-normal">
+              <ul className="space-y-1.5 text-[13px] sm:text-[14px] text-[#556b82] list-disc list-inside leading-relaxed font-normal">
                 {pleaseNotes.map((note, nIdx) => (
                   <li key={nIdx}>{highlightIntSwitch(note)}</li>
                 ))}
@@ -314,25 +317,25 @@ export default function OfferingDetailPage() {
         <section className="space-y-6">
           <div className="bg-white rounded-2xl border border-[#d9e2ec] p-6 sm:p-8 shadow-xs space-y-6">
             <div>
-              <h2 className="text-xl sm:text-2xl font-extrabold text-[#1d2d3e] tracking-tight">
+              <h2 className="text-2xl sm:text-[26px] font-bold text-[#1d2d3e] tracking-tight">
                 {whatsIncluded.title}
               </h2>
-              <p className="text-xs sm:text-sm text-[#556b82] mt-1">
+              <p className="text-[14px] sm:text-[15px] text-[#556b82] mt-1.5 leading-normal">
                 {whatsIncluded.description}
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {whatsIncluded.items.map((item, iIdx) => (
-                <div key={iIdx} className="bg-slate-50/70 rounded-xl p-5 border border-[#d9e2ec] space-y-3">
-                  <h3 className="text-sm font-bold text-[#0070f2] flex items-center space-x-2">
+                <div key={iIdx} className="bg-slate-50/70 rounded-2xl p-6 border border-[#d9e2ec] space-y-3.5">
+                  <h3 className="text-[16px] font-semibold text-[#0070f2] flex items-center space-x-2">
                     <span className="w-2 h-2 rounded-full bg-[#0070f2]" />
                     <span>{highlightIntSwitch(item.category)}</span>
                   </h3>
-                  <ul className="space-y-2">
+                  <ul className="space-y-2.5">
                     {item.details.map((d, dIdx) => (
-                      <li key={dIdx} className="flex items-start space-x-2 text-xs text-[#1d2d3e] leading-relaxed">
-                        <span className="text-[#107e3e] font-bold shrink-0">✓</span>
+                      <li key={dIdx} className="flex items-start space-x-2.5 text-[14px] text-[#1d2d3e] leading-relaxed">
+                        <span className="text-[#107e3e] font-bold shrink-0 mt-0.5">✓</span>
                         <span>{highlightIntSwitch(d)}</span>
                       </li>
                     ))}
@@ -347,12 +350,12 @@ export default function OfferingDetailPage() {
       {/* TAB 3: MIGRATION APPROACH */}
       {activeTab === 'approach' && (
         <section className="space-y-6">
-          <div className="bg-white rounded-2xl border border-[#d9e2ec] p-6 sm:p-8 shadow-xs space-y-6">
+          <div className="bg-white rounded-3xl border border-[#d9e2ec] p-6 sm:p-8 lg:p-10 shadow-xs space-y-6">
             <div>
-              <h2 className="text-xl sm:text-2xl font-extrabold text-[#1d2d3e] tracking-tight">
+              <h2 className="text-2xl sm:text-[26px] font-bold text-[#1d2d3e] tracking-tight">
                 Proven 5-Phase Migration Methodology
               </h2>
-              <p className="text-xs sm:text-sm text-[#556b82] mt-1">
+              <p className="text-[14px] sm:text-[15px] text-[#556b82] mt-1.5 leading-normal">
                 A predictable, accelerated path to SAP Integration Suite cutover.
               </p>
             </div>
@@ -361,30 +364,30 @@ export default function OfferingDetailPage() {
               {migrationApproach.map((step) => (
                 <div
                   key={step.stepNumber}
-                  className="bg-slate-50/70 rounded-xl p-4 sm:p-5 border border-[#d9e2ec] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+                  className="bg-slate-50/70 rounded-2xl p-5 sm:p-6 border border-[#d9e2ec] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5"
                 >
-                  <div className="flex items-start space-x-3.5">
-                    <div className="w-8 h-8 rounded-lg bg-[#0070f2] text-white font-bold text-sm flex items-center justify-center shrink-0">
+                  <div className="flex items-start space-x-4">
+                    <div className="w-10 h-10 rounded-xl bg-[#0070f2] text-white font-bold text-[15px] flex items-center justify-center shrink-0 shadow-2xs">
                       0{step.stepNumber}
                     </div>
                     <div>
-                      <div className="flex items-center space-x-2">
-                        <h3 className="text-sm font-bold text-[#1d2d3e]">{step.title}</h3>
-                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-100 text-[#0070f2]">
+                      <div className="flex items-center space-x-2.5">
+                        <h3 className="text-[16px] font-semibold text-[#1d2d3e]">{step.title}</h3>
+                        <span className="text-[12px] font-bold px-2.5 py-0.5 rounded-full bg-blue-100 text-[#0070f2]">
                           {step.duration}
                         </span>
                       </div>
-                      <p className="text-xs text-[#556b82] mt-1 max-w-xl leading-relaxed">
+                      <p className="text-[14px] text-[#556b82] mt-1.5 max-w-xl leading-relaxed">
                         {highlightIntSwitch(step.description)}
                       </p>
                     </div>
                   </div>
 
                   <div className="sm:text-right shrink-0">
-                    <span className="text-[10px] font-bold text-[#556b82] uppercase tracking-wider block">
+                    <span className="text-[12px] font-semibold text-[#556b82] uppercase tracking-wider block">
                       Key Deliverables
                     </span>
-                    <p className="text-xs font-semibold text-[#0070f2] mt-0.5">
+                    <p className="text-[13px] sm:text-[14px] font-semibold text-[#0070f2] mt-1">
                       {step.deliverables.map((deliv, dIdx) => (
                         <React.Fragment key={dIdx}>
                           {dIdx > 0 && ' • '}
@@ -403,25 +406,25 @@ export default function OfferingDetailPage() {
       {/* TAB 4: ENABLEMENT & SUPPORT */}
       {activeTab === 'enablement' && (
         <section className="space-y-6">
-          <div className="bg-white rounded-2xl border border-[#d9e2ec] p-6 sm:p-8 shadow-xs space-y-6">
+          <div className="bg-white rounded-3xl border border-[#d9e2ec] p-6 sm:p-8 lg:p-10 shadow-xs space-y-6">
             <div>
-              <h2 className="text-xl sm:text-2xl font-extrabold text-[#1d2d3e] tracking-tight">
+              <h2 className="text-2xl sm:text-[26px] font-bold text-[#1d2d3e] tracking-tight">
                 Enablement &amp; Hypercare Support
               </h2>
-              <p className="text-xs sm:text-sm text-[#556b82] mt-1">
+              <p className="text-[14px] sm:text-[15px] text-[#556b82] mt-1.5 leading-normal">
                 Ensuring your internal teams are fully self-sufficient post-migration.
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {enablementAndSupport.map((cat, eIdx) => (
-                <div key={eIdx} className="bg-slate-50/70 rounded-xl p-5 border border-[#d9e2ec] space-y-3">
-                  <h3 className="text-sm font-bold text-[#1d2d3e]">{cat.category}</h3>
-                  <p className="text-xs text-[#556b82] leading-relaxed font-normal">{cat.summary}</p>
-                  <ul className="space-y-2 pt-1">
+                <div key={eIdx} className="bg-slate-50/70 rounded-2xl p-6 border border-[#d9e2ec] space-y-3.5">
+                  <h3 className="text-[16px] font-semibold text-[#1d2d3e]">{cat.category}</h3>
+                  <p className="text-[14px] text-[#556b82] leading-relaxed font-normal">{cat.summary}</p>
+                  <ul className="space-y-2.5 pt-1">
                     {cat.highlights.map((h, hIdx) => (
-                      <li key={hIdx} className="flex items-start space-x-2 text-xs text-[#1d2d3e]">
-                        <svg className="w-3.5 h-3.5 text-[#0070f2] shrink-0 mt-0.5" viewBox="0 0 16 16" fill="none" stroke="currentColor">
+                      <li key={hIdx} className="flex items-start space-x-2.5 text-[14px] text-[#1d2d3e] leading-relaxed">
+                        <svg className="w-4 h-4 text-[#0070f2] shrink-0 mt-0.5" viewBox="0 0 16 16" fill="none" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M6 3.5l4.5 4.5-4.5 4.5" />
                         </svg>
                         <span>{highlightIntSwitch(h)}</span>
@@ -438,24 +441,24 @@ export default function OfferingDetailPage() {
       {/* TAB 5: FAQS */}
       {activeTab === 'faqs' && (
         <section className="space-y-6">
-          <div className="bg-white rounded-2xl border border-[#d9e2ec] p-6 sm:p-8 shadow-xs space-y-6">
+          <div className="bg-white rounded-3xl border border-[#d9e2ec] p-6 sm:p-8 lg:p-10 shadow-xs space-y-6">
             <div>
-              <h2 className="text-xl sm:text-2xl font-extrabold text-[#1d2d3e] tracking-tight">
+              <h2 className="text-2xl sm:text-[26px] font-bold text-[#1d2d3e] tracking-tight">
                 Frequently Asked Questions
               </h2>
-              <p className="text-xs sm:text-sm text-[#556b82] mt-1">
+              <p className="text-[14px] sm:text-[15px] text-[#556b82] mt-1.5 leading-normal">
                 Common questions regarding {offering.name} migration scoping and execution.
               </p>
             </div>
 
             <div className="space-y-4">
               {faqs.map((faq, fIdx) => (
-                <div key={fIdx} className="bg-slate-50/60 rounded-xl p-5 border border-[#d9e2ec] space-y-2">
-                  <h3 className="text-sm font-bold text-[#1d2d3e] flex items-start space-x-2">
+                <div key={fIdx} className="bg-slate-50/60 rounded-2xl p-6 border border-[#d9e2ec] space-y-2.5">
+                  <h3 className="text-[16px] font-semibold text-[#1d2d3e] flex items-start space-x-2.5">
                     <span className="text-[#0070f2] font-bold">Q:</span>
                     <span>{highlightIntSwitch(faq.question)}</span>
                   </h3>
-                  <p className="text-xs text-[#556b82] leading-relaxed pl-5 font-normal">
+                  <p className="text-[14px] text-[#556b82] leading-relaxed pl-6 font-normal">
                     {highlightIntSwitch(faq.answer)}
                   </p>
                 </div>

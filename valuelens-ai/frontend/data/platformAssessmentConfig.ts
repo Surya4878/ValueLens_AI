@@ -770,3 +770,162 @@ export function matchIncturePackage(
   };
 }
 
+/**
+ * Migration Cost Calculation Input
+ */
+export interface MigrationCostCalculationInput {
+  platformId: PlatformId;
+  totalInterfaces: number;
+  simpleCount?: number;
+  mediumCount?: number;
+  complexCount?: number;
+  applicationsCount?: number;
+  isDualStack?: boolean;
+  isGroundToGround?: boolean;
+}
+
+/**
+ * Migration Cost Calculation Result
+ */
+export interface MigrationCostCalculationResult {
+  matchedPackage: IncturePackageTier;
+  packagedPrice: number;
+  calculatedCost: number;
+  perInterfaceAverage: number;
+  unitRates: {
+    simpleRate: number;
+    mediumRate: number;
+    complexRate: number;
+  };
+  breakdown: {
+    simpleCost: number;
+    mediumCost: number;
+    complexCost: number;
+    dualStackUplift: number;
+    groundToGroundUplift: number;
+    intSwitchAcceleratorValue: number; // $0 cost to client (Free Value-Add)
+  };
+  currency: string;
+  assumptions: string[];
+}
+
+/**
+ * Baseline per-interface rates derived mathematically from Incture PDF Silver tier
+ * Standard distribution assumption: Simple (60%) : Medium (30%) : Complex (10%)
+ */
+export const INCURE_PDF_UNIT_RATES: Record<
+  PlatformId,
+  { simpleRate: number; mediumRate: number; complexRate: number; silverBaselineAvg: number }
+> = {
+  'sap-pipo': {
+    simpleRate: 890,
+    mediumRate: 1600,
+    complexRate: 2850,
+    silverBaselineAvg: 1300, // $65,000 / 50 interfaces
+  },
+  mulesoft: {
+    simpleRate: 1170,
+    mediumRate: 2100,
+    complexRate: 3750,
+    silverBaselineAvg: 1712, // $68,500 / 40 interfaces
+  },
+  'sap-neo': {
+    simpleRate: 685,
+    mediumRate: 1230,
+    complexRate: 2190,
+    silverBaselineAvg: 1000, // $25,000 / 25 interfaces
+  },
+  boomi: {
+    simpleRate: 1390,
+    mediumRate: 2500,
+    complexRate: 4450,
+    silverBaselineAvg: 2033, // $61,000 / 30 interfaces
+  },
+};
+
+/**
+ * Authoritative Incture PDF Migration Cost Calculator
+ * Calculates migration cost based on interfaces, complexity breakdown, dual-stack, and ground-to-ground flags.
+ */
+export function calculateInctureMigrationCost(
+  input: MigrationCostCalculationInput
+): MigrationCostCalculationResult {
+  const {
+    platformId,
+    totalInterfaces,
+    simpleCount,
+    mediumCount,
+    complexCount,
+    applicationsCount = 1,
+    isDualStack = false,
+    isGroundToGround = false,
+  } = input;
+
+  const rates = INCURE_PDF_UNIT_RATES[platformId] || INCURE_PDF_UNIT_RATES['sap-pipo'];
+
+  // Default to Incture PDF 60:30:10 distribution if counts are not explicitly divided
+  const s = simpleCount !== undefined ? simpleCount : Math.round(totalInterfaces * 0.6);
+  const m = mediumCount !== undefined ? mediumCount : Math.round(totalInterfaces * 0.3);
+  const c = complexCount !== undefined ? complexCount : Math.max(0, totalInterfaces - s - m);
+
+  // Derive package tier match
+  const matched = matchIncturePackage(
+    platformId,
+    totalInterfaces,
+    applicationsCount,
+    c > 0 ? 'Complex' : m > 0 ? 'Moderate' : 'Simple',
+    isDualStack
+  );
+
+  // Calculate base interface costs
+  const simpleCost = s * rates.simpleRate;
+  const mediumCost = m * rates.mediumRate;
+  const complexCost = c * rates.complexRate;
+  let subtotal = simpleCost + mediumCost + complexCost;
+
+  // Apply volume efficiency factor if matching Gold or Platinum
+  if (totalInterfaces >= 100) {
+    subtotal = Math.round(subtotal * 0.88); // 12% economy of scale for enterprise volume
+  } else if (totalInterfaces >= 50) {
+    subtotal = Math.round(subtotal * 0.94); // 6% economy of scale
+  }
+
+  // Dual-Stack uplift (+15% for SAP PI/PO per Incture PDF specification)
+  const dualStackUplift = isDualStack && platformId === 'sap-pipo' ? Math.round(subtotal * 0.15) : 0;
+
+  // Ground-to-ground connector network complexity uplift (+10%)
+  const groundToGroundUplift = isGroundToGround ? Math.round(subtotal * 0.1) : 0;
+
+  const calculatedCost = subtotal + dualStackUplift + groundToGroundUplift;
+  const perInterfaceAverage = totalInterfaces > 0 ? Math.round(calculatedCost / totalInterfaces) : 0;
+
+  return {
+    matchedPackage: matched.package,
+    packagedPrice: matched.package.price,
+    calculatedCost,
+    perInterfaceAverage,
+    unitRates: {
+      simpleRate: rates.simpleRate,
+      mediumRate: rates.mediumRate,
+      complexRate: rates.complexRate,
+    },
+    breakdown: {
+      simpleCost,
+      mediumCost,
+      complexCost,
+      dualStackUplift,
+      groundToGroundUplift,
+      intSwitchAcceleratorValue: 0, // IntSwitch is Free Value-Add
+    },
+    currency: 'USD',
+    assumptions: [
+      'Derived from Incture Migration Packages PDF standard commercial baseline.',
+      'Assumes Simple (60%) : Medium (30%) : Complex (10%) complexity distribution unless specified.',
+      isDualStack ? 'Includes +15% dual-stack adjustment (ccBPM / ABAP + Java conversion).' : 'Single-stack configuration.',
+      isGroundToGround ? 'Includes +10% ground-to-ground on-premise connectivity engineering.' : 'Standard cloud connectivity.',
+      'IntSwitch automation accelerator included at $0 (Free Value-Add) with up to 40% effort reduction.',
+    ],
+  };
+}
+
+

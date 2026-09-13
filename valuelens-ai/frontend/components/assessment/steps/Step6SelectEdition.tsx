@@ -473,11 +473,11 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <span className="text-xs font-bold text-[#0070f2] uppercase tracking-wider">STEP 6 OF 7</span>
+          <span className="text-[12px] font-bold text-[#0070f2] uppercase tracking-wider">STEP 6 OF 7</span>
           <h2 className="text-2xl sm:text-3xl font-bold text-[#1d2d3e] mt-1 font-['72',sans-serif]">
             SAP BTP Edition &amp; Capacity Sizing
           </h2>
-          <p className="text-base text-[#556b82] mt-1">
+          <p className="text-[15px] sm:text-[16px] text-[#556b82] mt-1.5 leading-relaxed">
             Configure your SAP Integration Suite subscription edition and capacity add-ons.
           </p>
         </div>
@@ -485,17 +485,17 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
         {/* AI Recommendation Trigger */}
         <div
           onClick={fetchLiveAiRecommendation}
-          className="cursor-pointer bg-white border border-[#d9e2ec] hover:border-[#0070f2] rounded-2xl p-4 px-5 shadow-xs hover:shadow-sm transition-all flex items-center gap-3.5 group max-w-xs shrink-0 active:scale-95"
+          className="cursor-pointer bg-white border border-[#d9e2ec] hover:border-[#0070f2] rounded-xl p-4 px-5 shadow-xs hover:shadow-sm transition-all flex items-center gap-3.5 group max-w-xs shrink-0 active:scale-95"
           title="Click to run live AI recommendations"
         >
-          <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#0070f2] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+          <div className="w-10 h-10 rounded-lg bg-blue-50 text-[#0070f2] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
             {aiLoading ? <Loader2 className="w-5 h-5 text-[#0070f2] animate-spin" /> : <Sparkles className="w-5 h-5 text-[#0070f2]" />}
           </div>
           <div>
-            <div className="text-sm font-bold text-[#1d2d3e] flex items-center gap-1.5">
+            <div className="text-[14px] font-bold text-[#1d2d3e] flex items-center gap-1.5">
               Generate AI Insights
             </div>
-            <p className="text-xs text-[#556b82] leading-tight mt-0.5">
+            <p className="text-[12px] text-[#556b82] leading-tight mt-0.5">
               Get AI-powered recommendations based on your inputs.
             </p>
           </div>
@@ -1293,7 +1293,7 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
         <button
           type="button"
           onClick={onBack}
-          className="px-6 py-3 text-sm font-semibold text-[#1d2d3e] bg-white border border-[#d9e2ec] rounded-xl hover:bg-slate-50 transition-colors flex items-center space-x-2 shadow-xs group"
+          className="h-[44px] px-6 text-[14px] font-semibold text-[#1d2d3e] bg-white border border-[#d9e2ec] rounded-lg hover:bg-slate-50 transition-colors flex items-center space-x-2 shadow-xs group cursor-pointer"
         >
           <ArrowLeft className="w-4 h-4 text-slate-500 group-hover:text-[#1d2d3e] transition-transform group-hover:-translate-x-0.5" />
           <span>Back to Cost Parameters</span>
@@ -1303,7 +1303,7 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
           type="button"
           disabled={loading}
           onClick={onCalculate}
-          className="px-8 py-3 text-sm font-bold text-white bg-[#0070f2] hover:bg-[#0057d2] rounded-xl shadow-lg shadow-blue-600/20 disabled:opacity-50 transition-all active:scale-95 flex items-center space-x-2"
+          className="h-[44px] px-6 text-[14px] font-semibold text-white bg-[#0070f2] hover:bg-[#0057d2] rounded-lg shadow-xs disabled:opacity-50 transition-all flex items-center space-x-2 cursor-pointer"
         >
           {loading ? (
             <>

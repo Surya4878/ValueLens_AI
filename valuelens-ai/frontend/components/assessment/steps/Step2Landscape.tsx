@@ -201,8 +201,9 @@ export const Step2Landscape: React.FC<Step2Props> = ({
 
   const setPiPoInterfacesCount = (val: number) => {
     setPiPoInterfacesCountState(val);
-    const simple = Math.round(val * 0.80);
-    const medium = Math.round(val * 0.15);
+    // Standard Incture PDF distribution: 60% Simple : 30% Medium : 10% Complex
+    const simple = Math.round(val * 0.60);
+    const medium = Math.round(val * 0.30);
     const complex = Math.max(0, val - simple - medium);
     let volume = 'Low';
     if (val > 100) volume = 'Medium';
@@ -235,13 +236,13 @@ export const Step2Landscape: React.FC<Step2Props> = ({
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <span className="text-xs font-bold text-blue-600 uppercase tracking-wider">
+        <span className="text-[12px] sm:text-[13px] font-semibold text-[#0070f2] uppercase tracking-wider">
           STEP 2 OF 7
         </span>
-        <h2 className="text-2xl font-bold text-slate-900 mt-1">
+        <h2 className="text-2xl sm:text-[28px] font-bold text-[#1d2d3e] mt-1 tracking-tight">
           {config.step2Title}
         </h2>
-        <p className="text-sm text-slate-500 mt-0.5">
+        <p className="text-[14px] sm:text-[15px] text-[#556b82] mt-1 font-normal leading-normal">
           {config.step2Description}
         </p>
       </div>
@@ -1193,13 +1194,13 @@ export const Step2Landscape: React.FC<Step2Props> = ({
       )}
 
       {/* Navigation Controls */}
-      <div className="flex items-center justify-between pt-4">
+      <div className="flex items-center justify-between pt-6 border-t border-[#d9e2ec]">
         <button
           type="button"
           onClick={onBack}
-          className="px-5 py-2.5 text-sm font-semibold text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors flex items-center space-x-2 shadow-xs group"
+          className="px-6 py-2.5 h-[44px] text-[14px] font-semibold text-[#556b82] bg-white border border-[#d9e2ec] rounded-lg hover:bg-slate-50 hover:text-[#1d2d3e] transition-colors flex items-center space-x-2 shadow-xs cursor-pointer"
         >
-          <svg className="w-4 h-4 text-slate-500 group-hover:text-slate-700 transition-transform group-hover:-translate-x-0.5" fill="none" viewBox="0 0 16 16" stroke="currentColor">
+          <svg className="w-4 h-4 text-[#556b82]" fill="none" viewBox="0 0 16 16" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M10 12.5l-4.5-4.5 4.5-4.5" />
           </svg>
           <span>Back</span>
@@ -1207,7 +1208,7 @@ export const Step2Landscape: React.FC<Step2Props> = ({
         <button
           type="button"
           onClick={onContinue}
-          className="px-6 py-2.5 text-sm font-semibold text-white bg-[#0070f2] hover:bg-[#0057d2] rounded-xl shadow-xs transition-all active:scale-95 flex items-center space-x-2 group"
+          className="px-8 py-2.5 h-[44px] text-[14px] font-semibold text-white bg-[#0070f2] hover:bg-[#0057d2] rounded-lg shadow-xs transition-all active:scale-95 flex items-center space-x-2 cursor-pointer"
         >
           <span>Continue</span>
           <svg className="w-4 h-4 text-white transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 16 16" stroke="currentColor">
