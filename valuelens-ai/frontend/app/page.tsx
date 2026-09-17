@@ -75,68 +75,68 @@ export default function HomePage() {
       <section className="bg-gradient-to-r from-[#eef5fc] via-[#f2f7fc] to-[#e8f2fa] rounded-3xl border border-[#d9e2ec] p-8 sm:p-10 lg:p-12 shadow-xs overflow-hidden">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
           {/* Left Column: Headings, Subtitle & CTAs */}
-          <div className="lg:col-span-6 space-y-6">
+          <div className="lg:col-span-5 space-y-5">
             {/* Tagline */}
             <p className="text-[12px] sm:text-[13px] font-semibold text-[#556b82] tracking-wider uppercase">
               ASSESS &nbsp;|&nbsp; PLAN &nbsp;|&nbsp; MIGRATE &nbsp;|&nbsp; REALIZE VALUE
             </p>
 
             {/* Main Headline */}
-            <h1 className="text-3xl sm:text-4xl lg:text-[42px] font-bold text-[#1d2d3e] leading-[1.18] tracking-tight">
+            <h1 className="text-3xl sm:text-4xl lg:text-[40px] font-bold text-[#1d2d3e] leading-[1.18] tracking-tight">
               Turn Your Integration<br />
               Migration into<br />
               <span className="text-[#0070f2]">Business Value.</span>
             </h1>
 
             {/* Paragraph */}
-            <p className="text-[15px] sm:text-[16px] text-[#556b82] leading-relaxed font-normal">
-              Simplify migration from SAP PI/PO, SAP BTP Neo environment, and third-party platforms to SAP Integration Suite with IntSwitch — an AI-driven integration tool. Streamline assessment, migration, and testing to reduce migration effort by up to 40%, minimize risks, and ensure seamless integration with SAP systems for enhanced scalability and agility.
+            <p className="text-[14px] sm:text-[15px] text-[#556b82] leading-relaxed font-normal">
+              Simplify migration from SAP PI/PO, webMethods, MuleSoft, Boomi, SAP BTP Neo environment, and legacy middleware to SAP Integration Suite with IntSwitch an AI-driven integration tool. Streamline assessment, migration, and testing to reduce migration effort by up to 40%, minimize risks, and ensure seamless integration with SAP systems.
             </p>
 
             {/* Powered by IntSwitch Card -> Links to /intswitch */}
-            <div className="pt-1">
+            <div className="pt-0.5">
               <Link
                 href="/intswitch"
                 title="IntSwitch — Incture Migration Tool"
-                className="group inline-flex flex-col bg-white/95 backdrop-blur-md rounded-2xl p-3.5 sm:py-3.5 sm:px-4.5 border border-[#d9e2ec] shadow-xs hover:shadow-md hover:border-[#0070f2] transition-all cursor-pointer w-fit max-w-[460px]"
+                className="group inline-flex flex-col bg-white/95 backdrop-blur-md rounded-2xl p-3 sm:py-3.5 sm:px-4 border border-[#d9e2ec] shadow-xs hover:shadow-md hover:border-[#0070f2] transition-all cursor-pointer w-full max-w-[460px]"
               >
                 {/* Powered by label */}
-                <div className="text-[12px] font-bold text-purple-700 tracking-wide mb-1">
+                <div className="text-[11px] font-bold text-purple-700 tracking-wide mb-1">
                   Powered by
                 </div>
 
-                <div className="flex items-center space-x-3.5">
+                <div className="flex items-center space-x-3">
                   {/* Left: Power Icon + IntSwitch & Incture Migration Tool */}
                   <div className="flex items-center space-x-2.5 shrink-0">
-                    <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-[#0070f2] shrink-0 group-hover:scale-105 transition-transform">
-                      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <div className="w-9 h-9 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-[#0070f2] shrink-0 group-hover:scale-105 transition-transform">
+                      <svg className="w-4.5 h-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.4} d="M12 2v9" />
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.4} d="M18.36 6.64a9 9 0 11-12.73 0" />
                       </svg>
                     </div>
                     <div>
-                      <h4 className="text-[16px] font-bold text-[#0070f2] leading-none group-hover:text-blue-700 transition-colors">
+                      <h4 className="text-[15px] font-bold text-[#0070f2] leading-none group-hover:text-blue-700 transition-colors">
                         IntSwitch
                       </h4>
-                      <p className="text-[12px] text-[#556b82] font-medium leading-tight mt-1">
+                      <p className="text-[11px] text-[#556b82] font-medium leading-tight mt-1">
                         Incture Migration And <br />Automation Tool
                       </p>
                     </div>
                   </div>
 
                   {/* Divider */}
-                  <div className="h-8 w-px bg-[#d9e2ec] shrink-0 mx-1" />
+                  <div className="h-8 w-px bg-[#d9e2ec] shrink-0 mx-0.5" />
 
                   {/* Middle Text: Accelerate your migration journey */}
                   <div className="shrink-0 pr-1">
-                    <p className="text-[13px] font-semibold text-[#1d2d3e] leading-tight">
+                    <p className="text-[12px] sm:text-[13px] font-semibold text-[#1d2d3e] leading-tight">
                       Accelerate your<br />migration journey
                     </p>
                   </div>
 
                   {/* Right Circle Arrow Button */}
-                  <div className="w-8 h-8 rounded-full bg-blue-50 border border-blue-100 text-[#0070f2] group-hover:bg-[#0070f2] group-hover:text-white flex items-center justify-center transition-all shrink-0 shadow-xs">
-                    <svg className="w-4 h-4 transition-transform group-hover:translate-x-0.5" viewBox="0 0 16 16" fill="none" stroke="currentColor">
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-blue-50 border border-blue-100 text-[#0070f2] group-hover:bg-[#0070f2] group-hover:text-white flex items-center justify-center transition-all shrink-0 shadow-xs ml-auto">
+                    <svg className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" viewBox="0 0 16 16" fill="none" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 3.5l4.5 4.5-4.5 4.5" />
                     </svg>
                   </div>
@@ -145,19 +145,19 @@ export default function HomePage() {
             </div>
 
             {/* 3 Action Buttons strictly in ONE Row with Subtext */}
-            <div className="grid grid-cols-3 gap-3 pt-2 w-full">
+            <div className="grid grid-cols-3 gap-2 sm:gap-3 pt-1 w-full">
               {/* Button 1: Explore Package Offerings */}
               <div className="flex flex-col">
                 <Link
                   href="/offerings"
-                  className="group inline-flex items-center justify-center space-x-1.5 px-3.5 py-2.5 h-[46px] rounded-lg text-[14px] font-semibold bg-[#0070f2] hover:bg-[#0057d2] text-white shadow-xs transition-all cursor-pointer text-center leading-tight"
+                  className="group inline-flex items-center justify-center space-x-1 px-2 sm:px-3 py-2.5 h-[44px] rounded-lg text-[13px] sm:text-[14px] font-semibold bg-[#0070f2] hover:bg-[#0057d2] text-white shadow-xs transition-all cursor-pointer text-center leading-tight whitespace-nowrap"
                 >
                   <span>Explore Offerings</span>
-                  <svg className="w-4 h-4 shrink-0 transition-transform group-hover:translate-x-0.5" viewBox="0 0 16 16" fill="none" stroke="currentColor">
+                  <svg className="w-3.5 h-3.5 shrink-0 transition-transform group-hover:translate-x-0.5" viewBox="0 0 16 16" fill="none" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M6 3.5l4.5 4.5-4.5 4.5" />
                   </svg>
                 </Link>
-                <span className="text-[12px] text-[#556b82] font-medium mt-1.5 text-center leading-tight">
+                <span className="text-[11px] sm:text-[12px] text-[#556b82] font-medium mt-1 text-center leading-tight">
                   Incture packaged offerings
                 </span>
               </div>
@@ -168,14 +168,14 @@ export default function HomePage() {
                   href="https://incture.com/case-studies/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group inline-flex items-center justify-center space-x-1.5 px-3.5 py-2.5 h-[46px] rounded-lg text-[14px] font-semibold bg-white hover:bg-slate-50 text-[#0070f2] border border-[#0070f2]/40 shadow-xs transition-all cursor-pointer text-center leading-tight"
+                  className="group inline-flex items-center justify-center space-x-1 px-2 sm:px-3 py-2.5 h-[44px] rounded-lg text-[13px] sm:text-[14px] font-semibold bg-white hover:bg-slate-50 text-[#0070f2] border border-[#0070f2]/40 shadow-xs transition-all cursor-pointer text-center leading-tight whitespace-nowrap"
                 >
                   <span>Customer Success</span>
-                  <svg className="w-4 h-4 shrink-0 transition-transform group-hover:translate-x-0.5" viewBox="0 0 16 16" fill="none" stroke="currentColor">
+                  <svg className="w-3.5 h-3.5 shrink-0 transition-transform group-hover:translate-x-0.5" viewBox="0 0 16 16" fill="none" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M6 3.5l4.5 4.5-4.5 4.5" />
                   </svg>
                 </a>
-                <span className="text-[12px] text-[#556b82] font-medium mt-1.5 text-center leading-tight">
+                <span className="text-[11px] sm:text-[12px] text-[#556b82] font-medium mt-1 text-center leading-tight">
                   Real transformation stories
                 </span>
               </div>
@@ -184,14 +184,14 @@ export default function HomePage() {
               <div className="flex flex-col">
                 <Link
                   href="/assessment"
-                  className="group inline-flex items-center justify-center space-x-1.5 px-3.5 py-2.5 h-[46px] rounded-lg text-[14px] font-semibold bg-[#7928ca] hover:bg-[#6820b0] text-white shadow-xs transition-all cursor-pointer text-center leading-tight"
+                  className="group inline-flex items-center justify-center space-x-1 px-2 sm:px-3 py-2.5 h-[44px] rounded-lg text-[13px] sm:text-[14px] font-semibold bg-[#7928ca] hover:bg-[#6820b0] text-white shadow-xs transition-all cursor-pointer text-center leading-tight whitespace-nowrap"
                 >
                   <span>Discover Value</span>
-                  <svg className="w-4 h-4 shrink-0 transition-transform group-hover:translate-x-0.5" viewBox="0 0 16 16" fill="none" stroke="currentColor">
+                  <svg className="w-3.5 h-3.5 shrink-0 transition-transform group-hover:translate-x-0.5" viewBox="0 0 16 16" fill="none" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M6 3.5l4.5 4.5-4.5 4.5" />
                   </svg>
                 </Link>
-                <span className="text-[12px] text-[#556b82] font-medium mt-1.5 text-center leading-tight">
+                <span className="text-[11px] sm:text-[12px] text-[#556b82] font-medium mt-1 text-center leading-tight">
                   Personalized business case
                 </span>
               </div>
@@ -199,11 +199,11 @@ export default function HomePage() {
           </div>
 
           {/* Right Column: Hero Architecture Diagram */}
-          <div className="lg:col-span-6 flex justify-center lg:justify-end items-center">
-            <div className="w-full rounded-3xl overflow-hidden shadow-sm border border-[#d9e2ec] bg-white hover:shadow-md transition-all p-2">
+          <div className="lg:col-span-7 flex justify-center lg:justify-end items-center">
+            <div className="w-full rounded-3xl overflow-hidden shadow-sm border border-[#d9e2ec] bg-white hover:shadow-md transition-all p-2 sm:p-2.5">
               <img
-                src="/images/hero-architecture-diagram.jpg?v=platforms"
-                alt="Integration Migration Architecture to SAP BTP Integration Suite"
+                src="/images/hero-architecture-diagram.png?v=webmethods"
+                alt="Integration Migration Architecture to SAP BTP Integration Suite with webMethods, Boomi, MuleSoft, and SAP PI/PO"
                 className="w-full h-auto object-contain block rounded-2xl"
               />
             </div>

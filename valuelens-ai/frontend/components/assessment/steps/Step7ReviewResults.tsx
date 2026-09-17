@@ -71,9 +71,22 @@ export const Step7ReviewResults: React.FC<Step7Props> = ({
   const targetBarHeight = displayTargetTco > 0 ? Math.max(20, Math.round((displayTargetTco / maxVal) * 160)) : 12;
 
   const handleGoToDashboard = () => {
+    let activeId =
+      (assessment.id && assessment.id !== 'demo-assessment-1' ? assessment.id : null) ||
+      (typeof window !== 'undefined' ? localStorage.getItem('valuelens_active_assessment_id') : null);
+
+    if (!activeId || activeId === 'demo-assessment-1') {
+      activeId = `asmt-${Date.now().toString(36)}`;
+    }
+
     if (typeof window !== 'undefined') {
       try {
-        localStorage.setItem('valuelens_active_assessment', JSON.stringify(assessment));
+        const asmtToStore = {
+          ...assessment,
+          id: activeId,
+        };
+        localStorage.setItem('valuelens_active_assessment', JSON.stringify(asmtToStore));
+        localStorage.setItem('valuelens_active_assessment_id', activeId);
         if (calculationResult) {
           localStorage.setItem('valuelens_active_calculation', JSON.stringify(calculationResult));
         }
@@ -81,7 +94,7 @@ export const Step7ReviewResults: React.FC<Step7Props> = ({
         console.warn('Error saving to localStorage', e);
       }
     }
-    router.push(assessment.id ? `/dashboard/${assessment.id}` : '/dashboard/demo-assessment-1');
+    router.push(`/dashboard/${activeId}`);
   };
 
   return (
@@ -126,7 +139,7 @@ export const Step7ReviewResults: React.FC<Step7Props> = ({
             onClick={onRestart}
             className="h-11 px-5 text-[14px] sm:text-[15px] font-semibold text-[#0070f2] bg-blue-50 border border-blue-200 rounded-xl hover:bg-blue-100 transition-colors cursor-pointer"
           >
-            Start New Assessment
+            Start New Business Value
           </button>
         </div>
       </div>

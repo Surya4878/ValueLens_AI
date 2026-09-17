@@ -11,7 +11,7 @@ export function TopNavbar() {
     { label: 'Home', href: '/' },
     { label: 'Packages', href: '/offerings' },
     { label: 'Business Value', href: '/assessment' },
-    { label: 'Dashboard', href: '/dashboard/demo-assessment-1' },
+    { label: 'Dashboard', href: '/dashboard' },
   ];
 
   return (

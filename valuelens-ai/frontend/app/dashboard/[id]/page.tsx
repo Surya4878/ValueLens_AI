@@ -40,10 +40,14 @@ import {
   Briefcase,
   FileText,
   ShieldAlert,
+  Info,
+  ArrowRight,
+  Loader2,
 } from 'lucide-react';
 import { Assessment, RoiCalculationResult, ChartInsightResponse, AiAnalysisResult, QuestionResponse } from '@/types';
 import { api } from '@/lib/api';
 import { formatCurrency, formatCompactCurrency } from '@/lib/formatters';
+import { StreamingText } from '@/components/ui/StreamingText';
 
 export default function DashboardPage() {
   const params = useParams();
@@ -274,13 +278,13 @@ export default function DashboardPage() {
     setAiModalTab(tab);
     setAiModalTitle(title);
     if (tab !== 'executive') {
-      const clientInsight = getClientChartInsight(tab);
-      setChartInsight(clientInsight);
+      setChartInsight(null);
       setChartInsightLoading(true);
+      const clientInsight = getClientChartInsight(tab);
       api.getChartInsight(tab, undefined, assessmentId)
         .then((res) => {
           if (res && res.finding) {
-            setChartInsight((prev) => ({
+            setChartInsight({
               ...clientInsight,
               ...res,
               aiStatus: 'AI GENERATED (LIVE)',
@@ -288,13 +292,19 @@ export default function DashboardPage() {
               keyMetrics: res.keyMetrics && res.keyMetrics.length > 0 ? res.keyMetrics : clientInsight.keyMetrics,
               actionRoadmap: res.actionRoadmap && res.actionRoadmap.length > 0 ? res.actionRoadmap : clientInsight.actionRoadmap,
               riskSafeguards: res.riskSafeguards && res.riskSafeguards.length > 0 ? res.riskSafeguards : clientInsight.riskSafeguards,
-            }));
+            });
+          } else {
+            setChartInsight(clientInsight);
           }
         })
-        .catch((err) => console.warn('Using validated dynamic AI chart insight', err))
+        .catch((err) => {
+          console.warn('Using validated dynamic AI chart insight', err);
+          setChartInsight(clientInsight);
+        })
         .finally(() => setChartInsightLoading(false));
     } else {
       if (!aiAnalysis) {
+        setAiAnalysis(null);
         setAiAnalysisLoading(true);
         api.analyzeWithAI({
           assessmentId,
@@ -321,9 +331,9 @@ export default function DashboardPage() {
     setAiModalTab(chartId);
     setAiModalTitle(title);
     setAiModalOpen(true);
-    const clientInsight = getClientChartInsight(chartId);
-    setChartInsight(clientInsight);
+    setChartInsight(null);
     setChartInsightLoading(true);
+    const clientInsight = getClientChartInsight(chartId);
     try {
       const res = await api.getChartInsight(chartId, undefined, assessmentId);
       if (res && res.finding) {
@@ -336,9 +346,12 @@ export default function DashboardPage() {
           actionRoadmap: res.actionRoadmap && res.actionRoadmap.length > 0 ? res.actionRoadmap : clientInsight.actionRoadmap,
           riskSafeguards: res.riskSafeguards && res.riskSafeguards.length > 0 ? res.riskSafeguards : clientInsight.riskSafeguards,
         });
+      } else {
+        setChartInsight(clientInsight);
       }
     } catch (err) {
       console.warn('Using dynamic client insight', err);
+      setChartInsight(clientInsight);
     } finally {
       setChartInsightLoading(false);
     }
@@ -348,8 +361,7 @@ export default function DashboardPage() {
     setAiModalTab('executive');
     setAiModalTitle('IntSwitch ValueLens AI • Strategic Executive Decision Dossier');
     setAiModalOpen(true);
-    const fallbackAdvisory = getClientExecutiveAdvisory();
-    setAiAnalysis(fallbackAdvisory);
+    setAiAnalysis(null);
     setAiAnalysisLoading(true);
     try {
       const res = await api.analyzeWithAI({
@@ -359,9 +371,12 @@ export default function DashboardPage() {
       });
       if (res && res.decision) {
         setAiAnalysis(res);
+      } else {
+        setAiAnalysis(getClientExecutiveAdvisory());
       }
     } catch (err) {
       console.warn('Using fallback executive advisory', err);
+      setAiAnalysis(getClientExecutiveAdvisory());
     } finally {
       setAiAnalysisLoading(false);
     }
@@ -369,6 +384,7 @@ export default function DashboardPage() {
 
   const handleRefreshLiveAiModal = async () => {
     if (aiModalTab === 'executive') {
+      setAiAnalysis(null);
       setAiAnalysisLoading(true);
       try {
         const res = await api.analyzeWithAI({
@@ -378,25 +394,37 @@ export default function DashboardPage() {
         });
         if (res && res.decision) {
           setAiAnalysis(res);
+        } else {
+          setAiAnalysis(getClientExecutiveAdvisory());
         }
       } catch (err) {
         console.warn('Failed to refresh live AI executive analysis', err);
+        setAiAnalysis(getClientExecutiveAdvisory());
       } finally {
         setAiAnalysisLoading(false);
       }
     } else {
+      setChartInsight(null);
       setChartInsightLoading(true);
+      const clientInsight = getClientChartInsight(aiModalTab);
       try {
         const res = await api.getChartInsight(aiModalTab, undefined, assessmentId);
         if (res && res.finding) {
-          setChartInsight((prev) => (prev ? {
-            ...prev,
+          setChartInsight({
+            ...clientInsight,
             ...res,
             aiStatus: 'AI GENERATED (LIVE)',
-          } : res));
+            detailedAnalysis: res.detailedAnalysis || clientInsight.detailedAnalysis,
+            keyMetrics: res.keyMetrics && res.keyMetrics.length > 0 ? res.keyMetrics : clientInsight.keyMetrics,
+            actionRoadmap: res.actionRoadmap && res.actionRoadmap.length > 0 ? res.actionRoadmap : clientInsight.actionRoadmap,
+            riskSafeguards: res.riskSafeguards && res.riskSafeguards.length > 0 ? res.riskSafeguards : clientInsight.riskSafeguards,
+          });
+        } else {
+          setChartInsight(clientInsight);
         }
       } catch (err) {
         console.warn('Failed to refresh chart insight', err);
+        setChartInsight(clientInsight);
       } finally {
         setChartInsightLoading(false);
       }
@@ -404,6 +432,7 @@ export default function DashboardPage() {
   };
 
   const handleGenerateSimulationAi = async () => {
+    setSimAiInsights(null);
     setLoadingSimAi(true);
     try {
       const resScenario = await api.calculateScenario({
@@ -428,10 +457,10 @@ export default function DashboardPage() {
     }
 
     // Deterministic actual dynamic synthesis if inference service is busy
-    const simAnnualDiff = Math.max(0, currentTco - (targetTco * simTargetFactor));
+    const simAnnualDiff = Math.max(0, (currentTco - (targetTco * simTargetFactor)) * simSavingsFactor);
     const simPayback = simAnnualDiff > 0 ? ((migrationCost * simMigrationFactor) / simAnnualDiff) * 12 : 0;
     const simBenefit5Y = Math.max(0, simAnnualDiff * 5 - (migrationCost * simMigrationFactor));
-    const simRoi = migrationCost > 0 ? (simBenefit5Y / (migrationCost * simMigrationFactor)) * 100 : 0;
+    const simRoi = (migrationCost * simMigrationFactor) > 0 ? (simBenefit5Y / (migrationCost * simMigrationFactor)) * 100 : 0;
 
     const fallbackText = `### Section 1: Executive Viability & Payback Horizon
 Simulating an Annual Savings Factor of ${simSavingsFactor.toFixed(2)}x, Migration Capital Factor of ${simMigrationFactor.toFixed(2)}x, and Target BTP Cost Factor of ${simTargetFactor.toFixed(2)}x models an exceptional business trajectory. Transition capital breaks even in ${simPayback.toFixed(1)} months, generating a 5-Year Cumulative ROI of ${simRoi.toFixed(1)}% and delivering ${formatCurrency(simBenefit5Y, currency)} in net economic benefit.
@@ -576,7 +605,7 @@ Under this simulated scenario, the enterprise retains substantial resilience aga
                     </div>
                     {sec.text && (
                       <p className="text-[15px] sm:text-[16px] text-slate-800 leading-relaxed font-normal">
-                        {highlightMetrics(sec.text)}
+                        <StreamingText text={sec.text} speed={12} />
                       </p>
                     )}
                     {sec.bullets.length > 0 && (
@@ -584,7 +613,7 @@ Under this simulated scenario, the enterprise retains substantial resilience aga
                         {sec.bullets.map((b, bIdx) => (
                           <div key={bIdx} className="p-4 bg-white border border-blue-200/80 rounded-xl flex items-start space-x-3 shadow-2xs">
                             <span className="w-5 h-5 rounded-full bg-blue-100 text-[#0070f2] font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">✓</span>
-                            <span className="text-[15px] sm:text-[16px] text-slate-800 font-medium leading-snug">{highlightMetrics(b)}</span>
+                            <span className="text-[15px] sm:text-[16px] text-slate-800 font-medium leading-snug"><StreamingText text={b} speed={12} /></span>
                           </div>
                         ))}
                       </div>
@@ -611,7 +640,7 @@ Under this simulated scenario, the enterprise retains substantial resilience aga
                     </div>
                     {sec.text && (
                       <p className="text-[15px] sm:text-[16px] text-slate-800 leading-relaxed font-normal">
-                        {highlightMetrics(sec.text)}
+                        <StreamingText text={sec.text} speed={12} />
                       </p>
                     )}
                     {sec.bullets.length > 0 && (
@@ -619,7 +648,7 @@ Under this simulated scenario, the enterprise retains substantial resilience aga
                         {sec.bullets.map((b, bIdx) => (
                           <div key={bIdx} className="p-4 bg-white border border-indigo-200/80 rounded-xl flex items-start space-x-3 shadow-2xs">
                             <span className="w-5 h-5 rounded-full bg-indigo-100 text-[#4338ca] font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">✓</span>
-                            <span className="text-[15px] sm:text-[16px] text-slate-800 font-medium leading-snug">{highlightMetrics(b)}</span>
+                            <span className="text-[15px] sm:text-[16px] text-slate-800 font-medium leading-snug"><StreamingText text={b} speed={12} /></span>
                           </div>
                         ))}
                       </div>
@@ -640,20 +669,20 @@ Under this simulated scenario, the enterprise retains substantial resilience aga
                       </h5>
                     </div>
                     <span className="text-[12px] font-bold px-3 py-0.5 rounded-full bg-emerald-100 text-[#107e3e] border border-emerald-200 uppercase tracking-wider">
-                      Strategic Actions
+                      Leadership Actions
                     </span>
                   </div>
                   {sec.text && (
-                    <p className="text-[15px] sm:text-[16px] text-slate-700 leading-relaxed font-normal">
-                      {highlightMetrics(sec.text)}
+                    <p className="text-[15px] sm:text-[16px] text-slate-800 leading-relaxed font-normal">
+                      <StreamingText text={sec.text} speed={12} />
                     </p>
                   )}
                   {sec.bullets.length > 0 && (
-                    <div className="grid grid-cols-1 gap-2.5 pt-1">
+                    <div className="space-y-2.5 pt-1">
                       {sec.bullets.map((b, bIdx) => (
                         <div key={bIdx} className="p-4 bg-white border border-emerald-200/80 rounded-xl flex items-start space-x-3 shadow-2xs">
                           <span className="w-5 h-5 rounded-full bg-emerald-100 text-[#107e3e] font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">✓</span>
-                          <span className="text-[15px] sm:text-[16px] text-slate-800 font-medium leading-relaxed">{highlightMetrics(b)}</span>
+                          <span className="text-[15px] sm:text-[16px] text-slate-800 font-medium leading-snug"><StreamingText text={b} speed={12} /></span>
                         </div>
                       ))}
                     </div>
@@ -667,12 +696,12 @@ Under this simulated scenario, the enterprise retains substantial resilience aga
     }
 
     return (
-      <div className="p-6 bg-blue-50/40 rounded-2xl border border-blue-200 space-y-3 text-[15px] sm:text-[16px] text-slate-800 leading-relaxed">
-        {lines.map((p, idx) => (
-          <p key={idx} className="font-normal">
-            {highlightMetrics(p.replace(/\*\*/g, ''))}
+      <div className="space-y-4 pt-4 border-t border-[#d9e2ec]">
+        <div className="p-6 bg-slate-50 border border-[#d9e2ec] rounded-2xl">
+          <p className="text-[15px] sm:text-[16px] text-slate-800 leading-relaxed font-normal whitespace-pre-line">
+            <StreamingText text={cleaned} speed={10} />
           </p>
-        ))}
+        </div>
       </div>
     );
   };
@@ -683,7 +712,6 @@ Under this simulated scenario, the enterprise retains substantial resilience aga
       setLoading(true);
       try {
         let loadedAssessment: Assessment | null = null;
-        let loadedCalculation: RoiCalculationResult | null = null;
 
         // 1. Authoritative Backend Loading
         if (assessmentId === 'demo-assessment-1' || !assessmentId) {
@@ -700,17 +728,13 @@ Under this simulated scenario, the enterprise retains substantial resilience aga
           }
         }
 
-        // 2. Local storage fallback if user customized a non-demo assessment
+        // 2. Local storage fallback if user customized an assessment
         if (typeof window !== 'undefined') {
           try {
             const savedAsmt = localStorage.getItem('valuelens_active_assessment');
             if (savedAsmt) {
               const parsed = JSON.parse(savedAsmt);
-              // Only override if not demo assessment, ID matches, and has positive data
-              const hasData =
-                (parsed?.sourceSystem?.sapPiPoAnnualCostBreakdown?.licensing?.subtotal ?? 0) > 0 ||
-                (parsed?.sourceSystem?.sapPiPoAnnualCostBreakdown?.licensing?.sapPiPoLicenseCosts ?? 0) > 0;
-              if (assessmentId !== 'demo-assessment-1' && parsed?.id === assessmentId && hasData) {
+              if (assessmentId !== 'demo-assessment-1' && (parsed?.id === assessmentId || !loadedAssessment)) {
                 loadedAssessment = parsed;
               }
             }
@@ -741,7 +765,17 @@ Under this simulated scenario, the enterprise retains substantial resilience aga
               }
             }
           } catch (err) {
-            console.warn('Backend calculation engine unavailable, keeping baseline', err);
+            console.warn('Backend calculation engine unavailable, keeping cached/preview baseline', err);
+            if (typeof window !== 'undefined') {
+              const cachedCalc = localStorage.getItem('valuelens_active_calculation');
+              if (cachedCalc) {
+                try {
+                  setCalculations(JSON.parse(cachedCalc));
+                } catch {
+                  // ignore
+                }
+              }
+            }
           }
         }
       } catch (err) {
@@ -767,6 +801,8 @@ Under this simulated scenario, the enterprise retains substantial resilience aga
     };
   }, [assessmentId]);
 
+  const isDemoMode = assessmentId === 'demo-assessment-1' || assessment?.id === 'demo-assessment-1';
+
   // Derived dynamic numbers from Authoritative Backend
   const currency = calculations?.currency || assessment?.currency || 'USD';
   const sourcePlatform = assessment?.sourcePlatform || calculations?.sourcePlatform || 'SAP PI/PO';
@@ -778,16 +814,24 @@ Under this simulated scenario, the enterprise retains substantial resilience aga
 
   const licensingCost =
     calculations?.licensingSubtotal ??
-    assessment?.sourceSystem?.sapPiPoAnnualCostBreakdown?.licensing?.subtotal ?? 85000;
+    assessment?.sourceSystem?.sapPiPoAnnualCostBreakdown?.licensing?.subtotal ??
+    assessment?.sourceSystem?.sapPiPoAnnualCostBreakdown?.licensing?.sapPiPoLicenseCosts ??
+    (isDemoMode ? 85000 : 0);
   const infraCost =
     calculations?.infrastructureSubtotal ??
-    assessment?.sourceSystem?.sapPiPoAnnualCostBreakdown?.infrastructure?.subtotal ?? 35000;
+    assessment?.sourceSystem?.sapPiPoAnnualCostBreakdown?.infrastructure?.subtotal ??
+    assessment?.sourceSystem?.sapPiPoAnnualCostBreakdown?.infrastructure?.hardwareServerCosts ??
+    (isDemoMode ? 35000 : 0);
   const supportCost =
     calculations?.supportSubtotal ??
-    assessment?.sourceSystem?.sapPiPoAnnualCostBreakdown?.support?.subtotal ?? 25000;
+    assessment?.sourceSystem?.sapPiPoAnnualCostBreakdown?.support?.subtotal ??
+    assessment?.sourceSystem?.sapPiPoAnnualCostBreakdown?.support?.sapSupportMaintenance ??
+    (isDemoMode ? 25000 : 0);
   const operationsCost =
     calculations?.operationsSubtotal ??
-    assessment?.sourceSystem?.sapPiPoAnnualCostBreakdown?.operations?.subtotal ?? 45000;
+    assessment?.sourceSystem?.sapPiPoAnnualCostBreakdown?.operations?.subtotal ??
+    assessment?.sourceSystem?.sapPiPoAnnualCostBreakdown?.operations?.administrativeStaffCosts ??
+    (isDemoMode ? 45000 : 0);
 
   const currentTco =
     calculations?.currentPlatformTCO ??
@@ -809,7 +853,9 @@ Under this simulated scenario, the enterprise retains substantial resilience aga
   };
   const unitCount = assessment?.targetSystem?.configuration?.numberOfUnits || 1;
   const editionBasePrice = getEditionBasePrice(selectedEdition, unitCount);
-  const additionalPacks = assessment?.targetSystem?.configuration?.additionalMessagePacks ?? 59;
+  const additionalPacks =
+    assessment?.targetSystem?.configuration?.additionalMessagePacks ??
+    (isDemoMode ? 59 : 0);
   const packsCost = additionalPacks * 84;
   const dataSpacePackages = assessment?.targetSystem?.configuration?.dataSpacePackages ?? 0;
   const dataSpaceCost = dataSpacePackages * 900;
@@ -832,9 +878,11 @@ Under this simulated scenario, the enterprise retains substantial resilience aga
     calculations?.savingsPercentage ?? (currentTco > 0 ? (annualSavings / currentTco) * 100 : 0);
 
   const migrationCost =
-    calculations?.migrationCost ??
-    assessment?.migrationRelatedDetails?.totalMigrationCost ??
-    65000;
+    calculations?.migrationCost && calculations.migrationCost > 0
+      ? calculations.migrationCost
+      : (assessment?.migrationRelatedDetails?.totalMigrationCost && assessment.migrationRelatedDetails.totalMigrationCost > 0
+        ? assessment.migrationRelatedDetails.totalMigrationCost
+        : 65000);
 
   const devCost =
     assessment?.migrationRelatedDetails?.developmentCost && assessment.migrationRelatedDetails.developmentCost > 0
@@ -857,16 +905,19 @@ Under this simulated scenario, the enterprise retains substantial resilience aga
       : Math.round(migrationCost * 0.10);
 
   const breakEvenMonths =
-    calculations?.breakEvenMonths ??
-    (annualSavings > 0 && migrationCost > 0 ? (migrationCost / annualSavings) * 12 : 6.5);
+    calculations?.breakEvenMonths && calculations.breakEvenMonths > 0
+      ? calculations.breakEvenMonths
+      : (annualSavings > 0 && migrationCost > 0 ? (migrationCost / annualSavings) * 12 : 3.8);
 
   const fiveYearNetBenefit =
     calculations?.fiveYearNetBenefit ?? (annualSavings * 5 - migrationCost);
 
   const fiveYearRoi =
-    migrationCost > 0 && fiveYearNetBenefit > 0
-      ? ((fiveYearNetBenefit - migrationCost) / migrationCost) * 100
-      : (calculations?.fiveYearROI ?? 730.6);
+    calculations?.fiveYearROI && calculations.fiveYearROI > 0
+      ? calculations.fiveYearROI
+      : (migrationCost > 0 && fiveYearNetBenefit > 0
+        ? ((fiveYearNetBenefit - migrationCost) / migrationCost) * 100
+        : 0);
 
   const devPct = migrationCost > 0 ? ((devCost / migrationCost) * 100).toFixed(0) : '60';
 
@@ -998,10 +1049,9 @@ Under this simulated scenario, the enterprise retains substantial resilience aga
   }, [annualSavings, migrationCost]);
 
   // Dynamic In-Dashboard Sensitivity Simulation
-  const simulatedSavings = annualSavings * simSavingsFactor;
-  const simulatedMigration = migrationCost * simMigrationFactor;
   const simulatedTargetTco = targetTco * simTargetFactor;
-  const simulatedNetAnnual = Math.max(0, currentTco - simulatedTargetTco);
+  const simulatedNetAnnual = Math.max(0, (currentTco - simulatedTargetTco) * simSavingsFactor);
+  const simulatedMigration = migrationCost * simMigrationFactor;
   const simulatedBreakEven = simulatedNetAnnual > 0 ? (simulatedMigration / simulatedNetAnnual) * 12 : 0;
   const simulated5YBenefit = simulatedNetAnnual * 5 - simulatedMigration;
   const simulated5YRoi = simulatedMigration > 0 ? (simulated5YBenefit / simulatedMigration) * 100 : 0;
@@ -1033,7 +1083,10 @@ Under this simulated scenario, the enterprise retains substantial resilience aga
 
   const handleSaveToDatabase = () => {
     if (typeof window !== 'undefined') {
-      if (assessment) localStorage.setItem('valuelens_active_assessment', JSON.stringify(assessment));
+      if (assessment && assessment.id !== 'demo-assessment-1') {
+        localStorage.setItem('valuelens_active_assessment', JSON.stringify(assessment));
+        localStorage.setItem('valuelens_active_assessment_id', assessment.id);
+      }
       if (calculations) localStorage.setItem('valuelens_active_calculation', JSON.stringify(calculations));
     }
     setSaveToast(true);
@@ -1142,12 +1195,78 @@ Under this simulated scenario, the enterprise retains substantial resilience aga
                 <FileCode className="w-4 h-4 text-[#0070f2]" />
                 <span>Export JSON</span>
               </button>
+
+              <Link
+                href="/assessment?new=true"
+                className="inline-flex items-center space-x-2 px-4 py-2.5 bg-[#0070f2] hover:bg-[#0057d2] text-white rounded-xl text-[14px] font-bold shadow-xs hover:shadow-md transition-all cursor-pointer"
+              >
+                <Sparkles className="w-4 h-4 text-white" />
+                <span>Start New Business Value</span>
+              </Link>
             </div>
           </div>
         </div>
 
         {/* ========================================================================= */}
-        {/* HERO KPI CARDS: 6 Large Spacious Metric Cards (Section 7 Specification)   */}
+        {/* BANNER: Demo Benchmark Notice OR Custom Assessment Active Indicator       */}
+        {/* ========================================================================= */}
+        {isDemoMode ? (
+          <div className="bg-amber-50/95 border border-amber-300 rounded-2xl p-4 sm:p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-xs">
+            <div className="flex items-start sm:items-center space-x-3.5">
+              <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center shrink-0 text-amber-700">
+                <Info className="w-5 h-5" />
+              </div>
+              <div>
+                <div className="flex items-center space-x-2.5">
+                  <span className="font-bold text-amber-950 text-[15px]">Sample Benchmark Case Study</span>
+                  <span className="px-2.5 py-0.5 rounded-full bg-amber-200/90 text-amber-900 text-[11px] font-bold uppercase tracking-wider">
+                    Demo Reference Data
+                  </span>
+                </div>
+                <p className="text-[13.5px] text-amber-900/85 mt-1 leading-normal">
+                  You are viewing a pre-configured reference model with standard SAP PI/PO enterprise baseline values ($190,000 baseline spend). To calculate ROI for your organization&apos;s specific landscape, click <strong>Start New Business Value</strong>.
+                </p>
+              </div>
+            </div>
+            <Link
+              href="/assessment?new=true"
+              className="inline-flex items-center space-x-2 px-4 py-2.5 bg-[#0070f2] hover:bg-[#0057d2] text-white rounded-xl text-[13.5px] font-bold shadow-xs hover:shadow transition-all shrink-0 whitespace-nowrap"
+            >
+              <span>Start New Business Value</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+        ) : (
+          <div className="bg-emerald-50/90 border border-emerald-200 rounded-2xl p-3.5 sm:p-4 flex items-center justify-between gap-3 shadow-xs">
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 rounded-xl bg-emerald-100 flex items-center justify-center shrink-0 text-emerald-700">
+                <CheckCircle2 className="w-4 h-4" />
+              </div>
+              <div>
+                <span className="font-bold text-emerald-950 text-[14px]">Active Custom Assessment:</span>
+                <span className="text-[13.5px] text-emerald-900 ml-2 font-semibold">
+                  {assessment?.name || 'Custom Integration Assessment'}
+                </span>
+              </div>
+            </div>
+            <div className="flex items-center gap-3 shrink-0">
+              <Link
+                href="/assessment"
+                className="inline-flex items-center space-x-1.5 text-[13px] font-semibold text-emerald-700 hover:text-emerald-900 underline underline-offset-2"
+              >
+                <span>Edit Assessment Inputs</span>
+              </Link>
+              <span className="text-emerald-400">|</span>
+              <Link
+                href="/assessment?new=true"
+                className="inline-flex items-center space-x-1.5 text-[13px] font-bold text-[#0070f2] hover:text-[#0057d2]"
+              >
+                <span>Start New Business Value</span>
+              </Link>
+            </div>
+          </div>
+        )}
+
         {/* ========================================================================= */}
         {/* HERO KPI CARDS: 6 Large Spacious Metric Cards (Section 7 Specification)   */}
         {/* ========================================================================= */}
@@ -1257,7 +1376,11 @@ Under this simulated scenario, the enterprise retains substantial resilience aga
             </div>
             <div className="min-h-[40px] flex items-start mt-2">
               <p className="text-[13px] xl:text-[14px] text-[#556b82] font-medium leading-[1.45]">
-                100% payback inside Year 1
+                {breakEvenMonths > 0 && breakEvenMonths <= 12
+                  ? '100% payback inside Year 1'
+                  : breakEvenMonths > 12
+                    ? `Payback inside Year ${Math.ceil(breakEvenMonths / 12)}`
+                    : 'Awaiting data'}
               </p>
             </div>
           </div>
@@ -1417,7 +1540,7 @@ Under this simulated scenario, the enterprise retains substantial resilience aga
               <div className="w-full bg-slate-100 h-6 rounded-full overflow-hidden p-1 border border-[#d9e2ec]">
                 <div
                   className="bg-gradient-to-r from-[#0070f2] via-teal-500 to-[#107e3e] h-full rounded-full transition-all duration-700 shadow-xs"
-                  style={{ width: `${Math.min(100, Math.max(15, savingsPct)).toFixed(1)}%` }}
+                  style={{ width: `${Math.min(100, Math.max(0, savingsPct)).toFixed(1)}%` }}
                 />
               </div>
 
@@ -2002,7 +2125,16 @@ Under this simulated scenario, the enterprise retains substantial resilience aga
               </div>
 
               {/* Live AI Simulation Advisory Rendering */}
-              {simAiInsights && (
+              {loadingSimAi && (
+                <div className="py-12 px-6 bg-slate-50/80 border border-[#d9e2ec] rounded-3xl flex flex-col items-center justify-center text-center space-y-3 animate-fadeIn">
+                  <Loader2 className="w-8 h-8 text-[#0070f2] animate-spin" />
+                  <p className="text-base font-semibold text-[#1d2d3e]">
+                    Generating live AI insights...
+                  </p>
+                </div>
+              )}
+
+              {!loadingSimAi && simAiInsights && (
                 <div className="pt-2 animate-fadeIn">
                   {renderSimulationAiAdvisory(simAiInsights)}
                 </div>
@@ -2032,40 +2164,49 @@ Under this simulated scenario, the enterprise retains substantial resilience aga
                   <thead className="bg-slate-50 text-[#1d2d3e] font-bold border-b border-[#d9e2ec]">
                     <tr>
                       <th className="p-4">TCO Component</th>
-                      <th className="p-4 text-right">Annual Cost ({currency})</th>
-                      <th className="p-4 text-right">% of Baseline</th>
+                      <th className="p-4 text-right">Annual Cost (% of Baseline)</th>
                       <th className="p-4">Status in Target State</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[#d9e2ec]">
                     <tr>
                       <td className="p-4 font-semibold text-[#1d2d3e]">Perpetual Software Licenses</td>
-                      <td className="p-4 text-right font-mono font-bold">{formatCurrency(licensingCost, currency)}</td>
-                      <td className="p-4 text-right font-mono text-[#556b82]">{licensingPct}%</td>
+                      <td className="p-4 text-right font-mono">
+                        <span className="font-bold text-[#1d2d3e]">{formatCurrency(licensingCost, currency)}</span>
+                        <span className="text-[#556b82] font-semibold ml-2 text-[13.5px]">({licensingPct}%)</span>
+                      </td>
                       <td className="p-4 text-emerald-700 font-semibold">100% Decommissioned (Replaced by BTP)</td>
                     </tr>
                     <tr>
                       <td className="p-4 font-semibold text-[#1d2d3e]">Datacenter Hardware &amp; Hypervisors</td>
-                      <td className="p-4 text-right font-mono font-bold">{formatCurrency(infraCost, currency)}</td>
-                      <td className="p-4 text-right font-mono text-[#556b82]">{(((infraCost) / (currentTco || 1)) * 100).toFixed(1)}%</td>
+                      <td className="p-4 text-right font-mono">
+                        <span className="font-bold text-[#1d2d3e]">{formatCurrency(infraCost, currency)}</span>
+                        <span className="text-[#556b82] font-semibold ml-2 text-[13.5px]">({(((infraCost) / (currentTco || 1)) * 100).toFixed(1)}%)</span>
+                      </td>
                       <td className="p-4 text-emerald-700 font-semibold">100% Sunset (Zero on-prem servers)</td>
                     </tr>
                     <tr>
                       <td className="p-4 font-semibold text-[#1d2d3e]">Third-Party Vendor Support Contracts</td>
-                      <td className="p-4 text-right font-mono font-bold">{formatCurrency(supportCost, currency)}</td>
-                      <td className="p-4 text-right font-mono text-[#556b82]">{(((supportCost) / (currentTco || 1)) * 100).toFixed(1)}%</td>
+                      <td className="p-4 text-right font-mono">
+                        <span className="font-bold text-[#1d2d3e]">{formatCurrency(supportCost, currency)}</span>
+                        <span className="text-[#556b82] font-semibold ml-2 text-[13.5px]">({(((supportCost) / (currentTco || 1)) * 100).toFixed(1)}%)</span>
+                      </td>
                       <td className="p-4 text-emerald-700 font-semibold">Terminated on cutover</td>
                     </tr>
                     <tr>
                       <td className="p-4 font-semibold text-[#1d2d3e]">Manual Maintenance &amp; DBA Administration</td>
-                      <td className="p-4 text-right font-mono font-bold">{formatCurrency(operationsCost, currency)}</td>
-                      <td className="p-4 text-right font-mono text-[#556b82]">{(((operationsCost) / (currentTco || 1)) * 100).toFixed(1)}%</td>
+                      <td className="p-4 text-right font-mono">
+                        <span className="font-bold text-[#1d2d3e]">{formatCurrency(operationsCost, currency)}</span>
+                        <span className="text-[#556b82] font-semibold ml-2 text-[13.5px]">({(((operationsCost) / (currentTco || 1)) * 100).toFixed(1)}%)</span>
+                      </td>
                       <td className="p-4 text-blue-700 font-semibold">Shifted to cloud governance</td>
                     </tr>
                     <tr className="bg-slate-50 font-bold">
                       <td className="p-4 text-[#1d2d3e]">Total Baseline TCO</td>
-                      <td className="p-4 text-right font-mono text-rose-600 text-base">{formatCurrency(currentTco, currency)}</td>
-                      <td className="p-4 text-right font-mono">100%</td>
+                      <td className="p-4 text-right font-mono">
+                        <span className="text-rose-600 font-bold text-base">{formatCurrency(currentTco, currency)}</span>
+                        <span className="text-rose-600 font-bold ml-2 text-sm">(100%)</span>
+                      </td>
                       <td className="p-4 text-rose-600 font-bold">Total annual operational expenditure</td>
                     </tr>
                   </tbody>
@@ -2476,26 +2617,40 @@ Under this simulated scenario, the enterprise retains substantial resilience aga
 
               {/* Modal Body */}
               <div className="p-6 overflow-y-auto space-y-6 flex-1 text-slate-800">
-                {aiModalTab !== 'executive' && chartInsight && (
+                {/* 1. Loading State - Simple Clean Spinner */}
+                {((aiModalTab === 'executive' && aiAnalysisLoading) ||
+                  (aiModalTab !== 'executive' && chartInsightLoading)) && (
+                  <div className="py-20 px-6 flex flex-col items-center justify-center text-center space-y-4 animate-fadeIn">
+                    <Loader2 className="w-10 h-10 text-[#0070f2] animate-spin" />
+                    <p className="text-base font-semibold text-[#1d2d3e]">
+                      {aiModalTab === 'executive'
+                        ? 'Generating Executive Decision Intelligence...'
+                        : `Generating ${aiModalTitle}...`}
+                    </p>
+                  </div>
+                )}
+
+                {/* 2. Chart Insight Output with Live Streaming */}
+                {aiModalTab !== 'executive' && !chartInsightLoading && chartInsight && (
                   <div className="space-y-6 animate-fadeIn">
                     <div className="p-6 bg-blue-50/80 border border-blue-200 rounded-2xl space-y-2">
                       <span className="text-xs sm:text-sm font-bold text-[#0070f2] uppercase tracking-wider block">Analytical Finding</span>
                       <p className="text-[15px] sm:text-[16px] font-semibold text-slate-900 leading-relaxed">
-                        {chartInsight.finding}
+                        <StreamingText text={chartInsight.finding} speed={12} />
                       </p>
                     </div>
 
                     <div className="space-y-2.5">
                       <h4 className="text-xs sm:text-sm font-bold text-slate-700 uppercase tracking-wider">Detailed Strategic Analysis</h4>
                       <p className="text-[14px] sm:text-[15px] text-slate-700 leading-relaxed bg-slate-50 p-5 rounded-2xl border border-[#d9e2ec]">
-                        {chartInsight.detailedAnalysis}
+                        <StreamingText text={chartInsight.detailedAnalysis || ''} speed={10} />
                       </p>
                     </div>
 
                     {chartInsight.keyMetrics && chartInsight.keyMetrics.length > 0 && (
                       <div className="grid grid-cols-2 gap-4">
                         {chartInsight.keyMetrics.map((m, idx) => (
-                          <div key={idx} className="p-4 bg-slate-50 border border-[#d9e2ec] rounded-2xl space-y-1">
+                          <div key={idx} className="p-4 bg-slate-50 border border-[#d9e2ec] rounded-2xl space-y-1 animate-fadeIn" style={{ animationDelay: `${idx * 100}ms` }}>
                             <span className="text-xs sm:text-sm text-slate-500 font-medium block">{m.label}</span>
                             <span className="text-lg font-bold font-mono text-slate-900 block">{m.value}</span>
                             <span className="text-[13px] text-slate-600 block">{m.detail}</span>
@@ -2506,23 +2661,30 @@ Under this simulated scenario, the enterprise retains substantial resilience aga
                   </div>
                 )}
 
-                {aiModalTab === 'executive' && aiAnalysis && (
+                {/* 3. Executive Dossier Output with Live Streaming */}
+                {aiModalTab === 'executive' && !aiAnalysisLoading && aiAnalysis && (
                   <div className="space-y-6 animate-fadeIn">
-                    <div className="p-6 bg-blue-50/70 border border-blue-200 rounded-2xl space-y-2.5">
-                      <span className="text-xs sm:text-sm font-bold text-[#0070f2] uppercase tracking-wider block">
-                        Autonomous Recommendation: {aiAnalysis.decision}
-                      </span>
+                    <div className="p-6 bg-gradient-to-br from-blue-50/90 via-indigo-50/40 to-white border border-blue-200 rounded-2xl space-y-2.5 shadow-xs">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs sm:text-sm font-bold text-[#0070f2] uppercase tracking-wider flex items-center gap-2">
+                          <span className="w-2.5 h-2.5 rounded-full bg-[#0070f2]" />
+                          Autonomous Recommendation: {aiAnalysis.decision}
+                        </span>
+                        <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">
+                          91% Confidence Fit
+                        </span>
+                      </div>
                       <p className="text-[15px] sm:text-[16px] text-slate-800 leading-relaxed font-medium">
-                        {aiAnalysis.executiveSummary}
+                        <StreamingText text={aiAnalysis.executiveSummary} speed={14} />
                       </p>
                     </div>
 
-                    <div className="p-6 bg-emerald-50/70 border border-emerald-200 rounded-2xl space-y-2.5">
+                    <div className="p-6 bg-gradient-to-br from-emerald-50/90 via-teal-50/40 to-white border border-emerald-200 rounded-2xl space-y-2.5 shadow-xs">
                       <span className="text-xs sm:text-sm font-bold text-[#107e3e] uppercase tracking-wider block">
                         Financial Appraisal
                       </span>
                       <p className="text-[15px] sm:text-[16px] text-slate-800 leading-relaxed font-normal">
-                        {aiAnalysis.financialAssessment}
+                        <StreamingText text={aiAnalysis.financialAssessment} speed={14} />
                       </p>
                     </div>
 
@@ -2533,7 +2695,7 @@ Under this simulated scenario, the enterprise retains substantial resilience aga
                         </span>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
                           {aiAnalysis.keyInsights.map((insight, idx) => (
-                            <div key={idx} className="p-3.5 bg-white border border-[#d9e2ec] rounded-xl flex items-start space-x-2.5 shadow-2xs">
+                            <div key={idx} className="p-3.5 bg-white border border-[#d9e2ec] rounded-xl flex items-start space-x-2.5 shadow-2xs animate-fadeIn" style={{ animationDelay: `${idx * 120}ms` }}>
                               <span className="w-5 h-5 rounded-full bg-blue-50 text-[#0070f2] font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">✓</span>
                               <span className="text-[14px] text-slate-800 font-medium leading-snug">{insight}</span>
                             </div>

@@ -177,11 +177,27 @@ public class RoiCalculationService {
 
         // 3. Calculate Migration Cost
         var migrationDetails = assessment.getMigrationRelatedDetails() != null ? assessment.getMigrationRelatedDetails() : new AssessmentDto.MigrationDetailsDto();
+        BigDecimal dev = migrationDetails.getDevelopmentCost();
+        BigDecimal test = migrationDetails.getTestingCost();
+        BigDecimal arch = migrationDetails.getArchitectureCost();
+        BigDecimal pm = migrationDetails.getProjectManagementCost();
+
+        BigDecimal totalInputCost = migrationDetails.getTotalMigrationCost();
+        if (totalInputCost == null || totalInputCost.compareTo(BigDecimal.ZERO) <= 0) {
+            totalInputCost = BigDecimal.valueOf(65000.00); // Standard Incture Silver Migration Package baseline
+        }
+        if (dev == null || dev.compareTo(BigDecimal.ZERO) <= 0) {
+            dev = totalInputCost.multiply(BigDecimal.valueOf(0.60)).setScale(2, RoundingMode.HALF_UP);
+            test = totalInputCost.multiply(BigDecimal.valueOf(0.20)).setScale(2, RoundingMode.HALF_UP);
+            arch = totalInputCost.multiply(BigDecimal.valueOf(0.10)).setScale(2, RoundingMode.HALF_UP);
+            pm = totalInputCost.multiply(BigDecimal.valueOf(0.10)).setScale(2, RoundingMode.HALF_UP);
+        }
+
         var migrationResult = migrationCostCalculator.calculate(
-                migrationDetails.getDevelopmentCost(),
-                migrationDetails.getTestingCost(),
-                migrationDetails.getArchitectureCost(),
-                migrationDetails.getProjectManagementCost(),
+                dev,
+                test,
+                arch,
+                pm,
                 migrationDetails.getTrainingCost(),
                 migrationDetails.getDeploymentCutoverCost(),
                 migrationDetails.getDocumentationCost(),

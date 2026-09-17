@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { api } from '@/lib/api';
 import { ValueOriginChip } from '@/components/ui/ValueOriginChip';
+import { StreamingText } from '@/components/ui/StreamingText';
 
 interface AiAssistantDrawerProps {
   assessmentId?: string;
@@ -144,7 +145,13 @@ export function AiAssistantDrawer({ assessmentId = 'demo-assessment-1' }: AiAssi
                         : 'bg-white text-slate-800 border border-slate-200 shadow-xs rounded-tl-xs space-y-2'
                     }`}
                   >
-                    <p>{msg.content}</p>
+                    <p>
+                      {msg.role === 'assistant' && idx === messages.length - 1 ? (
+                        <StreamingText text={msg.content} speed={14} />
+                      ) : (
+                        msg.content
+                      )}
+                    </p>
 
                     {/* Evidence Tags */}
                     {msg.evidence && msg.evidence.length > 0 && (

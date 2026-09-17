@@ -44,25 +44,12 @@ import { Step7ReviewResults } from './steps/Step7ReviewResults';
 
 export const PLATFORM_OPTIONS = SUPPORTED_PLATFORMS;
 
-export function AssessmentWizard() {
-  const router = useRouter();
-  const [loading, setLoading] = useState(false);
-  const [currentStep, setCurrentStep] = useState<number>(0);
-  const [selectedPlatform, setSelectedPlatform] = useState<PlatformId>('sap-pipo');
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [calculationResult, setCalculationResult] = useState<RoiCalculationResult | null>(null);
-
-  // Active platform configuration
-  const activePlat = PLATFORM_OPTIONS.find((p) => p.id === selectedPlatform) || PLATFORM_OPTIONS[0];
-  const activeConfig = PLATFORM_CONFIGS[selectedPlatform] || PLATFORM_CONFIGS['sap-pipo'];
-
-  // Step 1 Organization State
-  const [companyName, setCompanyName] = useState<string>('');
-
-  // Form State initialized with clean 0 / empty values (user enters all scope & costs)
-  const [assessment, setAssessment] = useState<Assessment>({
+export const createFreshAssessment = (platformId: PlatformId = 'sap-pipo'): Assessment => {
+  const config = PLATFORM_CONFIGS[platformId] || PLATFORM_CONFIGS['sap-pipo'];
+  return {
+    id: `asmt-${Date.now().toString(36)}-${Math.random().toString(36).substring(2, 6)}`,
     name: '',
-    sourcePlatform: 'SAP PI/PO',
+    sourcePlatform: config.name,
     targetPlatform: 'SAP BTP Integration Suite',
     status: 'IN_PROGRESS',
     currency: 'USD',
@@ -163,7 +150,26 @@ export function AssessmentWizard() {
       currency: 'USD',
       roiAnalysisPeriodYears: 5,
     },
-  });
+  };
+};
+
+export function AssessmentWizard() {
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [currentStep, setCurrentStep] = useState<number>(0);
+  const [selectedPlatform, setSelectedPlatform] = useState<PlatformId>('sap-pipo');
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [calculationResult, setCalculationResult] = useState<RoiCalculationResult | null>(null);
+
+  // Active platform configuration
+  const activePlat = PLATFORM_OPTIONS.find((p) => p.id === selectedPlatform) || PLATFORM_OPTIONS[0];
+  const activeConfig = PLATFORM_CONFIGS[selectedPlatform] || PLATFORM_CONFIGS['sap-pipo'];
+
+  // Step 1 Organization State
+  const [companyName, setCompanyName] = useState<string>('');
+
+  // Form State initialized with clean 0 / empty values (user enters all scope & costs)
+  const [assessment, setAssessment] = useState<Assessment>(() => createFreshAssessment('sap-pipo'));
 
   // Step 3 Requirements selection state (empty initially)
   const [selectedRequirements, setSelectedRequirements] = useState<string[]>([]);
@@ -186,13 +192,49 @@ export function AssessmentWizard() {
     other: 0,
   });
 
-  // Restore saved assessment data from localStorage if available
+  // Start completely fresh business value assessment with all blank/zero values
+  const handleStartNewBusinessValue = (targetPlatformId: PlatformId = 'sap-pipo') => {
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.removeItem('valuelens_active_assessment');
+        localStorage.removeItem('valuelens_active_assessment_id');
+        localStorage.removeItem('valuelens_active_calculation');
+        localStorage.removeItem('valuelens_assessment_draft');
+      } catch (e) {
+        console.warn('Could not clear localStorage', e);
+      }
+    }
+    setCompanyName('');
+    setSelectedPlatform(targetPlatformId);
+    setSelectedRequirements([]);
+    setCostsState({
+      licensing: 0,
+      infrastructure: 0,
+      support: 0,
+      operations: 0,
+      development: 0,
+      other: 0,
+    });
+    setCalculationResult(null);
+    setAssessment(createFreshAssessment(targetPlatformId));
+    setCurrentStep(0);
+  };
+
+  // Restore saved assessment data from localStorage if available, or reset if ?new=true
   useEffect(() => {
     if (typeof window !== 'undefined') {
+      const searchParams = new URLSearchParams(window.location.search);
+      if (searchParams.get('new') === 'true') {
+        handleStartNewBusinessValue();
+        return;
+      }
       try {
         const saved = localStorage.getItem('valuelens_active_assessment');
         if (saved) {
           const parsed = JSON.parse(saved);
+          if (parsed?.id === 'demo-assessment-1') {
+            return;
+          }
           const hasData =
             (parsed?.sourceSystem?.sapPiPoAnnualCostBreakdown?.licensing?.subtotal ?? 0) > 0 ||
             (parsed?.sourceSystem?.sapPiPoAnnualCostBreakdown?.licensing?.sapPiPoLicenseCosts ?? 0) > 0 ||
@@ -208,6 +250,9 @@ export function AssessmentWizard() {
                 development: 0,
                 other: 0,
               });
+            }
+            if (parsed.name) {
+              setCompanyName(parsed.name);
             }
             setAssessment((prev) => ({
               ...prev,
@@ -427,17 +472,101 @@ export function AssessmentWizard() {
   const handleExecuteCalculation = async () => {
     setLoading(true);
     setErrorMsg(null);
+    const asmtId =
+      assessment.id && assessment.id !== 'demo-assessment-1'
+        ? assessment.id
+        : `asmt-${Date.now().toString(36)}-${Math.random().toString(36).substring(2, 6)}`;
+    const asmtName = companyName?.trim()
+      ? `${companyName.trim()} - ${activeConfig.name} Migration`
+      : (assessment.name?.trim() || `${activeConfig.name} Migration Assessment`);
+
+    const migrationCost =
+      assessment.migrationRelatedDetails?.totalMigrationCost && assessment.migrationRelatedDetails.totalMigrationCost > 0
+        ? assessment.migrationRelatedDetails.totalMigrationCost
+        : 65000;
+
+    const assessmentToSave: Assessment = {
+      ...assessment,
+      id: asmtId,
+      name: asmtName,
+      sourcePlatform: activeConfig.name,
+      targetPlatform: 'SAP BTP Integration Suite',
+      migrationRelatedDetails: {
+        trainingCost: 0,
+        deploymentCutoverCost: 0,
+        documentationCost: 0,
+        contingencyCost: 0,
+        currency: assessment.currency || 'USD',
+        roiAnalysisPeriodYears: 5,
+        ...(assessment.migrationRelatedDetails || {}),
+        totalMigrationCost: migrationCost,
+        baseMigrationCost: migrationCost,
+        developmentCost: Math.round(migrationCost * 0.60),
+        testingCost: Math.round(migrationCost * 0.20),
+        architectureCost: Math.round(migrationCost * 0.10),
+        projectManagementCost: Math.round(migrationCost * 0.10),
+      },
+      sourceSystem: {
+        ...assessment.sourceSystem,
+        sapPiPoAnnualCostBreakdown: {
+          licensing: {
+            thirdPartyAdapterLicenses: 0,
+            developmentEnvironmentLicenses: 0,
+            testingEnvironmentLicenses: 0,
+            ...(assessment.sourceSystem?.sapPiPoAnnualCostBreakdown?.licensing || {}),
+            subtotal: costsState.licensing,
+            sapPiPoLicenseCosts: costsState.licensing,
+          },
+          infrastructure: {
+            storageBackupCosts: 0,
+            networkingConnectivity: 0,
+            dataCenterFacilities: 0,
+            ...(assessment.sourceSystem?.sapPiPoAnnualCostBreakdown?.infrastructure || {}),
+            subtotal: costsState.infrastructure,
+            hardwareServerCosts: costsState.infrastructure,
+          },
+          support: {
+            thirdPartySupportContracts: 0,
+            systemMaintenanceUpgrades: 0,
+            dataCenterFacilities: 0,
+            ...(assessment.sourceSystem?.sapPiPoAnnualCostBreakdown?.support || {}),
+            subtotal: costsState.support,
+            sapSupportMaintenance: costsState.support,
+          },
+          operations: {
+            supportStaffCosts: 0,
+            trainingCertificationCosts: 0,
+            dataCenterFacilities: 0,
+            ...(assessment.sourceSystem?.sapPiPoAnnualCostBreakdown?.operations || {}),
+            subtotal: costsState.operations,
+            administrativeStaffCosts: costsState.operations,
+          },
+        },
+      },
+    };
+
     try {
-      const saved = await api.saveAssessment(assessment);
+      const saved = await api.saveAssessment(assessmentToSave);
+      setAssessment(saved);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('valuelens_active_assessment', JSON.stringify(saved));
+        localStorage.setItem('valuelens_active_assessment_id', saved.id || asmtId);
+      }
+
       const calc = await api.calculateROI(saved);
       setCalculationResult(calc);
+      if (typeof window !== 'undefined' && calc) {
+        localStorage.setItem('valuelens_active_calculation', JSON.stringify(calc));
+      }
       setCurrentStep(7);
     } catch (err: unknown) {
       console.warn('Backend calculation endpoint returned error, applying deterministic mathematical model:', err);
+      setAssessment(assessmentToSave);
+
       // Deterministic mathematical fallback matching Spring Boot exact formulas
       const fallbackResult = {
-        calculationResultId: assessment.id || 'calc-preview',
-        assessmentId: assessment.id || 'assessment-1',
+        calculationResultId: asmtId,
+        assessmentId: asmtId,
         currentPlatformTCO: currentTcoPreview,
         targetPlatformTCO: targetTcoPreview,
         annualSavings: annualSavingsPreview,
@@ -479,8 +608,15 @@ export function AssessmentWizard() {
           fiveYearTargetTCO: targetTcoPreview * 5 + migrationCostPreview,
           fiveYearNetSavings: netFiveYearBenefitPreview,
         },
-        executiveSummary: `Migrating from ${activeConfig.name} to SAP BTP Integration Suite reduces annual operational expenditure by $${annualSavingsPreview.toLocaleString()} (${((annualSavingsPreview / currentTcoPreview) * 100).toFixed(1)}%), recouping the initial $${migrationCostPreview.toLocaleString()} migration investment within ${paybackMonthsPreview.toFixed(1)} months.`,
+        executiveSummary: `Migrating from ${activeConfig.name} to SAP BTP Integration Suite reduces annual operational expenditure by $${annualSavingsPreview.toLocaleString()} (${((annualSavingsPreview / (currentTcoPreview || 1)) * 100).toFixed(1)}%), recouping the initial $${migrationCostPreview.toLocaleString()} migration investment within ${paybackMonthsPreview.toFixed(1)} months.`,
       } as unknown as RoiCalculationResult;
+
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('valuelens_active_assessment', JSON.stringify(assessmentToSave));
+        localStorage.setItem('valuelens_active_assessment_id', asmtId);
+        localStorage.setItem('valuelens_active_calculation', JSON.stringify(fallbackResult));
+      }
+
       setCalculationResult(fallbackResult);
       setCurrentStep(7);
     } finally {
@@ -1093,7 +1229,7 @@ export function AssessmentWizard() {
               netFiveYearBenefit={netFiveYearBenefitPreview}
               paybackMonths={paybackMonthsPreview}
               onBack={() => setCurrentStep(6)}
-              onRestart={() => setCurrentStep(0)}
+              onRestart={() => handleStartNewBusinessValue(selectedPlatform)}
             />
           )}
         </div>

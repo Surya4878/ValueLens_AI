@@ -35,6 +35,7 @@ import { Assessment, RoiCalculationResult } from '@/types';
 import { PlatformId, PlatformConfig, COMMON_BTP_PRICING } from '@/data/platformAssessmentConfig';
 import { formatCurrency } from '@/lib/formatters';
 import { api } from '@/lib/api';
+import { StreamingText } from '@/components/ui/StreamingText';
 
 export interface Step6Props {
   platformId: PlatformId;
@@ -162,6 +163,7 @@ export const Step6SelectEdition: React.FC<Step6Props> = ({
 
   const fetchLiveAiRecommendation = async () => {
     if (aiLoading) return;
+    setAiRecommendationData(null);
     setAiLoading(true);
     setShowAiRecommendation(true);
     try {
@@ -546,7 +548,7 @@ SAP Cloud Transport (TMS) | Export, import and ship APIs and related artifacts |
                 </button>
               </div>
               <div className="text-sm text-[#556b82] leading-relaxed bg-white/90 p-5 rounded-2xl border border-indigo-100">
-                {aiRecommendationData.reasoning}
+                <StreamingText text={aiRecommendationData.reasoning} speed={12} />
               </div>
               <div className="pt-2 flex justify-end gap-3">
                 <button

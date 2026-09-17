@@ -7,6 +7,7 @@ import { TrendingUp, Layers, CheckCircle2 } from 'lucide-react';
 import { ScenarioResponse, ScenarioOutcome, Assessment, RoiCalculationResult } from '@/types';
 import { api } from '@/lib/api';
 import { formatCurrency, formatMonths, formatPercent } from '@/lib/formatters';
+import { StreamingText } from '@/components/ui/StreamingText';
 
 export default function ScenariosPage() {
   const params = useParams();
@@ -71,6 +72,7 @@ export default function ScenariosPage() {
 
   const fetchLiveAiScenarioAnalysis = async () => {
     if (!scenarios) return;
+    setAiAnalysisText(null);
     setLoadingAi(true);
     setAiError(null);
     try {
@@ -364,7 +366,7 @@ export default function ScenariosPage() {
                     </div>
                     {sec.text && (
                       <p className="text-[15px] sm:text-[16px] text-slate-700 leading-relaxed font-normal">
-                        {highlightMetrics(sec.text)}
+                        <StreamingText text={sec.text} speed={12} />
                       </p>
                     )}
                   </div>
@@ -389,7 +391,7 @@ export default function ScenariosPage() {
                     </div>
                     {sec.text && (
                       <p className="text-[15px] sm:text-[16px] text-slate-700 leading-relaxed font-normal">
-                        {highlightMetrics(sec.text)}
+                        <StreamingText text={sec.text} speed={12} />
                       </p>
                     )}
                   </div>
@@ -413,7 +415,7 @@ export default function ScenariosPage() {
                   </div>
                   {sec.text && (
                     <p className="text-[15px] sm:text-[16px] text-slate-700 leading-relaxed font-normal">
-                      {highlightMetrics(sec.text)}
+                      <StreamingText text={sec.text} speed={12} />
                     </p>
                   )}
                   {sec.bullets.length > 0 && (
@@ -421,7 +423,7 @@ export default function ScenariosPage() {
                       {sec.bullets.map((b, bIdx) => (
                         <div key={bIdx} className="p-4 bg-white border border-emerald-200/80 rounded-xl flex items-start space-x-3 shadow-2xs">
                           <span className="w-5 h-5 rounded-full bg-emerald-100 text-[#107e3e] font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">✓</span>
-                          <span className="text-[15px] sm:text-[16px] text-slate-800 font-medium leading-relaxed">{highlightMetrics(b)}</span>
+                          <span className="text-[15px] sm:text-[16px] text-slate-800 font-medium leading-relaxed"><StreamingText text={b} speed={12} /></span>
                         </div>
                       ))}
                     </div>
@@ -439,7 +441,7 @@ export default function ScenariosPage() {
       <div className="p-6 bg-purple-50/40 rounded-2xl border border-purple-200 space-y-4 text-[15px] sm:text-[16px] text-slate-800 leading-relaxed">
         {lines.map((p, idx) => (
           <p key={idx} className="font-normal">
-            {highlightMetrics(p.replace(/\*\*/g, ''))}
+            <StreamingText text={p.replace(/\*\*/g, '')} speed={10} />
           </p>
         ))}
       </div>
