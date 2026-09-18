@@ -13,6 +13,8 @@ application-prod.yml
 application-local.yml
 secrets.yml
 secrets.properties
+start-backend.bat
+*.local.bat
 
 # ============================================================
 # NODE / FRONTEND

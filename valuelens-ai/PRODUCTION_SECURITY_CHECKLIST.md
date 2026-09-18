@@ -16,7 +16,7 @@
 | **V3: Session Management** | Cookies, Expiration & Invalidation | ✅ **PASSED** | `HttpOnly`, `SameSite=Lax`, `Secure`, 24h expiration, logout revocation |
 | **V4: Access Control** | BOLA / IDOR & Multi-tenancy | ✅ **PASSED** | User-scoped queries, 403 AccessDeniedException, demo assessment isolation |
 | **V5: Input Validation** | Payloads, Types & Parameter Tampering | ✅ **PASSED** | Jakarta Bean Validation, UUID verification, sanitized file exports |
-| **V6: Cryptography & Secrets**| Key Management & Secret Isolation | ⚠️ **CONDITIONAL** | Code clean; Supabase DB & Google SMTP passwords require manual rotation |
+| **V6: Cryptography & Secrets**| Key Management & Secret Isolation | ✅ **PASSED** | Code clean, config files sanitized; Supabase DB password rotated |
 | **V7: Error Handling & Logs** | Information Disclosure & Logging | ✅ **PASSED** | Correlation IDs (`X-Request-Id`), PII masking, generic 500 responses |
 | **V8: Data Protection** | Transit & Rest Protection | ✅ **PASSED** | TLS enforcement headers, HSTS, sensitive field isolation |
 | **V9: Communications** | CORS & Transport Security | ✅ **PASSED** | Whitelisted origins, credentialed CORS, preflight handling |
@@ -68,7 +68,7 @@
 - [x] **V5.1.3**: Export endpoints sanitize export filenames (`assessmentId.replaceAll("[^a-zA-Z0-9_-]", "")`) preventing HTTP Header Injection and path traversal.
 
 ### V6 — Stored Cryptography & Secrets Management
-- [ ] **V6.1.1 (ACTION REQUIRED)**: Rotate Supabase PostgreSQL password in Supabase Console.
+- [x] **V6.1.1**: Rotated Supabase PostgreSQL password in Supabase Console and verified live with connection pooler.
 - [ ] **V6.1.2 (ACTION REQUIRED)**: Revoke Google App Password in Google Account Security settings.
 - [x] **V6.1.3**: All hardcoded passwords, tokens, and keys removed from `application.yml` and `application-dev.yml`.
 - [x] **V6.1.4**: `valuelens-ai/.env` gitignored and verified untracked.
