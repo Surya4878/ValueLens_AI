@@ -9,6 +9,9 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 @Service
 public class EmailService {
 
@@ -17,8 +20,11 @@ public class EmailService {
     @Autowired(required = false)
     private JavaMailSender mailSender;
 
-    @Value("${spring.mail.username:noreply@valuelens.ai}")
+    @Value("${app.email.from:${spring.mail.username:noreply.businessvaluelensai@gmail.com}}")
     private String fromEmail;
+
+    @Value("${app.contact.recipient-email:noreply.businessvaluelensai@gmail.com}")
+    private String contactRecipientEmail;
 
     @Value("${app.frontend.url:http://localhost:3000}")
     private String frontendUrl;
@@ -66,6 +72,37 @@ public class EmailService {
                 + "</div>";
 
         sendEmail(toEmail, subject, htmlBody);
+    }
+
+    public void sendContactOrDemoRequest(String requesterName, String requesterEmail, String companyName, String phone, String requestType, String message, String sourcePage) {
+        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        String cleanType = (requestType != null && !requestType.isBlank()) ? requestType : "Demo Request";
+        String subject = "[ValueLens AI Lead] " + cleanType + " from " + requesterName + (companyName != null && !companyName.isBlank() ? " (" + companyName + ")" : "");
+
+        String htmlBody = "<div style=\"font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; border: 1px solid #d9e2ec; border-radius: 16px; background-color: #ffffff;\">"
+                + "<div style=\"display: flex; align-items: center; margin-bottom: 20px;\">"
+                + "<h2 style=\"color: #0070f2; margin: 0; font-size: 22px;\">Business ValueLens AI - Inbound Request</h2>"
+                + "</div>"
+                + "<div style=\"background-color: #f0f4f8; border-radius: 12px; padding: 20px; margin-bottom: 20px;\">"
+                + "<p style=\"margin: 6px 0; font-size: 15px; color: #1d2d3e;\"><strong>Request Type:</strong> <span style=\"color: #0070f2; font-weight: bold;\">" + cleanType + "</span></p>"
+                + "<p style=\"margin: 6px 0; font-size: 15px; color: #1d2d3e;\"><strong>Requester Name:</strong> " + requesterName + "</p>"
+                + "<p style=\"margin: 6px 0; font-size: 15px; color: #1d2d3e;\"><strong>Email:</strong> <a href=\"mailto:" + requesterEmail + "\" style=\"color: #0070f2;\">" + requesterEmail + "</a></p>"
+                + "<p style=\"margin: 6px 0; font-size: 15px; color: #1d2d3e;\"><strong>Company:</strong> " + (companyName != null && !companyName.isBlank() ? companyName : "Not specified") + "</p>"
+                + (phone != null && !phone.isBlank() ? "<p style=\"margin: 6px 0; font-size: 15px; color: #1d2d3e;\"><strong>Phone:</strong> " + phone + "</p>" : "")
+                + (sourcePage != null && !sourcePage.isBlank() ? "<p style=\"margin: 6px 0; font-size: 14px; color: #556b82;\"><strong>Source Page:</strong> " + sourcePage + "</p>" : "")
+                + "<p style=\"margin: 6px 0; font-size: 13px; color: #556b82;\"><strong>Timestamp:</strong> " + timestamp + "</p>"
+                + "</div>"
+                + (message != null && !message.isBlank() ? "<div style=\"margin: 20px 0;\"><h4 style=\"margin: 0 0 8px 0; color: #1d2d3e; font-size: 15px;\">User Message / Requirements:</h4><div style=\"color: #334e68; background-color: #f8fafc; border-left: 4px solid #0070f2; padding: 14px; border-radius: 6px; font-size: 14px; line-height: 1.6;\">" + message + "</div></div>" : "")
+                + "<hr style=\"border: none; border-top: 1px solid #e2e8f0; margin: 24px 0;\" />"
+                + "<p style=\"color: #8c9ba5; font-size: 12px; text-align: center;\">Incture Technologies - Business ValueLens AI</p>"
+                + "</div>";
+
+        String targetEmail = (contactRecipientEmail != null && !contactRecipientEmail.isBlank())
+                ? contactRecipientEmail
+                : "noreply.businessvaluelensai@gmail.com";
+
+        log.info("[ValueLens AI Email Service] Forwarding {} lead from {} ({}) to {}", cleanType, requesterName, maskEmail(requesterEmail), targetEmail);
+        sendEmail(targetEmail, subject, htmlBody);
     }
 
     public void sendWelcomeEmail(String toEmail, String fullName) {

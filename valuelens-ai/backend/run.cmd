@@ -7,5 +7,6 @@ if exist "%~dp0..\.env" (
             set "%%A=%%B"
         )
     )
+    for /f "tokens=1* delims==" %%A in ('type "%~dp0..\.env" ^| findstr /v "^#" ^| findstr /r "="') do set "%%A=%%B"
 )
 call "%~dp0mvnw.cmd" spring-boot:run

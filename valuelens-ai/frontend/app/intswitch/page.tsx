@@ -1,5 +1,7 @@
 'use client';
 
+import { ContactModal } from '@/components/modals/ContactModal';
+
 import React, { useState } from 'react';
 import Link from 'next/link';
 
@@ -720,33 +722,13 @@ export default function IntSwitchPage() {
       </section>
 
       {/* Demo Modal */}
-      {demoModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-xs p-4">
-          <div className="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-slate-100 text-center space-y-4 animate-in fade-in zoom-in-95 duration-200">
-            <div className="w-12 h-12 rounded-2xl bg-purple-50 text-[#7928ca] flex items-center justify-center mx-auto">
-              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-            </div>
-
-            <h3 className="text-[20px] font-black text-slate-900">
-              Request Received!
-            </h3>
-
-            <p className="text-[14px] sm:text-[15px] text-slate-600 leading-relaxed">
-              Thank you for your interest in <strong className="text-[#0070f2] font-extrabold">IntSwitch</strong>. Our Incture Migration Specialists will reach out shortly to arrange a customized demonstration for your landscape.
-            </p>
-
-            <button
-              type="button"
-              onClick={() => setDemoModalOpen(false)}
-              className="w-full py-3 rounded-xl bg-[#0070f2] text-white font-bold text-[14px] sm:text-[15px] hover:bg-blue-700 transition-colors cursor-pointer"
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
+      <ContactModal
+        isOpen={demoModalOpen}
+        onClose={() => setDemoModalOpen(false)}
+        defaultRequestType="IntSwitch Demo"
+        sourcePage="/intswitch"
+        title="Request an IntSwitch Demo"
+      />
     </div>
   );
 }

@@ -224,5 +224,38 @@ export const api = {
       body: JSON.stringify(params),
     });
     return res.data;
+  },
+
+  // Contact & Demo Inquiries
+  async requestDemo(payload: {
+    fullName: string;
+    email: string;
+    companyName?: string;
+    phone?: string;
+    message?: string;
+    requestType?: string;
+    sourcePage?: string;
+  }): Promise<{ success: boolean; email?: string }> {
+    const res = await fetchJson<ApiResponse<{ success: boolean; email?: string }>>('/api/v1/contact/request-demo', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+    return res.data;
+  },
+
+  async sendContactInquiry(payload: {
+    fullName: string;
+    email: string;
+    companyName?: string;
+    phone?: string;
+    message?: string;
+    requestType?: string;
+    sourcePage?: string;
+  }): Promise<{ success: boolean; email?: string }> {
+    const res = await fetchJson<ApiResponse<{ success: boolean; email?: string }>>('/api/v1/contact/inquiry', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+    return res.data;
   }
 };

@@ -112,7 +112,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 export function useAuth(): AuthContextType {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    return {
+      user: null,
+      isAuthenticated: false,
+      loading: false,
+      login: async () => { throw new Error('Not within AuthProvider'); },
+      registerStart: async () => { throw new Error('Not within AuthProvider'); },
+      verifyOtp: async () => { throw new Error('Not within AuthProvider'); },
+      resendOtp: async () => { throw new Error('Not within AuthProvider'); },
+      loginWithGoogle: async () => { throw new Error('Not within AuthProvider'); },
+      loginWithMicrosoft: async () => { throw new Error('Not within AuthProvider'); },
+      logout: async () => {},
+      refreshUser: async () => null,
+    };
   }
   return context;
 }

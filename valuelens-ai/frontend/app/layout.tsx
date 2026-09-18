@@ -24,8 +24,8 @@ export default function RootLayout({
           <RouteGuard>
             <main className="flex-1">{children}</main>
           </RouteGuard>
+          <AppFooter />
         </AuthProvider>
-        <AppFooter />
       </body>
     </html>
   );
