@@ -1,0 +1,51 @@
+_schema-version: '3.2'
+ID: valuelens-ai
+description: "ValueLens AI - Enterprise Migration Economics & Decision Intelligence Platform"
+version: 2.0.0
+
+modules:
+  # ==============================================================================
+  # ValueLens Backend Module (Java 21 Spring Boot 3.3.4)
+  # ==============================================================================
+  - name: valuelens-backend
+    type: java
+    path: backend
+    parameters:
+      memory: 1024M
+      disk-quota: 1024M
+      buildpacks:
+        - java_buildpack
+      health-check-type: http
+      health-check-http-endpoint: /api/v1/assessments/demo
+    properties:
+      JBP_CONFIG_OPEN_JDK_JRE: '{ jre: { version: 21.+ } }'
+      SPRING_PROFILES_ACTIVE: prod
+      COOKIE_SECURE: "true"
+      RATE_LIMIT_ENABLED: "true"
+    build-parameters:
+      builder: custom
+      build-result: target/valuelens-backend-1.0.0-SNAPSHOT.jar
+      commands:
+        - mvn clean package -DskipTests
+
+  # ==============================================================================
+  # ValueLens Frontend Module (Next.js 14 / Node.js 20)
+  # ==============================================================================
+  - name: valuelens-frontend
+    type: nodejs
+    path: frontend
+    parameters:
+      memory: 1024M
+      disk-quota: 1024M
+      buildpacks:
+        - nodejs_buildpack
+      command: npm start
+      health-check-type: http
+      health-check-http-endpoint: /login
+    properties:
+      NODE_ENV: production
+    build-parameters:
+      builder: custom
+      commands:
+        - npm ci
+        - npm run build

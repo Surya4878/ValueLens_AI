@@ -1,0 +1,40 @@
+{
+  "xsappname": "valuelens-ai",
+  "tenant-mode": "dedicated",
+  "description": "Security descriptor for ValueLens AI on SAP BTP",
+  "scopes": [
+    {
+      "name": "$XSAPPNAME.Viewer",
+      "description": "View ROI Assessments and Reports in ValueLens AI"
+    },
+    {
+      "name": "$XSAPPNAME.Admin",
+      "description": "Manage Platform Configurations and AI Models in ValueLens AI"
+    }
+  ],
+  "role-templates": [
+    {
+      "name": "ValueLensViewer",
+      "description": "Standard user access to ValueLens AI",
+      "scope-references": [
+        "$XSAPPNAME.Viewer"
+      ]
+    },
+    {
+      "name": "ValueLensAdmin",
+      "description": "Administrative access to ValueLens AI",
+      "scope-references": [
+        "$XSAPPNAME.Viewer",
+        "$XSAPPNAME.Admin"
+      ]
+    }
+  ],
+  "oauth2-configuration": {
+    "credential-types": [
+      "binding-secret"
+    ],
+    "redirect-uris": [
+      "https://*.hana.ondemand.com/**"
+    ]
+  }
+}

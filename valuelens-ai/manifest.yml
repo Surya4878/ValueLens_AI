@@ -1,0 +1,45 @@
+---
+applications:
+  # ==============================================================================
+  # ValueLens AI — Backend Service (Spring Boot 3.3.4 / Java 21)
+  # ==============================================================================
+  - name: valuelens-backend
+    path: ./backend/target/valuelens-backend-1.0.0-SNAPSHOT.jar
+    buildpacks:
+      - java_buildpack
+    memory: 1024M
+    disk_quota: 1024M
+    instances: 1
+    timeout: 180
+    health-check-type: http
+    health-check-http-endpoint: /api/v1/assessments/demo
+    env:
+      JBP_CONFIG_OPEN_JDK_JRE: '{ jre: { version: 21.+ } }'
+      SPRING_PROFILES_ACTIVE: prod
+      COOKIE_SECURE: "true"
+      RATE_LIMIT_ENABLED: "true"
+      # Note: Secrets should be provided via CF user-provided service or cf set-env
+      # DATABASE_URL: jdbc:postgresql://<host>:5432/postgres?sslmode=require
+      # DATABASE_USER: <user>
+      # DATABASE_PASSWORD: <password>
+      # JWT_SECRET: <secret-min-32-chars>
+      # CORS_ALLOWED_ORIGINS: https://<frontend-route>
+
+  # ==============================================================================
+  # ValueLens AI — Frontend UI (Next.js 14 / Node.js 20)
+  # ==============================================================================
+  - name: valuelens-frontend
+    path: ./frontend
+    buildpacks:
+      - nodejs_buildpack
+    memory: 1024M
+    disk_quota: 1024M
+    instances: 1
+    timeout: 180
+    command: npm start
+    health-check-type: http
+    health-check-http-endpoint: /login
+    env:
+      NODE_ENV: production
+      # Note: Point NEXT_PUBLIC_API_BASE_URL to the deployed backend route
+      # NEXT_PUBLIC_API_BASE_URL: https://valuelens-backend.<cfapps-domain>
