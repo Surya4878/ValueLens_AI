@@ -7,9 +7,9 @@ spring:
   profiles:
     default: dev
   datasource:
-    url: ${DATABASE_URL:jdbc:postgresql://aws-0-ap-northeast-1.pooler.supabase.com:5432/postgres?sslmode=require}
-    username: ${DATABASE_USER:postgres.bcjlwdjwpsksysukraup}
-    password: ${DATABASE_PASSWORD:Inc@832418!}
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USER}
+    password: ${DATABASE_PASSWORD}
     driver-class-name: org.postgresql.Driver
   jpa:
     open-in-view: false
@@ -29,8 +29,8 @@ spring:
   mail:
     host: ${SMTP_HOST:smtp.gmail.com}
     port: ${SMTP_PORT:587}
-    username: ${SMTP_USER:noreply.businessvaluelensai@gmail.com}
-    password: ${SMTP_PASS:impdmyqqqhxcbdwa}
+    username: ${SMTP_USER}
+    password: ${SMTP_PASS}
     properties:
       mail:
         smtp:
@@ -68,7 +68,7 @@ app:
   pricing:
     version-tag: BTP_2026_Q1
   auth:
-    jwt-secret: ${JWT_SECRET:ValueLensAiEnterpriseSecretKeyForAuthenticationMustBeAtLeast32BytesLong2026!}
+    jwt-secret: ${JWT_SECRET}
     jwt-expiration-ms: ${JWT_EXPIRATION_MS:86400000} # 24 hours
     otp-expiration-minutes: ${OTP_EXPIRATION_MINUTES:10}
     otp-resend-cooldown-seconds: ${OTP_RESEND_COOLDOWN_SECONDS:60}
