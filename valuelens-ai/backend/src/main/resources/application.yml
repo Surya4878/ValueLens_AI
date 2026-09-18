@@ -7,20 +7,22 @@ spring:
   profiles:
     default: dev
   datasource:
-    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/valuelens_db}
-    username: ${DATABASE_USER:postgres}
-    password: ${DATABASE_PASSWORD:}
+    url: ${DATABASE_URL:jdbc:postgresql://aws-0-ap-northeast-1.pooler.supabase.com:5432/postgres?sslmode=require}
+    username: ${DATABASE_USER:postgres.bcjlwdjwpsksysukraup}
+    password: ${DATABASE_PASSWORD:Inc@832418!}
     driver-class-name: org.postgresql.Driver
   jpa:
     open-in-view: false
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: update
     properties:
       hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: false
-      jdbc:
-        lob:
-          non_contextual_creation: true
+        jdbc:
+          lob:
+            non_contextual_creation: true
   flyway:
     enabled: ${FLYWAY_ENABLED:false}
     baseline-on-migrate: true
@@ -28,7 +30,7 @@ spring:
     host: ${SMTP_HOST:smtp.gmail.com}
     port: ${SMTP_PORT:587}
     username: ${SMTP_USER:noreply.businessvaluelensai@gmail.com}
-    password: ${SMTP_PASS:}
+    password: ${SMTP_PASS:impdmyqqqhxcbdwa}
     properties:
       mail:
         smtp:

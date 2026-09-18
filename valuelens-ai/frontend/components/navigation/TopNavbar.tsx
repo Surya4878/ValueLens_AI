@@ -1,14 +1,12 @@
-﻿'use client';
+'use client';
 
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/components/auth/AuthProvider';
-import { ContactModal } from '@/components/modals/ContactModal';
 
 export function TopNavbar() {
   const pathname = usePathname();
-  const [contactModalOpen, setContactModalOpen] = React.useState(false);
 
   // Hide TopNavbar completely on authentication routes per user requirement
   const isAuthPage =
@@ -69,11 +67,10 @@ export function TopNavbar() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`text-[14px] lg:text-[15px] transition-all px-3.5 sm:px-4 py-2 rounded-lg ${
-                    isActive
-                      ? 'text-[#0070f2] font-semibold bg-[#e5f0ff]/50 border-b-2 border-[#0070f2]'
-                      : 'text-[#556b82] font-medium hover:text-[#0070f2] hover:bg-slate-50 border-b-2 border-transparent'
-                  }`}
+                  className={`text-[14px] lg:text-[15px] transition-all px-3.5 sm:px-4 py-2 rounded-lg ${isActive
+                    ? 'text-[#0070f2] font-semibold bg-[#e5f0ff]/50 border-b-2 border-[#0070f2]'
+                    : 'text-[#556b82] font-medium hover:text-[#0070f2] hover:bg-slate-50 border-b-2 border-transparent'
+                    }`}
                 >
                   {link.label}
                 </Link>
@@ -81,26 +78,12 @@ export function TopNavbar() {
             })}
           </nav>
 
-          {/* Right: Authenticated User Profile Badge OR Sign In / Register */}
+
           <div className="flex items-center space-x-3 shrink-0">
-            <button
-              type="button"
-              onClick={() => setContactModalOpen(true)}
-              className="text-[13px] sm:text-[14px] font-semibold text-[#556b82] hover:text-[#0070f2] transition-colors cursor-pointer px-2.5 py-1.5 rounded-lg hover:bg-slate-50"
-            >
-              Contact Us
-            </button>
             <UserProfileNav />
           </div>
         </div>
       </div>
-      <ContactModal
-        isOpen={contactModalOpen}
-        onClose={() => setContactModalOpen(false)}
-        defaultRequestType="Request a Demo"
-        sourcePage="TopNavbar"
-        title="Request a Demo / Contact Us"
-      />
     </header>
   );
 }
@@ -129,11 +112,11 @@ function UserProfileNav() {
     // Generate initials (e.g. "SP" for Surya Prakash)
     const initials = user.fullName
       ? user.fullName
-          .split(' ')
-          .map((n) => n[0])
-          .slice(0, 2)
-          .join('')
-          .toUpperCase()
+        .split(' ')
+        .map((n) => n[0])
+        .slice(0, 2)
+        .join('')
+        .toUpperCase()
       : 'VL';
 
     return (

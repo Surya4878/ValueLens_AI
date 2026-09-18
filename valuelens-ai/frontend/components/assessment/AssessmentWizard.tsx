@@ -220,6 +220,15 @@ export function AssessmentWizard() {
     setCurrentStep(0);
   };
 
+  // Scroll to top whenever wizard step changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    if (typeof document !== 'undefined') {
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+    }
+  }, [currentStep]);
+
   // Restore saved assessment data from localStorage if available, or reset if ?new=true
   useEffect(() => {
     if (typeof window !== 'undefined') {

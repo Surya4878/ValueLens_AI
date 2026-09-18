@@ -280,13 +280,23 @@ export function RegisterForm() {
           />
           <span>
             I agree to the{' '}
-            <Link href="/terms" className="text-[#0070f2] hover:underline">
+            <a
+              href="https://incture.com/terms-of-service/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[#0070f2] hover:underline"
+            >
               Terms of Service
-            </Link>{' '}
+            </a>{' '}
             and{' '}
-            <Link href="/privacy" className="text-[#0070f2] hover:underline">
+            <a
+              href="https://incture.com/privacy-policy/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[#0070f2] hover:underline"
+            >
               Privacy Policy
-            </Link>
+            </a>
             .
           </span>
         </label>

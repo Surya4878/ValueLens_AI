@@ -48,11 +48,12 @@ import { Assessment, RoiCalculationResult, ChartInsightResponse, AiAnalysisResul
 import { api } from '@/lib/api';
 import { formatCurrency, formatCompactCurrency } from '@/lib/formatters';
 import { StreamingText } from '@/components/ui/StreamingText';
+import { generateExecutiveReportPdf } from '@/lib/reportPdfGenerator';
 
 export default function DashboardPage() {
   const params = useParams();
   const router = useRouter();
-  const assessmentId = (params?.id as string) || 'demo-assessment-1';
+  const assessmentId = (params?.id as string) || 'initial';
 
   const [loading, setLoading] = useState(true);
   const [assessment, setAssessment] = useState<Assessment | null>(null);
@@ -713,14 +714,80 @@ Under this simulated scenario, the enterprise retains substantial resilience aga
       try {
         let loadedAssessment: Assessment | null = null;
 
+        // 0. Initial Zero-Mode: When assessmentId is 'initial', initialize clean zero-state without demo data
+        if (assessmentId === 'initial') {
+          loadedAssessment = {
+            id: 'initial',
+            name: 'New Migration Assessment',
+            clientName: 'Enterprise Client',
+            industry: 'General Enterprise',
+            sourcePlatform: 'SAP PI/PO',
+            targetPlatform: 'SAP BTP Integration Suite',
+            createdAt: new Date().toISOString(),
+            status: 'DRAFT',
+            currency: 'USD',
+            migrationStrategy: 'GREENFIELD',
+            complexityTier: 'Standard',
+            sourceSystem: {
+              sapPiPoAnnualCostBreakdown: {
+                licensing: { subtotal: 0, sapPiPoLicenseCosts: 0 },
+                infrastructure: { subtotal: 0, hardwareServerCosts: 0 },
+                support: { subtotal: 0, sapSupportMaintenance: 0 },
+                operations: { subtotal: 0, administrativeStaffCosts: 0 },
+              },
+            },
+            targetSystem: {
+              configuration: {
+                totalAnnualCost: 0,
+                selectedEditionName: 'SAP Integration Suite, Standard Edition',
+                numberOfUnits: 1,
+                additionalMessagePacks: 0,
+              },
+              additionalTcoComponents: {
+                totalAdditionalTcoAnnual: 0,
+              },
+            },
+            migrationRelatedDetails: {
+              totalMigrationCost: 0,
+              developmentCost: 0,
+              testingCost: 0,
+              architectureCost: 0,
+              projectManagementCost: 0,
+            },
+          } as any;
+          setAssessment(loadedAssessment);
+          setCalculations({
+            assessmentId: 'initial',
+            currency: 'USD',
+            sourcePlatform: 'SAP PI/PO',
+            targetPlatform: 'SAP BTP Integration Suite',
+            currentPlatformTCO: 0,
+            targetPlatformTCO: 0,
+            annualSavings: 0,
+            savingsPercentage: 0,
+            migrationCost: 0,
+            breakEvenMonths: 0,
+            fiveYearROI: 0,
+            fiveYearNetBenefit: 0,
+            recommendedMigrationPackage: 'Custom Plan',
+            indicativeTimeline: 'Pending assessment',
+            licensingSubtotal: 0,
+            infrastructureSubtotal: 0,
+            supportSubtotal: 0,
+            operationsSubtotal: 0,
+            paybackYears: 0,
+          } as any);
+          return;
+        }
+
         // 1. Authoritative Backend Loading
-        if (assessmentId === 'demo-assessment-1' || !assessmentId) {
+        if (assessmentId === 'demo-assessment-1') {
           try {
             loadedAssessment = await api.getDemoAssessment();
           } catch (e) {
             console.warn('Failed to load demo assessment from backend API', e);
           }
-        } else {
+        } else if (assessmentId) {
           try {
             loadedAssessment = await api.getAssessment(assessmentId);
           } catch (e) {
@@ -743,8 +810,8 @@ Under this simulated scenario, the enterprise retains substantial resilience aga
           }
         }
 
-        // 3. Fallback to demo assessment if still null
-        if (!loadedAssessment) {
+        // 3. Fallback to demo assessment ONLY if explicitly demo
+        if (!loadedAssessment && assessmentId === 'demo-assessment-1') {
           try {
             loadedAssessment = await api.getDemoAssessment();
           } catch {
@@ -802,6 +869,7 @@ Under this simulated scenario, the enterprise retains substantial resilience aga
   }, [assessmentId]);
 
   const isDemoMode = assessmentId === 'demo-assessment-1' || assessment?.id === 'demo-assessment-1';
+  const isInitialZeroMode = assessmentId === 'initial' || assessment?.id === 'initial';
 
   // Derived dynamic numbers from Authoritative Backend
   const currency = calculations?.currency || assessment?.currency || 'USD';
@@ -812,30 +880,30 @@ Under this simulated scenario, the enterprise retains substantial resilience aga
     ? indicativeTimeline.split('(')[0].trim()
     : indicativeTimeline;
 
-  const licensingCost =
+  const licensingCost = isInitialZeroMode ? 0 : (
     calculations?.licensingSubtotal ??
     assessment?.sourceSystem?.sapPiPoAnnualCostBreakdown?.licensing?.subtotal ??
     assessment?.sourceSystem?.sapPiPoAnnualCostBreakdown?.licensing?.sapPiPoLicenseCosts ??
-    (isDemoMode ? 85000 : 0);
-  const infraCost =
+    (isDemoMode ? 85000 : 0));
+  const infraCost = isInitialZeroMode ? 0 : (
     calculations?.infrastructureSubtotal ??
     assessment?.sourceSystem?.sapPiPoAnnualCostBreakdown?.infrastructure?.subtotal ??
     assessment?.sourceSystem?.sapPiPoAnnualCostBreakdown?.infrastructure?.hardwareServerCosts ??
-    (isDemoMode ? 35000 : 0);
-  const supportCost =
+    (isDemoMode ? 35000 : 0));
+  const supportCost = isInitialZeroMode ? 0 : (
     calculations?.supportSubtotal ??
     assessment?.sourceSystem?.sapPiPoAnnualCostBreakdown?.support?.subtotal ??
     assessment?.sourceSystem?.sapPiPoAnnualCostBreakdown?.support?.sapSupportMaintenance ??
-    (isDemoMode ? 25000 : 0);
-  const operationsCost =
+    (isDemoMode ? 25000 : 0));
+  const operationsCost = isInitialZeroMode ? 0 : (
     calculations?.operationsSubtotal ??
     assessment?.sourceSystem?.sapPiPoAnnualCostBreakdown?.operations?.subtotal ??
     assessment?.sourceSystem?.sapPiPoAnnualCostBreakdown?.operations?.administrativeStaffCosts ??
-    (isDemoMode ? 45000 : 0);
+    (isDemoMode ? 45000 : 0));
 
-  const currentTco =
+  const currentTco = isInitialZeroMode ? 0 : (
     calculations?.currentPlatformTCO ??
-    (licensingCost + infraCost + supportCost + operationsCost);
+    (licensingCost + infraCost + supportCost + operationsCost));
 
   const selectedEdition =
     calculations?.recommendedBtpEdition ||
@@ -843,7 +911,7 @@ Under this simulated scenario, the enterprise retains substantial resilience aga
     'SAP Integration Suite, Standard Edition';
 
   const getEditionBasePrice = (edition: string, unitCount: number = 1) => {
-    if (!edition || unitCount <= 0) return 64068;
+    if (!edition || unitCount <= 0) return 0;
     const lower = edition.toLowerCase();
     if (lower.includes('starter')) return 20736 * unitCount;
     if (lower.includes('enhanced')) return 92256 * unitCount;
@@ -852,7 +920,9 @@ Under this simulated scenario, the enterprise retains substantial resilience aga
     return 64068 * unitCount;
   };
   const unitCount = assessment?.targetSystem?.configuration?.numberOfUnits || 1;
-  const editionBasePrice = getEditionBasePrice(selectedEdition, unitCount);
+  const editionBasePrice = (isInitialZeroMode || (!isDemoMode && !assessment?.targetSystem?.configuration?.selectedEditionName))
+    ? 0
+    : getEditionBasePrice(selectedEdition, unitCount);
   const additionalPacks =
     assessment?.targetSystem?.configuration?.additionalMessagePacks ??
     (isDemoMode ? 59 : 0);
@@ -861,28 +931,28 @@ Under this simulated scenario, the enterprise retains substantial resilience aga
   const dataSpaceCost = dataSpacePackages * 900;
   const additionalEicTenants = assessment?.targetSystem?.configuration?.additionalEicTenants ?? 0;
   const eicCost = additionalEicTenants * 41460;
-  const addOnsCost = packsCost + dataSpaceCost + eicCost;
-  const targetConfigCost =
+  const addOnsCost = isInitialZeroMode ? 0 : (packsCost + dataSpaceCost + eicCost);
+  const targetConfigCost = isInitialZeroMode ? 0 : (
     assessment?.targetSystem?.configuration?.totalAnnualCost && assessment.targetSystem.configuration.totalAnnualCost > 0
       ? assessment.targetSystem.configuration.totalAnnualCost
-      : editionBasePrice + addOnsCost;
-  const targetAdditionalTco =
-    assessment?.targetSystem?.additionalTcoComponents?.totalAdditionalTcoAnnual || 0;
-  const targetTco =
+      : (editionBasePrice > 0 || addOnsCost > 0 ? editionBasePrice + addOnsCost : 0));
+  const targetAdditionalTco = isInitialZeroMode ? 0 : (
+    assessment?.targetSystem?.additionalTcoComponents?.totalAdditionalTcoAnnual || 0);
+  const targetTco = isInitialZeroMode ? 0 : (
     calculations?.targetPlatformTCO ??
-    (targetConfigCost + targetAdditionalTco);
+    (targetConfigCost + targetAdditionalTco));
 
-  const annualSavings =
-    calculations?.annualSavings ?? (currentTco > targetTco ? currentTco - targetTco : 0);
-  const savingsPct =
-    calculations?.savingsPercentage ?? (currentTco > 0 ? (annualSavings / currentTco) * 100 : 0);
+  const annualSavings = isInitialZeroMode ? 0 : (
+    calculations?.annualSavings ?? (currentTco > targetTco ? currentTco - targetTco : 0));
+  const savingsPct = isInitialZeroMode ? 0 : (
+    calculations?.savingsPercentage ?? (currentTco > 0 ? (annualSavings / currentTco) * 100 : 0));
 
-  const migrationCost =
+  const migrationCost = isInitialZeroMode ? 0 : (
     calculations?.migrationCost && calculations.migrationCost > 0
       ? calculations.migrationCost
       : (assessment?.migrationRelatedDetails?.totalMigrationCost && assessment.migrationRelatedDetails.totalMigrationCost > 0
         ? assessment.migrationRelatedDetails.totalMigrationCost
-        : 65000);
+        : (isDemoMode ? 65000 : 0)));
 
   const devCost =
     assessment?.migrationRelatedDetails?.developmentCost && assessment.migrationRelatedDetails.developmentCost > 0
@@ -904,20 +974,20 @@ Under this simulated scenario, the enterprise retains substantial resilience aga
       ? assessment.migrationRelatedDetails.projectManagementCost
       : Math.round(migrationCost * 0.10);
 
-  const breakEvenMonths =
+  const breakEvenMonths = isInitialZeroMode ? 0 : (
     calculations?.breakEvenMonths && calculations.breakEvenMonths > 0
       ? calculations.breakEvenMonths
-      : (annualSavings > 0 && migrationCost > 0 ? (migrationCost / annualSavings) * 12 : 3.8);
+      : (annualSavings > 0 && migrationCost > 0 ? (migrationCost / annualSavings) * 12 : (isDemoMode ? 3.8 : 0)));
 
-  const fiveYearNetBenefit =
-    calculations?.fiveYearNetBenefit ?? (annualSavings * 5 - migrationCost);
+  const fiveYearNetBenefit = isInitialZeroMode ? 0 : (
+    calculations?.fiveYearNetBenefit ?? (annualSavings * 5 - migrationCost));
 
-  const fiveYearRoi =
+  const fiveYearRoi = isInitialZeroMode ? 0 : (
     calculations?.fiveYearROI && calculations.fiveYearROI > 0
       ? calculations.fiveYearROI
       : (migrationCost > 0 && fiveYearNetBenefit > 0
         ? ((fiveYearNetBenefit - migrationCost) / migrationCost) * 100
-        : 0);
+        : 0));
 
   const devPct = migrationCost > 0 ? ((devCost / migrationCost) * 100).toFixed(0) : '60';
 
@@ -1078,74 +1148,46 @@ Under this simulated scenario, the enterprise retains substantial resilience aga
 
   // Action Button Handlers
   const handleDownloadPdf = () => {
-    window.print();
-  };
+    const projectionRows = [1, 2, 3, 4, 5].map((y) => {
+      const baselineSpend = currentTco;
+      const btpRunCost = targetTco;
+      const cumulativeSavings = annualSavings * y;
+      const migrationCapex = y === 1 ? migrationCost : 0;
+      const netBenefit = cumulativeSavings - migrationCost;
+      const roi = migrationCost > 0 ? (netBenefit / migrationCost) * 100 : 0;
+      return {
+        year: y,
+        baselineSpend,
+        btpRunCost,
+        cumulativeSavings,
+        migrationCapex,
+        netBenefit,
+        roi,
+      };
+    });
 
-  const handleSaveToDatabase = async () => {
-    if (typeof window !== 'undefined') {
-      if (assessment && assessment.id !== 'demo-assessment-1') {
-        localStorage.setItem('valuelens_active_assessment', JSON.stringify(assessment));
-        localStorage.setItem('valuelens_active_assessment_id', assessment.id);
-      }
-      if (calculations) localStorage.setItem('valuelens_active_calculation', JSON.stringify(calculations));
-    }
-
-    // Persist to backend database / Supabase by assessmentId
-    try {
-      if (assessment) {
-        await api.saveAssessment({
-          ...assessment,
-          id: assessment.id || assessmentId,
-        });
-      }
-    } catch (err) {
-      console.warn('Backend database save note:', err);
-    }
-
-    setSaveToast(true);
-    setTimeout(() => setSaveToast(false), 3500);
-  };
-
-  const handleExportJson = () => {
-    const exportData = {
-      assessmentId,
-      sourcePlatform: assessment?.sourcePlatform || 'SAP PI/PO',
-      targetPlatform: 'SAP BTP Integration Suite',
-      generatedDate: new Date().toISOString(),
-      keyMetrics: {
-        currentPlatformTCO: currentTco,
-        targetPlatformTCO: targetTco,
-        annualSavings: annualSavings,
-        savingsPercentage: savingsPct,
-        totalMigrationCost: migrationCost,
-        breakEvenMonths: breakEvenMonths,
-        fiveYearROI: fiveYearRoi,
-        fiveYearNetBenefit: fiveYearNetBenefit,
-      },
+    generateExecutiveReportPdf({
       assessment,
       calculations,
-      aiAnalysis,
-    };
-    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `valuelens-roi-analysis-${assessmentId}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
+      currentTco,
+      targetTco,
+      annualSavings,
+      savingsPct,
+      migrationCost,
+      breakEvenMonths,
+      fiveYearRoi,
+      fiveYearNetBenefit,
+      currency,
+      sourcePlatform,
+      packageName,
+      cleanTimeline,
+      timelineData: projectionRows,
+    });
   };
 
   return (
     <div className="min-h-screen bg-[#f5f6f8] py-8 md:py-10 text-[#1d2d3e]">
       <div className="max-w-[1280px] mx-auto px-6 sm:px-8 lg:px-10 space-y-8 lg:space-y-10">
-
-        {/* Save Toast Notification */}
-        {saveToast && (
-          <div className="fixed top-6 right-6 z-50 bg-[#107e3e] text-white px-5 py-3 rounded-2xl shadow-xl flex items-center space-x-2 text-[14px] font-bold animate-fadeIn border border-emerald-400">
-            <Check className="w-5 h-5" />
-            <span>ROI Analysis &amp; Calculations Saved Successfully</span>
-          </div>
-        )}
 
         {/* ========================================================================= */}
         {/* TOP BAR: Back Button, Title, Subtitle, Date & Action Buttons             */}
@@ -1191,24 +1233,6 @@ Under this simulated scenario, the enterprise retains substantial resilience aga
                 <span>Download PDF</span>
               </button>
 
-              <button
-                type="button"
-                onClick={handleSaveToDatabase}
-                className="inline-flex items-center space-x-2 px-4 py-2.5 bg-white hover:bg-slate-50 text-[#1d2d3e] border border-[#d9e2ec] rounded-xl text-[14px] font-semibold shadow-xs hover:border-[#0070f2] transition-colors cursor-pointer"
-              >
-                <Save className="w-4 h-4 text-[#0070f2]" />
-                <span>Save to Database</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={handleExportJson}
-                className="inline-flex items-center space-x-2 px-4 py-2.5 bg-white hover:bg-slate-50 text-[#1d2d3e] border border-[#d9e2ec] rounded-xl text-[14px] font-semibold shadow-xs hover:border-[#0070f2] transition-colors cursor-pointer"
-              >
-                <FileCode className="w-4 h-4 text-[#0070f2]" />
-                <span>Export JSON</span>
-              </button>
-
               <Link
                 href="/assessment?new=true"
                 className="inline-flex items-center space-x-2 px-4 py-2.5 bg-[#0070f2] hover:bg-[#0057d2] text-white rounded-xl text-[14px] font-bold shadow-xs hover:shadow-md transition-all cursor-pointer"
@@ -1221,9 +1245,35 @@ Under this simulated scenario, the enterprise retains substantial resilience aga
         </div>
 
         {/* ========================================================================= */}
-        {/* BANNER: Demo Benchmark Notice OR Custom Assessment Active Indicator       */}
+        {/* BANNER: Initial Zero Notice, Demo Benchmark Notice OR Custom Assessment Active */}
         {/* ========================================================================= */}
-        {isDemoMode ? (
+        {isInitialZeroMode ? (
+          <div className="bg-gradient-to-r from-blue-50/90 to-indigo-50/90 border border-blue-200 rounded-2xl p-4 sm:p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-xs">
+            <div className="flex items-start sm:items-center space-x-3.5">
+              <div className="w-10 h-10 rounded-xl bg-[#0070f2]/10 flex items-center justify-center shrink-0 text-[#0070f2]">
+                <Sparkles className="w-5 h-5" />
+              </div>
+              <div>
+                <div className="flex items-center space-x-2.5">
+                  <span className="font-bold text-[#1d2d3e] text-[15px]">New Business Case Assessment</span>
+                  <span className="px-2.5 py-0.5 rounded-full bg-blue-100 text-[#0070f2] text-[11px] font-bold uppercase tracking-wider">
+                    Ready for Inputs
+                  </span>
+                </div>
+                <p className="text-[13.5px] text-[#556b82] mt-1 leading-normal">
+                  Your baseline dashboard is initialized with clean zero state. Click <strong>Start Business Value Assessment</strong> to configure your enterprise parameters and calculate customized ROI.
+                </p>
+              </div>
+            </div>
+            <Link
+              href="/assessment?new=true"
+              className="inline-flex items-center space-x-2 px-4 py-2.5 bg-[#0070f2] hover:bg-[#0057d2] text-white rounded-xl text-[13.5px] font-bold shadow-xs hover:shadow transition-all shrink-0 whitespace-nowrap"
+            >
+              <span>Start Business Value Assessment</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+        ) : isDemoMode ? (
           <div className="bg-amber-50/95 border border-amber-300 rounded-2xl p-4 sm:p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-xs">
             <div className="flex items-start sm:items-center space-x-3.5">
               <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center shrink-0 text-amber-700">
@@ -1283,139 +1333,145 @@ Under this simulated scenario, the enterprise retains substantial resilience aga
         {/* ========================================================================= */}
         {/* HERO KPI CARDS: 6 Large Spacious Metric Cards (Section 7 Specification)   */}
         {/* ========================================================================= */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-4 sm:gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 sm:gap-5">
           {/* Card 1: CURRENT PLATFORM TCO */}
-          <div className="bg-white rounded-3xl border border-[#d9e2ec] p-4 sm:p-5 shadow-xs hover:shadow-md transition-shadow flex flex-col min-h-[190px]">
-            <div className="min-h-[58px] flex items-start justify-between gap-2">
-              <span className="text-[13px] xl:text-[13.5px] font-semibold text-[#556b82] uppercase tracking-wider leading-[1.35] block">
+          <div className="bg-white rounded-3xl border border-[#d9e2ec] p-4 sm:p-5 shadow-xs hover:shadow-md transition-shadow flex flex-col min-h-[190px] overflow-hidden">
+            <div className="min-h-[52px] flex items-start justify-between gap-2">
+              <span className="text-[12.5px] xl:text-[13px] font-semibold text-[#556b82] uppercase tracking-wider leading-[1.35] block truncate">
                 Current {sourcePlatform} TCO
               </span>
               <div className="w-8 h-8 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
                 <Server className="w-4 h-4" />
               </div>
             </div>
-            <div className="min-h-[46px] flex items-center mt-3">
-              <div className="text-[28px] xl:text-[30px] 2xl:text-[34px] font-bold text-[#1d2d3e] font-mono tracking-tight leading-[1.15] whitespace-nowrap">
-                {currentTco > 0 ? formatCurrency(currentTco, currency) : 'Awaiting data'}
+            <div className="min-h-[46px] flex items-center mt-2">
+              <div className="text-[22px] sm:text-[24px] xl:text-[25px] 2xl:text-[28px] font-bold text-[#1d2d3e] font-mono tracking-tight leading-tight truncate">
+                {formatCurrency(currentTco, currency)}
               </div>
             </div>
-            <div className="min-h-[40px] flex items-start mt-2">
-              <p className="text-[13px] xl:text-[14px] text-[#556b82] font-medium leading-[1.45]">
+            <div className="min-h-[38px] flex items-start mt-2">
+              <p className="text-[12.5px] xl:text-[13px] text-[#556b82] font-medium leading-[1.45] truncate">
                 Annual baseline spend
               </p>
             </div>
           </div>
 
           {/* Card 2: TARGET BTP TCO */}
-          <div className="bg-white rounded-3xl border border-[#d9e2ec] p-4 sm:p-5 shadow-xs hover:shadow-md transition-shadow flex flex-col min-h-[190px]">
-            <div className="min-h-[58px] flex items-start justify-between gap-2">
-              <span className="text-[13px] xl:text-[13.5px] font-semibold text-[#0070f2] uppercase tracking-wider leading-[1.35] block">
+          <div className="bg-white rounded-3xl border border-[#d9e2ec] p-4 sm:p-5 shadow-xs hover:shadow-md transition-shadow flex flex-col min-h-[190px] overflow-hidden">
+            <div className="min-h-[52px] flex items-start justify-between gap-2">
+              <span className="text-[12.5px] xl:text-[13px] font-semibold text-[#0070f2] uppercase tracking-wider leading-[1.35] block truncate">
                 Target BTP TCO
               </span>
               <div className="w-8 h-8 rounded-xl bg-blue-50 text-[#0070f2] flex items-center justify-center shrink-0">
                 <Cpu className="w-4 h-4" />
               </div>
             </div>
-            <div className="min-h-[46px] flex items-center mt-3">
-              <div className="text-[28px] xl:text-[30px] 2xl:text-[34px] font-bold text-[#0070f2] font-mono tracking-tight leading-[1.15] whitespace-nowrap">
-                {targetTco > 0 ? formatCurrency(targetTco, currency) : 'Awaiting data'}
+            <div className="min-h-[46px] flex items-center mt-2">
+              <div className="text-[22px] sm:text-[24px] xl:text-[25px] 2xl:text-[28px] font-bold text-[#0070f2] font-mono tracking-tight leading-tight truncate">
+                {formatCurrency(targetTco, currency)}
               </div>
             </div>
-            <div className="min-h-[40px] flex items-start mt-2">
-              <p className="text-[13px] xl:text-[14px] text-[#556b82] font-medium leading-[1.45]">
-                Standard Edition + 59 packs
+            <div className="min-h-[38px] flex items-start mt-2">
+              <p className="text-[12.5px] xl:text-[13px] text-[#556b82] font-medium leading-[1.45] truncate">
+                {targetTco > 0 ? (selectedEdition.includes('Standard') ? 'Standard Edition' : selectedEdition) : 'Target cloud runtime'}
               </p>
             </div>
           </div>
 
           {/* Card 3: ANNUAL SAVINGS */}
-          <div className="bg-white rounded-3xl border border-[#d9e2ec] p-4 sm:p-5 shadow-xs hover:shadow-md transition-shadow flex flex-col min-h-[190px]">
-            <div className="min-h-[58px] flex items-start justify-between gap-2">
-              <span className="text-[13px] xl:text-[13.5px] font-semibold text-[#107e3e] uppercase tracking-wider leading-[1.35] block">
+          <div className="bg-white rounded-3xl border border-[#d9e2ec] p-4 sm:p-5 shadow-xs hover:shadow-md transition-shadow flex flex-col min-h-[190px] overflow-hidden">
+            <div className="min-h-[52px] flex items-start justify-between gap-2">
+              <span className="text-[12.5px] xl:text-[13px] font-semibold text-[#107e3e] uppercase tracking-wider leading-[1.35] block truncate">
                 Annual Savings
               </span>
               <div className="w-8 h-8 rounded-xl bg-emerald-50 text-[#107e3e] flex items-center justify-center shrink-0">
                 <DollarSign className="w-4 h-4" />
               </div>
             </div>
-            <div className="min-h-[46px] flex items-center mt-3">
-              <div className="text-[28px] xl:text-[30px] 2xl:text-[34px] font-bold text-[#107e3e] font-mono tracking-tight leading-[1.15] whitespace-nowrap">
-                {annualSavings > 0 ? `+${formatCurrency(annualSavings, currency)}` : 'Awaiting data'}
+            <div className="min-h-[46px] flex items-center mt-2">
+              <div className="text-[22px] sm:text-[24px] xl:text-[25px] 2xl:text-[28px] font-bold text-[#107e3e] font-mono tracking-tight leading-tight truncate">
+                {annualSavings > 0 ? `+${formatCurrency(annualSavings, currency)}` : formatCurrency(0, currency)}
               </div>
             </div>
-            <div className="min-h-[40px] flex items-start mt-2">
-              <p className="text-[13px] xl:text-[14px] text-[#556b82] font-medium leading-[1.45]">
-                <span className="font-bold text-[#107e3e]">↓ {savingsPct.toFixed(1)}%</span> run-rate reduction
+            <div className="min-h-[38px] flex items-start mt-2">
+              <p className="text-[12.5px] xl:text-[13px] text-[#556b82] font-medium leading-[1.45] truncate">
+                {savingsPct > 0 ? (
+                  <>
+                    <span className="font-bold text-[#107e3e]">↓ {savingsPct.toFixed(1)}%</span> run-rate reduction
+                  </>
+                ) : (
+                  <span>Baseline run-rate</span>
+                )}
               </p>
             </div>
           </div>
 
           {/* Card 4: MIGRATION INVESTMENT */}
-          <div className="bg-white rounded-3xl border border-[#d9e2ec] p-4 sm:p-5 shadow-xs hover:shadow-md transition-shadow flex flex-col min-h-[190px]">
-            <div className="min-h-[58px] flex items-start justify-between gap-2">
-              <span className="text-[13px] xl:text-[13.5px] font-semibold text-amber-700 uppercase tracking-wider leading-[1.35] block">
+          <div className="bg-white rounded-3xl border border-[#d9e2ec] p-4 sm:p-5 shadow-xs hover:shadow-md transition-shadow flex flex-col min-h-[190px] overflow-hidden">
+            <div className="min-h-[52px] flex items-start justify-between gap-2">
+              <span className="text-[12.5px] xl:text-[13px] font-semibold text-amber-700 uppercase tracking-wider leading-[1.35] block truncate">
                 Migration Investment
               </span>
               <div className="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
                 <Briefcase className="w-4 h-4" />
               </div>
             </div>
-            <div className="min-h-[46px] flex items-center mt-3">
-              <div className="text-[28px] xl:text-[30px] 2xl:text-[34px] font-bold text-[#1d2d3e] font-mono tracking-tight leading-[1.15] whitespace-nowrap">
-                {migrationCost > 0 ? formatCurrency(migrationCost, currency) : 'Awaiting data'}
+            <div className="min-h-[46px] flex items-center mt-2">
+              <div className="text-[22px] sm:text-[24px] xl:text-[25px] 2xl:text-[28px] font-bold text-[#1d2d3e] font-mono tracking-tight leading-tight truncate">
+                {formatCurrency(migrationCost, currency)}
               </div>
             </div>
-            <div className="min-h-[40px] flex items-start mt-2">
-              <p className="text-[13px] xl:text-[14px] text-[#556b82] font-medium leading-[1.45]">
-                Incture {packageName} ({cleanTimeline})
+            <div className="min-h-[38px] flex items-start mt-2">
+              <p className="text-[12.5px] xl:text-[13px] text-[#556b82] font-medium leading-[1.45] truncate">
+                {migrationCost > 0 ? `Incture ${packageName} (${cleanTimeline})` : 'Delivery package'}
               </p>
             </div>
           </div>
 
           {/* Card 5: BREAK-EVEN */}
-          <div className="bg-white rounded-3xl border border-[#d9e2ec] p-4 sm:p-5 shadow-xs hover:shadow-md transition-shadow flex flex-col min-h-[190px]">
-            <div className="min-h-[58px] flex items-start justify-between gap-2">
-              <span className="text-[13px] xl:text-[13.5px] font-semibold text-[#0070f2] uppercase tracking-wider leading-[1.35] block">
+          <div className="bg-white rounded-3xl border border-[#d9e2ec] p-4 sm:p-5 shadow-xs hover:shadow-md transition-shadow flex flex-col min-h-[190px] overflow-hidden">
+            <div className="min-h-[52px] flex items-start justify-between gap-2">
+              <span className="text-[12.5px] xl:text-[13px] font-semibold text-[#0070f2] uppercase tracking-wider leading-[1.35] block truncate">
                 Break-Even
               </span>
               <div className="w-8 h-8 rounded-xl bg-blue-50 text-[#0070f2] flex items-center justify-center shrink-0">
                 <Calendar className="w-4 h-4" />
               </div>
             </div>
-            <div className="min-h-[46px] flex items-center mt-3">
-              <div className="text-[28px] xl:text-[30px] 2xl:text-[34px] font-bold text-[#0070f2] tracking-tight leading-[1.15] whitespace-nowrap">
-                {breakEvenMonths > 0 ? `${breakEvenMonths.toFixed(1)} Months` : 'Awaiting data'}
+            <div className="min-h-[46px] flex items-center mt-2">
+              <div className="text-[22px] sm:text-[24px] xl:text-[25px] 2xl:text-[28px] font-bold text-[#0070f2] tracking-tight leading-tight truncate">
+                {breakEvenMonths > 0 ? `${breakEvenMonths.toFixed(1)} Months` : '0.0 Months'}
               </div>
             </div>
-            <div className="min-h-[40px] flex items-start mt-2">
-              <p className="text-[13px] xl:text-[14px] text-[#556b82] font-medium leading-[1.45]">
+            <div className="min-h-[38px] flex items-start mt-2">
+              <p className="text-[12.5px] xl:text-[13px] text-[#556b82] font-medium leading-[1.45] truncate">
                 {breakEvenMonths > 0 && breakEvenMonths <= 12
                   ? '100% payback inside Year 1'
                   : breakEvenMonths > 12
                     ? `Payback inside Year ${Math.ceil(breakEvenMonths / 12)}`
-                    : 'Awaiting data'}
+                    : 'Break-even payback'}
               </p>
             </div>
           </div>
 
           {/* Card 6: 5-YEAR ROI */}
-          <div className="bg-white rounded-3xl border border-[#d9e2ec] p-4 sm:p-5 shadow-xs hover:shadow-md transition-shadow flex flex-col min-h-[190px]">
-            <div className="min-h-[58px] flex items-start justify-between gap-2">
-              <span className="text-[13px] xl:text-[13.5px] font-semibold text-[#8a3ffc] uppercase tracking-wider leading-[1.35] block">
+          <div className="bg-white rounded-3xl border border-[#d9e2ec] p-4 sm:p-5 shadow-xs hover:shadow-md transition-shadow flex flex-col min-h-[190px] overflow-hidden">
+            <div className="min-h-[52px] flex items-start justify-between gap-2">
+              <span className="text-[12.5px] xl:text-[13px] font-semibold text-[#8a3ffc] uppercase tracking-wider leading-[1.35] block truncate">
                 5-Year ROI
               </span>
               <div className="w-8 h-8 rounded-xl bg-purple-50 text-[#8a3ffc] flex items-center justify-center shrink-0">
                 <TrendingUp className="w-4 h-4" />
               </div>
             </div>
-            <div className="min-h-[46px] flex items-center mt-3">
-              <div className="text-[28px] xl:text-[30px] 2xl:text-[34px] font-bold text-[#8a3ffc] font-mono tracking-tight leading-[1.15] whitespace-nowrap">
-                {fiveYearRoi > 0 ? `${fiveYearRoi.toFixed(1)}%` : 'Awaiting data'}
+            <div className="min-h-[46px] flex items-center mt-2">
+              <div className="text-[22px] sm:text-[24px] xl:text-[25px] 2xl:text-[28px] font-bold text-[#8a3ffc] font-mono tracking-tight leading-tight truncate">
+                {fiveYearRoi > 0 ? `${fiveYearRoi.toFixed(1)}%` : '0.0%'}
               </div>
             </div>
-            <div className="min-h-[40px] flex items-start mt-2">
-              <p className="text-[13px] xl:text-[14px] text-[#556b82] font-medium leading-[1.45]">
-                Net: {formatCurrency(fiveYearNetBenefit, currency)}
+            <div className="min-h-[38px] flex items-start mt-2">
+              <p className="text-[12.5px] xl:text-[13px] text-[#556b82] font-medium leading-[1.45] truncate">
+                Net: {formatCurrency(fiveYearNetBenefit > 0 ? fiveYearNetBenefit : 0, currency)}
               </p>
             </div>
           </div>
@@ -1442,8 +1498,8 @@ Under this simulated scenario, the enterprise retains substantial resilience aga
                   type="button"
                   onClick={() => setDashboardTab(tab.id as any)}
                   className={`flex-1 flex items-center justify-center space-x-2.5 px-4 xl:px-5 py-3 h-[50px] rounded-xl text-[14px] xl:text-[15px] transition-all cursor-pointer whitespace-nowrap ${isActive
-                      ? 'bg-[#0070f2] text-white shadow-xs font-semibold'
-                      : 'text-[#556b82] hover:text-[#1d2d3e] hover:bg-slate-100 font-medium'
+                    ? 'bg-[#0070f2] text-white shadow-xs font-semibold'
+                    : 'text-[#556b82] hover:text-[#1d2d3e] hover:bg-slate-100 font-medium'
                     }`}
                 >
                   <Icon className={`w-[18px] h-[18px] shrink-0 ${isActive ? 'text-white' : 'text-[#556b82]'}`} />
@@ -2437,7 +2493,7 @@ Under this simulated scenario, the enterprise retains substantial resilience aga
                     <img src="/images/intswitch-logo.png" alt="IntSwitch" className="h-7 w-auto object-contain" />
                     <div>
                       <h4 className="text-[20px] sm:text-[23px] font-bold text-[#1d2d3e] tracking-tight leading-snug">
-                        IntSwitch — Accelerate Migration with Greater Confidence
+                        IntSwitch Accelerate Migration with Greater Confidence
                       </h4>
                       <p className="text-[14px] sm:text-[15px] text-[#556b82] mt-0.5">
                         Incture&apos;s migration, testing and quality-monitoring accelerator
@@ -2501,7 +2557,7 @@ Under this simulated scenario, the enterprise retains substantial resilience aga
                 {/* Grounded Accelerator Capabilities Checklist */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 pt-1">
                   <div className="p-5 bg-white/90 rounded-2xl border border-[#d9e2ec] space-y-2.5">
-                    <span className="font-bold text-[#1d2d3e] block text-[15px] sm:text-[16px]">⚡ Accelerated Automated Conversion</span>
+                    <span className="font-bold text-[#1d2d3e] block text-[15px] sm:text-[16px]">  Accelerated Automated Conversion</span>
                     <ul className="text-slate-700 space-y-2 text-[14px] sm:text-[15px]">
                       <li className="flex items-start space-x-2">
                         <span className="text-emerald-600 font-bold mt-0.5">✓</span>
@@ -2515,7 +2571,7 @@ Under this simulated scenario, the enterprise retains substantial resilience aga
                   </div>
 
                   <div className="p-5 bg-white/90 rounded-2xl border border-[#d9e2ec] space-y-2.5">
-                    <span className="font-bold text-[#1d2d3e] block text-[15px] sm:text-[16px]">🛡️ Non-Intrusive Validation &amp; Quality</span>
+                    <span className="font-bold text-[#1d2d3e] block text-[15px] sm:text-[16px]">Non-Intrusive Validation &amp; Quality</span>
                     <ul className="text-slate-700 space-y-2 text-[14px] sm:text-[15px]">
                       <li className="flex items-start space-x-2">
                         <span className="text-emerald-600 font-bold mt-0.5">✓</span>
@@ -2580,8 +2636,8 @@ Under this simulated scenario, the enterprise retains substantial resilience aga
                   type="button"
                   onClick={() => switchModalTab('tco-comparison', 'Platform Cost Breakdown & TCO Reduction')}
                   className={`px-2 py-2 rounded-xl transition-all cursor-pointer font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 ${aiModalTab === 'tco-comparison'
-                      ? 'bg-[#0070f2] text-white shadow-xs'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200'
+                    ? 'bg-[#0070f2] text-white shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200'
                     }`}
                 >
                   <span className="truncate">Cost Comparison</span>
@@ -2590,8 +2646,8 @@ Under this simulated scenario, the enterprise retains substantial resilience aga
                   type="button"
                   onClick={() => switchModalTab('cost-drivers', 'Legacy TCO Cost Drivers & Elimination')}
                   className={`px-2 py-2 rounded-xl transition-all cursor-pointer font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 ${aiModalTab === 'cost-drivers'
-                      ? 'bg-[#0070f2] text-white shadow-xs'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200'
+                    ? 'bg-[#0070f2] text-white shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200'
                     }`}
                 >
                   <span className="truncate">Cost Drivers</span>
@@ -2600,8 +2656,8 @@ Under this simulated scenario, the enterprise retains substantial resilience aga
                   type="button"
                   onClick={() => switchModalTab('migration-cost', 'Incture Migration Package & Delivery')}
                   className={`px-2 py-2 rounded-xl transition-all cursor-pointer font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 ${aiModalTab === 'migration-cost'
-                      ? 'bg-[#0070f2] text-white shadow-xs'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200'
+                    ? 'bg-[#0070f2] text-white shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200'
                     }`}
                 >
                   <span className="truncate">Migration Package</span>
@@ -2610,8 +2666,8 @@ Under this simulated scenario, the enterprise retains substantial resilience aga
                   type="button"
                   onClick={() => switchModalTab('roi-timeline', '10-Year ROI Trajectory & Recovery')}
                   className={`px-2 py-2 rounded-xl transition-all cursor-pointer font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 ${aiModalTab === 'roi-timeline'
-                      ? 'bg-[#0070f2] text-white shadow-xs'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200'
+                    ? 'bg-[#0070f2] text-white shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200'
                     }`}
                 >
                   <span className="truncate">ROI Trajectory</span>
@@ -2620,8 +2676,8 @@ Under this simulated scenario, the enterprise retains substantial resilience aga
                   type="button"
                   onClick={() => switchModalTab('executive', 'Autonomous Strategic Advisory Dossier')}
                   className={`px-2 py-2 rounded-xl transition-all cursor-pointer font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 ${aiModalTab === 'executive'
-                      ? 'bg-[#0070f2] text-white shadow-xs'
-                      : 'text-[#0070f2] bg-blue-50 hover:bg-blue-100 border border-blue-200'
+                    ? 'bg-[#0070f2] text-white shadow-xs'
+                    : 'text-[#0070f2] bg-blue-50 hover:bg-blue-100 border border-blue-200'
                     }`}
                 >
                   <span className="truncate">Executive Dossier</span>
@@ -2633,15 +2689,15 @@ Under this simulated scenario, the enterprise retains substantial resilience aga
                 {/* 1. Loading State - Simple Clean Spinner */}
                 {((aiModalTab === 'executive' && aiAnalysisLoading) ||
                   (aiModalTab !== 'executive' && chartInsightLoading)) && (
-                  <div className="py-20 px-6 flex flex-col items-center justify-center text-center space-y-4 animate-fadeIn">
-                    <Loader2 className="w-10 h-10 text-[#0070f2] animate-spin" />
-                    <p className="text-base font-semibold text-[#1d2d3e]">
-                      {aiModalTab === 'executive'
-                        ? 'Generating Executive Decision Intelligence...'
-                        : `Generating ${aiModalTitle}...`}
-                    </p>
-                  </div>
-                )}
+                    <div className="py-20 px-6 flex flex-col items-center justify-center text-center space-y-4 animate-fadeIn">
+                      <Loader2 className="w-10 h-10 text-[#0070f2] animate-spin" />
+                      <p className="text-base font-semibold text-[#1d2d3e]">
+                        {aiModalTab === 'executive'
+                          ? 'Generating Executive Decision Intelligence...'
+                          : `Generating ${aiModalTitle}...`}
+                      </p>
+                    </div>
+                  )}
 
                 {/* 2. Chart Insight Output with Live Streaming */}
                 {aiModalTab !== 'executive' && !chartInsightLoading && chartInsight && (

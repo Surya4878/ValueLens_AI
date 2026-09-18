@@ -39,6 +39,30 @@ const nextConfig = {
         ]
       }
     ];
+  },
+  async redirects() {
+    return [
+      {
+        source: '/terms',
+        destination: 'https://incture.com/terms-of-service/',
+        permanent: false,
+      },
+      {
+        source: '/privacy',
+        destination: 'https://incture.com/privacy-policy/',
+        permanent: false,
+      },
+      {
+        source: '/contact',
+        destination: 'https://incture.com/contact-us/',
+        permanent: false,
+      },
+      {
+        source: '/contact-us',
+        destination: 'https://incture.com/contact-us/',
+        permanent: false,
+      },
+    ];
   }
 };
 

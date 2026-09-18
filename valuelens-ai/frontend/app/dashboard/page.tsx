@@ -25,8 +25,8 @@ export default function DashboardRedirectPage() {
           // ignore error
         }
       }
-      // If no active custom assessment, go to the benchmark demo assessment
-      router.replace('/dashboard/demo-assessment-1');
+      // If user has no custom assessment, open clean initial zero-state dashboard
+      router.replace('/dashboard/initial');
     }
   }, [router]);
 

@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { TopNavbar } from '@/components/navigation/TopNavbar';
 import { AppFooter } from '@/components/navigation/AppFooter';
+import { ScrollToTop } from '@/components/navigation/ScrollToTop';
 import { AuthProvider } from '@/components/auth/AuthProvider';
 import { RouteGuard } from '@/components/auth/RouteGuard';
 
@@ -20,6 +21,7 @@ export default function RootLayout({
     <html lang="en">
       <body className="min-h-screen flex flex-col bg-[#f5f6f7] text-[#1d2d3e] font-sans antialiased selection:bg-[#e5f0ff] selection:text-[#0070f2]">
         <AuthProvider>
+          <ScrollToTop />
           <TopNavbar />
           <RouteGuard>
             <main className="flex-1">{children}</main>

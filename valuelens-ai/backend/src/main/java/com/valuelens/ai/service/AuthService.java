@@ -362,7 +362,7 @@ public class AuthService {
         String normalizedEmail = dto.getEmail().toLowerCase().trim();
 
         Optional<UserEntity> userOpt = userRepository.findByEmailIgnoreCase(normalizedEmail);
-        if (userOpt.isPresent() && userOpt.get().isEmailVerified()) {
+        if (userOpt.isPresent()) {
             String rawToken = UUID.randomUUID().toString().replace("-", "") + UUID.randomUUID().toString().replace("-", "");
             String tokenHash = sha256(rawToken);
 
@@ -374,6 +374,9 @@ public class AuthService {
             );
             passwordResetRepository.save(reset);
             emailService.sendPasswordReset(normalizedEmail, rawToken);
+            log.info("Password reset token generated and email dispatched for: {}", normalizedEmail);
+        } else {
+            log.warn("Password reset requested for non-existent user email: {}", normalizedEmail);
         }
 
         return Map.of(
@@ -411,11 +414,13 @@ public class AuthService {
                 .orElseThrow(() -> new IllegalArgumentException("Associated user account not found."));
 
         user.setPasswordHash(passwordEncoder.encode(newPassword));
+        user.setEmailVerified(true);
         user.setUpdatedAt(LocalDateTime.now());
         userRepository.save(user);
 
         reset.setUsed(true);
         passwordResetRepository.save(reset);
+        log.info("Password successfully altered and updated in database for: {}", user.getEmail());
 
         return Map.of(
                 "success", true,

@@ -1,12 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
-import { ContactModal } from '@/components/modals/ContactModal';
+import React from 'react';
 import { usePathname } from 'next/navigation';
 
 export function AppFooter() {
   const pathname = usePathname();
-  const [contactOpen, setContactOpen] = useState(false);
 
   // Hide footer completely on authentication pages
   const isAuthPage =
@@ -65,22 +63,27 @@ export function AppFooter() {
 
         {/* Right: Legal & Copyright (14px) */}
         <div className="flex flex-wrap items-center justify-center space-x-3.5 text-[14px] text-[#556b82]">
-          <span className="hover:text-[#0070f2] cursor-pointer transition-colors font-medium">Privacy</span>
+          <a
+            href="https://incture.com/privacy-policy/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-[#0070f2] cursor-pointer transition-colors font-medium"
+          >
+            Privacy Policy
+          </a>
           <span className="text-[#d9e2ec]">|</span>
-          <span className="hover:text-[#0070f2] cursor-pointer transition-colors font-medium">Terms</span>
-          <span className="text-[#d9e2ec]">|</span>
-          <button type="button" onClick={() => setContactOpen(true)} className="hover:text-[#0070f2] cursor-pointer transition-colors font-medium">Contact Us</button>
+          <a
+            href="https://incture.com/terms-of-service/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-[#0070f2] cursor-pointer transition-colors font-medium"
+          >
+            Terms of Service
+          </a>
           <span className="text-[#d9e2ec]">|</span>
           <span className="text-[14px] text-[#556b82] font-normal">© 2026 Incture. All rights reserved.</span>
         </div>
       </div>
-      <ContactModal
-        isOpen={contactOpen}
-        onClose={() => setContactOpen(false)}
-        defaultRequestType="Contact Us"
-        sourcePage="AppFooter"
-        title="Contact Business ValueLens AI Team"
-      />
     </footer>
   );
 }

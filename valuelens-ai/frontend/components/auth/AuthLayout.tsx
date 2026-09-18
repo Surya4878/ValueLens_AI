@@ -64,13 +64,13 @@ export function AuthLayout({ children, headerLink }: AuthLayoutProps) {
         {/* Bottom Disclaimer */}
         {/* <div className="pt-8 mt-8 border-t border-[#eef2f6] text-center text-[12px] sm:text-[13px] text-[#556b82]">
           By continuing, you agree to our{' '}
-          <Link href="/terms" className="underline hover:text-[#0070f2]">
+          <a href="https://incture.com/terms-of-service/" target="_blank" rel="noopener noreferrer" className="underline hover:text-[#0070f2]">
             Terms of Service
-          </Link>{' '}
+          </a>{' '}
           and{' '}
-          <Link href="/privacy" className="underline hover:text-[#0070f2]">
+          <a href="https://incture.com/privacy-policy/" target="_blank" rel="noopener noreferrer" className="underline hover:text-[#0070f2]">
             Privacy Policy
-          </Link>
+          </a>
           .
           <p className="text-[11px] text-[#8c9ba5] mt-2">
             Incture Technologies • Business ValueLens AI • All rights reserved

@@ -1,12 +1,9 @@
 'use client';
 
-import { ContactModal } from '@/components/modals/ContactModal';
-
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
 
 export default function IntSwitchPage() {
-  const [demoModalOpen, setDemoModalOpen] = useState(false);
 
   // 7 Migration Lifecycle Steps with chevron ribbon styling
   const lifecycleSteps = [
@@ -166,7 +163,7 @@ export default function IntSwitchPage() {
                   IntSwitch
                 </h2>
                 <p className="text-[13px] sm:text-[14px] font-semibold text-slate-500 tracking-wide">
-                  IntSwitch — Migration, Testing &amp; Quality Assurance
+                  IntSwitch Migration, Testing &amp; Quality Assurance
                 </p>
               </div>
             </div>
@@ -179,22 +176,23 @@ export default function IntSwitchPage() {
 
             {/* Description (16px-17px) */}
             <p className="text-[16px] sm:text-[17px] text-slate-600 leading-relaxed font-normal max-w-xl">
-              An AI-driven integration migration tool for assessment, migration, validation and regression testing — simplifying your journey to SAP Integration Suite.
+              An AI-driven integration migration tool for assessment, migration, validation and regression testing simplifying your journey to SAP Integration Suite.
             </p>
 
             {/* 2 Buttons: Request a Demo & View IntSwitch on SAP (14px-15px) */}
             <div className="flex flex-wrap items-center gap-3.5 pt-1">
               {/* Button 1: Request a Demo */}
-              <button
-                type="button"
-                onClick={() => setDemoModalOpen(true)}
+              <a
+                href="https://incture.com/contact-us/"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="group inline-flex items-center justify-center space-x-2 px-6 py-3 rounded-xl text-[14px] sm:text-[15px] font-bold bg-[#7928ca] hover:bg-[#6820b0] text-white shadow-xs transition-colors cursor-pointer"
               >
                 <span>Request a Demo</span>
                 <svg className="w-4 h-4 shrink-0 transition-transform group-hover:translate-x-0.5" viewBox="0 0 16 16" fill="none" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M6 3.5l4.5 4.5-4.5 4.5" />
                 </svg>
-              </button>
+              </a>
 
               {/* Button 2: View IntSwitch on SAP */}
               <a
@@ -377,16 +375,15 @@ export default function IntSwitchPage() {
               const clipPathStyle = step.isFirst
                 ? 'polygon(0% 0%, calc(100% - 16px) 0%, 100% 50%, calc(100% - 16px) 100%, 0% 100%)'
                 : step.isLast
-                ? 'polygon(0% 0%, calc(100% - 20px) 0%, 100% 50%, calc(100% - 20px) 100%, 0% 100%, 16px 50%)'
-                : 'polygon(0% 0%, calc(100% - 16px) 0%, 100% 50%, calc(100% - 16px) 100%, 0% 100%, 16px 50%)';
+                  ? 'polygon(0% 0%, calc(100% - 20px) 0%, 100% 50%, calc(100% - 20px) 100%, 0% 100%, 16px 50%)'
+                  : 'polygon(0% 0%, calc(100% - 16px) 0%, 100% 50%, calc(100% - 16px) 100%, 0% 100%, 16px 50%)';
 
               return (
                 <div key={step.step} className="flex flex-col items-center text-center group">
                   {/* Chevron Arrow Block */}
                   <div
-                    className={`w-full h-18 sm:h-22 flex items-center justify-center transition-all group-hover:brightness-95 group-hover:scale-[1.02] cursor-default shadow-2xs ${
-                      step.isFirst ? 'rounded-l-lg' : ''
-                    }`}
+                    className={`w-full h-18 sm:h-22 flex items-center justify-center transition-all group-hover:brightness-95 group-hover:scale-[1.02] cursor-default shadow-2xs ${step.isFirst ? 'rounded-l-lg' : ''
+                      }`}
                     style={{
                       background: step.bgColor,
                       clipPath: clipPathStyle,
@@ -708,27 +705,19 @@ export default function IntSwitchPage() {
             </div>
           </div>
 
-          <button
-            type="button"
-            onClick={() => setDemoModalOpen(true)}
+          <a
+            href="https://incture.com/contact-us/"
+            target="_blank"
+            rel="noopener noreferrer"
             className="group inline-flex items-center space-x-2 px-6 py-3 rounded-xl text-[14px] sm:text-[15px] font-bold bg-white text-[#0070f2] hover:bg-blue-50 shadow-md hover:shadow-lg transition-all shrink-0 cursor-pointer"
           >
             <span>Request a Demo</span>
             <svg className="w-4 h-4 shrink-0 transition-transform group-hover:translate-x-0.5" viewBox="0 0 16 16" fill="none" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M6 3.5l4.5 4.5-4.5 4.5" />
             </svg>
-          </button>
+          </a>
         </div>
       </section>
-
-      {/* Demo Modal */}
-      <ContactModal
-        isOpen={demoModalOpen}
-        onClose={() => setDemoModalOpen(false)}
-        defaultRequestType="IntSwitch Demo"
-        sourcePage="/intswitch"
-        title="Request an IntSwitch Demo"
-      />
     </div>
   );
 }

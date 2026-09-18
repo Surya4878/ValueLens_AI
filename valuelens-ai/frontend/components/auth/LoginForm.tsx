@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Mail, Lock, Eye, EyeOff, ArrowRight, AlertCircle } from 'lucide-react';
@@ -12,7 +12,7 @@ export function LoginForm() {
   const searchParams = useSearchParams();
   const returnUrl = searchParams.get('returnUrl') || '/assessment';
 
-  const { login } = useAuth();
+  const { login, loginWithMicrosoft, loginWithGoogle } = useAuth();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -21,6 +21,40 @@ export function LoginForm() {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Handle OAuth redirect fragments (Microsoft / Google)
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const hash = window.location.hash;
+    if (!hash) return;
+
+    const params = new URLSearchParams(hash.replace(/^#/, ''));
+    const accessToken = params.get('access_token');
+    const idToken = params.get('id_token');
+    // 'state' param is set to 'google' in Google redirect URL so we can
+    // distinguish it from a Microsoft redirect (which also returns access_token)
+    const state = params.get('state') || '';
+
+    // Google always returns an id_token (JWT). Prefer it over access_token.
+    // Microsoft implicit flow returns only access_token (no id_token by default).
+    if (idToken) {
+      // Google redirect: id_token is the signed JWT we need to verify
+      setLoading(true);
+      window.history.replaceState(null, '', window.location.pathname + window.location.search);
+      loginWithGoogle(idToken)
+        .then(() => router.push(returnUrl))
+        .catch((err) => setError(err.message || 'Google sign-in failed'))
+        .finally(() => setLoading(false));
+    } else if (accessToken && !state.startsWith('google')) {
+      // Microsoft redirect: opaque access_token, no id_token
+      setLoading(true);
+      window.history.replaceState(null, '', window.location.pathname + window.location.search);
+      loginWithMicrosoft(accessToken)
+        .then(() => router.push(returnUrl))
+        .catch((err) => setError(err.message || 'Microsoft sign-in failed'))
+        .finally(() => setLoading(false));
+    }
+  }, [loginWithMicrosoft, loginWithGoogle, returnUrl, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

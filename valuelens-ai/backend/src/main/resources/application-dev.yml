@@ -1,12 +1,18 @@
-﻿spring:
+spring:
   datasource:
     url: ${DATABASE_URL:jdbc:postgresql://aws-0-ap-northeast-1.pooler.supabase.com:5432/postgres?sslmode=require}
     username: ${DATABASE_USER:postgres.bcjlwdjwpsksysukraup}
     password: ${DATABASE_PASSWORD:}
-    driver-class-name: org.postgresql.Driver
+    driver-class-name: ${DATABASE_DRIVER:org.postgresql.Driver}
   jpa:
+    open-in-view: false
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: update
     properties:
       hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: false
+        jdbc:
+          lob:
+            non_contextual_creation: true
