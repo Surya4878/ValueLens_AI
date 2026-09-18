@@ -1,4 +1,4 @@
-server:
+﻿server:
   port: 8080
 
 spring:
@@ -9,7 +9,7 @@ spring:
   datasource:
     url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/valuelens_db}
     username: ${DATABASE_USER:postgres}
-    password: ${DATABASE_PASSWORD:postgres}
+    password: ${DATABASE_PASSWORD:}
     driver-class-name: org.postgresql.Driver
   jpa:
     open-in-view: false
@@ -17,36 +17,79 @@ spring:
       ddl-auto: update
     properties:
       hibernate:
-        format_sql: true
+        format_sql: false
         jdbc:
           lob:
             non_contextual_creation: true
   flyway:
     enabled: ${FLYWAY_ENABLED:false}
     baseline-on-migrate: true
+  mail:
+    host: ${SMTP_HOST:smtp.gmail.com}
+    port: ${SMTP_PORT:587}
+    username: ${SMTP_USER:}
+    password: ${SMTP_PASS:}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          connectiontimeout: 8000
+          timeout: 8000
+          writetimeout: 8000
 
 nvidia:
   base-url: ${NVIDIA_BASE_URL:https://integrate.api.nvidia.com/v1}
-  api-key: ${NVIDIA_API_KEY}
+  api-key: ${NVIDIA_API_KEY:}
   model: ${NVIDIA_MODEL:meta/llama-3.2-11b-vision-instruct}
   temperature: ${NVIDIA_TEMPERATURE:0.6}
   max-tokens: ${NVIDIA_MAX_TOKENS:1500}
   timeout-seconds: ${NVIDIA_TIMEOUT_SECONDS:35}
 
 app:
+  frontend:
+    url: ${FRONTEND_URL:http://localhost:3000}
   cors:
     allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000,http://127.0.0.1:3000}
+  security:
+    cookie:
+      secure: ${COOKIE_SECURE:false}
+    rate-limit:
+      enabled: ${RATE_LIMIT_ENABLED:true}
   calculation:
     engine-version: ROI_ENGINE_V1
     default-currency: USD
   pricing:
     version-tag: BTP_2026_Q1
+  auth:
+    jwt-secret: ${JWT_SECRET:ValueLensAiEnterpriseSecretKeyForAuthenticationMustBeAtLeast32BytesLong2026!}
+    jwt-expiration-ms: ${JWT_EXPIRATION_MS:86400000} # 24 hours
+    otp-expiration-minutes: ${OTP_EXPIRATION_MINUTES:10}
+    otp-resend-cooldown-seconds: ${OTP_RESEND_COOLDOWN_SECONDS:60}
+    otp-max-attempts: ${OTP_MAX_ATTEMPTS:5}
+    google-client-id: ${GOOGLE_CLIENT_ID:}
+    microsoft-client-id: ${MICROSOFT_CLIENT_ID:}
+    microsoft-tenant-id: ${MICROSOFT_TENANT_ID:}
+  supabase:
+    url: ${SUPABASE_URL:}
+    anon-key: ${SUPABASE_ANON_KEY:}
+    service-role-key: ${SUPABASE_SERVICE_ROLE_KEY:}
+  email:
+    smtp-host: ${EMAIL_SMTP_HOST:smtp.gmail.com}
+    smtp-port: ${EMAIL_SMTP_PORT:587}
+    smtp-username: ${EMAIL_SMTP_USERNAME:}
+    smtp-password: ${EMAIL_SMTP_PASSWORD:}
+    from: ${EMAIL_FROM:no-reply@valuelens.incture.com}
 
 springdoc:
   api-docs:
     path: /v3/api-docs
+    enabled: ${SWAGGER_ENABLED:true}
   swagger-ui:
     path: /swagger-ui.html
+    enabled: ${SWAGGER_ENABLED:true}
     operations-sorter: method
 
 logging:

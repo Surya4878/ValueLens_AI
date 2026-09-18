@@ -1,6 +1,8 @@
 package com.valuelens.ai.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.valuelens.ai.dto.AssessmentDto;
+import com.valuelens.ai.exception.AccessDeniedException;
 import com.valuelens.ai.model.AssessmentEntity;
 import com.valuelens.ai.repository.AssessmentRepository;
 import org.springframework.stereotype.Service;
@@ -14,63 +16,122 @@ import java.util.*;
 public class AssessmentService {
 
     private final AssessmentRepository assessmentRepository;
-    private final Map<String, AssessmentDto> inMemoryStore = new HashMap<>();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     public AssessmentService(AssessmentRepository assessmentRepository) {
         this.assessmentRepository = assessmentRepository;
-        // Preload demo assessment into store
-        AssessmentDto demo = buildDemoAssessment();
-        inMemoryStore.put(demo.getId(), demo);
-        inMemoryStore.put("demo-assessment-1", demo);
-        inMemoryStore.put("demo-sap-pipo-to-btp", demo);
     }
 
     @Transactional
     public AssessmentDto saveAssessment(AssessmentDto dto) {
+        return saveAssessment(dto, null);
+    }
+
+    @Transactional
+    public AssessmentDto saveAssessment(AssessmentDto dto, String userId) {
         if (dto.getId() == null || dto.getId().isBlank()) {
             dto.setId("asmt-" + UUID.randomUUID().toString().substring(0, 8));
         }
 
-        AssessmentEntity entity = new AssessmentEntity();
-        entity.setId(dto.getId());
+        Optional<AssessmentEntity> existingOpt = assessmentRepository.findById(dto.getId());
+        AssessmentEntity entity;
+        if (existingOpt.isPresent()) {
+            entity = existingOpt.get();
+            // Ownership check: If assessment already has a userId and caller does not match, reject
+            if (entity.getUserId() != null && !entity.getUserId().isBlank()) {
+                if (userId == null || !entity.getUserId().equals(userId)) {
+                    throw new AccessDeniedException("Access denied: You do not have permission to modify this assessment.");
+                }
+            }
+        } else {
+            entity = new AssessmentEntity();
+            entity.setId(dto.getId());
+            entity.setCreatedAt(LocalDateTime.now());
+        }
+
         entity.setName(dto.getName() != null ? dto.getName() : "Enterprise Integration Assessment");
         entity.setSourcePlatform(dto.getSourcePlatform() != null ? dto.getSourcePlatform() : "SAP PI/PO");
         entity.setTargetPlatform(dto.getTargetPlatform() != null ? dto.getTargetPlatform() : "SAP BTP Integration Suite");
         entity.setStatus(dto.getStatus() != null ? dto.getStatus() : "COMPLETED");
         entity.setCurrency(dto.getCurrency() != null ? dto.getCurrency() : "USD");
-        entity.setCreatedAt(LocalDateTime.now());
         entity.setUpdatedAt(LocalDateTime.now());
         entity.setCreatedBy("Enterprise Architect");
+        if (userId != null && !userId.isBlank()) {
+            entity.setUserId(userId);
+        }
+
+        try {
+            entity.setAssessmentData(objectMapper.writeValueAsString(dto));
+        } catch (Exception ignored) {}
 
         assessmentRepository.save(entity);
-        inMemoryStore.put(dto.getId(), dto);
-
         return dto;
     }
 
     public AssessmentDto getAssessment(String id) {
-        if (inMemoryStore.containsKey(id)) {
-            return inMemoryStore.get(id);
+        return getAssessment(id, null);
+    }
+
+    public AssessmentDto getAssessment(String id, String userId) {
+        // Public demo assessment baseline
+        if ("demo-assessment-1".equals(id) || "demo-sap-pipo-to-btp".equals(id) || id == null || id.isBlank()) {
+            return buildDemoAssessment();
         }
-        var opt = assessmentRepository.findById(id);
+
+        Optional<AssessmentEntity> opt = assessmentRepository.findById(id);
         if (opt.isPresent()) {
+            AssessmentEntity entity = opt.get();
+            // Check ownership
+            if (entity.getUserId() != null && !entity.getUserId().isBlank()) {
+                if (userId == null || !entity.getUserId().equals(userId)) {
+                    throw new AccessDeniedException("Access denied: You do not have permission to view this assessment.");
+                }
+            }
+            if (entity.getAssessmentData() != null && !entity.getAssessmentData().isBlank()) {
+                try {
+                    return objectMapper.readValue(entity.getAssessmentData(), AssessmentDto.class);
+                } catch (Exception ignored) {}
+            }
             AssessmentDto dto = buildDemoAssessment();
-            dto.setId(opt.get().getId());
-            dto.setName(opt.get().getName());
-            dto.setSourcePlatform(opt.get().getSourcePlatform());
-            dto.setTargetPlatform(opt.get().getTargetPlatform());
-            dto.setCurrency(opt.get().getCurrency());
+            dto.setId(entity.getId());
+            dto.setName(entity.getName());
+            dto.setSourcePlatform(entity.getSourcePlatform());
+            dto.setTargetPlatform(entity.getTargetPlatform());
+            dto.setCurrency(entity.getCurrency());
             return dto;
         }
-        AssessmentDto fallback = buildDemoAssessment();
-        if (id != null && !id.isBlank()) {
-            fallback.setId(id);
-        }
-        return fallback;
+
+        throw new IllegalArgumentException("Assessment not found with id: " + id);
     }
 
     public List<AssessmentDto> listAssessments() {
-        return new ArrayList<>(inMemoryStore.values());
+        return listAssessments(null);
+    }
+
+    public List<AssessmentDto> listAssessments(String userId) {
+        if (userId == null || userId.isBlank()) {
+            return List.of(buildDemoAssessment());
+        }
+
+        List<AssessmentEntity> entities = assessmentRepository.findByUserIdOrderByUpdatedAtDesc(userId);
+        List<AssessmentDto> dtos = new ArrayList<>();
+        for (AssessmentEntity entity : entities) {
+            if (entity.getAssessmentData() != null && !entity.getAssessmentData().isBlank()) {
+                try {
+                    dtos.add(objectMapper.readValue(entity.getAssessmentData(), AssessmentDto.class));
+                    continue;
+                } catch (Exception ignored) {}
+            }
+            AssessmentDto fallback = new AssessmentDto();
+            fallback.setId(entity.getId());
+            fallback.setName(entity.getName());
+            fallback.setSourcePlatform(entity.getSourcePlatform());
+            fallback.setTargetPlatform(entity.getTargetPlatform());
+            fallback.setStatus(entity.getStatus());
+            fallback.setCurrency(entity.getCurrency());
+            dtos.add(fallback);
+        }
+        return dtos;
     }
 
     public AssessmentDto buildDemoAssessment() {

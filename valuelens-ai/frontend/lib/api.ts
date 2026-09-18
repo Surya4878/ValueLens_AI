@@ -21,6 +21,7 @@ async function fetchJson<T>(endpoint: string, options: RequestInit = {}): Promis
 
   try {
     const res = await fetch(url, {
+      credentials: 'include',
       ...options,
       headers,
     });

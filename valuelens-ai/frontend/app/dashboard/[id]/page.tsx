@@ -1081,7 +1081,7 @@ Under this simulated scenario, the enterprise retains substantial resilience aga
     window.print();
   };
 
-  const handleSaveToDatabase = () => {
+  const handleSaveToDatabase = async () => {
     if (typeof window !== 'undefined') {
       if (assessment && assessment.id !== 'demo-assessment-1') {
         localStorage.setItem('valuelens_active_assessment', JSON.stringify(assessment));
@@ -1089,8 +1089,21 @@ Under this simulated scenario, the enterprise retains substantial resilience aga
       }
       if (calculations) localStorage.setItem('valuelens_active_calculation', JSON.stringify(calculations));
     }
+
+    // Persist to backend database / Supabase by assessmentId
+    try {
+      if (assessment) {
+        await api.saveAssessment({
+          ...assessment,
+          id: assessment.id || assessmentId,
+        });
+      }
+    } catch (err) {
+      console.warn('Backend database save note:', err);
+    }
+
     setSaveToast(true);
-    setTimeout(() => setSaveToast(false), 3000);
+    setTimeout(() => setSaveToast(false), 3500);
   };
 
   const handleExportJson = () => {

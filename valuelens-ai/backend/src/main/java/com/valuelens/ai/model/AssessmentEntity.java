@@ -35,8 +35,17 @@ public class AssessmentEntity {
     @Column(name = "created_by", length = 128)
     private String createdBy;
 
+    @Column(name = "user_id", length = 64)
+    private String userId;
+
     @Column(columnDefinition = "TEXT")
     private String notes;
+
+    @Column(name = "assessment_data", columnDefinition = "TEXT")
+    private String assessmentData;
+
+    @Column(name = "calculation_data", columnDefinition = "TEXT")
+    private String calculationData;
 
     public AssessmentEntity() {}
 
@@ -69,6 +78,12 @@ public class AssessmentEntity {
     public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
     public String getCreatedBy() { return createdBy; }
     public void setCreatedBy(String createdBy) { this.createdBy = createdBy; }
+    public String getUserId() { return userId; }
+    public void setUserId(String userId) { this.userId = userId; }
     public String getNotes() { return notes; }
     public void setNotes(String notes) { this.notes = notes; }
+    public String getAssessmentData() { return assessmentData; }
+    public void setAssessmentData(String assessmentData) { this.assessmentData = assessmentData; }
+    public String getCalculationData() { return calculationData; }
+    public void setCalculationData(String calculationData) { this.calculationData = calculationData; }
 }

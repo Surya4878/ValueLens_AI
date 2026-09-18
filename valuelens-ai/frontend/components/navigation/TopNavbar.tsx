@@ -1,11 +1,25 @@
-'use client';
+﻿'use client';
 
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useAuth } from '@/components/auth/AuthProvider';
 
 export function TopNavbar() {
   const pathname = usePathname();
+
+  // Hide TopNavbar completely on authentication routes per user requirement
+  const isAuthPage =
+    pathname === '/login' ||
+    pathname?.startsWith('/login') ||
+    pathname === '/register' ||
+    pathname?.startsWith('/register') ||
+    pathname === '/forgot-password' ||
+    pathname?.startsWith('/forgot-password');
+
+  if (isAuthPage) {
+    return null;
+  }
 
   const navLinks = [
     { label: 'Home', href: '/' },
@@ -44,7 +58,7 @@ export function TopNavbar() {
           </div>
 
           {/* Nav Links: SAP Standard Enterprise Tab Bar immediately following brand */}
-          <nav className="hidden md:flex items-center space-x-2 lg:space-x-3">
+          <nav className="hidden md:flex items-center space-x-2 lg:space-x-3 flex-1">
             {navLinks.map((link) => {
               const isActive =
                 pathname === link.href ||
@@ -64,8 +78,112 @@ export function TopNavbar() {
               );
             })}
           </nav>
+
+          {/* Right: Authenticated User Profile Badge OR Sign In / Register */}
+          <div className="flex items-center space-x-3 shrink-0">
+            <UserProfileNav />
+          </div>
         </div>
       </div>
     </header>
+  );
+}
+
+function UserProfileNav() {
+  const { user, isAuthenticated, loading, logout } = useAuth();
+  const [dropdownOpen, setDropdownOpen] = React.useState(false);
+  const dropdownRef = React.useRef<HTMLDivElement>(null);
+
+  // Close dropdown on outside click
+  React.useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setDropdownOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  if (loading) {
+    return <div className="w-8 h-8 rounded-full bg-slate-100 animate-pulse" />;
+  }
+
+  if (isAuthenticated && user) {
+    // Generate initials (e.g. "SP" for Surya Prakash)
+    const initials = user.fullName
+      ? user.fullName
+          .split(' ')
+          .map((n) => n[0])
+          .slice(0, 2)
+          .join('')
+          .toUpperCase()
+      : 'VL';
+
+    return (
+      <div className="relative" ref={dropdownRef}>
+        <button
+          type="button"
+          onClick={() => setDropdownOpen(!dropdownOpen)}
+          className="flex items-center space-x-2.5 p-1.5 pl-2.5 rounded-full border border-[#d9e2ec] hover:border-[#0070f2] bg-white hover:bg-slate-50 transition-all cursor-pointer shadow-2xs"
+          aria-expanded={dropdownOpen}
+        >
+          <span className="text-[13px] sm:text-[14px] font-semibold text-[#1d2d3e] hidden sm:inline max-w-[140px] truncate">
+            {user.fullName}
+          </span>
+          <div className="w-8 h-8 rounded-full bg-[#0070f2] text-white flex items-center justify-center font-bold text-[13px] tracking-wide shadow-xs">
+            {initials}
+          </div>
+        </button>
+
+        {/* Dropdown Menu */}
+        {dropdownOpen && (
+          <div className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-xl border border-[#d9e2ec] py-2 z-50 animate-fadeIn text-[#1d2d3e]">
+            <div className="px-4 py-3 border-b border-[#e2e8f0]">
+              <p className="text-[14px] font-bold truncate">{user.fullName}</p>
+              <p className="text-[12px] text-[#556b82] truncate mt-0.5">{user.email}</p>
+              {user.companyName && (
+                <p className="text-[11px] text-[#0070f2] font-semibold tracking-wide uppercase mt-1 truncate">
+                  {user.companyName}
+                </p>
+              )}
+            </div>
+
+            {/* My Assessments and Executive Dashboard links hidden per user request */}
+
+            <div className="border-t border-[#e2e8f0] pt-1 mt-1">
+              <button
+                type="button"
+                onClick={async () => {
+                  setDropdownOpen(false);
+                  await logout();
+                  window.location.href = '/login';
+                }}
+                className="w-full text-left px-4 py-2.5 text-[13px] font-semibold text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
+              >
+                Log Out
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex items-center space-x-2">
+      <Link
+        href="/login"
+        className="px-4 py-1.5 text-[13px] sm:text-[14px] font-bold rounded-xl bg-[#0070f2] hover:bg-[#0057d2] text-white shadow-2xs hover:shadow transition-all"
+      >
+        Sign In
+      </Link>
+      <Link
+        href="/register"
+        className="px-3.5 py-1.5 text-[13px] sm:text-[14px] font-semibold text-[#556b82] hover:text-[#0070f2] transition-colors"
+      >
+        Create Account
+      </Link>
+    </div>
   );
 }

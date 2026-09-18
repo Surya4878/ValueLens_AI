@@ -3,6 +3,7 @@ package com.valuelens.ai.exception;
 import com.valuelens.ai.dto.ErrorResponseDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -19,6 +20,20 @@ public class GlobalExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<ErrorResponseDto> handleUnauthorized(UnauthorizedException ex) {
+        log.warn("Unauthorized request: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(new ErrorResponseDto("UNAUTHORIZED", ex.getMessage(), List.of()));
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorResponseDto> handleAccessDenied(AccessDeniedException ex) {
+        log.warn("Access denied: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(new ErrorResponseDto("ACCESS_DENIED", ex.getMessage(), List.of()));
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponseDto> handleValidationExceptions(MethodArgumentNotValidException ex) {
         List<String> details = new ArrayList<>();
@@ -34,7 +49,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponseDto> handleInvalidJson(HttpMessageNotReadableException ex) {
         log.warn("Malformed JSON in request: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new ErrorResponseDto("MALFORMED_JSON", "Invalid JSON payload in request body", List.of(ex.getMessage())));
+                .body(new ErrorResponseDto("MALFORMED_JSON", "Invalid JSON payload in request body", List.of("Malformed JSON body")));
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
@@ -46,8 +61,10 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponseDto> handleGenericException(Exception ex) {
-        log.error("Unhandled exception processing request: {}", ex.getMessage(), ex);
+        String requestId = MDC.get("requestId");
+        log.error("Unhandled exception processing request [requestId={}]: {}", requestId, ex.getMessage(), ex);
+        List<String> details = requestId != null ? List.of("Reference ID: " + requestId) : List.of();
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new ErrorResponseDto("INTERNAL_ERROR", "An unexpected error occurred processing your request", List.of(ex.getMessage() != null ? ex.getMessage() : "Unknown error")));
+                .body(new ErrorResponseDto("INTERNAL_ERROR", "An unexpected error occurred. Please contact support with the reference ID.", details));
     }
 }

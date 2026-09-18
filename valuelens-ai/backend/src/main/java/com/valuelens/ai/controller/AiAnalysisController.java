@@ -1,11 +1,16 @@
 package com.valuelens.ai.controller;
 
 import com.valuelens.ai.dto.*;
+import com.valuelens.ai.exception.UnauthorizedException;
 import com.valuelens.ai.service.AiAnalysisService;
 import com.valuelens.ai.service.AssessmentService;
+import com.valuelens.ai.service.JwtSessionService;
 import com.valuelens.ai.service.RoiCalculationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,23 +24,47 @@ public class AiAnalysisController {
     private final AiAnalysisService aiAnalysisService;
     private final AssessmentService assessmentService;
     private final RoiCalculationService roiCalculationService;
+    private final JwtSessionService jwtSessionService;
+
+    @Value("${spring.profiles.active:dev}")
+    private String activeProfile;
 
     public AiAnalysisController(
             AiAnalysisService aiAnalysisService,
             AssessmentService assessmentService,
-            RoiCalculationService roiCalculationService
+            RoiCalculationService roiCalculationService,
+            JwtSessionService jwtSessionService
     ) {
         this.aiAnalysisService = aiAnalysisService;
         this.assessmentService = assessmentService;
         this.roiCalculationService = roiCalculationService;
+        this.jwtSessionService = jwtSessionService;
+    }
+
+    private String getAuthenticatedUserId(HttpServletRequest request) {
+        String token = jwtSessionService.extractToken(request);
+        if (token != null && jwtSessionService.validateToken(token)) {
+            return jwtSessionService.getUserIdFromToken(token);
+        }
+        return null;
     }
 
     @PostMapping({"/api/v1/ai/analyze", "/api/ai/analyze"})
     @Operation(summary = "Analyze Assessment with AI", description = "Generates board-level executive decision, insights, risks, and recommendations")
-    public ResponseEntity<ApiResponseDto<AiAnalysisResponseDto>> analyze(@RequestBody AiAnalysisRequestDto request) {
+    public ResponseEntity<ApiResponseDto<AiAnalysisResponseDto>> analyze(@RequestBody AiAnalysisRequestDto request, HttpServletRequest httpRequest) {
+        String userId = getAuthenticatedUserId(httpRequest);
+
         // If assessment not included in body, load from assessmentId or fallback to demo
         if (request.getAssessment() == null && request.getAssessmentId() != null) {
-            request.setAssessment(assessmentService.getAssessment(request.getAssessmentId()));
+            String id = request.getAssessmentId();
+            if (!"demo-assessment-1".equals(id) && !"demo-sap-pipo-to-btp".equals(id)) {
+                if (userId == null) {
+                    throw new UnauthorizedException("Authentication required to analyze assessment.");
+                }
+                request.setAssessment(assessmentService.getAssessment(id, userId));
+            } else {
+                request.setAssessment(assessmentService.buildDemoAssessment());
+            }
         } else if (request.getAssessment() == null) {
             request.setAssessment(assessmentService.buildDemoAssessment());
         }
@@ -50,13 +79,19 @@ public class AiAnalysisController {
     }
 
     @PostMapping("/api/v1/ai/chart-insight")
-    @Operation(summary = "Chart-Specific AI Insight", description = "Analyzes a specific dashboard chart (TCO, Cost Drivers, Migration, ROI Timeline)")
-    public ResponseEntity<ApiResponseDto<ChartInsightResponseDto>> getChartInsight(@RequestBody ChartInsightRequestDto request) {
+    @Operation(summary = "Chart-Specific AI Insight", description = "Analyzes a specific dashboard chart")
+    public ResponseEntity<ApiResponseDto<ChartInsightResponseDto>> getChartInsight(@RequestBody ChartInsightRequestDto request, HttpServletRequest httpRequest) {
+        String userId = getAuthenticatedUserId(httpRequest);
         AssessmentDto assessment = null;
         if (request.getAssessmentId() != null) {
-            try {
-                assessment = assessmentService.getAssessment(request.getAssessmentId());
-            } catch (Exception ignored) {}
+            String id = request.getAssessmentId();
+            if (!"demo-assessment-1".equals(id) && !"demo-sap-pipo-to-btp".equals(id)) {
+                if (userId != null) {
+                    try {
+                        assessment = assessmentService.getAssessment(id, userId);
+                    } catch (Exception ignored) {}
+                }
+            }
         }
         if (assessment == null) {
             assessment = assessmentService.buildDemoAssessment();
@@ -75,11 +110,15 @@ public class AiAnalysisController {
 
     @PostMapping("/api/v1/ai/executive-story")
     @Operation(summary = "Generate Executive Story", description = "Generates a cohesive management presentation story narrative")
-    public ResponseEntity<ApiResponseDto<Map<String, String>>> generateExecutiveStory(@RequestBody(required = false) Map<String, String> request) {
+    public ResponseEntity<ApiResponseDto<Map<String, String>>> generateExecutiveStory(@RequestBody(required = false) Map<String, String> request, HttpServletRequest httpRequest) {
         String assessmentId = request != null ? request.get("assessmentId") : null;
+        String userId = getAuthenticatedUserId(httpRequest);
         AssessmentDto assessment = null;
-        if (assessmentId != null && !assessmentId.isBlank()) {
-            assessment = assessmentService.getAssessment(assessmentId);
+        if (assessmentId != null && !assessmentId.isBlank() && !"demo-assessment-1".equals(assessmentId) && !"demo-sap-pipo-to-btp".equals(assessmentId)) {
+            if (userId == null) {
+                throw new UnauthorizedException("Authentication required to generate story for assessment.");
+            }
+            assessment = assessmentService.getAssessment(assessmentId, userId);
         }
         if (assessment == null) {
             assessment = assessmentService.buildDemoAssessment();
@@ -97,8 +136,12 @@ public class AiAnalysisController {
     }
 
     @GetMapping("/api/v1/ai/debug")
-    @Operation(summary = "Debug NVIDIA connectivity", description = "Tests direct NVIDIA NIM API connectivity from JVM")
+    @Operation(summary = "Debug NVIDIA connectivity", description = "Tests direct NVIDIA NIM API connectivity from JVM (dev only)")
     public ResponseEntity<ApiResponseDto<Map<String, String>>> debugNvidia() {
+        if ("prod".equalsIgnoreCase(activeProfile) || "production".equalsIgnoreCase(activeProfile)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(ApiResponseDto.error("Endpoint disabled in production environment."));
+        }
         String result = aiAnalysisService.debugNvidiaConnectivity();
         return ResponseEntity.ok(ApiResponseDto.success("Debug complete", Map.of("result", result)));
     }
