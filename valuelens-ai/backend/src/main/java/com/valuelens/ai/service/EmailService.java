@@ -127,7 +127,7 @@ public class EmailService {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-            helper.setFrom(fromEmail);
+            helper.setFrom(fromEmail, "Business ValueLens AI");
             helper.setTo(to);
             helper.setSubject(subject);
             helper.setText(htmlBody, true);

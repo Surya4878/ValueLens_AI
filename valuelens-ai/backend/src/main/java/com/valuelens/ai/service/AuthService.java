@@ -45,6 +45,7 @@ public class AuthService {
     @Value("${app.auth.google-client-id:}")
     private String googleClientId;
 
+    @Autowired
     public AuthService(UserRepository userRepository,
                        EmailVerificationRepository emailVerificationRepository,
                        PasswordResetRepository passwordResetRepository,

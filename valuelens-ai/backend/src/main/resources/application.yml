@@ -1,4 +1,4 @@
-﻿server:
+server:
   port: 8080
 
 spring:
@@ -18,17 +18,17 @@ spring:
     properties:
       hibernate:
         format_sql: false
-        jdbc:
-          lob:
-            non_contextual_creation: true
+      jdbc:
+        lob:
+          non_contextual_creation: true
   flyway:
     enabled: ${FLYWAY_ENABLED:false}
     baseline-on-migrate: true
   mail:
     host: ${SMTP_HOST:smtp.gmail.com}
     port: ${SMTP_PORT:587}
-    username: ${SMTP_USER:${SPRING_MAIL_USERNAME:noreply.businessvaluelensai@gmail.com}}
-    password: ${SMTP_PASS:${SPRING_MAIL_PASSWORD:}}
+    username: ${SMTP_USER:noreply.businessvaluelensai@gmail.com}
+    password: ${SMTP_PASS:}
     properties:
       mail:
         smtp:
@@ -79,11 +79,7 @@ app:
     anon-key: ${SUPABASE_ANON_KEY:}
     service-role-key: ${SUPABASE_SERVICE_ROLE_KEY:}
   email:
-    smtp-host: ${EMAIL_SMTP_HOST:smtp.gmail.com}
-    smtp-port: ${EMAIL_SMTP_PORT:587}
-    smtp-username: ${EMAIL_SMTP_USERNAME:}
-    smtp-password: ${EMAIL_SMTP_PASSWORD:}
-    from: ${EMAIL_FROM:noreply.businessvaluelensai@gmail.com}
+    from: ${APP_FROM_EMAIL:${SMTP_USER:noreply.businessvaluelensai@gmail.com}}
 
 springdoc:
   api-docs:
