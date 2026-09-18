@@ -155,6 +155,16 @@ function UserProfileNav() {
                 type="button"
                 onClick={async () => {
                   setDropdownOpen(false);
+                  try {
+                    localStorage.removeItem('valuelens_active_assessment');
+                    localStorage.removeItem('valuelens_active_assessment_id');
+                    localStorage.removeItem('valuelens_active_calculation');
+                    localStorage.removeItem('valuelens_assessment_draft');
+                    localStorage.removeItem('valuelens_active_user_id');
+                    localStorage.removeItem('valuelens_active_user_email');
+                  } catch {
+                    // ignore
+                  }
                   await logout();
                   window.location.href = '/login';
                 }}

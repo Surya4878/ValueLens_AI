@@ -124,6 +124,7 @@ export interface MigrationDetails {
 
 export interface Assessment {
   id?: string;
+  userId?: string;
   name: string;
   sourcePlatform: PlatformType;
   targetPlatform: string;

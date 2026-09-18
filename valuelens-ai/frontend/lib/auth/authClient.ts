@@ -101,6 +101,19 @@ export const authClient = {
       await fetchAuthJson('/api/auth/logout', { method: 'POST' });
     } catch {
       // ignore
+    } finally {
+      if (typeof window !== 'undefined') {
+        try {
+          localStorage.removeItem('valuelens_active_assessment');
+          localStorage.removeItem('valuelens_active_assessment_id');
+          localStorage.removeItem('valuelens_active_calculation');
+          localStorage.removeItem('valuelens_assessment_draft');
+          localStorage.removeItem('valuelens_active_user_id');
+          localStorage.removeItem('valuelens_active_user_email');
+        } catch {
+          // ignore
+        }
+      }
     }
   },
 

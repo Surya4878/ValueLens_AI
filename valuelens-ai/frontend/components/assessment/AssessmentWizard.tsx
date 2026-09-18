@@ -41,6 +41,7 @@ import { Step4Sizing } from './steps/Step4Sizing';
 import { Step5CostParameters, Step5CostsState } from './steps/Step5CostParameters';
 import { Step6SelectEdition } from './steps/Step6SelectEdition';
 import { Step7ReviewResults } from './steps/Step7ReviewResults';
+import { useAuth, clearUserLocalCache } from '@/components/auth/AuthProvider';
 
 export const PLATFORM_OPTIONS = SUPPORTED_PLATFORMS;
 
@@ -155,6 +156,7 @@ export const createFreshAssessment = (platformId: PlatformId = 'sap-pipo'): Asse
 
 export function AssessmentWizard() {
   const router = useRouter();
+  const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState<number>(0);
   const [selectedPlatform, setSelectedPlatform] = useState<PlatformId>('sap-pipo');
@@ -244,6 +246,16 @@ export function AssessmentWizard() {
           if (parsed?.id === 'demo-assessment-1') {
             return;
           }
+
+          // Security & Privacy: Discard draft if it belongs to another user account
+          const activeUserId = localStorage.getItem('valuelens_active_user_id');
+          if (user?.id) {
+            if ((parsed?.userId && parsed.userId !== user.id) || (activeUserId && activeUserId !== user.id)) {
+              clearUserLocalCache();
+              return;
+            }
+          }
+
           const hasData =
             (parsed?.sourceSystem?.sapPiPoAnnualCostBreakdown?.licensing?.subtotal ?? 0) > 0 ||
             (parsed?.sourceSystem?.sapPiPoAnnualCostBreakdown?.licensing?.sapPiPoLicenseCosts ?? 0) > 0 ||
@@ -497,6 +509,7 @@ export function AssessmentWizard() {
     const assessmentToSave: Assessment = {
       ...assessment,
       id: asmtId,
+      userId: user?.id || assessment.userId,
       name: asmtName,
       sourcePlatform: activeConfig.name,
       targetPlatform: 'SAP BTP Integration Suite',
@@ -560,6 +573,9 @@ export function AssessmentWizard() {
       if (typeof window !== 'undefined') {
         localStorage.setItem('valuelens_active_assessment', JSON.stringify(saved));
         localStorage.setItem('valuelens_active_assessment_id', saved.id || asmtId);
+        if (user?.id) {
+          localStorage.setItem('valuelens_active_user_id', user.id);
+        }
       }
 
       const calc = await api.calculateROI(saved);
@@ -624,6 +640,9 @@ export function AssessmentWizard() {
         localStorage.setItem('valuelens_active_assessment', JSON.stringify(assessmentToSave));
         localStorage.setItem('valuelens_active_assessment_id', asmtId);
         localStorage.setItem('valuelens_active_calculation', JSON.stringify(fallbackResult));
+        if (user?.id) {
+          localStorage.setItem('valuelens_active_user_id', user.id);
+        }
       }
 
       setCalculationResult(fallbackResult);
