@@ -1,3 +1,21 @@
+# CF Upload Exclusions for ValueLens Frontend
+# node_modules: CF nodejs_buildpack installs these fresh during staging
 node_modules/
-.git/
+
+# Dev/local environment files
+.env
+.env.local
+.env.development
+.env.test
+
+# Logs & caches
 *.log
+.cache/
+.turbo/
+
+# TypeScript build info (not needed, CF has its own)
+*.tsbuildinfo
+
+# NOTE: .next/ is intentionally NOT excluded here.
+# We pre-build with 'npm run build' in SAP BAS before cf push,
+# so the .next/ directory must be uploaded to BTP.
