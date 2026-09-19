@@ -22,7 +22,9 @@ function highlightIntSwitch(text: string | undefined): React.ReactNode {
 
 export default function OfferingDetailPage() {
   const params = useParams();
-  const platformSlug = (params?.platform as string) || 'sap-pipo';
+  const rawSlug = (params?.platform as string) || 'sap-pipo';
+  // Normalize alias so both sap-cpi-neo and sap-neo resolve to sap-neo-cpi
+  const platformSlug = (rawSlug === 'sap-cpi-neo' || rawSlug === 'sap-neo') ? 'sap-neo-cpi' : rawSlug;
   const offering: PlatformOffering | undefined = OFFERINGS_DATA[platformSlug];
 
   const [activeTab, setActiveTab] = useState<

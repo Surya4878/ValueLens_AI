@@ -66,6 +66,7 @@ export default function DashboardPage() {
 
   // Save Toast Notification State
   const [saveToast, setSaveToast] = useState(false);
+  const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
 
   // In-Dashboard Sensitivity Simulation State
   const [simSavingsFactor, setSimSavingsFactor] = useState<number>(1.0);
@@ -1147,42 +1148,51 @@ Under this simulated scenario, the enterprise retains substantial resilience aga
         : '55%';
 
   // Action Button Handlers
-  const handleDownloadPdf = () => {
-    const projectionRows = [1, 2, 3, 4, 5].map((y) => {
-      const baselineSpend = currentTco;
-      const btpRunCost = targetTco;
-      const cumulativeSavings = annualSavings * y;
-      const migrationCapex = y === 1 ? migrationCost : 0;
-      const netBenefit = cumulativeSavings - migrationCost;
-      const roi = migrationCost > 0 ? (netBenefit / migrationCost) * 100 : 0;
-      return {
-        year: y,
-        baselineSpend,
-        btpRunCost,
-        cumulativeSavings,
-        migrationCapex,
-        netBenefit,
-        roi,
-      };
-    });
+  const handleDownloadPdf = async () => {
+    try {
+      setIsDownloadingPdf(true);
+      const projectionRows = [1, 2, 3, 4, 5].map((y) => {
+        const baselineSpend = currentTco;
+        const btpRunCost = targetTco;
+        const cumulativeSavings = annualSavings * y;
+        const migrationCapex = y === 1 ? migrationCost : 0;
+        const netBenefit = cumulativeSavings - migrationCost;
+        const roi = migrationCost > 0 ? (netBenefit / migrationCost) * 100 : 0;
+        return {
+          year: y,
+          baselineSpend,
+          btpRunCost,
+          cumulativeSavings,
+          migrationCapex,
+          netBenefit,
+          roi,
+        };
+      });
 
-    generateExecutiveReportPdf({
-      assessment,
-      calculations,
-      currentTco,
-      targetTco,
-      annualSavings,
-      savingsPct,
-      migrationCost,
-      breakEvenMonths,
-      fiveYearRoi,
-      fiveYearNetBenefit,
-      currency,
-      sourcePlatform,
-      packageName,
-      cleanTimeline,
-      timelineData: projectionRows,
-    });
+      await generateExecutiveReportPdf({
+        assessment,
+        calculations,
+        currentTco,
+        targetTco,
+        annualSavings,
+        savingsPct,
+        migrationCost,
+        breakEvenMonths,
+        fiveYearRoi,
+        fiveYearNetBenefit,
+        currency,
+        sourcePlatform,
+        packageName,
+        cleanTimeline,
+        timelineData: projectionRows,
+      });
+    } catch (err) {
+      console.error('Failed to generate PDF:', err);
+    } finally {
+      setTimeout(() => {
+        setIsDownloadingPdf(false);
+      }, 1500);
+    }
   };
 
   return (
@@ -1227,10 +1237,20 @@ Under this simulated scenario, the enterprise retains substantial resilience aga
               <button
                 type="button"
                 onClick={handleDownloadPdf}
-                className="inline-flex items-center space-x-2 px-4 py-2.5 bg-white hover:bg-slate-50 text-[#1d2d3e] border border-[#d9e2ec] rounded-xl text-[14px] font-semibold shadow-xs hover:border-[#0070f2] transition-colors cursor-pointer"
+                disabled={isDownloadingPdf}
+                className="inline-flex items-center space-x-2 px-4 py-2.5 bg-white hover:bg-slate-50 text-[#1d2d3e] border border-[#d9e2ec] rounded-xl text-[14px] font-semibold shadow-xs hover:border-[#0070f2] transition-colors cursor-pointer disabled:opacity-75 disabled:cursor-not-allowed"
               >
-                <Download className="w-4 h-4 text-[#0070f2]" />
-                <span>Download PDF</span>
+                {isDownloadingPdf ? (
+                  <>
+                    <Loader2 className="w-4 h-4 text-[#0070f2] animate-spin" />
+                    <span>Preparing PDF...</span>
+                  </>
+                ) : (
+                  <>
+                    <Download className="w-4 h-4 text-[#0070f2]" />
+                    <span>Download PDF</span>
+                  </>
+                )}
               </button>
 
               <Link

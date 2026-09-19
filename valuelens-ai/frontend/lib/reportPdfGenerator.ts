@@ -29,7 +29,7 @@ interface GeneratePdfOptions {
   }>;
 }
 
-export function generateExecutiveReportPdf(options: GeneratePdfOptions) {
+export async function generateExecutiveReportPdf(options: GeneratePdfOptions) {
   const {
     currentTco,
     targetTco,
@@ -73,19 +73,29 @@ export function generateExecutiveReportPdf(options: GeneratePdfOptions) {
   doc.setDrawColor(borderGray[0], borderGray[1], borderGray[2]);
   doc.roundedRect(margin, y, contentWidth, 68, 8, 8, 'S');
 
+  // Reset draw color to transparent before text to prevent stroke artifacts
+  doc.setDrawColor(255, 255, 255);
+
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(18);
   doc.setTextColor(primaryBlue[0], primaryBlue[1], primaryBlue[2]);
   doc.text('Incture', margin + 18, y + 28);
 
+  // Vertical divider line between logo and title
+  doc.setDrawColor(borderGray[0], borderGray[1], borderGray[2]);
+  doc.setLineWidth(1);
+  doc.line(margin + 70, y + 14, margin + 70, y + 36);
+
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(14);
   doc.setTextColor(darkNavy[0], darkNavy[1], darkNavy[2]);
-  doc.text('|  Business ValueLens AI', margin + 74, y + 28);
+  doc.setDrawColor(255, 255, 255); // prevent text stroke
+  doc.text('Business ValueLens AI', margin + 80, y + 28);
 
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(11);
   doc.setTextColor(textMuted[0], textMuted[1], textMuted[2]);
+  doc.setDrawColor(255, 255, 255);
   doc.text('EXECUTIVE INVESTMENT DOSSIER & ROI ASSESSMENT', margin + 18, y + 50);
 
   const dateStr = new Date().toLocaleDateString('en-US', {
@@ -350,7 +360,45 @@ export function generateExecutiveReportPdf(options: GeneratePdfOptions) {
     doc.text(`Page ${i} of ${totalPages}`, pageWidth - margin, pageHeight - 20, { align: 'right' });
   }
 
-  // Download directly
-  const safeId = options.assessment?.id || 'assessment';
-  doc.save(`ValueLens_AI_Executive_ROI_Report_${safeId}.pdf`);
+  // Safe filename with guaranteed .pdf extension
+  const cleanId = (options.assessment?.id || 'assessment').replace(/[^a-zA-Z0-9_-]/g, '_');
+  const fileName = `ValueLens_AI_Executive_ROI_Report_${cleanId}.pdf`;
+
+  try {
+    const dataUri = doc.output('datauristring', { filename: fileName });
+
+    // Method 1: Stage PDF on server and trigger a top-level GET download to a URL ending in .pdf.
+    // In Google Chrome / Edge / Windows, a GET request to an endpoint whose URL path explicitly
+    // ends with ".pdf" (e.g. /api/download/ValueLens_Report.pdf?token=...) will ALWAYS be saved
+    // with that exact filename and .pdf extension, completely eliminating the Chrome GUID fallback bug.
+    const res = await fetch(`/api/download/${encodeURIComponent(fileName)}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ pdfBase64: dataUri }),
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      if (data.downloadUrl) {
+        window.location.href = data.downloadUrl;
+        return;
+      }
+    }
+    throw new Error('Failed to stage PDF download');
+  } catch (err) {
+    console.warn('Staged GET download failed, falling back to data URI anchor:', err);
+    try {
+      const dataUri = doc.output('datauristring', { filename: fileName });
+      const link = document.createElement('a');
+      link.href = dataUri;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      setTimeout(() => {
+        if (document.body.contains(link)) document.body.removeChild(link);
+      }, 500);
+    } catch {
+      doc.save(fileName);
+    }
+  }
 }

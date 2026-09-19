@@ -28,6 +28,14 @@ SECURITY_SECRET_AUDIT.md
 PRODUCTION_SECURITY_CHECKLIST.md
 SAP_BTP_DEPLOYMENT_GUIDE.md
 *.audit.md
+QA_TEST_REPORT.md
+QA_BUGS_FOUND.md
+PERFORMANCE_TEST_REPORT.md
+API_TEST_REPORT.md
+FINAL_QA_REPORT.md
+*QA*.md
+*TEST_REPORT*.md
+*BUGS*.md
 
 # ============================================================
 # SCRATCH & TEST ARTIFACTS
@@ -99,3 +107,9 @@ logs/
 *.bak
 *.swp
 *.orig
+
+# ============================================================
+# EXPLICITLY TRACK THESE (overrides above)
+# ============================================================
+# Next.js API routes are app code, not generated artifacts
+!frontend/app/api/

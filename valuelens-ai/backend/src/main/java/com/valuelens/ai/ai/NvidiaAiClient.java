@@ -69,10 +69,11 @@ public class NvidiaAiClient {
 
         boolean acquired = false;
         try {
-            log.debug("Waiting for NVIDIA NIM concurrency gate...");
-            acquired = concurrencyGate.tryAcquire(35, TimeUnit.SECONDS);
+            int gateTimeoutSec = (properties.getTimeoutSeconds() != null && properties.getTimeoutSeconds() > 0)
+                    ? properties.getTimeoutSeconds() : 6;
+            acquired = concurrencyGate.tryAcquire(gateTimeoutSec, TimeUnit.SECONDS);
             if (!acquired) {
-                log.warn("NVIDIA NIM concurrency gate timed out after 35s waiting for active request.");
+                log.warn("NVIDIA NIM concurrency gate timed out after {}s waiting for active request.", gateTimeoutSec);
                 return null;
             }
 
@@ -203,11 +204,8 @@ public class NvidiaAiClient {
                 }
 
             } catch (java.net.http.HttpTimeoutException te) {
-                log.warn("NVIDIA NIM request timed out on attempt {}/{} after {}ms. Retrying...", attempt, maxRetries, System.currentTimeMillis() - t0);
-                if (attempt < maxRetries) {
-                    try { Thread.sleep(retryDelayMs); } catch (InterruptedException ie) { Thread.currentThread().interrupt(); }
-                    retryDelayMs *= 2;
-                }
+                log.warn("NVIDIA NIM request timed out after {}ms. Activating fast advisory fallback.", System.currentTimeMillis() - t0);
+                return null;
             } catch (InterruptedException ie) {
                 Thread.currentThread().interrupt();
                 log.warn("Retry sleep interrupted");
