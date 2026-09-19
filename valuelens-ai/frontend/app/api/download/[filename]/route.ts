@@ -14,11 +14,11 @@ const pdfCache = globalThis.__valuelensPdfCache;
 if (typeof setInterval !== 'undefined') {
   setInterval(() => {
     const now = Date.now();
-    for (const [key, item] of pdfCache.entries()) {
+    pdfCache.forEach((item, key) => {
       if (now - item.timestamp > 120000) {
         pdfCache.delete(key);
       }
-    }
+    });
   }, 60000);
 }
 
@@ -76,7 +76,7 @@ export async function GET(
 
     const filename = decodeURIComponent(params.filename || cached.filename || 'ValueLens_Report.pdf');
 
-    return new NextResponse(cached.buffer, {
+    return new NextResponse(new Uint8Array(cached.buffer) as unknown as BodyInit, {
       status: 200,
       headers: {
         'Content-Type': 'application/pdf',

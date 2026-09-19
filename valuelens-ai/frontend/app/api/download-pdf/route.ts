@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
 
     // Return with native Content-Disposition header so Chrome/Edge download engine
     // ALWAYS preserves the .pdf extension and proper filename without blob UUID fallback
-    return new NextResponse(buffer, {
+    return new NextResponse(new Uint8Array(buffer) as unknown as BodyInit, {
       status: 200,
       headers: {
         'Content-Type': 'application/pdf',
