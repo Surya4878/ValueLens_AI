@@ -10,6 +10,15 @@ export const metadata: Metadata = {
   title: 'ValueLens AI — AI-Powered Migration Economics & Decision Intelligence',
   description:
     'Enterprise platform for analyzing integration migration economics from SAP PI/PO, MuleSoft, SAP CPI (Neo), and Boomi to SAP BTP Integration Suite.',
+  icons: {
+    icon: [
+      { url: '/images/incture-favicon.png', sizes: '192x192', type: 'image/png' },
+      { url: '/images/incture-favicon-32.png', sizes: '32x32', type: 'image/png' },
+      { url: '/favicon.ico', sizes: 'any' },
+    ],
+    shortcut: '/images/incture-favicon-32.png',
+    apple: '/images/incture-favicon.png',
+  },
 };
 
 export default function RootLayout({
