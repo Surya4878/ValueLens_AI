@@ -21,7 +21,7 @@ import { SocialAuthButtons } from '@/components/auth/SocialAuthButtons';
 export function RegisterForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const returnUrl = searchParams.get('returnUrl') || '/assessment';
+  const returnUrl = searchParams.get('returnUrl') || '/';
 
   const { registerStart } = useAuth();
 

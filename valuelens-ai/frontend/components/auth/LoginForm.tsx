@@ -10,7 +10,7 @@ import { SocialAuthButtons } from '@/components/auth/SocialAuthButtons';
 export function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const returnUrl = searchParams.get('returnUrl') || '/assessment';
+  const returnUrl = searchParams.get('returnUrl') || '/';
 
   const { login, loginWithMicrosoft, loginWithGoogle } = useAuth();
 

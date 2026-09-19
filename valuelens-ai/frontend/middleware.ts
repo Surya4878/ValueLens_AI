@@ -17,7 +17,9 @@ export function middleware(request: NextRequest) {
   // 1. If user visits root '/' without authentication, display login page initially
   if (pathname === '/') {
     if (!isAuthenticated) {
-      return NextResponse.redirect(new URL('/login', request.url));
+      const loginUrl = new URL('/login', request.url);
+      loginUrl.searchParams.set('returnUrl', '/');
+      return NextResponse.redirect(loginUrl);
     }
   }
 

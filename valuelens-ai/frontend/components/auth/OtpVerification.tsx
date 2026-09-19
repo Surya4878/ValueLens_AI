@@ -10,7 +10,7 @@ export function OtpVerification() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const email = searchParams.get('email') || '';
-  const returnUrl = searchParams.get('returnUrl') || '/assessment';
+  const returnUrl = searchParams.get('returnUrl') || '/';
 
   const { verifyOtp, resendOtp } = useAuth();
 
